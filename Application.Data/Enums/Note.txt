@@ -1,0 +1,1 @@
+﻿cái enum này để chỉ định status của các thứ
