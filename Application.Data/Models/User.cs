@@ -15,6 +15,6 @@ namespace Application.Data.Models
         public DateTime CreatedAt { get; set; }
         public DateTime LastUpdatedOn { get; set; }
         public byte Status { get; set; }
-        public virtual Rating? Rating { get; set; }
-    }
+		public virtual ICollection<Rating>? Ratings { get; set; } = new List<Rating>();
+	}
 }

@@ -18,4 +18,9 @@
     <ProjectReference Include="..\Application.Data\Application.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

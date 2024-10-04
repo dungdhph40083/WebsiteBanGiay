@@ -5,20 +5,22 @@ namespace Application.Data.Models
 {
     public class Order
     {
-        [Key]
-        public Guid OrderID { get; set; }
-        [ForeignKey(nameof(User))]
-        public Guid UserID { get; set; }
-        public DateTime OrderDate { get; set; }
-        public byte Status { get; set; }
-        public long TotalPrice { get; set; }
-        public string? ShippingAddress { get; set; }
-        [ForeignKey(nameof(Product))]
-        public Guid ProductID { get; set; }
-        [ForeignKey(nameof(PaymentMethod))]
-        public Guid PaymentMethodID { get; set; }
-        public virtual User? User { get; set; }
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
-        public virtual PaymentMethod? PaymentMethod { get; set; }
-    }
+		[Key]
+		public Guid OrderID { get; set; }
+
+		[ForeignKey(nameof(User))]
+		public Guid UserID { get; set; }
+
+		public DateTime OrderDate { get; set; }
+		public byte Status { get; set; }
+		public long TotalPrice { get; set; }
+		public string? ShippingAddress { get; set; }
+
+		[ForeignKey(nameof(PaymentMethod))]
+		public Guid PaymentMethodID { get; set; }
+
+		public virtual User? User { get; set; }
+		public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>(); // Updated navigation property
+		public virtual PaymentMethod? PaymentMethod { get; set; }
+	}
 }

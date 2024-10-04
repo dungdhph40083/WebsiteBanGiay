@@ -20,5 +20,8 @@ namespace Application.Data.Models
         public Guid OrderID { get; set; }
         public virtual Order? Orders { get; set; }
         public virtual ICollection<Category_Product>? Category_Products { get; set; } = new List<Category_Product>();
-    }
+		public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>(); // Updated navigation property
+
+
+	}
 }

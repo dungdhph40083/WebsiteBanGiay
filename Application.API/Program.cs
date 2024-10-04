@@ -1,3 +1,4 @@
+using Application.API.ModelContext;
 using Application.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AppDBContext>(Options =>
+builder.Services.AddDbContext<GiayDBContext>(Options =>
 {
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay"));
 });

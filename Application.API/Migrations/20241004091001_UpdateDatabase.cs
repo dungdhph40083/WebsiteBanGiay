@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Application.Data.Migrations
+namespace Application.API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialRelease69 : Migration
+    public partial class UpdateDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -119,7 +119,7 @@ namespace Application.Data.Migrations
                 columns: table => new
                 {
                     ShippingMethodID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderDetailID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MethodName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ShippingFee = table.Column<long>(type: "bigint", nullable: false),
                     EstimatedDeliveryTime = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -422,8 +422,8 @@ namespace Application.Data.Migrations
                 name: "OrderDetails",
                 columns: table => new
                 {
-                    OrderDetailID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<long>(type: "bigint", nullable: false),
@@ -433,17 +433,16 @@ namespace Application.Data.Migrations
                     Discount = table.Column<int>(type: "int", nullable: false),
                     TotalSumPrice = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ShippingMethodID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ShippingMethodID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderDetails", x => x.OrderDetailID);
+                    table.PrimaryKey("PK_OrderDetails", x => x.Id);
                     table.ForeignKey(
                         name: "FK_OrderDetails_ShippingMethods_ShippingMethodID",
                         column: x => x.ShippingMethodID,
                         principalTable: "ShippingMethods",
-                        principalColumn: "ShippingMethodID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ShippingMethodID");
                 });
 
             migrationBuilder.CreateTable(
@@ -463,7 +462,7 @@ namespace Application.Data.Migrations
                         name: "FK_OrderTrackings_OrderDetails_OrderDetailID",
                         column: x => x.OrderDetailID,
                         principalTable: "OrderDetails",
-                        principalColumn: "OrderDetailID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -488,7 +487,7 @@ namespace Application.Data.Migrations
                         name: "FK_PaymentMethods_OrderDetails_OrderDetailID",
                         column: x => x.OrderDetailID,
                         principalTable: "OrderDetails",
-                        principalColumn: "OrderDetailID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -502,7 +501,6 @@ namespace Application.Data.Migrations
                     Status = table.Column<byte>(type: "tinyint", nullable: false),
                     TotalPrice = table.Column<long>(type: "bigint", nullable: false),
                     ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PaymentMethodID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ReturnID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -689,8 +687,7 @@ namespace Application.Data.Migrations
                         name: "FK_Ratings_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserID");
                 });
 
             migrationBuilder.CreateTable(
@@ -742,7 +739,7 @@ namespace Application.Data.Migrations
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "UserID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -798,8 +795,7 @@ namespace Application.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_ShippingMethodID",
                 table: "OrderDetails",
-                column: "ShippingMethodID",
-                unique: true);
+                column: "ShippingMethodID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_PaymentMethodID",
@@ -900,8 +896,7 @@ namespace Application.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Ratings_UserID",
                 table: "Ratings",
-                column: "UserID",
-                unique: true);
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles_User_RoleUserRoleID",
@@ -941,16 +936,14 @@ namespace Application.Data.Migrations
                 table: "OrderDetails",
                 column: "OrderID",
                 principalTable: "Orders",
-                principalColumn: "OrderID",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "OrderID");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_OrderDetails_Products_ProductID",
                 table: "OrderDetails",
                 column: "ProductID",
                 principalTable: "Products",
-                principalColumn: "ProductID",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "ProductID");
         }
 
         /// <inheritdoc />

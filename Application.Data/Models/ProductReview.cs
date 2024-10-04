@@ -19,7 +19,7 @@ namespace Application.Data.Models
 		public float RatingStar {  get; set; }
 		public string? Comment { get; set;}
 		public DateTime? ReviewDate { get; set; }
-		public virtual ProductDetail? ProductDetail { get; set; }
-		public virtual User? User { get; set; }
+		public virtual ProductDetail? ProductDetail { get; set; } = null!;
+		public virtual User? User { get; set; } = null!;
 	}
 }
