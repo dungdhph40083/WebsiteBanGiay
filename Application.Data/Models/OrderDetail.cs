@@ -23,6 +23,6 @@ namespace Application.Data.Models
         public Guid ShippingMethodID { get; set; }
         public virtual Order? Order { get; set; }
         public virtual Product? Product { get; set; }
-        public virtual ICollection<ShippingMethod> ShippingMethod { get; set; } = new List<ShippingMethod>();
+        public virtual ShippingMethod? ShippingMethod { get; set; }
     }
 }

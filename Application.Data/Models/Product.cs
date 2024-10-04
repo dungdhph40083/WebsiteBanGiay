@@ -18,6 +18,7 @@ namespace Application.Data.Models
         public DateTime UpdatedAt { get; set; }
         public string? UpdatedBy { get; set; }
         public Guid OrderID { get; set; }
-        public virtual Category_Product? Category_Product { get; set; }
+        public virtual Order? Orders { get; set; }
+        public virtual ICollection<Category_Product>? Category_Products { get; set; } = new List<Category_Product>();
     }
 }

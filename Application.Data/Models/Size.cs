@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Data.Models
 {
-	public class Sizes
+	public class Size
 	{
 		[Key]
 		public Guid SizeID { get; set; }

@@ -13,6 +13,6 @@ namespace Application.Data.Models
         public DateTime ReturnDate { get; set; }
         public long RefundAmount { get; set; }
         public byte Status { get; set; }
-        public virtual ICollection<Order>? Order { get; set; } = new List<Order>();
+        public virtual ICollection<Order>? Orders { get; set; } = new List<Order>();
     }
 }

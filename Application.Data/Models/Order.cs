@@ -18,7 +18,7 @@ namespace Application.Data.Models
         [ForeignKey(nameof(PaymentMethod))]
         public Guid PaymentMethodID { get; set; }
         public virtual User? User { get; set; }
-        public virtual ICollection<Product> Product { get; set; } = new List<Product>();
+        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
         public virtual PaymentMethod? PaymentMethod { get; set; }
     }
 }

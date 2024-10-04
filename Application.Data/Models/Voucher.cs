@@ -1,24 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Data.Models
 {
-	public class Vouchers
+	public class Voucher
 	{
 		[Key]
 		public Guid VoucherID { get; set; }
+		[ForeignKey(nameof(Category))]
 		public Guid CategoryID { get; set; }
+		[ForeignKey(nameof(Product))]
 		public Guid ProductID {  get; set; }
-		public decimal DiscountPrice { get; set; }
-		public decimal DiscountPerson { get; set;}
+		public long DiscountPrice { get; set; }
+		public string? DiscountPerson { get; set;}
 		public string? Description { get; set; }
 		public DateTime CreatedOn { get; set; }
 		public DateTime LastUpdatedOn { get; set;}
 		public byte Status { get; set; }
+
+		public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+		public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 		
 	}
 }
