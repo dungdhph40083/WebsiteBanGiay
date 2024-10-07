@@ -1,17 +1,18 @@
 ﻿using Application.Data.Models;
-using Application.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Application.API.ModelContext
+namespace Application.Data.ModelContexts
 {
 	public class GiayDBContext : DbContext
 	{
-		public GiayDBContext(DbContextOptions<GiayDBContext> Options) : base(Options)
+		public GiayDBContext(DbContextOptions options) : base(options)
 		{
 		}
-
-	
-
 		public DbSet<Address> Addresses { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Category_Product> Category_Products { get; set; }
@@ -44,12 +45,12 @@ namespace Application.API.ModelContext
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-	
-	 modelBuilder.Entity<Rating>()
-		.HasOne(r => r.User)
-		.WithMany(u => u.Ratings)
-		.HasForeignKey(r => r.UserID)
-		.OnDelete(DeleteBehavior.NoAction); // Sử dụng Restrict để tránh cascade delete
+
+			modelBuilder.Entity<Rating>()
+			   .HasOne(r => r.User)
+			   .WithMany(u => u.Ratings)
+			   .HasForeignKey(r => r.UserID)
+			   .OnDelete(DeleteBehavior.NoAction); // Sử dụng Restrict để tránh cascade delete
 			modelBuilder.Entity<ProductReview>()
 	  .HasOne(pr => pr.User)
 	  .WithMany()
@@ -57,11 +58,17 @@ namespace Application.API.ModelContext
 	  .OnDelete(DeleteBehavior.Restrict); // Không cho phép cascade delete
 
 			modelBuilder.Entity<OrderDetail>()
-	   .HasOne(od => od.Order)
-	   .WithMany(o => o.OrderDetails)
-	   .HasForeignKey(od => od.OrderID)
-	   .OnDelete(DeleteBehavior.NoAction);
+			  .HasOne(od => od.Order)
+			  .WithMany(o => o.OrderDetails)
+			  .HasForeignKey(od => od.OrderID)
+			  .OnDelete(DeleteBehavior.NoAction); // or DeleteBehavior.Restrict
 
+			// OrderDetail -> Product (No cascade delete)
+			modelBuilder.Entity<OrderDetail>()
+				.HasOne(od => od.Product)
+				.WithMany(p => p.OrderDetails)
+				.HasForeignKey(od => od.ProductID)
+				.OnDelete(DeleteBehavior.NoAction); // 
 
 		}
 	}

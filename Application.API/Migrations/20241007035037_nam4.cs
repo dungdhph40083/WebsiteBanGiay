@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Application.API.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateDatabase : Migration
+    public partial class nam4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -943,7 +943,8 @@ namespace Application.API.Migrations
                 table: "OrderDetails",
                 column: "ProductID",
                 principalTable: "Products",
-                principalColumn: "ProductID");
+                principalColumn: "ProductID",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />

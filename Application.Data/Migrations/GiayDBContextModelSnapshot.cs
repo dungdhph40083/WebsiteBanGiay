@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Application.API.Migrations
+namespace Application.Data.Migrations
 {
     [DbContext(typeof(GiayDBContext))]
     partial class GiayDBContextModelSnapshot : ModelSnapshot
@@ -1059,7 +1059,7 @@ namespace Application.API.Migrations
                     b.HasOne("Application.Data.Models.Product", "Product")
                         .WithMany("OrderDetails")
                         .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Application.Data.Models.ShippingMethod", "ShippingMethod")
