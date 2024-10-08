@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Data.Models
-{
+{	
 	public class CustomerSupportTickets
 	{
 		[Key]
