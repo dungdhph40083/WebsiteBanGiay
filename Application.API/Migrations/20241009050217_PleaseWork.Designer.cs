@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Application.API.Migrations
 {
     [DbContext(typeof(GiayDBContext))]
-    [Migration("20241004091001_UpdateDatabase")]
-    partial class UpdateDatabase
+    [Migration("20241009050217_PleaseWork")]
+    partial class PleaseWork
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,42 +24,6 @@ namespace Application.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Application.Data.Models.Address", b =>
-                {
-                    b.Property<Guid>("AddressID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("DefaultAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("RoleID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
-
-                    b.Property<Guid>("UserID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AddressID");
-
-                    b.HasIndex("RoleID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("Addresses");
-                });
 
             modelBuilder.Entity("Application.Data.Models.Category", b =>
                 {
@@ -73,15 +37,7 @@ namespace Application.API.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProductID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("VoucherID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("CategoryID");
-
-                    b.HasIndex("VoucherID");
 
                     b.ToTable("Categories");
                 });
@@ -92,13 +48,17 @@ namespace Application.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryID")
+                    b.Property<Guid?>("CategoryID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ProductID")
+                    b.Property<Guid?>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CategoryProductID");
+
+                    b.HasIndex("CategoryID");
+
+                    b.HasIndex("ProductID");
 
                     b.ToTable("Category_Products");
                 });
@@ -112,26 +72,66 @@ namespace Application.API.Migrations
                     b.Property<string>("ColorName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DateCreated")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("Product_Details_ColorProductDetailsColorID")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
-                    b.HasKey("ColorID");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("Product_Details_ColorProductDetailsColorID");
+                    b.HasKey("ColorID");
 
                     b.ToTable("Colors");
                 });
 
-            modelBuilder.Entity("Application.Data.Models.CustomerSupportTickets", b =>
+            modelBuilder.Entity("Application.Data.Models.Color_ProductDetail", b =>
+                {
+                    b.Property<Guid>("Color_ProductDetailID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ColorID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductDetailID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Color_ProductDetailID");
+
+                    b.HasIndex("ColorID");
+
+                    b.HasIndex("ProductDetailID");
+
+                    b.ToTable("Color_ProductDetail");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.CustomerSupportMessage", b =>
+                {
+                    b.Property<long>("MessageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MessageID"));
+
+                    b.Property<Guid?>("CustomerSupportTicketTicketID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MessageContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("TicketID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("MessageID");
+
+                    b.HasIndex("CustomerSupportTicketTicketID");
+
+                    b.ToTable("CustomerSupportMessages");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.CustomerSupportTicket", b =>
                 {
                     b.Property<Guid>("TicketID")
                         .ValueGeneratedOnAdd()
@@ -152,7 +152,7 @@ namespace Application.API.Migrations
                     b.Property<string>("Subject")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserID")
+                    b.Property<Guid?>("UserID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("TicketID");
@@ -174,9 +174,6 @@ namespace Application.API.Migrations
                     b.Property<string>("ImageName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProductDetailsID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
@@ -194,33 +191,49 @@ namespace Application.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreateDateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CreateDateBy")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ProductDetailsID")
+                    b.Property<Guid?>("ColorID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("QuantityInStock")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal?>("Size")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
+                    b.Property<Guid?>("SizeID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
                     b.HasKey("LogID");
 
-                    b.HasIndex("ProductDetailsID");
+                    b.HasIndex("ColorID");
+
+                    b.HasIndex("SizeID");
 
                     b.ToTable("InventoryLogs");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Inventory_ProductDetail", b =>
+                {
+                    b.Property<Guid>("Inventory_ProductDetailID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("LogID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductDetailsID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Inventory_ProductDetailID");
+
+                    b.HasIndex("LogID");
+
+                    b.HasIndex("ProductDetailsID");
+
+                    b.ToTable("Inventory_ProductDetail");
                 });
 
             modelBuilder.Entity("Application.Data.Models.Order", b =>
@@ -232,10 +245,7 @@ namespace Application.API.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PaymentMethodID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ReturnID")
+                    b.Property<Guid?>("PaymentMethodID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ShippingAddress")
@@ -247,14 +257,12 @@ namespace Application.API.Migrations
                     b.Property<long>("TotalPrice")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid>("UserID")
+                    b.Property<Guid?>("UserID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("OrderID");
 
                     b.HasIndex("PaymentMethodID");
-
-                    b.HasIndex("ReturnID");
 
                     b.HasIndex("UserID");
 
@@ -263,12 +271,12 @@ namespace Application.API.Migrations
 
             modelBuilder.Entity("Application.Data.Models.OrderDetail", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("OrderDetailID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("ColorID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -282,7 +290,7 @@ namespace Application.API.Migrations
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid>("ProductID")
+                    b.Property<Guid?>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -291,22 +299,31 @@ namespace Application.API.Migrations
                     b.Property<Guid?>("ShippingMethodID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Size")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("SizeID")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("TotalSumPrice")
+                    b.Property<long>("SumTotalPrice")
                         .HasColumnType("bigint");
 
                     b.Property<long>("TotalUnitPrice")
                         .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                    b.Property<Guid?>("VoucherID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("OrderDetailID");
+
+                    b.HasIndex("ColorID");
 
                     b.HasIndex("OrderID");
 
                     b.HasIndex("ProductID");
 
                     b.HasIndex("ShippingMethodID");
+
+                    b.HasIndex("SizeID");
+
+                    b.HasIndex("VoucherID");
 
                     b.ToTable("OrderDetails");
                 });
@@ -317,7 +334,7 @@ namespace Application.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderDetailID")
+                    b.Property<Guid?>("OrderDetailID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<byte>("ShippingStatus")
@@ -326,7 +343,7 @@ namespace Application.API.Migrations
                     b.Property<long>("TrackingNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("TrackingID");
@@ -345,17 +362,11 @@ namespace Application.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MethodName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("OrderDetailID")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
@@ -363,12 +374,7 @@ namespace Application.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("PaymentMethodID");
-
-                    b.HasIndex("OrderDetailID");
 
                     b.ToTable("PaymentMethods");
                 });
@@ -382,7 +388,7 @@ namespace Application.API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PaymentMethodID")
+                    b.Property<Guid?>("PaymentMethodID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<byte>("Status")
@@ -404,54 +410,22 @@ namespace Application.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("OrderID")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("Product_Details_SizeProductDetailsSizeID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SaleID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("VoucherID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("ProductID");
-
-                    b.HasIndex("OrderID");
-
-                    b.HasIndex("Product_Details_SizeProductDetailsSizeID");
-
-                    b.HasIndex("SaleID");
-
-                    b.HasIndex("VoucherID");
 
                     b.ToTable("Products");
                 });
@@ -465,14 +439,14 @@ namespace Application.API.Migrations
                     b.Property<string>("Brand")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ColorID")
+                    b.Property<string>("Features")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ImageID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ImageID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("LogID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Instructions")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Material")
                         .HasColumnType("nvarchar(max)");
@@ -483,7 +457,7 @@ namespace Application.API.Migrations
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid>("ProductID")
+                    b.Property<Guid?>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -492,54 +466,19 @@ namespace Application.API.Migrations
                     b.Property<string>("ShoeType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("SizeID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("WarrantyPeriod")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ProductDetailsID");
 
-                    b.HasIndex("ColorID");
-
-                    b.HasIndex("ImageID")
-                        .IsUnique();
+                    b.HasIndex("ImageID");
 
                     b.HasIndex("ProductID");
 
-                    b.HasIndex("SizeID");
-
                     b.ToTable("ProductDetails");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.ProductReview", b =>
-                {
-                    b.Property<Guid>("ReviewID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ProductDetailID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<float>("RatingStar")
-                        .HasColumnType("real");
-
-                    b.Property<DateTime?>("ReviewDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ReviewID");
-
-                    b.HasIndex("ProductDetailID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("ProductReviews");
                 });
 
             modelBuilder.Entity("Application.Data.Models.ProductWarranty", b =>
@@ -551,17 +490,11 @@ namespace Application.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ProductID")
+                    b.Property<Guid?>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WarrantyConditions")
                         .HasColumnType("nvarchar(max)");
@@ -576,57 +509,6 @@ namespace Application.API.Migrations
                     b.ToTable("ProductWarranties");
                 });
 
-            modelBuilder.Entity("Application.Data.Models.Product_Details_Color", b =>
-                {
-                    b.Property<Guid>("ProductDetailsColorID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ColorID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductDetailsID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProductDetailsColorID");
-
-                    b.ToTable("Product_Details_Colors");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Product_Details_Size", b =>
-                {
-                    b.Property<Guid>("ProductDetailsSizeID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductDetailID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SizeID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProductDetailsSizeID");
-
-                    b.ToTable("Product_Details_Sizes");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Product_Inventory", b =>
-                {
-                    b.Property<Guid>("ProductInventoryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("LogID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductDetailsID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProductInventoryID");
-
-                    b.ToTable("Product_Inventorys");
-                });
-
             modelBuilder.Entity("Application.Data.Models.Rating", b =>
                 {
                     b.Property<Guid>("RatingID")
@@ -639,13 +521,14 @@ namespace Application.API.Migrations
                     b.Property<DateTime?>("DateRated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProductID")
+                    b.Property<Guid?>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("RatingStar")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("RatingStar")
+                        .HasPrecision(1, 1)
+                        .HasColumnType("decimal(1,1)");
 
-                    b.Property<Guid>("UserID")
+                    b.Property<Guid?>("UserID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("RatingID");
@@ -663,7 +546,7 @@ namespace Application.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("OrderID")
+                    b.Property<Guid?>("OrderID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Reason")
@@ -680,6 +563,8 @@ namespace Application.API.Migrations
 
                     b.HasKey("ReturnID");
 
+                    b.HasIndex("OrderID");
+
                     b.ToTable("Returns");
                 });
 
@@ -692,12 +577,12 @@ namespace Application.API.Migrations
                     b.Property<string>("RoleName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("User_RoleUserRoleID")
+                    b.Property<Guid?>("UserID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("RoleID");
 
-                    b.HasIndex("User_RoleUserRoleID");
+                    b.HasIndex("UserID");
 
                     b.ToTable("Roles");
                 });
@@ -711,13 +596,10 @@ namespace Application.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProductID")
+                    b.Property<Guid?>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SaleCode")
@@ -729,10 +611,9 @@ namespace Application.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("SaleID");
+
+                    b.HasIndex("ProductID");
 
                     b.ToTable("Sales");
                 });
@@ -745,9 +626,6 @@ namespace Application.API.Migrations
 
                     b.Property<DateTime>("EstimatedDeliveryTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("MethodName")
                         .HasColumnType("nvarchar(max)");
@@ -766,15 +644,14 @@ namespace Application.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("ColorID")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Created")
+                    b.Property<DateTime?>("DateAdded")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("Discount")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
+                    b.Property<long>("Discount")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsCheckedOut")
                         .HasColumnType("bit");
@@ -782,20 +659,23 @@ namespace Application.API.Migrations
                     b.Property<long?>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("QuantityCard")
+                    b.Property<int>("QuantityCart")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Size")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<Guid>("UserID")
+                    b.Property<Guid?>("SizeID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("VoucherID")
+                    b.Property<Guid?>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("VoucherID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CartID");
+
+                    b.HasIndex("ColorID");
+
+                    b.HasIndex("SizeID");
 
                     b.HasIndex("UserID");
 
@@ -813,9 +693,6 @@ namespace Application.API.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("Product_Details_SizeProductDetailsSizeID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("SizeName")
                         .HasColumnType("nvarchar(max)");
 
@@ -827,9 +704,28 @@ namespace Application.API.Migrations
 
                     b.HasKey("SizeID");
 
-                    b.HasIndex("Product_Details_SizeProductDetailsSizeID");
-
                     b.ToTable("Sizes");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Size_ProductDetail", b =>
+                {
+                    b.Property<Guid>("Size_ProductDetailID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductDetailID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SizeID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Size_ProductDetailID");
+
+                    b.HasIndex("ProductDetailID");
+
+                    b.HasIndex("SizeID");
+
+                    b.ToTable("Product_Details_Sizes");
                 });
 
             modelBuilder.Entity("Application.Data.Models.User", b =>
@@ -841,14 +737,14 @@ namespace Application.API.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Avatar")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ImageID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("LastUpdatedOn")
                         .HasColumnType("datetime2");
@@ -858,28 +754,27 @@ namespace Application.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
-                    b.Property<Guid?>("User_RoleUserRoleID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("UserID");
 
-                    b.HasIndex("User_RoleUserRoleID");
+                    b.HasIndex("ImageID");
 
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Application.Data.Models.User_Role", b =>
                 {
-                    b.Property<Guid>("UserRoleID")
+                    b.Property<Guid>("User_RoleID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -889,7 +784,11 @@ namespace Application.API.Migrations
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("UserRoleID");
+                    b.HasKey("User_RoleID");
+
+                    b.HasIndex("RoleID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("User_Roles");
                 });
@@ -900,7 +799,7 @@ namespace Application.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryID")
+                    b.Property<Guid?>("CategoryID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedOn")
@@ -918,7 +817,7 @@ namespace Application.API.Migrations
                     b.Property<DateTime>("LastUpdatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProductID")
+                    b.Property<Guid?>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<byte>("Status")
@@ -926,55 +825,281 @@ namespace Application.API.Migrations
 
                     b.HasKey("VoucherID");
 
+                    b.HasIndex("CategoryID");
+
+                    b.HasIndex("ProductID");
+
                     b.ToTable("Vouchers");
                 });
 
-            modelBuilder.Entity("CategoryCategory_Product", b =>
+            modelBuilder.Entity("Application.Data.Models.Category_Product", b =>
                 {
-                    b.Property<Guid>("CategoriesCategoryID")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasOne("Application.Data.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryID");
 
-                    b.Property<Guid>("Category_ProductCategoryProductID")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasOne("Application.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID");
 
-                    b.HasKey("CategoriesCategoryID", "Category_ProductCategoryProductID");
+                    b.Navigation("Category");
 
-                    b.HasIndex("Category_ProductCategoryProductID");
-
-                    b.ToTable("CategoryCategory_Product");
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Category_ProductProduct", b =>
+            modelBuilder.Entity("Application.Data.Models.Color_ProductDetail", b =>
                 {
-                    b.Property<Guid>("Category_ProductsCategoryProductID")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasOne("Application.Data.Models.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorID");
 
-                    b.Property<Guid>("ProductsProductID")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasOne("Application.Data.Models.ProductDetail", "ProductDetail")
+                        .WithMany("Color_ProductDetails")
+                        .HasForeignKey("ProductDetailID");
 
-                    b.HasKey("Category_ProductsCategoryProductID", "ProductsProductID");
+                    b.Navigation("Color");
 
-                    b.HasIndex("ProductsProductID");
-
-                    b.ToTable("Category_ProductProduct");
+                    b.Navigation("ProductDetail");
                 });
 
-            modelBuilder.Entity("ProductDetailProduct_Inventory", b =>
+            modelBuilder.Entity("Application.Data.Models.CustomerSupportMessage", b =>
                 {
-                    b.Property<Guid>("ProductDetailsID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Product_InventoryProductInventoryID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ProductDetailsID", "Product_InventoryProductInventoryID");
-
-                    b.HasIndex("Product_InventoryProductInventoryID");
-
-                    b.ToTable("ProductDetailProduct_Inventory");
+                    b.HasOne("Application.Data.Models.CustomerSupportTicket", null)
+                        .WithMany("CustomerSupportMessages")
+                        .HasForeignKey("CustomerSupportTicketTicketID");
                 });
 
-            modelBuilder.Entity("Application.Data.Models.Address", b =>
+            modelBuilder.Entity("Application.Data.Models.CustomerSupportTicket", b =>
+                {
+                    b.HasOne("Application.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.InventoryLog", b =>
+                {
+                    b.HasOne("Application.Data.Models.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorID");
+
+                    b.HasOne("Application.Data.Models.Size", "Size")
+                        .WithMany()
+                        .HasForeignKey("SizeID");
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Size");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Inventory_ProductDetail", b =>
+                {
+                    b.HasOne("Application.Data.Models.InventoryLog", "InventoryLog")
+                        .WithMany()
+                        .HasForeignKey("LogID");
+
+                    b.HasOne("Application.Data.Models.ProductDetail", "ProductDetail")
+                        .WithMany("Inventory_ProductDetails")
+                        .HasForeignKey("ProductDetailsID");
+
+                    b.Navigation("InventoryLog");
+
+                    b.Navigation("ProductDetail");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Order", b =>
+                {
+                    b.HasOne("Application.Data.Models.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodID");
+
+                    b.HasOne("Application.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+
+                    b.Navigation("PaymentMethod");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.OrderDetail", b =>
+                {
+                    b.HasOne("Application.Data.Models.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorID");
+
+                    b.HasOne("Application.Data.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderID");
+
+                    b.HasOne("Application.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID");
+
+                    b.HasOne("Application.Data.Models.ShippingMethod", "ShippingMethod")
+                        .WithMany()
+                        .HasForeignKey("ShippingMethodID");
+
+                    b.HasOne("Application.Data.Models.Size", "Size")
+                        .WithMany()
+                        .HasForeignKey("SizeID");
+
+                    b.HasOne("Application.Data.Models.Voucher", "Voucher")
+                        .WithMany()
+                        .HasForeignKey("VoucherID");
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ShippingMethod");
+
+                    b.Navigation("Size");
+
+                    b.Navigation("Voucher");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.OrderTracking", b =>
+                {
+                    b.HasOne("Application.Data.Models.OrderDetail", "OrderDetail")
+                        .WithMany()
+                        .HasForeignKey("OrderDetailID");
+
+                    b.Navigation("OrderDetail");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.PaymentMethodDetail", b =>
+                {
+                    b.HasOne("Application.Data.Models.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodID");
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.ProductDetail", b =>
+                {
+                    b.HasOne("Application.Data.Models.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageID");
+
+                    b.HasOne("Application.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID");
+
+                    b.Navigation("Image");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.ProductWarranty", b =>
+                {
+                    b.HasOne("Application.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Rating", b =>
+                {
+                    b.HasOne("Application.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID");
+
+                    b.HasOne("Application.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Return", b =>
+                {
+                    b.HasOne("Application.Data.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderID");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Role", b =>
+                {
+                    b.HasOne("Application.Data.Models.User", null)
+                        .WithMany("Roles")
+                        .HasForeignKey("UserID");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Sale", b =>
+                {
+                    b.HasOne("Application.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.ShoppingCart", b =>
+                {
+                    b.HasOne("Application.Data.Models.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorID");
+
+                    b.HasOne("Application.Data.Models.Size", "Size")
+                        .WithMany()
+                        .HasForeignKey("SizeID");
+
+                    b.HasOne("Application.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+
+                    b.HasOne("Application.Data.Models.Voucher", "Voucher")
+                        .WithMany()
+                        .HasForeignKey("VoucherID");
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Size");
+
+                    b.Navigation("User");
+
+                    b.Navigation("Voucher");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Size_ProductDetail", b =>
+                {
+                    b.HasOne("Application.Data.Models.ProductDetail", "ProductDetail")
+                        .WithMany("Size_ProductDetails")
+                        .HasForeignKey("ProductDetailID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Application.Data.Models.Size", "Size")
+                        .WithMany()
+                        .HasForeignKey("SizeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductDetail");
+
+                    b.Navigation("Size");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.User", b =>
+                {
+                    b.HasOne("Application.Data.Models.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageID");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.User_Role", b =>
                 {
                     b.HasOne("Application.Data.Models.Role", "Role")
                         .WithMany()
@@ -993,375 +1118,38 @@ namespace Application.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Application.Data.Models.Category", b =>
+            modelBuilder.Entity("Application.Data.Models.Voucher", b =>
                 {
-                    b.HasOne("Application.Data.Models.Voucher", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("VoucherID");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Color", b =>
-                {
-                    b.HasOne("Application.Data.Models.Product_Details_Color", null)
-                        .WithMany("Colors")
-                        .HasForeignKey("Product_Details_ColorProductDetailsColorID");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.CustomerSupportTickets", b =>
-                {
-                    b.HasOne("Application.Data.Models.User", "User")
+                    b.HasOne("Application.Data.Models.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.InventoryLog", b =>
-                {
-                    b.HasOne("Application.Data.Models.Product_Inventory", "Product_Inventory")
-                        .WithMany("InventoryLogs")
-                        .HasForeignKey("ProductDetailsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product_Inventory");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Order", b =>
-                {
-                    b.HasOne("Application.Data.Models.PaymentMethod", "PaymentMethod")
-                        .WithMany()
-                        .HasForeignKey("PaymentMethodID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.Return", null)
-                        .WithMany("Orders")
-                        .HasForeignKey("ReturnID");
-
-                    b.HasOne("Application.Data.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PaymentMethod");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.OrderDetail", b =>
-                {
-                    b.HasOne("Application.Data.Models.Order", "Order")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("CategoryID");
 
                     b.HasOne("Application.Data.Models.Product", "Product")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.ShippingMethod", "ShippingMethod")
                         .WithMany()
-                        .HasForeignKey("ShippingMethodID");
+                        .HasForeignKey("ProductID");
 
-                    b.Navigation("Order");
+                    b.Navigation("Category");
 
                     b.Navigation("Product");
-
-                    b.Navigation("ShippingMethod");
                 });
 
-            modelBuilder.Entity("Application.Data.Models.OrderTracking", b =>
+            modelBuilder.Entity("Application.Data.Models.CustomerSupportTicket", b =>
                 {
-                    b.HasOne("Application.Data.Models.OrderDetail", "OrderDetail")
-                        .WithMany()
-                        .HasForeignKey("OrderDetailID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrderDetail");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.PaymentMethod", b =>
-                {
-                    b.HasOne("Application.Data.Models.OrderDetail", "OrderDetail")
-                        .WithMany()
-                        .HasForeignKey("OrderDetailID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrderDetail");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.PaymentMethodDetail", b =>
-                {
-                    b.HasOne("Application.Data.Models.PaymentMethod", "PaymentMethod")
-                        .WithMany()
-                        .HasForeignKey("PaymentMethodID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PaymentMethod");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Product", b =>
-                {
-                    b.HasOne("Application.Data.Models.Order", "Orders")
-                        .WithMany()
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.Product_Details_Size", null)
-                        .WithMany("Products")
-                        .HasForeignKey("Product_Details_SizeProductDetailsSizeID");
-
-                    b.HasOne("Application.Data.Models.Sale", null)
-                        .WithMany("Products")
-                        .HasForeignKey("SaleID");
-
-                    b.HasOne("Application.Data.Models.Voucher", null)
-                        .WithMany("Products")
-                        .HasForeignKey("VoucherID");
-
-                    b.Navigation("Orders");
+                    b.Navigation("CustomerSupportMessages");
                 });
 
             modelBuilder.Entity("Application.Data.Models.ProductDetail", b =>
                 {
-                    b.HasOne("Application.Data.Models.Product_Details_Color", "Product_Details_Color")
-                        .WithMany("ProductDetails")
-                        .HasForeignKey("ColorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Color_ProductDetails");
 
-                    b.HasOne("Application.Data.Models.Image", "Image")
-                        .WithOne("ProductDetail")
-                        .HasForeignKey("Application.Data.Models.ProductDetail", "ImageID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Inventory_ProductDetails");
 
-                    b.HasOne("Application.Data.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.Product_Details_Size", "Product_Details_Size")
-                        .WithMany()
-                        .HasForeignKey("SizeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Image");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Product_Details_Color");
-
-                    b.Navigation("Product_Details_Size");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.ProductReview", b =>
-                {
-                    b.HasOne("Application.Data.Models.ProductDetail", "ProductDetail")
-                        .WithMany()
-                        .HasForeignKey("ProductDetailID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ProductDetail");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.ProductWarranty", b =>
-                {
-                    b.HasOne("Application.Data.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Rating", b =>
-                {
-                    b.HasOne("Application.Data.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.User", "User")
-                        .WithMany("Ratings")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Role", b =>
-                {
-                    b.HasOne("Application.Data.Models.User_Role", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("User_RoleUserRoleID");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.ShoppingCart", b =>
-                {
-                    b.HasOne("Application.Data.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.Voucher", "Voucher")
-                        .WithMany()
-                        .HasForeignKey("VoucherID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("Voucher");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Size", b =>
-                {
-                    b.HasOne("Application.Data.Models.Product_Details_Size", null)
-                        .WithMany("Sizes")
-                        .HasForeignKey("Product_Details_SizeProductDetailsSizeID");
+                    b.Navigation("Size_ProductDetails");
                 });
 
             modelBuilder.Entity("Application.Data.Models.User", b =>
-                {
-                    b.HasOne("Application.Data.Models.User_Role", null)
-                        .WithMany("Users")
-                        .HasForeignKey("User_RoleUserRoleID");
-                });
-
-            modelBuilder.Entity("CategoryCategory_Product", b =>
-                {
-                    b.HasOne("Application.Data.Models.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesCategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.Category_Product", null)
-                        .WithMany()
-                        .HasForeignKey("Category_ProductCategoryProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Category_ProductProduct", b =>
-                {
-                    b.HasOne("Application.Data.Models.Category_Product", null)
-                        .WithMany()
-                        .HasForeignKey("Category_ProductsCategoryProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProductDetailProduct_Inventory", b =>
-                {
-                    b.HasOne("Application.Data.Models.ProductDetail", null)
-                        .WithMany()
-                        .HasForeignKey("ProductDetailsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Data.Models.Product_Inventory", null)
-                        .WithMany()
-                        .HasForeignKey("Product_InventoryProductInventoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Image", b =>
-                {
-                    b.Navigation("ProductDetail");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Order", b =>
-                {
-                    b.Navigation("OrderDetails");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Product", b =>
-                {
-                    b.Navigation("OrderDetails");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Product_Details_Color", b =>
-                {
-                    b.Navigation("Colors");
-
-                    b.Navigation("ProductDetails");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Product_Details_Size", b =>
-                {
-                    b.Navigation("Products");
-
-                    b.Navigation("Sizes");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Product_Inventory", b =>
-                {
-                    b.Navigation("InventoryLogs");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Return", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Sale", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.User", b =>
-                {
-                    b.Navigation("Ratings");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.User_Role", b =>
                 {
                     b.Navigation("Roles");
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Application.Data.Models.Voucher", b =>
-                {
-                    b.Navigation("Categories");
-
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

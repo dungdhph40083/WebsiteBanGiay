@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace Application.Data.Models
 {
-	public class CustomerSupportTickets
+	public class CustomerSupportTicket
 	{
 		[Key]
 		public Guid TicketID { get; set; }
 		[ForeignKey(nameof(User))]
-		public Guid UserID { get; set; }
+		public Guid? UserID { get; set; }
 		public string? Subject { get; set; }
 		public string? Message { get; set; }
-		public byte Status { get; set;}
+		public byte Status { get; set; }
 		public DateTime? CreateAt { get; set; }
 		public DateTime? CreateBy { get; set; }
-
 		public virtual User? User { get; set; }
+		public virtual ICollection<CustomerSupportMessage> CustomerSupportMessages { get; set; } = new List<CustomerSupportMessage>();
 	}
 }

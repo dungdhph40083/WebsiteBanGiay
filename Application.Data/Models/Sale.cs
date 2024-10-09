@@ -13,11 +13,9 @@ namespace Application.Data.Models
         public string? SaleCode { get; set; }
         public byte Status { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string? CreatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string? UpdatedBy { get; set; }
         [ForeignKey(nameof(Product))]
-        public Guid ProductID { get; set; }
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+        public Guid? ProductID { get; set; }
+        public virtual Product? Product { get; set; }
     }
 }

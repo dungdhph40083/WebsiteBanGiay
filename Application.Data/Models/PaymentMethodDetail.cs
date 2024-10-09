@@ -8,7 +8,7 @@ namespace Application.Data.Models
         [Key]
         public Guid PaymentMethodDetailID { get; set; }
         [ForeignKey(nameof(PaymentMethod))]
-        public Guid PaymentMethodID { get; set; }
+        public Guid? PaymentMethodID { get; set; }
         public long TotalMoney { get; set; }
         public byte Status { get; set; }
         public string? Description { get; set; }

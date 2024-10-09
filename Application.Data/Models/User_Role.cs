@@ -11,13 +11,13 @@ namespace Application.Data.Models
 	public class User_Role
 	{
 		[Key]
-		public Guid UserRoleID { get; set; }
-		
+		public Guid User_RoleID { get; set; }
+		[ForeignKey(nameof(User))]
 		public Guid UserID { get; set; }
-		
-		public Guid RoleID { get; set; }
+        [ForeignKey(nameof(Role))]
+        public Guid RoleID { get; set; }
 
-		public virtual ICollection<User> Users { get; set; } = new List<User>();
-		public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+		public virtual User? User { get; set; }
+		public virtual Role? Role { get; set; }
 	}
 }

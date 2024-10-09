@@ -9,7 +9,7 @@ namespace Application.Data.Models
 		public Guid OrderID { get; set; }
 
 		[ForeignKey(nameof(User))]
-		public Guid UserID { get; set; }
+		public Guid? UserID { get; set; }
 
 		public DateTime OrderDate { get; set; }
 		public byte Status { get; set; }
@@ -17,10 +17,9 @@ namespace Application.Data.Models
 		public string? ShippingAddress { get; set; }
 
 		[ForeignKey(nameof(PaymentMethod))]
-		public Guid PaymentMethodID { get; set; }
+		public Guid? PaymentMethodID { get; set; }
 
 		public virtual User? User { get; set; }
-		public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>(); // Updated navigation property
 		public virtual PaymentMethod? PaymentMethod { get; set; }
 	}
 }

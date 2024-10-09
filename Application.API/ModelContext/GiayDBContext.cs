@@ -12,12 +12,14 @@ namespace Application.API.ModelContext
 
 	
 
-		public DbSet<Address> Addresses { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Category_Product> Category_Products { get; set; }
 		public DbSet<Color> Colors { get; set; }
-		public DbSet<CustomerSupportTickets> CustomerSupportTickets { get; set; }
+		public DbSet<Color_ProductDetail> Color_ProductDetails { get; set; }
+		public DbSet<CustomerSupportMessage> CustomerSupportMessages { get; set; }
+		public DbSet<CustomerSupportTicket> CustomerSupportTickets { get; set; }
 		public DbSet<Image> Images { get; set; }
+		public DbSet<Inventory_ProductDetail> Inventory_ProductDetails { get; set; }
 		public DbSet<InventoryLog> InventoryLogs { get; set; }
 		public DbSet<Order> Orders { get; set; }
 		public DbSet<OrderDetail> OrderDetails { get; set; }
@@ -25,11 +27,10 @@ namespace Application.API.ModelContext
 		public DbSet<PaymentMethod> PaymentMethods { get; set; }
 		public DbSet<PaymentMethodDetail> PaymentMethodDetails { get; set; }
 		public DbSet<Product> Products { get; set; }
-		public DbSet<Product_Details_Color> Product_Details_Colors { get; set; }
-		public DbSet<Product_Details_Size> Product_Details_Sizes { get; set; }
-		public DbSet<Product_Inventory> Product_Inventorys { get; set; }
+		public DbSet<Color_ProductDetail> Product_Details_Colors { get; set; }
+		public DbSet<Size_ProductDetail> Product_Details_Sizes { get; set; }
+		public DbSet<Inventory_ProductDetail> Product_Inventorys { get; set; }
 		public DbSet<ProductDetail> ProductDetails { get; set; }
-		public DbSet<ProductReview> ProductReviews { get; set; }
 		public DbSet<ProductWarranty> ProductWarranties { get; set; }
 		public DbSet<Rating> Ratings { get; set; }
 		public DbSet<Return> Returns { get; set; }
@@ -45,22 +46,22 @@ namespace Application.API.ModelContext
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 	
-	 modelBuilder.Entity<Rating>()
-		.HasOne(r => r.User)
-		.WithMany(u => u.Ratings)
-		.HasForeignKey(r => r.UserID)
-		.OnDelete(DeleteBehavior.NoAction); // Sử dụng Restrict để tránh cascade delete
-			modelBuilder.Entity<ProductReview>()
-	  .HasOne(pr => pr.User)
-	  .WithMany()
-	  .HasForeignKey(pr => pr.UserID)
-	  .OnDelete(DeleteBehavior.Restrict); // Không cho phép cascade delete
+	 //modelBuilder.Entity<Rating>()
+		//.HasOne(r => r.User)
+		//.WithMany(u => u.Ratings)
+		//.HasForeignKey(r => r.UserID)
+		//.OnDelete(DeleteBehavior.NoAction); // Sử dụng Restrict để tránh cascade delete
+		//	modelBuilder.Entity<ProductReview>()
+	 // .HasOne(pr => pr.User)
+	 // .WithMany()
+	 // .HasForeignKey(pr => pr.UserID)
+	 // .OnDelete(DeleteBehavior.Restrict); // Không cho phép cascade delete
 
-			modelBuilder.Entity<OrderDetail>()
-	   .HasOne(od => od.Order)
-	   .WithMany(o => o.OrderDetails)
-	   .HasForeignKey(od => od.OrderID)
-	   .OnDelete(DeleteBehavior.NoAction);
+		//	modelBuilder.Entity<OrderDetail>()
+	 //  .HasOne(od => od.Order)
+	 //  .WithMany(o => o.OrderDetails)
+	 //  .HasForeignKey(od => od.OrderID)
+	 //  .OnDelete(DeleteBehavior.NoAction);
 
 
 		}

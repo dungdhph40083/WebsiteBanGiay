@@ -13,18 +13,16 @@ namespace Application.Data.Models
 		[Key]
 		public Guid VoucherID { get; set; }
 		[ForeignKey(nameof(Category))]
-		public Guid CategoryID { get; set; }
+		public Guid? CategoryID { get; set; }
 		[ForeignKey(nameof(Product))]
-		public Guid ProductID {  get; set; }
+		public Guid? ProductID {  get; set; }
 		public long DiscountPrice { get; set; }
 		public string? DiscountPerson { get; set;}
 		public string? Description { get; set; }
 		public DateTime CreatedOn { get; set; }
 		public DateTime LastUpdatedOn { get; set;}
 		public byte Status { get; set; }
-
-		public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
-		public virtual ICollection<Product> Products { get; set; } = new List<Product>();
-		
+		public virtual Category? Category { get; set; }
+		public virtual Product? Product { get; set; }
 	}
 }

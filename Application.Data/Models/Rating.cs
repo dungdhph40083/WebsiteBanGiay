@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,13 +14,13 @@ namespace Application.Data.Models
 		[Key]
 		public Guid RatingID { get; set; }
 		[ForeignKey(nameof(User))]
-		public Guid UserID { get; set; }
+		public Guid? UserID { get; set; }
 		[ForeignKey(nameof(Product))]
-		public Guid ProductID { get; set; }
-		public string? RatingStar {  get; set; }
+		public Guid? ProductID { get; set; }
+		[Precision(1, 1)]
+		public decimal? RatingStar {  get; set; }
 		public string? Comment { get; set; }
 		public DateTime? DateRated { get; set; }
-
 		public virtual User? User { get; set; }
 		public virtual Product? Product { get; set; }
 	}
