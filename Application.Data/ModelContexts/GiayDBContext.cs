@@ -1,12 +1,16 @@
 ﻿using Application.Data.Models;
-using Application.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Application.API.ModelContext
+namespace Application.Data.ModelContexts
 {
 	public class GiayDBContext : DbContext
 	{
-		public GiayDBContext(DbContextOptions<GiayDBContext> Options) : base(Options)
+		public GiayDBContext(DbContextOptions options) : base(options)
 		{
 		}
 
@@ -63,6 +67,12 @@ namespace Application.API.ModelContext
 	 //  .HasForeignKey(od => od.OrderID)
 	 //  .OnDelete(DeleteBehavior.NoAction);
 
+			// OrderDetail -> Product (No cascade delete)
+			modelBuilder.Entity<OrderDetail>()
+				.HasOne(od => od.Product)
+				.WithMany(p => p.OrderDetails)
+				.HasForeignKey(od => od.ProductID)
+				.OnDelete(DeleteBehavior.NoAction); // 
 
 		}
 	}
