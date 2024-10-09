@@ -38,12 +38,11 @@ namespace Application.Data.Repositories
 
 
             // Tạo ticket hỗ trợ mới
-            var ticket = new CustomerSupportTickets
+            var ticket = new CustomerSupportTicket
             {
                 TicketID = Guid.NewGuid(), // Tạo TicketID mới
                 UserID = ticketDTO.UserID, // Sử dụng UserID đã xác định
                 Subject = ticketDTO.Subject,
-                Message = ticketDTO.Message,
                 Status = ticketDTO.Status,
                 CreateAt = DateTime.Now, // Ghi lại thời gian tạo
                 CreateBy = ticketDTO.CreateBy // Gán người tạo (có thể là UserID hoặc tên người dùng)
@@ -73,7 +72,6 @@ namespace Application.Data.Repositories
                TicketID = ticket.TicketID,
                UserID = ticket.UserID,
                Subject = ticket.Subject,
-               Message = ticket.Message,
                Status = ticket.Status,
                CreateAt = ticket.CreateAt,
                CreateBy = ticket.CreateBy
@@ -94,7 +92,6 @@ namespace Application.Data.Repositories
                 TicketID = ticket.TicketID,
                 UserID = ticket.UserID,
                 Subject = ticket.Subject,
-                Message = ticket.Message,
                 Status = ticket.Status,
                 CreateAt = ticket.CreateAt,
                 CreateBy = ticket.CreateBy
@@ -108,7 +105,6 @@ namespace Application.Data.Repositories
             if (ticket != null)
             {
                 ticket.Subject = ticketDTO.Subject;
-                ticket.Message = ticketDTO.Message;
                 ticket.Status = ticketDTO.Status;
                 ticket.CreateAt = ticketDTO.CreateAt;
                 ticket.CreateBy = ticketDTO.CreateBy;

@@ -104,7 +104,7 @@ namespace Application.Data.Repositories
         public async Task<OrderDto> GetOrderByIdAsync(Guid orderId)
         {
             var order = await _context.Orders.FindAsync(orderId);
-            if (order == null) return null;
+            if (order == null) return default!;
 
             return new OrderDto
             {
@@ -121,7 +121,7 @@ namespace Application.Data.Repositories
         public async Task<OrderDto> UpdateOrderAsync(OrderDto orderDto)
         {
             var order = await _context.Orders.FindAsync(orderDto.OrderID);
-            if (order == null) return null;
+            if (order == null) return default!;
 
             order.Status = orderDto.Status;
             order.TotalPrice = orderDto.TotalPrice;

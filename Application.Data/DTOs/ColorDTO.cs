@@ -16,6 +16,6 @@ namespace Application.Data.DTOs
         [DataType(DataType.DateTime)]
         public DateTime? CreatedAt { get; set; }
         [DataType(DataType.DateTime)]
-        public DateTime? UpdateAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

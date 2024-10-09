@@ -56,14 +56,16 @@ namespace Application.Data.Repositories
         public async Task<CategoryProductDTO> GetById(Guid id)
         {
             var categoryProduct = await _context.Category_Products.FindAsync(id);
-            if (categoryProduct == null) return null;
-
-            return new CategoryProductDTO
+            if (categoryProduct != null)
             {
-                CategoryProductID = categoryProduct.CategoryProductID,
-                ProductID = Guid.NewGuid(), // Fake ID
-                CategoryID = categoryProduct.CategoryID
-            };
+                return new CategoryProductDTO
+                {
+                    CategoryProductID = categoryProduct.CategoryProductID,
+                    ProductID = Guid.NewGuid(), // Fake ID
+                    CategoryID = categoryProduct.CategoryID
+                };
+            }
+            else return default!;
         }
 
         public async Task Update(CategoryProductDTO categoryProductDto)

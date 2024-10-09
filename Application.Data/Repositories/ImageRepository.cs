@@ -24,7 +24,6 @@ namespace Application.Data.Repositories
             var image = new Image
             {
                 ImageID = Guid.NewGuid(), // Tạo ID mới
-                ProductDetailsID = Guid.NewGuid(), // Giả mạo ProductDetailsID
                 ImageName = imageDto.ImageName,
                 Status = imageDto.Status,
                 CreatedDate = DateTime.UtcNow,
@@ -37,7 +36,6 @@ namespace Application.Data.Repositories
             return new ImageDTO
             {
                 ImageID = image.ImageID,
-                ProductDetailsID = image.ProductDetailsID,
                 ImageName = image.ImageName,
                 Status = image.Status,
                 CreatedDate = image.CreatedDate,
@@ -61,7 +59,6 @@ namespace Application.Data.Repositories
             .Select(i => new ImageDTO
             {
                 ImageID = i.ImageID,
-                ProductDetailsID = i.ProductDetailsID,
                 ImageName = i.ImageName,
                 Status = i.Status,
                 CreatedDate = i.CreatedDate,
@@ -77,7 +74,6 @@ namespace Application.Data.Repositories
             return new ImageDTO
             {
                 ImageID = image.ImageID,
-                ProductDetailsID = image.ProductDetailsID,
                 ImageName = image.ImageName,
                 Status = image.Status,
                 CreatedDate = image.CreatedDate,

@@ -24,13 +24,13 @@ namespace Application.Data.Repositories
             var productDetailsId = Guid.NewGuid(); // Tạo ID mới
 
             // Kiểm tra xem ProductDetailsID có hợp lệ không
-            var productInventoryExists = await _context.Product_Inventorys.AnyAsync(p => p.ProductInventoryID == productDetailsId);
+            var productInventoryExists = await _context.Product_Inventorys.AnyAsync(p => p.Inventory_ProductDetailID == productDetailsId);
             if (!productInventoryExists)
             {
                 // Nếu không tồn tại, tạo một bản ghi mới trong Product_Inventorys
-                var newProductInventory = new Product_Inventory
+                var newProductInventory = new Inventory_ProductDetail()
                 {
-                    ProductInventoryID = productDetailsId, // Gán ID giả mạo
+                    Inventory_ProductDetailID = productDetailsId, // Gán ID giả mạo
                                                            // Gán các thuộc tính khác nếu cần
                 };
 
@@ -41,13 +41,11 @@ namespace Application.Data.Repositories
             var inventoryLog = new InventoryLog
             {
                 LogID = Guid.NewGuid(), // Tạo ID mới
-                ProductDetailsID = productDetailsId, // Sử dụng ID đã tạo
-                Size = inventoryLogDto.Size,
-                Color = inventoryLogDto.Color,
+                SizeID = inventoryLogDto.SizeID,
+                ColorID = inventoryLogDto.ColorID,
                 QuantityInStock = inventoryLogDto.QuantityInStock,
                 Status = inventoryLogDto.Status,
-                CreateDateAt = DateTime.UtcNow,
-                CreateDateBy = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
             };
 
             _context.InventoryLogs.Add(inventoryLog);
@@ -56,13 +54,11 @@ namespace Application.Data.Repositories
             return new InventoryLogDto
             {
                 LogID = inventoryLog.LogID,
-                ProductDetailsID = inventoryLog.ProductDetailsID,
-                Size = inventoryLog.Size,
-                Color = inventoryLog.Color,
+                SizeID = inventoryLog.SizeID,
+                ColorID = inventoryLog.ColorID,
                 QuantityInStock = inventoryLog.QuantityInStock,
                 Status = inventoryLog.Status,
-                CreateDateAt = inventoryLog.CreateDateAt,
-                CreateDateBy = inventoryLog.CreateDateBy
+                CreatedAt = inventoryLog.CreatedAt
             };
         }
 
@@ -82,13 +78,11 @@ namespace Application.Data.Repositories
            .Select(log => new InventoryLogDto
            {
                LogID = log.LogID,
-               ProductDetailsID = log.ProductDetailsID,
-               Size = log.Size,
-               Color = log.Color,
+               SizeID = log.SizeID,
+               ColorID = log.ColorID,
                QuantityInStock = log.QuantityInStock,
                Status = log.Status,
-               CreateDateAt = log.CreateDateAt,
-               CreateDateBy = log.CreateDateBy
+               CreatedAt = log.CreatedAt
            }).ToListAsync();
         }
 
@@ -100,13 +94,11 @@ namespace Application.Data.Repositories
             return new InventoryLogDto
             {
                 LogID = log.LogID,
-                ProductDetailsID = log.ProductDetailsID,
-                Size = log.Size,
-                Color = log.Color,
+                SizeID = log.SizeID,
+                ColorID = log.ColorID,
                 QuantityInStock = log.QuantityInStock,
                 Status = log.Status,
-                CreateDateAt = log.CreateDateAt,
-                CreateDateBy = log.CreateDateBy
+                CreatedAt = log.CreatedAt
             };
         }
 
@@ -115,12 +107,11 @@ namespace Application.Data.Repositories
             var log = await _context.InventoryLogs.FindAsync(logId);
             if (log == null) return false;
 
-            log.Size = inventoryLogDto.Size;
-            log.Color = inventoryLogDto.Color;
+            log.SizeID = inventoryLogDto.SizeID;
+            log.ColorID = inventoryLogDto.ColorID;
             log.QuantityInStock = inventoryLogDto.QuantityInStock;
             log.Status = inventoryLogDto.Status;
-            log.CreateDateAt = inventoryLogDto.CreateDateAt; // Cập nhật thông tin khác nếu cần
-            log.CreateDateBy = DateTime.UtcNow;
+            log.CreatedAt = inventoryLogDto.CreatedAt; // Cập nhật thông tin khác nếu cần
 
             await _context.SaveChangesAsync();
             return true;

@@ -24,7 +24,6 @@ namespace Application.Data.Repositories
             var category = new Category
             {
                 CategoryID = Guid.NewGuid(), // Fake ID
-                ProductID = Guid.NewGuid(), // Fake ProductID
                 Name = categoryDto.Name,
                 Description = categoryDto.Description
             };
@@ -49,7 +48,6 @@ namespace Application.Data.Repositories
              .Select(c => new CategoryDTO
              {
                  CategoryID = c.CategoryID,
-                 ProductID = Guid.NewGuid(), // Fake ProductID
                  Name = c.Name,
                  Description = c.Description
              }).ToListAsync();
@@ -58,12 +56,11 @@ namespace Application.Data.Repositories
         public async Task<CategoryDTO> GetByIdCategory(Guid id)
         {
             var category = await _context.Categories.FindAsync(id);
-            if (category == null) return null;
+            if (category == null) return default!;
 
             return new CategoryDTO
             {
                 CategoryID = category.CategoryID,
-                ProductID = Guid.NewGuid(), // Fake ProductID
                 Name = category.Name,
                 Description = category.Description
             };
