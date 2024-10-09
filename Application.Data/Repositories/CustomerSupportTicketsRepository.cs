@@ -19,7 +19,7 @@ namespace Application.Data.Repositories
         {
             _context = context;
         }
-        public async Task CreateTicket(CustomerSupportTicketsDTO ticketDTO)
+        public async Task CreateTicket(CustomerSupportTicketDTO ticketDTO)
         {
             if (!await _context.Users.AnyAsync(u => u.UserID == ticketDTO.UserID))
             {
@@ -65,10 +65,10 @@ namespace Application.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<CustomerSupportTicketsDTO>> GetAllTickets()
+        public async Task<IEnumerable<CustomerSupportTicketDTO>> GetAllTickets()
         {
             return await _context.CustomerSupportTickets
-           .Select(ticket => new CustomerSupportTicketsDTO
+           .Select(ticket => new CustomerSupportTicketDTO
            {
                TicketID = ticket.TicketID,
                UserID = ticket.UserID,
@@ -80,7 +80,7 @@ namespace Application.Data.Repositories
            }).ToListAsync();
         }
 
-        public async Task<CustomerSupportTicketsDTO> GetTicketById(Guid ticketId)
+        public async Task<CustomerSupportTicketDTO> GetTicketById(Guid ticketId)
         {
             var ticket = await _context.CustomerSupportTickets.FindAsync(ticketId);
 
@@ -89,7 +89,7 @@ namespace Application.Data.Repositories
                 return null;
             }
 
-            return new CustomerSupportTicketsDTO
+            return new CustomerSupportTicketDTO
             {
                 TicketID = ticket.TicketID,
                 UserID = ticket.UserID,
@@ -101,7 +101,7 @@ namespace Application.Data.Repositories
             };
         }
 
-        public async Task UpdateTicket(CustomerSupportTicketsDTO ticketDTO)
+        public async Task UpdateTicket(CustomerSupportTicketDTO ticketDTO)
         {
             var ticket = await _context.CustomerSupportTickets.FindAsync(ticketDTO.TicketID);
 

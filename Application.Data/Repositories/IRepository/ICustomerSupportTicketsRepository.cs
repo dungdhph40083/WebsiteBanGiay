@@ -9,10 +9,10 @@ namespace Application.Data.Repositories.IRepository
 {
     public interface ICustomerSupportTicketsRepository
     {
-        Task<IEnumerable<CustomerSupportTicketsDTO>> GetAllTickets();
-        Task<CustomerSupportTicketsDTO> GetTicketById(Guid ticketId);
-        Task CreateTicket(CustomerSupportTicketsDTO ticketDTO);
-        Task UpdateTicket(CustomerSupportTicketsDTO ticketDTO);
+        Task<IEnumerable<CustomerSupportTicketDTO>> GetAllTickets();
+        Task<CustomerSupportTicketDTO> GetTicketById(Guid ticketId);
+        Task CreateTicket(CustomerSupportTicketDTO ticketDTO);
+        Task UpdateTicket(CustomerSupportTicketDTO ticketDTO);
         Task DeleteTicket(Guid ticketId);
     }
 }

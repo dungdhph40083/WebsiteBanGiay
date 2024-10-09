@@ -13,9 +13,9 @@ namespace Application.Data.DTOs
         public Guid ColorID { get; set; }
         public string? ColorName { get; set; }
         public byte Status { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime? DateCreated { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime? DateUpdated { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime? CreatedAt { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime? UpdateAt { get; set; }
     }
 }

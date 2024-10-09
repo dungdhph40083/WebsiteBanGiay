@@ -38,7 +38,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTicket([FromBody] CustomerSupportTicketsDTO ticketDTO)
+        public async Task<IActionResult> CreateTicket([FromBody] CustomerSupportTicketDTO ticketDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -53,7 +53,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTicket(Guid id, [FromBody] CustomerSupportTicketsDTO ticketDTO)
+        public async Task<IActionResult> UpdateTicket(Guid id, [FromBody] CustomerSupportTicketDTO ticketDTO)
         {
             if (id != ticketDTO.TicketID)
             {
