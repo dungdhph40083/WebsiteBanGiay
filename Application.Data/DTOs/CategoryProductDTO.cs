@@ -8,7 +8,7 @@ namespace Application.Data.DTOs
 {
     public class CategoryProductDTO
     {
-        public Guid CategoryProductID { get; set; }
+        public Guid? CategoryProductID { get; set; }
         public Guid? ProductID { get; set; } 
         public Guid? CategoryID { get; set; }
     }

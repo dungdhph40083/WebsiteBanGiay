@@ -55,7 +55,7 @@ namespace Application.Data.Repositories
                ColorName = c.ColorName,
                Status = c.Status,
                CreatedAt = c.CreatedAt,
-               UpdateAt = c.UpdatedAt
+               UpdatedAt = c.UpdatedAt
            })
            .ToListAsync();
         }

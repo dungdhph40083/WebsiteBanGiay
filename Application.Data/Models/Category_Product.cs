@@ -6,7 +6,7 @@ namespace Application.Data.Models
     public class Category_Product
     {
         [Key]
-        public Guid CategoryProductID { get; set; }
+        public Guid? CategoryProductID { get; set; }
         [ForeignKey(nameof(Product))]
         public Guid? ProductID { get; set; }
         [ForeignKey(nameof(Category))]
