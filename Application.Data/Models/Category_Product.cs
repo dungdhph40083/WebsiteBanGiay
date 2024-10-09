@@ -7,11 +7,11 @@ namespace Application.Data.Models
     {
         [Key]
         public Guid CategoryProductID { get; set; }
-        
-        public Guid ProductID { get; set; }
-        
-        public Guid CategoryID { get; set; }
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
-        public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+        [ForeignKey(nameof(Product))]
+        public Guid? ProductID { get; set; }
+        [ForeignKey(nameof(Category))]
+        public Guid? CategoryID { get; set; }
+        public virtual Product? Product { get; set; }
+        public virtual Category? Category { get; set; }
     }
 }

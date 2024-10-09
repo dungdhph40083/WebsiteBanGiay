@@ -13,27 +13,21 @@ namespace Application.Data.Models
 		[Key]
 		public Guid ProductDetailsID { get; set; }
         [ForeignKey(nameof(Product))]
-		public Guid ProductID { get; set; }
+		public Guid? ProductID { get; set; }
 		public string? Material { get; set; }
 		public int Quantity { get; set; }
 		public long Price { get; set; }
-		[ForeignKey(nameof(Product_Details_Color))]
-		public Guid ColorID { get; set; }
-		[ForeignKey(nameof(Image))]
-		public Guid ImageID { get; set; }
-		[ForeignKey(nameof(Product_Details_Size))]
-		public Guid SizeID { get; set; }
-		public string? Brand { get; set; }
-		public string? PlaceOfOrigin { get; set; }
+        public string? Brand { get; set; }
+        public string? PlaceOfOrigin { get; set; }
+        public string? Type { get; set; }
+        public DateTime WarrantyPeriod { get; set; }
+		public string? Instructions { get; set; }
+		public string? Features { get; set; }
 		public string? ShoeType { get; set; }
-		public DateTime WarrantyPeriod { get; set; }
-        [ForeignKey(nameof(Product_Inventory))]
-        public Guid LogID { get; set; }
-
 		public virtual Product? Product { get; set; }
-		public virtual Product_Details_Color? Product_Details_Color { get; set; }
 		public virtual Image? Image { get; set; }
-		public virtual Product_Details_Size? Product_Details_Size { get; set; }
-		public virtual ICollection<Product_Inventory> Product_Inventory { get; set; } = new List<Product_Inventory>();
+		public virtual ICollection<Color_ProductDetail> Color_ProductDetails { get; set; } = new List<Color_ProductDetail>();
+		public virtual ICollection<Inventory_ProductDetail> Inventory_ProductDetails { get; set; } = new List<Inventory_ProductDetail>();
+		public virtual ICollection<Size_ProductDetail> Size_ProductDetails { get; set; } = new List<Size_ProductDetail>();
     }
 }

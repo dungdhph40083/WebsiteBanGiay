@@ -8,11 +8,11 @@ namespace Application.Data.Models
         [Key]
         public Guid ReturnID { get; set; }
         [ForeignKey(nameof(Order))]
-        public Guid OrderID { get; set; }
+        public Guid? OrderID { get; set; }
         public string? Reason { get; set; }
         public DateTime ReturnDate { get; set; }
         public long RefundAmount { get; set; }
         public byte Status { get; set; }
-        public virtual ICollection<Order>? Orders { get; set; } = new List<Order>();
+        public virtual Order? Order { get; set; }
     }
 }

@@ -12,12 +12,9 @@ namespace Application.Data.Models
 	{
 		[Key]
 		public Guid ImageID { get; set; }
-		
-		public Guid ProductDetailsID { get; set; }
 		public string? ImageName { get; set; }
 		public byte Status { get; set; }
 		public DateTime? CreatedDate { get; set; }
 		public DateTime? UpdateDate { get; set; }
-		public virtual ProductDetail? ProductDetail { get; set; }
 	}
 }

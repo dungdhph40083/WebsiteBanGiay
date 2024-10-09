@@ -10,18 +10,7 @@ namespace Application.Data.Models
         public string? Name { get; set; }
         public string? Description { get; set; }
         public long Price { get; set; }
-        public byte[]? Image { get; set; }
-        [ForeignKey(nameof(Category_Product))]
-        public Guid CategoryID { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string? CreatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string? UpdatedBy { get; set; }
-        public Guid OrderID { get; set; }
-        public virtual Order? Orders { get; set; }
-        public virtual ICollection<Category_Product>? Category_Products { get; set; } = new List<Category_Product>();
-		public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>(); // Updated navigation property
-
-
 	}
 }

@@ -14,21 +14,23 @@ namespace Application.Data.Models
 		[Key]
 		public Guid CartID { get; set; }
 		[ForeignKey(nameof(User))]
-		public Guid UserID { get; set; }
-		public int QuantityCard {  get; set; }
-		[Precision(14, 2)]
-		public decimal? Size { get; set; }
-		public string? Color { get; set; }
+		public Guid? UserID { get; set; }
+		public int QuantityCart { get; set; }
+		[ForeignKey(nameof(Size))]
+		public Guid? SizeID { get; set; }
+		[ForeignKey(nameof(Color))]
+		public Guid? ColorID { get; set; }
 		public long? Price { get; set; }
-		[Precision(14, 2)]
-		public decimal? Discount { get; set;}
-		public DateTime? Created { get; set; }
+		public long Discount { get; set;}
+		public DateTime? DateAdded { get; set; }
 		public bool IsCheckedOut { get; set;}
 		[ForeignKey(nameof(Voucher))]
-		public Guid VoucherID { get; set; }
+		public Guid? VoucherID { get; set; }
 		
 		public virtual User? User { get; set; }
 		public virtual Voucher? Voucher { get; set; }
+		public virtual Size? Size { get; set; }
+		public virtual Color? Color { get; set; }
 
 	}
 }

@@ -7,8 +7,6 @@ namespace Application.Data.Models
     {
         [Key]
         public Guid ShippingMethodID { get; set; }
-        
-        public Guid Id { get; set; }
         public string? MethodName { get; set; }
         public long ShippingFee { get; set; }
         public DateTime EstimatedDeliveryTime { get; set; }

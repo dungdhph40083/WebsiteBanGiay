@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace Application.Data.Models
 {
-	public class Product_Details_Size
+	public class Size_ProductDetail
 	{
 		[Key]
-		public Guid ProductDetailsSizeID { get; set; }
-		
+		public Guid Size_ProductDetailID { get; set; }
+		[ForeignKey(nameof(ProductDetail))]
 		public Guid ProductDetailID { get; set; }
-		
+		[ForeignKey(nameof(Size))]
 		public Guid SizeID { get; set; }
 
-		public virtual ICollection<Product> Products { get; set; } = new List<Product>();
-		public virtual ICollection<Size> Sizes { get; set; } = new List<Size>();
+		public virtual ProductDetail? ProductDetail { get; set; }
+		public virtual Size? Size { get; set; }
 	}			
 }

@@ -8,10 +8,10 @@ namespace Application.Data.Models
         [Key]
         public Guid TrackingID { get; set; }
         [ForeignKey(nameof(OrderDetail))] 
-        public Guid OrderDetailID { get; set; }
+        public Guid? OrderDetailID { get; set; }
         public long TrackingNumber { get; set; }
         public byte ShippingStatus { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public virtual OrderDetail? OrderDetail { get; set; }
     }
 }
