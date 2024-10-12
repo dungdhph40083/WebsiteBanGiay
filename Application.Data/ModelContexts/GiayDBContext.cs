@@ -14,8 +14,6 @@ namespace Application.Data.ModelContexts
 		{
 		}
 
-	
-
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Category_Product> Category_Products { get; set; }
 		public DbSet<Color> Colors { get; set; }
@@ -68,11 +66,11 @@ namespace Application.Data.ModelContexts
 	 //  .OnDelete(DeleteBehavior.NoAction);
 
 			// OrderDetail -> Product (No cascade delete)
-			modelBuilder.Entity<OrderDetail>()
-				.HasOne(od => od.Product)
-				.WithMany(p => p.OrderDetails)
-				.HasForeignKey(od => od.ProductID)
-				.OnDelete(DeleteBehavior.NoAction); // 
+			//modelBuilder.Entity<OrderDetail>()
+			//	.HasOne(od => od.Product)
+			//	.WithMany(p => p.OrderDetails)
+			//	.HasForeignKey(od => od.ProductID)
+			//	.OnDelete(DeleteBehavior.NoAction); // 
 
 		}
 	}
