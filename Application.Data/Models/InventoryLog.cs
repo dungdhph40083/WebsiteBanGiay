@@ -17,11 +17,14 @@ namespace Application.Data.Models
 		public Guid? SizeID { get; set; }
 		[ForeignKey(nameof(Color))]
 		public Guid? ColorID { get; set; }
+        [ForeignKey(nameof(Product))]
+        public Guid? ProductID { get; set; }
 		public long QuantityInStock { get; set; }
 		public byte Status { get; set; }
 		public DateTime? CreatedAt { get; set; }
 		public virtual Size? Size { get; set; }
 		public virtual Color? Color { get; set; }
+		public virtual Product? Product { get; set; }
 
 		/*
 			⣿⣿⣿⣿⡿⡿⢟⠿⠻⡻⠟⢟⠿⠻⡻⠟⢟⠿⠻⡻⠟⢟⠿⠻⡻⠟⢟⠿⠻⡻⠟⢟⠿⠻⡻⠟⢟⠿⠻⡻⠟⢟⠿⠻⡻⠟⢟⠿⠻⡻⠟⢟⠿⡻⡿⣿⣿⣿⣿⣿
