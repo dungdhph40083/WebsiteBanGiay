@@ -81,11 +81,11 @@ UpdatedAt				datetime
 )
 
 insert into Products values
-('6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Giày Adidas 8152',				N'Adidas 8152 dành cho thể thao và thời trang, giúp giảm mỏi chân khi vận động nặng', 172000, GETDATE(), GETDATE()),
-('a785be42-a9de-44f8-b826-7bc9151eea9b', N'Giày Adidas A83',				N'Adidas A83 dành cho thể thao, giúp giảm mỏi chân khi vận động nặng', 144000, GETDATE(), GETDATE()),
-('87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Giày Adidas Đen-trắng Galaxy 5', N'Adidas Đen-trắng nam tính, thời trang hot nhất', 126000, GETDATE(), GETDATE()),
-('61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Giày Adidas Da bò',				N'Adidas Da bò hiếm có, đẹp mắt, hợp gu', 193000, GETDATE(), GETDATE()),
-('4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Giày Adidas Trắng sọc đen',		N'Adidas Trắng sọc đen dành cho thể thao, giúp giảm mỏi chân khi vận động nặng', 126000, GETDATE(), GETDATE())
+('6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Giày Adidas 8152',				N'Adidas 8152 dành cho thể thao và thời trang, giúp giảm mỏi chân khi vận động nặng',	172000, GETDATE(), GETDATE()),
+('a785be42-a9de-44f8-b826-7bc9151eea9b', N'Giày Adidas A83',				N'Adidas A83 dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',					144000, GETDATE(), GETDATE()),
+('87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Giày Adidas Đen-trắng Galaxy 5', N'Adidas Đen-trắng nam tính, thời trang hot nhất',										126000, GETDATE(), GETDATE()),
+('61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Giày Adidas Da bò',				N'Adidas Da bò hiếm có, đẹp mắt, hợp gu',												193000, GETDATE(), GETDATE()),
+('4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Giày Adidas Trắng sọc đen',		N'Adidas Trắng sọc đen dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',		126000, GETDATE(), GETDATE())
 
 create table Category_Products
 (
@@ -289,22 +289,6 @@ insert into Colors values
 ('9cc6436e-8e24-4065-9925-eccd56d6d099', N'Màu xanh lá', 1, GETDATE(), GETDATE()),
 ('8bb6b87b-4d97-490d-91f2-c57b2d40d820', N'Màu hồng', 1, GETDATE(), GETDATE())
 
-create table InventoryLogs
-(
-LogID					uniqueidentifier	not null	primary key,
-SizeID					uniqueidentifier,
-ColorID					uniqueidentifier,
-QuantityInStock			int,
-[Status]				tinyint,
-UpdatedAt				datetime,
-
-constraint FK_Size_InventoryLogs
-foreign key (SizeID) references Sizes(SizeID),
-
-constraint FK_Color_InventoryLogs
-foreign key (ColorID) references Colors(ColorID)
-)
-
 create table ProductDetails
 (
 ProductDetailID			uniqueidentifier	not null	primary key,
@@ -327,6 +311,41 @@ constraint FK_Images_ProductDetails
 foreign key (ImageID) references Images(ImageID)
 )
 
+insert into ProductDetails values
+('ec093371-289f-4f78-a90a-f95a6cb5edec', '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Mô tả', 69420, 172000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null),
+('7e7c19ee-161b-4c04-82e9-56ca7676613f', 'a785be42-a9de-44f8-b826-7bc9151eea9b', N'Mô tả', 69420, 144000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null),
+('b6ac32d4-d03f-4ce0-9b19-31f41cd77438', '87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null),
+('c54d8c98-6884-4d21-9100-7ecafce37a56', '61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Mô tả', 69420, 193000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null),
+('a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c', '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null)
+
+
+create table InventoryLogs
+(
+LogID					uniqueidentifier	not null	primary key,
+SizeID					uniqueidentifier,
+ColorID					uniqueidentifier,
+ProductDetailID			uniqueidentifier,
+QuantityInStock			int,
+[Status]				tinyint,
+UpdatedAt				datetime,
+
+constraint FK_Size_InventoryLogs
+foreign key (SizeID) references Sizes(SizeID),
+
+constraint FK_Color_InventoryLogs
+foreign key (ColorID) references Colors(ColorID),
+
+constraint FK_ProductDetail_InventoryLogs
+foreign key (ProductDetailID) references Colors(ProductDetailID)
+)
+
+insert into InventoryLogs values
+('89837276-d9d8-4847-980e-eb7a93711673', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', 'ec093371-289f-4f78-a90a-f95a6cb5edec', 69420, 1, GETDATE()),
+('d4b2b1da-1a36-49ad-80f2-9480da370f5e', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', '7e7c19ee-161b-4c04-82e9-56ca7676613f', 69420, 1, GETDATE()),
+('3c0ab7ed-a5bc-4723-bb6b-6698a4c31d74', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', 'b6ac32d4-d03f-4ce0-9b19-31f41cd77438', 69420, 1, GETDATE()),
+('8e170bac-b30b-4226-8339-e7fd91532199', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', 'c54d8c98-6884-4d21-9100-7ecafce37a56', 69420, 1, GETDATE()),
+('09b0f4fd-33b9-45df-919b-75cfb3be32ad', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', 'a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c', 69420, 1, GETDATE())
+
 create table Size_ProductDetails
 (
 Size_ProductDetail_ID	uniqueidentifier	not null	primary key,
@@ -339,6 +358,13 @@ foreign key (ProductID) references Products(ProductID),
 constraint FK_Size_Size_ProductDetails
 foreign key (SizeID) references Sizes(SizeID)
 )
+
+insert into Size_ProductDetails values
+(NEWID(), '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
+(NEWID(), 'a785be42-a9de-44f8-b826-7bc9151eea9b', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
+(NEWID(), '87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
+(NEWID(), '61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
+(NEWID(), '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'88580723-ab1d-4362-93cd-f1ec0c8206fd')
 
 create table Inventory_ProductDetails
 (
@@ -353,6 +379,13 @@ constraint FK_ProductDetail_Inventory_ProductDetails
 foreign key (ProductDetailID) references ProductDetails(ProductDetailID)
 )
 
+insert into Inventory_ProductDetails values
+(NEWID(), '89837276-d9d8-4847-980e-eb7a93711673', 'ec093371-289f-4f78-a90a-f95a6cb5edec'),
+(NEWID(), 'd4b2b1da-1a36-49ad-80f2-9480da370f5e', '7e7c19ee-161b-4c04-82e9-56ca7676613f'),
+(NEWID(), '3c0ab7ed-a5bc-4723-bb6b-6698a4c31d74', 'b6ac32d4-d03f-4ce0-9b19-31f41cd77438'),
+(NEWID(), '8e170bac-b30b-4226-8339-e7fd91532199', 'c54d8c98-6884-4d21-9100-7ecafce37a56'),
+(NEWID(), '09b0f4fd-33b9-45df-919b-75cfb3be32ad', 'a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c')
+
 create table Color_ProductDetails
 (
 Color_ProductDetailID	uniqueidentifier	not null	primary key,
@@ -365,6 +398,13 @@ foreign key (ColorID) references Colors(ColorID),
 constraint FK_ProductDetail_Color_ProductDetails
 foreign key (ProductDetailID) references ProductDetails(ProductDetailID)
 )
+
+insert into Color_ProductDetails values
+(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'ec093371-289f-4f78-a90a-f95a6cb5edec'),
+(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', '7e7c19ee-161b-4c04-82e9-56ca7676613f'),
+(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'b6ac32d4-d03f-4ce0-9b19-31f41cd77438'),
+(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'c54d8c98-6884-4d21-9100-7ecafce37a56'),
+(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c')
 end
 
 create table Vouchers
@@ -386,6 +426,13 @@ foreign key (CategoryID) references Categories(CategoryID),
 constraint FK_Product_Vouchers
 foreign key (ProductID) references Products(ProductID)
 )
+
+insert into Vouchers values
+('152847ec-dc80-470a-88c4-1a555ed00632', '0d3a5b93-0087-4d99-bddb-d5dface1fa95', null, 22, 24000, 10, N'Giảm giá khai trương cho mặt hàng thuộc danh mục', GETDATE(), GETDATE(), 1),
+('2e1b811e-c9fc-465f-85db-33d79525535b', '96dbcc88-1558-4bbb-a483-3804b24f086e', null, 22, 24000, 10, N'Giảm giá khai trương cho mặt hàng thuộc danh mục', GETDATE(), GETDATE(), 1),
+('288a4e39-8a4b-4d20-9b7f-aedcfacbcc09', null, '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', 44, 36000, 15, N'Giảm giá khai trương cho mặt hàng này', GETDATE(), GETDATE(), 1),
+('04287033-79a1-4ccf-a09f-211efd446da9', null, 'a785be42-a9de-44f8-b826-7bc9151eea9b', 44, 36000, 15, N'Giảm giá khai trương cho mặt hàng này', GETDATE(), GETDATE(), 1),
+('564ff9b2-8f4c-4e9b-8c83-eae212779591', null, '87e469e0-45ed-4eda-b929-5d3dc3789bf1', 44, 36000, 15, N'Giảm giá khai trương cho mặt hàng này', GETDATE(), GETDATE(), 1)
 
 create table Orders
 (
