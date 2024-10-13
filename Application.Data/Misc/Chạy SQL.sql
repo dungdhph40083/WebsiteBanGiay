@@ -50,12 +50,11 @@ go
 
 -- LƯU Ý: KIỂM TRA VÀ SỬA ĐƯỜNG DẪN TỚI TỆP TRƯỚC KHI DÙNG --
 insert into Images values
-('2ac06cd1-492f-47f2-bdc3-6e8ce031b3ab', N'Adidas 8152',				(select * from openrowset(bulk '%userprofile%\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-8152.jpg', single_blob)),					1, GETDATE(), GETDATE()),
-('7fcf6f9a-7352-423a-8bf9-612d542b3522', N'Adidas A83',				(select * from openrowset(bulk '%userprofile%\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-a83.jpg', single_blob)),					1, GETDATE(), GETDATE()),
-('05f20b0f-6979-4e82-a727-cb24f626d478', N'Adidas Đen-trắng Galaxy 5', (select * from openrowset(bulk '%userprofile%\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-black-white-galaxy5.jpg', single_blob)),	1, GETDATE(), GETDATE()),
-('79ba4596-0578-45ad-8109-a7d5029ab4d9', N'Adidas Da bò',				(select * from openrowset(bulk '%userprofile%\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-da-bo.jpg', single_blob)),					1, GETDATE(), GETDATE()),
-('8d59af65-660c-4a93-a91c-754218be7de3', N'Adidas Trắng sọc đen',		(select * from openrowset(bulk '%userprofile%\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-trang-soc-den.jpg', single_blob)),			1, GETDATE(), GETDATE())
-
+('2ac06cd1-492f-47f2-bdc3-6e8ce031b3ab', N'Adidas 8152',				(select * from openrowset(bulk 'C:\Users\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-8152.jpg', single_blob) as ImageFile),						1, GETDATE(), GETDATE()),
+('7fcf6f9a-7352-423a-8bf9-612d542b3522', N'Adidas A83',					(select * from openrowset(bulk 'C:\Users\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-a83.jpg', single_blob) as ImageFile),						1, GETDATE(), GETDATE()),
+('05f20b0f-6979-4e82-a727-cb24f626d478', N'Adidas Đen-trắng Galaxy 5',	(select * from openrowset(bulk 'C:\Users\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-black-white-galaxy5.jpg', single_blob) as ImageFile),		1, GETDATE(), GETDATE()),
+('79ba4596-0578-45ad-8109-a7d5029ab4d9', N'Adidas Da bò',				(select * from openrowset(bulk 'C:\Users\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-da-bo.jpg', single_blob) as ImageFile),						1, GETDATE(), GETDATE()),
+('8d59af65-660c-4a93-a91c-754218be7de3', N'Adidas Trắng sọc đen',		(select * from openrowset(bulk 'C:\Users\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-trang-soc-den.jpg', single_blob) as ImageFile),				1, GETDATE(), GETDATE())
 
 begin /* region Category-Products */
 create table Categories
