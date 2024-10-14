@@ -45,7 +45,7 @@ namespace Application.Data.Repositories
                 ColorID = inventoryLogDto.ColorID,
                 QuantityInStock = inventoryLogDto.QuantityInStock,
                 Status = inventoryLogDto.Status,
-                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
             };
 
             _context.InventoryLogs.Add(inventoryLog);
@@ -58,7 +58,7 @@ namespace Application.Data.Repositories
                 ColorID = inventoryLog.ColorID,
                 QuantityInStock = inventoryLog.QuantityInStock,
                 Status = inventoryLog.Status,
-                CreatedAt = inventoryLog.CreatedAt
+                UpdatedAt = inventoryLog.UpdatedAt
             };
         }
 
@@ -82,7 +82,7 @@ namespace Application.Data.Repositories
                ColorID = log.ColorID,
                QuantityInStock = log.QuantityInStock,
                Status = log.Status,
-               CreatedAt = log.CreatedAt
+               UpdatedAt = log.UpdatedAt
            }).ToListAsync();
         }
 
@@ -98,7 +98,7 @@ namespace Application.Data.Repositories
                 ColorID = log.ColorID,
                 QuantityInStock = log.QuantityInStock,
                 Status = log.Status,
-                CreatedAt = log.CreatedAt
+                UpdatedAt = log.UpdatedAt
             };
         }
 
@@ -111,7 +111,7 @@ namespace Application.Data.Repositories
             log.ColorID = inventoryLogDto.ColorID;
             log.QuantityInStock = inventoryLogDto.QuantityInStock;
             log.Status = inventoryLogDto.Status;
-            log.CreatedAt = inventoryLogDto.CreatedAt; // Cập nhật thông tin khác nếu cần
+            log.UpdatedAt = inventoryLogDto.UpdatedAt; // Cập nhật thông tin khác nếu cần
 
             await _context.SaveChangesAsync();
             return true;

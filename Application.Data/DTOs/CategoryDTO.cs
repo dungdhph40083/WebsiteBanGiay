@@ -10,7 +10,7 @@ namespace Application.Data.DTOs
     {
         public Guid CategoryID { get; set; }
         // public Guid ProductID { get; set; }
-        public string? Name { get; set; }
+        public string? CategoryName { get; set; }
         public string? Description { get; set; }
     }
 }

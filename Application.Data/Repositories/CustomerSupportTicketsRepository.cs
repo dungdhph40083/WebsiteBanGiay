@@ -44,8 +44,7 @@ namespace Application.Data.Repositories
                 UserID = ticketDTO.UserID, // Sử dụng UserID đã xác định
                 Subject = ticketDTO.Subject,
                 Status = ticketDTO.Status,
-                CreateAt = DateTime.Now, // Ghi lại thời gian tạo
-                CreateBy = ticketDTO.CreateBy // Gán người tạo (có thể là UserID hoặc tên người dùng)
+                CreatedAt = DateTime.Now, // Ghi lại thời gian tạo
             };
 
             // Thêm ticket vào cơ sở dữ liệu
@@ -73,8 +72,7 @@ namespace Application.Data.Repositories
                UserID = ticket.UserID,
                Subject = ticket.Subject,
                Status = ticket.Status,
-               CreateAt = ticket.CreateAt,
-               CreateBy = ticket.CreateBy
+               CreatedAt = ticket.CreatedAt
            }).ToListAsync();
         }
 
@@ -93,8 +91,7 @@ namespace Application.Data.Repositories
                 UserID = ticket.UserID,
                 Subject = ticket.Subject,
                 Status = ticket.Status,
-                CreateAt = ticket.CreateAt,
-                CreateBy = ticket.CreateBy
+                CreatedAt = ticket.CreatedAt
             };
         }
 
@@ -106,8 +103,7 @@ namespace Application.Data.Repositories
             {
                 ticket.Subject = ticketDTO.Subject;
                 ticket.Status = ticketDTO.Status;
-                ticket.CreateAt = ticketDTO.CreateAt;
-                ticket.CreateBy = ticketDTO.CreateBy;
+                ticket.CreatedAt = ticketDTO.CreatedAt;
 
                 _context.CustomerSupportTickets.Update(ticket);
                 await _context.SaveChangesAsync();

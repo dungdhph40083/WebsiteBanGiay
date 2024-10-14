@@ -24,7 +24,7 @@ namespace Application.Data.Repositories
             var category = new Category
             {
                 CategoryID = Guid.NewGuid(), // Fake ID
-                Name = categoryDto.Name,
+                CategoryName = categoryDto.CategoryName,
                 Description = categoryDto.Description
             };
 
@@ -48,7 +48,7 @@ namespace Application.Data.Repositories
              .Select(c => new CategoryDTO
              {
                  CategoryID = c.CategoryID,
-                 Name = c.Name,
+                 CategoryName = c.CategoryName,
                  Description = c.Description
              }).ToListAsync();
         }
@@ -61,7 +61,7 @@ namespace Application.Data.Repositories
             return new CategoryDTO
             {
                 CategoryID = category.CategoryID,
-                Name = category.Name,
+                CategoryName = category.CategoryName,
                 Description = category.Description
             };
         }
@@ -71,7 +71,7 @@ namespace Application.Data.Repositories
             var category = await _context.Categories.FindAsync(categoryDto.CategoryID);
             if (category == null) return;
 
-            category.Name = categoryDto.Name;
+            category.CategoryName = categoryDto.CategoryName;
             category.Description = categoryDto.Description;
 
             _context.Categories.Update(category);

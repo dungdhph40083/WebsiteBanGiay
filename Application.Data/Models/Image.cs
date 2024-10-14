@@ -15,7 +15,7 @@ namespace Application.Data.Models
 		public string? ImageName { get; set; }
 		public byte[]? ImageData { get; set; }
 		public byte Status { get; set; }
-		public DateTime? CreatedDate { get; set; }
-		public DateTime? UpdateDate { get; set; }
+		public DateTime? CreatedAt { get; set; }
+		public DateTime? UpdatedAt{ get; set; }
 	}
 }

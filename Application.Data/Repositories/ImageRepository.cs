@@ -26,8 +26,8 @@ namespace Application.Data.Repositories
                 ImageID = Guid.NewGuid(), // Tạo ID mới
                 ImageName = imageDto.ImageName,
                 Status = imageDto.Status,
-                CreatedDate = DateTime.UtcNow,
-                UpdateDate = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
 
             _context.Images.Add(image);
@@ -38,8 +38,8 @@ namespace Application.Data.Repositories
                 ImageID = image.ImageID,
                 ImageName = image.ImageName,
                 Status = image.Status,
-                CreatedDate = image.CreatedDate,
-                UpdateDate = image.UpdateDate
+                CreatedAt = image.CreatedAt,
+                UpdatedAt = image.UpdatedAt
             };
         }
 
@@ -61,8 +61,8 @@ namespace Application.Data.Repositories
                 ImageID = i.ImageID,
                 ImageName = i.ImageName,
                 Status = i.Status,
-                CreatedDate = i.CreatedDate,
-                UpdateDate = i.UpdateDate
+                CreatedAt = i.CreatedAt,
+                UpdatedAt = i.UpdatedAt
             }).ToListAsync();
         }
 
@@ -76,8 +76,8 @@ namespace Application.Data.Repositories
                 ImageID = image.ImageID,
                 ImageName = image.ImageName,
                 Status = image.Status,
-                CreatedDate = image.CreatedDate,
-                UpdateDate = image.UpdateDate
+                CreatedAt = image.CreatedAt,
+                UpdatedAt = image.UpdatedAt
             };
         }
 
@@ -88,7 +88,7 @@ namespace Application.Data.Repositories
 
             image.ImageName = imageDto.ImageName;
             image.Status = imageDto.Status;
-            image.UpdateDate = DateTime.UtcNow;
+            image.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             return true;

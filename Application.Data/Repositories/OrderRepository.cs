@@ -56,7 +56,6 @@ namespace Application.Data.Repositories
                 UserID = userId,
                 OrderDate = DateTime.UtcNow,
                 Status = orderDto.Status,
-                TotalPrice = orderDto.TotalPrice,
                 ShippingAddress = orderDto.ShippingAddress,
                 PaymentMethodID = paymentMethodId
             };
@@ -70,7 +69,7 @@ namespace Application.Data.Repositories
                 UserID = order.UserID,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
-                TotalPrice = order.TotalPrice,
+
                 ShippingAddress = order.ShippingAddress,
                 PaymentMethodID = order.PaymentMethodID
             };
@@ -95,7 +94,7 @@ namespace Application.Data.Repositories
                 UserID = order.UserID,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
-                TotalPrice = order.TotalPrice,
+
                 ShippingAddress = order.ShippingAddress,
                 PaymentMethodID = order.PaymentMethodID
             }).ToListAsync();
@@ -112,7 +111,7 @@ namespace Application.Data.Repositories
                 UserID = order.UserID,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
-                TotalPrice = order.TotalPrice,
+
                 ShippingAddress = order.ShippingAddress,
                 PaymentMethodID = order.PaymentMethodID
             };
@@ -124,7 +123,6 @@ namespace Application.Data.Repositories
             if (order == null) return default!;
 
             order.Status = orderDto.Status;
-            order.TotalPrice = orderDto.TotalPrice;
             order.ShippingAddress = orderDto.ShippingAddress;
 
             await _context.SaveChangesAsync();
