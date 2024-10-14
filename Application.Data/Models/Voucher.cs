@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,7 +18,8 @@ namespace Application.Data.Models
 		[ForeignKey(nameof(Product))]
 		public Guid? ProductID {  get; set; }
 		public long DiscountPrice { get; set; }
-		public string? DiscountPerson { get; set;}
+		[Precision(5, 2)]
+		public decimal DiscountPercent { get; set; }
 		public string? Description { get; set; }
 		public DateTime CreatedOn { get; set; }
 		public DateTime LastUpdatedOn { get; set;}

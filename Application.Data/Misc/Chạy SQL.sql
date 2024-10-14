@@ -56,7 +56,7 @@ insert into Images values
 ('79ba4596-0578-45ad-8109-a7d5029ab4d9', N'Adidas Da bò',				(select * from openrowset(bulk 'C:\Users\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-da-bo.jpg', single_blob) as ImageFile),						1, GETDATE(), GETDATE()),
 ('8d59af65-660c-4a93-a91c-754218be7de3', N'Adidas Trắng sọc đen',		(select * from openrowset(bulk 'C:\Users\do726\Desktop\fpt polytechnic\PRO201\WebsiteBanGiay\Application.Data\Images\adidas-trang-soc-den.jpg', single_blob) as ImageFile),				1, GETDATE(), GETDATE())
 
-begin /* region Category-Products */
+/* region Category-Products */
 create table Categories
 (
 CategoryID				uniqueidentifier	not null	primary key,
@@ -107,9 +107,7 @@ insert into Category_Products values
 (NEWID(), '61ba03de-fbd6-41dd-8ebf-53a400cfa0db', '414f0af6-366f-4bd7-a09d-510193f533ea'),
 (NEWID(), '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', '0d3a5b93-0087-4d99-bddb-d5dface1fa95')
 
-end
-
-begin /* region User-Roles */
+/* region User-Roles */
 create table Users
 (
 UserID					uniqueidentifier	not null	primary key,
@@ -134,7 +132,7 @@ insert into Users values
 create table Roles
 (
 RoleID					uniqueidentifier	not null	primary key,
-RoleCode				nvarchar(MAX)		not null	unique,
+RoleCode				varchar(100)		not null	unique,
 RoleName				nvarchar(MAX)
 )
 
@@ -160,8 +158,6 @@ insert into User_Roles values
 (NEWID(), '2aab6663-80a4-44ce-8139-c679be51318c', '9ba7bf79-19c1-4611-b44b-69fc8023842e'),
 (NEWID(), '2aab6663-80a4-44ce-8139-c679be51318c', '1bfa7246-60e1-4d82-a469-cdecf867fd01'),
 (NEWID(), '911729e5-b813-453f-9c6b-11dfae751464', '1bfa7246-60e1-4d82-a469-cdecf867fd01')
-
-end
 
 create table Sales
 (
@@ -239,7 +235,7 @@ create table Ratings
 RatingID				uniqueidentifier	not null	primary key,
 UserID					uniqueidentifier,
 ProductID				uniqueidentifier,
-Stars					decimal(1, 1),
+Stars					decimal(2, 1),
 Comment					uniqueidentifier,
 DateRated				datetime,
 
@@ -249,8 +245,6 @@ foreign key (UserID) references Users(UserID),
 constraint FK_Product_User
 foreign key (ProductID) references Products(ProductID)
 )
-
-begin /* region Sizes&Colors&Logs etc. */
 
 create table Sizes
 (
@@ -311,11 +305,11 @@ foreign key (ImageID) references Images(ImageID)
 )
 
 insert into ProductDetails values
-('ec093371-289f-4f78-a90a-f95a6cb5edec', '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Mô tả', 69420, 172000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null),
-('7e7c19ee-161b-4c04-82e9-56ca7676613f', 'a785be42-a9de-44f8-b826-7bc9151eea9b', N'Mô tả', 69420, 144000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null),
-('b6ac32d4-d03f-4ce0-9b19-31f41cd77438', '87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null),
-('c54d8c98-6884-4d21-9100-7ecafce37a56', '61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Mô tả', 69420, 193000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null),
-('a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c', '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Thể thao & thời trang', null)
+('ec093371-289f-4f78-a90a-f95a6cb5edec', '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Mô tả', 69420, 172000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null),
+('7e7c19ee-161b-4c04-82e9-56ca7676613f', 'a785be42-a9de-44f8-b826-7bc9151eea9b', N'Mô tả', 69420, 144000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null),
+('b6ac32d4-d03f-4ce0-9b19-31f41cd77438', '87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null),
+('c54d8c98-6884-4d21-9100-7ecafce37a56', '61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Mô tả', 69420, 193000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null),
+('a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c', '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null)
 
 
 create table InventoryLogs
@@ -335,7 +329,7 @@ constraint FK_Color_InventoryLogs
 foreign key (ColorID) references Colors(ColorID),
 
 constraint FK_ProductDetail_InventoryLogs
-foreign key (ProductDetailID) references Colors(ProductDetailID)
+foreign key (ProductDetailID) references ProductDetails(ProductDetailID)
 )
 
 insert into InventoryLogs values
@@ -404,7 +398,6 @@ insert into Color_ProductDetails values
 (NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'b6ac32d4-d03f-4ce0-9b19-31f41cd77438'),
 (NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'c54d8c98-6884-4d21-9100-7ecafce37a56'),
 (NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c')
-end
 
 create table Vouchers
 (
@@ -413,7 +406,7 @@ CategoryID				uniqueidentifier,
 ProductID				uniqueidentifier,
 UsesLeft				int,
 DiscountPrice			bigint,
-DiscountPercent			decimal(3,2),
+DiscountPercent			decimal(5, 2),
 [Description]			nvarchar(MAX),
 CreatedAt				datetime,
 LastUpdatedOn			datetime,

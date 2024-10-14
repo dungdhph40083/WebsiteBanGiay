@@ -17,7 +17,7 @@ namespace Application.Data.Models
 		public Guid? UserID { get; set; }
 		[ForeignKey(nameof(Product))]
 		public Guid? ProductID { get; set; }
-		[Precision(1, 1)]
+		[Precision(2, 1)]
 		public decimal? RatingStar {  get; set; }
 		public string? Comment { get; set; }
 		public DateTime? DateRated { get; set; }
