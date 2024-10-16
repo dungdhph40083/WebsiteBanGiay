@@ -3,6 +3,8 @@ using Application.Data;
 using Microsoft.EntityFrameworkCore;
 using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
+using AutoMapper;
+using Application.Data.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,15 @@ builder.Services.AddScoped<ICustomerSupportTicketsRepository, CustomerSupportTic
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IInventoryLogRepository, InventoryLogRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+builder.Services.AddScoped<IShoppingCart, ShoppingCartRepository>();
+
+
+var MapperConfig = new MapperConfiguration(Config =>
+{
+    Config.AddProfile(new MapProfile());
+});
+builder.Services.AddSingleton(MapperConfig.CreateMapper());
 
 var app = builder.Build();
 
