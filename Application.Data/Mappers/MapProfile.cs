@@ -16,6 +16,9 @@ namespace Application.Data.Mappers
             CreateMap<ShoppingCartDTO, ShoppingCart>();
             CreateMap<ShoppingCart, ShoppingCartDTO>();
 
+            CreateMap<SizeDTO, Size>();
+            CreateMap<Size, SizeDTO>();
+
             // PLEASE use automapper it literally decreases your muscle work by like 83%
         }
     }

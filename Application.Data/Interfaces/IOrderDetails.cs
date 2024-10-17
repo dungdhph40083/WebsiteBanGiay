@@ -8,6 +8,6 @@ namespace Application.Data.Interfaces
 {
 	public class IOrderDetails
 	{
-
+		// chắc cái thư mục này vô dụng rồi nhỉ
 	}
 }
