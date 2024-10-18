@@ -1,5 +1,6 @@
 ﻿using Application.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,15 @@ namespace Application.Data.ModelContexts
         public GiayDBContext(DbContextOptions options) : base(options) { }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json")
+				.Build();
+
+            var connectionString = configuration.GetConnectionString("DatabaseBanGiay");
+
+            // Configure the context to use SQL Server with the connection string
+            optionsBuilder.UseSqlServer(connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,9 +49,7 @@ namespace Application.Data.ModelContexts
 		public DbSet<PaymentMethod> PaymentMethods { get; set; }
 		public DbSet<PaymentMethodDetail> PaymentMethodDetails { get; set; }
 		public DbSet<Product> Products { get; set; }
-		public DbSet<Color_ProductDetail> Product_Details_Colors { get; set; }
-		public DbSet<Size_ProductDetail> Product_Details_Sizes { get; set; }
-		public DbSet<Inventory_ProductDetail> Product_Inventorys { get; set; }
+		public DbSet<Size_ProductDetail> Size_ProductDetails { get; set; }
 		public DbSet<ProductDetail> ProductDetails { get; set; }
 		public DbSet<ProductWarranty> ProductWarranties { get; set; }
 		public DbSet<Rating> Ratings { get; set; }
