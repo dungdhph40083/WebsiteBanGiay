@@ -16,7 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddScoped<IShoppingCart, ShoppingCartRepository>();
+//builder.Services.AddScoped<IShoppingCart, ShoppingCartRepository>();
 
 
 var MapperConfig = new MapperConfiguration(Config =>
