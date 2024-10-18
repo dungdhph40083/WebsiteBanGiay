@@ -20,7 +20,6 @@ builder.Services.AddDbContext<GiayDBContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay"));
 });
 
-//builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryProductRepository, CategoryProductRepository>();
 builder.Services.AddScoped<IColorRepository, ColorRepository>();
