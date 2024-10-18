@@ -13,5 +13,5 @@ namespace Application.Data.Models
 		public Guid RoleID { get; set; }
 		public string RoleCode { get; set; } = null!;
 		public string? RoleName { get; set; }
-	}
+    }
 }

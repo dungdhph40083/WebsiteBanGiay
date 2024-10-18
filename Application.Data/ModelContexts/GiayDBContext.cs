@@ -1,8 +1,10 @@
 ﻿using Application.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,11 +12,20 @@ namespace Application.Data.ModelContexts
 {
 	public class GiayDBContext : DbContext
 	{
-		public GiayDBContext(DbContextOptions options) : base(options)
-		{
-		}
+        public GiayDBContext() { }
+        public GiayDBContext(DbContextOptions options) : base(options) { }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Data Source=HUNGTUAN;Initial Catalog=DatabaseBanGiay;Integrated Security=True;Trust Server Certificate=True");
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+			
+        }
 
-		public DbSet<Category> Categories { get; set; }
+
+
+        public DbSet<Category> Categories { get; set; }
 		public DbSet<Category_Product> Category_Products { get; set; }
 		public DbSet<Color> Colors { get; set; }
 		public DbSet<Color_ProductDetail> Color_ProductDetails { get; set; }
@@ -45,33 +56,6 @@ namespace Application.Data.ModelContexts
 		public DbSet<User_Role> User_Roles { get; set; }
 		public DbSet<Voucher> Vouchers { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-	
-	 //modelBuilder.Entity<Rating>()
-		//.HasOne(r => r.User)
-		//.WithMany(u => u.Ratings)
-		//.HasForeignKey(r => r.UserID)
-		//.OnDelete(DeleteBehavior.NoAction); // Sử dụng Restrict để tránh cascade delete
-		//	modelBuilder.Entity<ProductReview>()
-	 // .HasOne(pr => pr.User)
-	 // .WithMany()
-	 // .HasForeignKey(pr => pr.UserID)
-	 // .OnDelete(DeleteBehavior.Restrict); // Không cho phép cascade delete
-
-		//	modelBuilder.Entity<OrderDetail>()
-	 //  .HasOne(od => od.Order)
-	 //  .WithMany(o => o.OrderDetails)
-	 //  .HasForeignKey(od => od.OrderID)
-	 //  .OnDelete(DeleteBehavior.NoAction);
-
-			// OrderDetail -> Product (No cascade delete)
-			//modelBuilder.Entity<OrderDetail>()
-			//	.HasOne(od => od.Product)
-			//	.WithMany(p => p.OrderDetails)
-			//	.HasForeignKey(od => od.ProductID)
-			//	.OnDelete(DeleteBehavior.NoAction); // 
-
-		}
+		
 	}
 }

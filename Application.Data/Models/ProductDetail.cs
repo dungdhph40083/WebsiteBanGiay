@@ -11,7 +11,7 @@ namespace Application.Data.Models
 	public class ProductDetail
 	{
 		[Key]
-		public Guid ProductDetailsID { get; set; }
+		public Guid ProductDetailID { get; set; }
         [ForeignKey(nameof(Product))]
 		public Guid? ProductID { get; set; }
 		public string? Material { get; set; }
@@ -23,7 +23,6 @@ namespace Application.Data.Models
         public DateTime WarrantyPeriod { get; set; }
 		public string? Instructions { get; set; }
 		public string? Features { get; set; }
-		public string? ShoeType { get; set; }
 		public virtual Product? Product { get; set; }
 		public virtual Image? Image { get; set; }
 		public virtual ICollection<Color_ProductDetail> Color_ProductDetails { get; set; } = new List<Color_ProductDetail>();

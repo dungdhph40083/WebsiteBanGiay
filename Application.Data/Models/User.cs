@@ -20,6 +20,6 @@ namespace Application.Data.Models
         public DateTime LastUpdatedOn { get; set; }
         public byte Status { get; set; }
         public virtual Image? Image { get; set; }
-        public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+        public virtual ICollection<User_Role> User_Roles { get; set; } = new List<User_Role>();
 	}
 }
