@@ -16,7 +16,7 @@ namespace Application.Data.ModelContexts
         public GiayDBContext(DbContextOptions options) : base(options) { }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=HUNGTUAN;Initial Catalog=DatabaseBanGiay;Integrated Security=True;Trust Server Certificate=True");
+            
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

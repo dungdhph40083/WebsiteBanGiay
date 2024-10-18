@@ -15,8 +15,26 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<GiayDBContext>(Options =>
+{
+    Options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay"));
+});
+
+//builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryProductRepository, CategoryProductRepository>();
+builder.Services.AddScoped<IColorRepository, ColorRepository>();
+builder.Services.AddScoped<ICustomerSupportTicketsRepository, CustomerSupportTicketsRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IInventoryLogRepository, InventoryLogRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 builder.Services.AddScoped<IShoppingCart, ShoppingCartRepository>();
+builder.Services.AddScoped<ISize_ProductDetail, Size_ProductDetailRepository>();
+builder.Services.AddScoped<ISize, SizeRepository>();
+builder.Services.AddScoped<IUser_Role, User_RoleRepository>();
+builder.Services.AddScoped<IUser, UserRepository>();
+builder.Services.AddScoped<IVoucher, VoucherRepository>();
 
 
 var MapperConfig = new MapperConfiguration(Config =>
