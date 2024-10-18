@@ -5,6 +5,7 @@ using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
 using AutoMapper;
 using Application.Data.Mappers;
+using Application.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,12 @@ builder.Services.AddScoped<ICustomerSupportTicketsRepository, CustomerSupportTic
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IInventoryLogRepository, InventoryLogRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-
+builder.Services.AddScoped<IPaymentMethod, PaymentMethodRepository>();
+builder.Services.AddScoped<IPaymentMethodDetail, PaymentMethodDetailRepository>();
+builder.Services.AddScoped<IOrderTracking, OrderTrackingRepository>();
+builder.Services.AddScoped<IOrderDetails, OrderDetailsRepository>();
+builder.Services.AddScoped<IProduct, ProductRepository>();
+builder.Services.AddScoped<IProductInventory, ProductInventoryRepository>();
 builder.Services.AddScoped<IShoppingCart, ShoppingCartRepository>();
 builder.Services.AddScoped<ISize_ProductDetail, Size_ProductDetailRepository>();
 builder.Services.AddScoped<ISize, SizeRepository>();
