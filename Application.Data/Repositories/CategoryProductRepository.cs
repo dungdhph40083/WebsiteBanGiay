@@ -23,7 +23,7 @@ namespace Application.Data.Repositories
         {
             var categoryProduct = new Category_Product
             {
-                CategoryProductID = Guid.NewGuid(), // Fake ID
+                Category_Products_ID = Guid.NewGuid(), // Fake ID
                 ProductID = Guid.NewGuid(), // Fake ID
                 CategoryID = categoryProductDto.CategoryID
             };
@@ -47,7 +47,7 @@ namespace Application.Data.Repositories
             return await _context.Category_Products
             .Select(cp => new CategoryProductDTO
             {
-                CategoryProductID = cp.CategoryProductID,
+                Category_Products_ID = cp.Category_Products_ID,
                 ProductID = Guid.NewGuid(), // Fake ID
                 CategoryID = cp.CategoryID
             }).ToListAsync();
@@ -60,7 +60,7 @@ namespace Application.Data.Repositories
             {
                 return new CategoryProductDTO
                 {
-                    CategoryProductID = categoryProduct.CategoryProductID,
+                    Category_Products_ID = categoryProduct.Category_Products_ID,
                     ProductID = Guid.NewGuid(), // Fake ID
                     CategoryID = categoryProduct.CategoryID
                 };
@@ -70,7 +70,7 @@ namespace Application.Data.Repositories
 
         public async Task Update(CategoryProductDTO categoryProductDto)
         {
-            var categoryProduct = await _context.Category_Products.FindAsync(categoryProductDto.CategoryProductID);
+            var categoryProduct = await _context.Category_Products.FindAsync(categoryProductDto.Category_Products_ID);
             if (categoryProduct == null) return;
 
             categoryProduct.CategoryID = categoryProductDto.CategoryID;

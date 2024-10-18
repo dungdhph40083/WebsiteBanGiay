@@ -13,7 +13,6 @@ namespace Application.Data.Models
 
 		public DateTime OrderDate { get; set; }
 		public byte Status { get; set; }
-		public long TotalPrice { get; set; }
 		public string? ShippingAddress { get; set; }
 
 		[ForeignKey(nameof(PaymentMethod))]

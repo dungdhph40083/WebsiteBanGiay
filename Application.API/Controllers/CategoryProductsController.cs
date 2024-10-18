@@ -36,13 +36,13 @@ namespace Application.API.Controllers
         public async Task<ActionResult> Create(CategoryProductDTO categoryProductDto)
         {
             await _categoryProductRepository.Add(categoryProductDto);
-            return CreatedAtAction(nameof(GetById), new { id = categoryProductDto.CategoryProductID }, categoryProductDto);
+            return CreatedAtAction(nameof(GetById), new { id = categoryProductDto.Category_Products_ID }, categoryProductDto);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(Guid id, CategoryProductDTO categoryProductDto)
         {
-            if (id != categoryProductDto.CategoryProductID) return BadRequest();
+            if (id != categoryProductDto.Category_Products_ID) return BadRequest();
 
             await _categoryProductRepository.Update(categoryProductDto);
             return NoContent();

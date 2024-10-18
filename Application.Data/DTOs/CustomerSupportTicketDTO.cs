@@ -12,7 +12,6 @@ namespace Application.Data.DTOs
         public Guid? UserID { get; set; } 
         public string? Subject { get; set; }
         public byte Status { get; set; }
-        public DateTime? CreateAt { get; set; }
-        public DateTime? CreateBy { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 }

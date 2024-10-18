@@ -13,8 +13,8 @@ namespace Application.Data.Models
 		public Guid SizeID { get; set; }
 		public string? SizeName { get; set; }
 		public byte Status { get; set; }
-		public DateTime? CreateDate {  get; set; }
-		public DateTime? UpdateDate { get; set;}
+		public DateTime? CreatedAt {  get; set; }
+		public DateTime? UpdatedAt { get; set;}
 
 	}
 }
