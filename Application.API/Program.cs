@@ -34,6 +34,7 @@ builder.Services.AddScoped<ISize, SizeRepository>();
 builder.Services.AddScoped<IUser_Role, User_RoleRepository>();
 builder.Services.AddScoped<IUser, UserRepository>();
 builder.Services.AddScoped<IVoucher, VoucherRepository>();
+builder.Services.AddScoped<IProductDetail, ProductDetailRepository>();
 
 
 var MapperConfig = new MapperConfiguration(Config =>

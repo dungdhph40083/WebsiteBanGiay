@@ -8,6 +8,7 @@ using System.Linq;
 using System;
 using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
+using Application.Data.DTOs;
 
 namespace Application.API.Controllers
 {
@@ -15,51 +16,41 @@ namespace Application.API.Controllers
     [ApiController]
     public class ProductDetailsController : ControllerBase
     {
-        private readonly IAllRepositories<ProductDetail> _allrepo;
-        GiayDBContext _context = new GiayDBContext();
-        public ProductDetailsController()
+        private readonly IProductDetail ProductDetailRepo;
+        public ProductDetailsController(IProductDetail ProductDetailRepo)
         {
-            _allrepo = new AllRepositroies<ProductDetail>(_context, _context.ProductDetails);
-        }
-        [HttpGet]
-        public IEnumerable<ProductDetail> GetAllItem()
-        {
-            return _allrepo.GetAllItems();
+            this.ProductDetailRepo = ProductDetailRepo;
         }
 
-        [HttpGet("{id}")]
-        public ProductDetail Get(Guid id)
+        [HttpGet]
+        public async Task<ActionResult<List<ProductDetail>>> Get()
         {
-            return _allrepo.GetAllItems().FirstOrDefault(c => c.ProductDetailID == id);
+            return await ProductDetailRepo.GetProductDetails();
         }
-        //[HttpPost("Create")]
-        //public bool Create(ProductDetail obj)
-        //{
-        //    return _allrepo.CreateItem(obj);
-        //}
-        //[Route("Update")]
-        //[HttpPut]
-        //public bool Update(ProductDetail obj)
-        //{
-        //    ProductDetail item = _allrepo.GetAllItems().FirstOrDefault(c => c.ProductDetailID == obj.ProductDetailID);
-        //    item.ProductID = obj.ProductID;
-        //    item.Material = obj.Material;
-        //    item.Quantity = obj.Quantity;
-        //    item.Price = obj.Price;
-        //    item.Brand = obj.Brand;
-        //    item.PlaceOfOrigin = obj.PlaceOfOrigin;
-        //    item.Type = obj.Type;
-        //    item.WarrantyPeriod = obj.WarrantyPeriod;
-        //    item.Instructions = obj.Instructions;
-        //    item.Features = obj.Features;
-        //    //item.ImageID = obj.Image;
-        //    return _allrepo.UpdateItem(item);
-        //}
-        [HttpDelete("Delete")]
-        public bool Delete(Guid id)
+
+        [HttpGet("{ID}")]
+        public async Task<ActionResult<ProductDetail?>> Get(Guid ID)
         {
-            ProductDetail Item = _allrepo.GetAllItems().FirstOrDefault(c => c.ProductDetailID == id);
-            return _allrepo.DeleteItem(Item);
+            return await ProductDetailRepo.GetProductDetailByID(ID);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProductDetail>> Post([FromBody] ProductDetailDTO NewProductDetail)
+        {
+            return await ProductDetailRepo.CreateNew(NewProductDetail);
+        }
+
+        [HttpPut("{ID}")]
+        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromBody] ProductDetailDTO UpdateProductDetail)
+        {
+            return await ProductDetailRepo.UpdateExisting(ID, UpdateProductDetail);
+        }
+
+        [HttpDelete("{ID}")]
+        public async Task<ActionResult> Delete(Guid ID)
+        {
+            await ProductDetailRepo.DeleteExisting(ID);
+            return Ok();
         }
     }
 }

@@ -25,8 +25,10 @@ namespace Application.Data.Models
 		public string? Features { get; set; }
 		public virtual Product? Product { get; set; }
 		public virtual Image? Image { get; set; }
-		public virtual ICollection<Color_ProductDetail> Color_ProductDetails { get; set; } = new List<Color_ProductDetail>();
-		public virtual ICollection<Inventory_ProductDetail> Inventory_ProductDetails { get; set; } = new List<Inventory_ProductDetail>();
-		public virtual ICollection<Size_ProductDetail> Size_ProductDetails { get; set; } = new List<Size_ProductDetail>();
+		//public virtual ICollection<Color_ProductDetail> Color_ProductDetails { get; set; } = new List<Color_ProductDetail>();
+		//public virtual ICollection<Inventory_ProductDetail> Inventory_ProductDetails { get; set; } = new List<Inventory_ProductDetail>();
+		//public virtual ICollection<Size_ProductDetail> Size_ProductDetails { get; set; } = new List<Size_ProductDetail>();
+
+		// 3 dong nay ko dung nua
     }
 }

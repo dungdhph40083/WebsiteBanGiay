@@ -19,6 +19,12 @@ namespace Application.Data.Mappers
             CreateMap<SizeDTO, Size>();
             CreateMap<Size, SizeDTO>();
 
+            // khi cần dùng mapper thì phải khai báo mới cái "sơ đồ ghép" cho mỗi thằng
+            // cần hợp nhất hoặc trích xuất dữ liệu ra
+
+            CreateMap<ProductDetail, ProductDetailDTO>();
+            CreateMap<ProductDetailDTO, ProductDetail>();
+
             // PLEASE use automapper it literally decreases your muscle work by like 83%
         }
     }

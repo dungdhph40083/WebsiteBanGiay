@@ -1,5 +1,6 @@
 ﻿using Application.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,17 @@ namespace Application.Data.ModelContexts
         public GiayDBContext(DbContextOptions options) : base(options) { }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+            // Build configuration
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            // Create DbContextOptionsBuilder
+            var connectionString = configuration.GetConnectionString("DatabaseBanGiay");
+
+            // Configure the context to use SQL Server with the connection string
+            optionsBuilder.UseSqlServer(connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
