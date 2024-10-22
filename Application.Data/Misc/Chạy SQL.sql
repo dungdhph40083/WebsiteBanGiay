@@ -236,7 +236,7 @@ RatingID				uniqueidentifier	not null	primary key,
 UserID					uniqueidentifier,
 ProductID				uniqueidentifier,
 Stars					decimal(2, 1),
-Comment					uniqueidentifier,
+Comment					nvarchar(MAX),
 DateRated				datetime,
 
 constraint FK_Rating_User
