@@ -21,7 +21,7 @@ namespace Application.Data.Repositories
         {
             Size_ProductDetail Relation = new() { Size_ProductDetailID = Guid.NewGuid() };
             Relation = Mapper.Map(NewRelation, Relation);
-            await Context.Product_Details_Sizes.AddAsync(Relation);
+            await Context.Size_ProductDetails.AddAsync(Relation);
             await Context.SaveChangesAsync();
             return Relation;
         }
@@ -31,19 +31,19 @@ namespace Application.Data.Repositories
             var Target = await GetSize_ProductDetailByID(TargetID);
             if (Target != null)
             {
-                Context.Product_Details_Sizes.Remove(Target);
+                Context.Size_ProductDetails.Remove(Target);
                 await Context.SaveChangesAsync();
             }
         }
 
         public Task<List<Size_ProductDetail>> GetSize_ProductDetails()
         {
-            return Context.Product_Details_Sizes.ToListAsync();
+            return Context.Size_ProductDetails.ToListAsync();
         }
 
         public async Task<Size_ProductDetail?> GetSize_ProductDetailByID(Guid TargetID)
         {
-            var Target = await Context.Product_Details_Sizes.FindAsync(TargetID);
+            var Target = await Context.Size_ProductDetails.FindAsync(TargetID);
             return Target;
         }
 

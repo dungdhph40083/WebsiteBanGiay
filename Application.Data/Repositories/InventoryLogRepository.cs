@@ -24,17 +24,17 @@ namespace Application.Data.Repositories
             var productDetailsId = Guid.NewGuid(); // Tạo ID mới
 
             // Kiểm tra xem ProductDetailsID có hợp lệ không
-            var productInventoryExists = await _context.Product_Inventorys.AnyAsync(p => p.Inventory_ProductDetailID == productDetailsId);
+            var productInventoryExists = await _context.Inventory_ProductDetails.AnyAsync(p => p.Inventory_ProductDetailID == productDetailsId);
             if (!productInventoryExists)
             {
-                // Nếu không tồn tại, tạo một bản ghi mới trong Product_Inventorys
+                // Nếu không tồn tại, tạo một bản ghi mới trong Inventory_ProductDetails
                 var newProductInventory = new Inventory_ProductDetail()
                 {
                     Inventory_ProductDetailID = productDetailsId, // Gán ID giả mạo
                                                            // Gán các thuộc tính khác nếu cần
                 };
 
-                _context.Product_Inventorys.Add(newProductInventory);
+                _context.Inventory_ProductDetails.Add(newProductInventory);
                 await _context.SaveChangesAsync(); // Lưu bản ghi mới
             }
 

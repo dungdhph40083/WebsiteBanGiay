@@ -12,7 +12,7 @@ namespace Application.Data.DTOs
         [Precision(5, 2)]
         public decimal DiscountPercent { get; set; }
         public string? Description { get; set; }
-        public DateTime CreatedOn { get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime LastUpdatedOn { get; set; }
         public byte Status { get; set; }
     }
