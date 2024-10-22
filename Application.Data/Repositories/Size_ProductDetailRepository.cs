@@ -19,7 +19,7 @@ namespace Application.Data.Repositories
 
         public async Task<Size_ProductDetail> CreateNew(Size_ProductDetailDTO NewRelation)
         {
-            Size_ProductDetail Relation = new() { Size_ProductDetailID = Guid.NewGuid() };
+            Size_ProductDetail Relation = new() { Size_ProductDetail_ID = Guid.NewGuid() };
             Relation = Mapper.Map(NewRelation, Relation);
             await Context.Size_ProductDetails.AddAsync(Relation);
             await Context.SaveChangesAsync();
