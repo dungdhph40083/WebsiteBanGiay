@@ -4,6 +4,7 @@ using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Application.Data.DTOs;
 
 namespace Application.API.Controllers
 {
@@ -11,34 +12,40 @@ namespace Application.API.Controllers
     [ApiController]
     public class RatingsController : ControllerBase
     {
-        private readonly IAllRepositories<Rating> _allrepo;
-        GiayDBContext _context = new GiayDBContext();
-        public RatingsController()
+        private readonly IRatings Rating;
+
+        public RatingsController(IRatings Rating)
         {
-            _allrepo = new AllRepositroies<Rating>(_context, _context.Ratings);
+            this.Rating = Rating;
         }
         [HttpGet]
-        public IEnumerable<Rating> GetAllItem()
+        public async Task<ActionResult<List<Rating>>> Get()
         {
-            return _allrepo.GetAllItems();
+            return await Rating.GetProductRating();
+        }
+        [HttpGet("{ID}")]
+        public async Task<ActionResult<Rating?>> Get(Guid ID)
+        {
+            return await Rating.GetProductRatinglByID(ID);
         }
 
-        [HttpGet("{id}")]
-        public Rating Get(Guid id)
+        [HttpPost]
+        public async Task<ActionResult<Rating>> Post([FromBody] RatingsDTO NewRating)
         {
-            return _allrepo.GetAllItems().FirstOrDefault(c => c.RatingID == id);
+            return await Rating.CreateNew(NewRating);
         }
-        //[HttpPost("Create")]
-        //public bool Create(Rating obj)
-        //{
-        //    Rating Item = new Rating();
-        //    Item.RatingID = Guid.NewGuid();
-        //    Item.UserID = obj.UserID;
-        //    Item.ProductID = obj.ProductID;
-        //    Item.Stars = obj.Stars;
-        //    Item.Comment = obj.Comment;
-        //    Item.DateRated = DateTime.Now;
-        //    return _allrepo.CreateItem(Item);
-        //}
+
+        [HttpPut("{ID}")]
+        public async Task<ActionResult<Rating?>> Put(Guid ID, [FromBody] RatingsDTO UpdateRating)
+        {
+            return await Rating.UpdateExisting(ID, UpdateRating);
+        }
+
+        [HttpDelete("{ID}")]
+        public async Task<ActionResult> Delete(Guid ID)
+        {
+            await Rating.DeleteExisting(ID);
+            return Ok();
+        }
     }
 }

@@ -24,6 +24,15 @@ namespace Application.Data.Mappers
 
             CreateMap<ProductDetail, ProductDetailDTO>();
             CreateMap<ProductDetailDTO, ProductDetail>();
+            
+            CreateMap<ProductWarranty, ProductWarrantyDTO>();
+            CreateMap<ProductWarrantyDTO, ProductWarranty>();
+            
+            CreateMap<Rating, RatingsDTO>();
+            CreateMap<RatingsDTO, Rating>();
+            
+            CreateMap<Return, ReturnDTO>();
+            CreateMap<ReturnDTO, Return>();
 
             // PLEASE use automapper it literally decreases your muscle work by like 83%
         }
