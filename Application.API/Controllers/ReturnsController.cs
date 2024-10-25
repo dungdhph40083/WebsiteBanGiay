@@ -4,6 +4,7 @@ using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Application.Data.DTOs;
 
 namespace Application.API.Controllers
 {
@@ -11,22 +12,40 @@ namespace Application.API.Controllers
     [ApiController]
     public class ReturnsController : ControllerBase
     {
-        private readonly IAllRepositories<Return> _allrepo;
-        GiayDBContext _context = new GiayDBContext();
-        public ReturnsController()
+        private readonly IReturn returnrepos;
+
+        public ReturnsController(IReturn returnrepos)
         {
-            _allrepo = new AllRepositroies<Return>(_context, _context.Returns);
+            this.returnrepos = returnrepos;
         }
         [HttpGet]
-        public IEnumerable<Return> GetAllItem()
+        public async Task<ActionResult<List<Return>>> Get()
         {
-            return _allrepo.GetAllItems();
+            return await returnrepos.GetReturn();
+        }
+        [HttpGet("{ID}")]
+        public async Task<ActionResult<Return?>> Get(Guid ID)
+        {
+            return await returnrepos.GetReturnlByID(ID);
         }
 
-        [HttpGet("{id}")]
-        public Return Get(Guid id)
+        [HttpPost]
+        public async Task<ActionResult<Return>> Post([FromBody] ReturnDTO NewReturn)
         {
-            return _allrepo.GetAllItems().FirstOrDefault(c => c.ReturnID == id);
+            return await returnrepos.CreateNew(NewReturn);
+        }
+
+        [HttpPut("{ID}")]
+        public async Task<ActionResult<Return?>> Put(Guid ID, [FromBody] ReturnDTO UpdateReturn)
+        {
+            return await returnrepos.UpdateExisting(ID, UpdateReturn);
+        }
+
+        [HttpDelete("{ID}")]
+        public async Task<ActionResult> Delete(Guid ID)
+        {
+            await returnrepos.DeleteExisting(ID);
+            return Ok();
         }
     }
 }

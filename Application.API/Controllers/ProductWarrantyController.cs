@@ -1,4 +1,5 @@
-﻿using Application.Data.ModelContexts;
+﻿using Application.Data.DTOs;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
@@ -11,46 +12,40 @@ namespace Application.API.Controllers
     [ApiController]
     public class ProductWarrantyController : ControllerBase
     {
-        private readonly IAllRepositories<ProductWarranty> _allrepo;
-        GiayDBContext _context = new GiayDBContext();
+        private readonly IProductWarranty productWarrantyRepo;
 
-        public ProductWarrantyController()
+        public ProductWarrantyController(IProductWarranty productWarrantyRepo)
         {
-            _allrepo = new AllRepositroies<ProductWarranty>(_context, _context.ProductWarranties);
+            this.productWarrantyRepo = productWarrantyRepo;
         }
         [HttpGet]
-        public IEnumerable<ProductWarranty> GetAllItem()
+        public async Task<ActionResult<List<ProductWarranty>>> Get()
         {
-            return _allrepo.GetAllItems();
+            return await productWarrantyRepo.GetProductWarranty();
         }
-        //[HttpPost("Create")]
-        //public bool Create(ProductWarranty item)
-        //{
-
-        //    ProductWarranty Item = new ProductWarranty();
-        //    Item.WarrantyID = item.WarrantyID;
-        //    Item.WarrantyPeriod = DateTime.Now;
-        //    Item.WarrantyConditions = item.WarrantyConditions;
-        //    Item.CreatedAt = DateTime.Now;
-        //    return _allrepo.CreateItem(Item);
-        //}
-        //[HttpPut("Update")]
-        //public bool Post(ProductWarranty item)
-        //{
-        //    ProductWarranty Item = _allrepo.GetAllItems().FirstOrDefault(c => c.WarrantyID == item.WarrantyID);
-        //    Item.WarrantyPeriod = DateTime.Now;
-        //    Item.WarrantyConditions = item.WarrantyConditions;
-        //    Item.UpdatedAt = DateTime.Now;
-
-        //    return _allrepo.UpdateItem(Item);
-        //    //
-        //}
-
-        [HttpDelete("Delete")]
-        public bool Delete(Guid id)
+        [HttpGet("{ID}")]
+        public async Task<ActionResult<ProductWarranty?>> Get(Guid ID)
         {
-            ProductWarranty Item = _allrepo.GetAllItems().FirstOrDefault(c => c.WarrantyID == id);
-            return _allrepo.DeleteItem(Item);
+            return await productWarrantyRepo.GetProductWarrantylByID(ID);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProductWarranty>> Post([FromBody] ProductWarrantyDTO NewWarranty)
+        {
+            return await productWarrantyRepo.CreateNew(NewWarranty);
+        }
+
+        [HttpPut("{ID}")]
+        public async Task<ActionResult<ProductWarranty?>> Put(Guid ID, [FromBody] ProductWarrantyDTO UpdateWarranty)
+        {
+            return await productWarrantyRepo.UpdateExisting(ID, UpdateWarranty);
+        }
+
+        [HttpDelete("{ID}")]
+        public async Task<ActionResult> Delete(Guid ID)
+        {
+            await productWarrantyRepo.DeleteExisting(ID);
+            return Ok();
         }
     }
 }

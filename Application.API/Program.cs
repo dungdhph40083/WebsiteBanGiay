@@ -22,7 +22,6 @@ builder.Services.AddDbContext<GiayDBContext>(Options =>
 });
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICategoryProductRepository, CategoryProductRepository>();
 builder.Services.AddScoped<IColorRepository, ColorRepository>();
 builder.Services.AddScoped<ICustomerSupportTicketsRepository, CustomerSupportTicketsRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
@@ -39,6 +38,10 @@ builder.Services.AddScoped<ISize, SizeRepository>();
 builder.Services.AddScoped<IUser_Role, User_RoleRepository>();
 builder.Services.AddScoped<IUser, UserRepository>();
 builder.Services.AddScoped<IVoucher, VoucherRepository>();
+builder.Services.AddScoped<IProductDetail, ProductDetailRepository>();
+builder.Services.AddScoped<IProductWarranty, ProductWarrantyRepository>();
+builder.Services.AddScoped<IRatings, RatingsRepository>();
+builder.Services.AddScoped<IReturn, ReturnRepository>();
 
 
 var MapperConfig = new MapperConfiguration(Config =>
