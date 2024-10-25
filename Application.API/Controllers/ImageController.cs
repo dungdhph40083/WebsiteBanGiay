@@ -1,4 +1,5 @@
-﻿using Application.Data.DTOs;
+﻿using Application.API.Service;
+using Application.Data.DTOs;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
@@ -33,10 +34,18 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ImageDTO>> CreateImage([FromBody] ImageDTO imageDto)
+        public async Task<ActionResult<ImageDTO>> CreateImage([FromForm] ImageDTO imageDto, IFormFile ImageFile)
         {
-            var createdImage = await _imageRepository.CreateImageAsync(imageDto);
-            return CreatedAtAction(nameof(GetImage), new { id = createdImage.ImageID }, createdImage);
+            if (ImageFile.Length > 4_194_304)
+            {
+                return BadRequest("Tệp ảnh không được vượt quá 4MB!");
+            }
+            if (CheckingIfThis.IsAnImage(ImageFile))
+            {
+                var createdImage = await _imageRepository.CreateImageAsync(imageDto, ImageFile);
+                return CreatedAtAction(nameof(GetImage), new { id = createdImage.ImageID }, createdImage);
+            }
+            else return BadRequest("Tệp ảnh không hợp lệ!");
         }
 
         [HttpPut("{id}")]

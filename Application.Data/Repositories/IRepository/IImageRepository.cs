@@ -1,17 +1,14 @@
 ﻿using Application.Data.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Application.Data.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Data.Repositories.IRepository
 {
     public interface IImageRepository
     {
-        Task<IEnumerable<ImageDTO>> GetAllImagesAsync();
-        Task<ImageDTO?> GetImageByIdAsync(Guid imageId);
-        Task<ImageDTO> CreateImageAsync(ImageDTO imageDto);
+        Task<IEnumerable<Image>> GetAllImagesAsync();
+        Task<Image?> GetImageByIdAsync(Guid imageId);
+        Task<Image> CreateImageAsync(ImageDTO imageDto, IFormFile File);
         Task<bool> UpdateImageAsync(Guid imageId, ImageDTO imageDto);
         Task<bool> DeleteImageAsync(Guid imageId);
     }

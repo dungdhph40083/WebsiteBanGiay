@@ -8,7 +8,8 @@ create table Images
 (
 ImageID					uniqueidentifier	not null	primary key,
 ImageName				nvarchar(MAX),
-ImageData				varbinary(MAX),
+ImageDescription		nvarchar(MAX),
+ImageFileName			nvarchar(MAX),
 [Status]				tinyint,
 CreatedAt				datetime,
 UpdatedAt				datetime
@@ -17,11 +18,11 @@ go
 
 -- LƯU Ý: KIỂM TRA VÀ SỬA ĐƯỜNG DẪN TỚI TỆP TRƯỚC KHI DÙNG --
 insert into Images values
-('2ac06cd1-492f-47f2-bdc3-6e8ce031b3ab', N'Adidas 8152',				null, 1, GetDate(), GetDate()),
-('7fcf6f9a-7352-423a-8bf9-612d542b3522', N'Adidas A83',					null, 1, GetDate(), GetDate()),
-('05f20b0f-6979-4e82-a727-cb24f626d478', N'Adidas Đen-trắng Galaxy 5',	null, 1, GetDate(), GetDate()),
-('79ba4596-0578-45ad-8109-a7d5029ab4d9', N'Adidas Da bò',				null, 1, GetDate(), GetDate()),
-('8d59af65-660c-4a93-a91c-754218be7de3', N'Adidas Trắng sọc đen',		null, 1, GetDate(), GetDate())
+('2ac06cd1-492f-47f2-bdc3-6e8ce031b3ab', N'Adidas 8152',				N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-8152.jpg',					1, GetDate(), GetDate()),
+('7fcf6f9a-7352-423a-8bf9-612d542b3522', N'Adidas A83',					N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-a83.jpg',					1, GetDate(), GetDate()),
+('05f20b0f-6979-4e82-a727-cb24f626d478', N'Adidas Đen-trắng Galaxy 5',	N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-black-white-galaxy5.jpg',	1, GetDate(), GetDate()),
+('79ba4596-0578-45ad-8109-a7d5029ab4d9', N'Adidas Da bò',				N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-da-bo.jpg',				1, GetDate(), GetDate()),
+('8d59af65-660c-4a93-a91c-754218be7de3', N'Adidas Trắng sọc đen',		N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-trang-soc-den.jpg',		1, GetDate(), GetDate())
 																		
 /* region Category-Products */
 create table Categories
@@ -41,17 +42,21 @@ create table Products
 ProductID				uniqueidentifier	not null	primary key,
 [Name]					nvarchar(MAX),
 [Description]			nvarchar(MAX),
+ImageID					uniqueidentifier,
 Price					bigint,
 CreatedAt				datetime,
 UpdatedAt				datetime
+
+constraint FK_Images_Products
+foreign key (ImageID) references Images(ImageID)
 )
 
 insert into Products values
-('6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Giày Adidas 8152',				N'Adidas 8152 dành cho thể thao và thời trang, giúp giảm mỏi chân khi vận động nặng',	172000, GETDATE(), GETDATE()),
-('a785be42-a9de-44f8-b826-7bc9151eea9b', N'Giày Adidas A83',				N'Adidas A83 dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',					144000, GETDATE(), GETDATE()),
-('87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Giày Adidas Đen-trắng Galaxy 5', N'Adidas Đen-trắng nam tính, thời trang hot nhất',										126000, GETDATE(), GETDATE()),
-('61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Giày Adidas Da bò',				N'Adidas Da bò hiếm có, đẹp mắt, hợp gu',												193000, GETDATE(), GETDATE()),
-('4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Giày Adidas Trắng sọc đen',		N'Adidas Trắng sọc đen dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',		126000, GETDATE(), GETDATE())
+('6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Giày Adidas 8152',				N'Adidas 8152 dành cho thể thao và thời trang, giúp giảm mỏi chân khi vận động nặng',	172000, '2ac06cd1-492f-47f2-bdc3-6e8ce031b3ab', GETDATE(), GETDATE()),
+('a785be42-a9de-44f8-b826-7bc9151eea9b', N'Giày Adidas A83',				N'Adidas A83 dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',					144000, '7fcf6f9a-7352-423a-8bf9-612d542b3522', GETDATE(), GETDATE()),
+('87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Giày Adidas Đen-trắng Galaxy 5', N'Adidas Đen-trắng nam tính, thời trang hot nhất',										126000, '05f20b0f-6979-4e82-a727-cb24f626d478', GETDATE(), GETDATE()),
+('61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Giày Adidas Da bò',				N'Adidas Da bò hiếm có, đẹp mắt, hợp gu',												193000, '79ba4596-0578-45ad-8109-a7d5029ab4d9', GETDATE(), GETDATE()),
+('4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Giày Adidas Trắng sọc đen',		N'Adidas Trắng sọc đen dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',		126000, '8d59af65-660c-4a93-a91c-754218be7de3', GETDATE(), GETDATE())
 
 create table Category_Products
 (
