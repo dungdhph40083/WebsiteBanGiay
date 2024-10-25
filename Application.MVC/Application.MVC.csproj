@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Application.API\Application.API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="WWWRoot\images\" />
+  </ItemGroup>
+
 </Project>

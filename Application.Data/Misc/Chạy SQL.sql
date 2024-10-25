@@ -8,7 +8,8 @@ create table Images
 (
 ImageID					uniqueidentifier	not null	primary key,
 ImageName				nvarchar(MAX),
-ImageData				varbinary(MAX),
+ImageDescription		nvarchar(MAX),
+ImageFileName			nvarchar(MAX),
 [Status]				tinyint,
 CreatedAt				datetime,
 UpdatedAt				datetime
@@ -17,11 +18,11 @@ go
 
 -- LƯU Ý: KIỂM TRA VÀ SỬA ĐƯỜNG DẪN TỚI TỆP TRƯỚC KHI DÙNG --
 insert into Images values
-('2ac06cd1-492f-47f2-bdc3-6e8ce031b3ab', N'Adidas 8152',				null, 1, GetDate(), GetDate()),
-('7fcf6f9a-7352-423a-8bf9-612d542b3522', N'Adidas A83',					null, 1, GetDate(), GetDate()),
-('05f20b0f-6979-4e82-a727-cb24f626d478', N'Adidas Đen-trắng Galaxy 5',	null, 1, GetDate(), GetDate()),
-('79ba4596-0578-45ad-8109-a7d5029ab4d9', N'Adidas Da bò',				null, 1, GetDate(), GetDate()),
-('8d59af65-660c-4a93-a91c-754218be7de3', N'Adidas Trắng sọc đen',		null, 1, GetDate(), GetDate())
+('2ac06cd1-492f-47f2-bdc3-6e8ce031b3ab', N'Adidas 8152',				N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-8152.jpg',					1, GetDate(), GetDate()),
+('7fcf6f9a-7352-423a-8bf9-612d542b3522', N'Adidas A83',					N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-a83.jpg',					1, GetDate(), GetDate()),
+('05f20b0f-6979-4e82-a727-cb24f626d478', N'Adidas Đen-trắng Galaxy 5',	N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-black-white-galaxy5.jpg',	1, GetDate(), GetDate()),
+('79ba4596-0578-45ad-8109-a7d5029ab4d9', N'Adidas Da bò',				N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-da-bo.jpg',				1, GetDate(), GetDate()),
+('8d59af65-660c-4a93-a91c-754218be7de3', N'Adidas Trắng sọc đen',		N'(Mô tả hình ảnh bằng chữ ở đây)', N'adidas-trang-soc-den.jpg',		1, GetDate(), GetDate())
 																		
 /* region Category-Products */
 create table Categories

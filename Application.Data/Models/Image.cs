@@ -13,9 +13,10 @@ namespace Application.Data.Models
 		[Key]
 		public Guid ImageID { get; set; }
 		public string? ImageName { get; set; }
-		public byte[]? ImageData { get; set; }
+		public string? ImageDescription { get; set; }
+		public string? ImageFileName { get; set; }
 		public byte Status { get; set; }
 		public DateTime? CreatedAt { get; set; }
-		public DateTime? UpdatedAt{ get; set; }
+		public DateTime? UpdatedAt { get; set; }
 	}
 }

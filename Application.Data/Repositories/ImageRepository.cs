@@ -2,45 +2,54 @@
 using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Data.Repositories
 {
     public class ImageRepository : IImageRepository
     {
         private readonly GiayDBContext _context;
+        private readonly IMapper Mapper;
+        private static Random RNG = new Random();
+        const string RandomizerChars = "0123456789abcdef";
 
-        public ImageRepository(GiayDBContext context)
+        public ImageRepository(GiayDBContext context, IMapper Mapper)
         {
             _context = context;
+            this.Mapper = Mapper;
         }
-        public async Task<ImageDTO> CreateImageAsync(ImageDTO imageDto)
+        public async Task<Image> CreateImageAsync(ImageDTO imageDto, IFormFile ImageFile)
         {
-            var image = new Image
+            // This violates SRP but idc anymore
+
+            string UniqueID = new(Enumerable.Repeat(RandomizerChars, 5).Select(Idx => Idx[RNG.Next(Idx.Length)]).ToArray());
+            string FileExtension = Path.GetExtension(ImageFile.FileName);
+            DateTime TimeSync = DateTime.UtcNow; // Để đồng bộ thời gian thêm và cập nhật vì nãy thêm vào dùng 2 cái DateTime.UtcNow nó bị delay một vài milligiây @@
+            string FileName = Path.GetFileNameWithoutExtension(ImageFile.FileName) + $"_{DateTimeOffset.Parse(TimeSync.ToString()).ToUnixTimeSeconds()}_{UniqueID}" + FileExtension;
+
+            Image Image = new()
             {
-                ImageID = Guid.NewGuid(), // Tạo ID mới
-                ImageName = imageDto.ImageName,
-                Status = imageDto.Status,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                ImageID = Guid.NewGuid(),
+                ImageFileName = FileName,
+                CreatedAt = TimeSync,
+                UpdatedAt = TimeSync
             };
 
-            _context.Images.Add(image);
+            Image = Mapper.Map(imageDto, Image);
+
+            _context.Images.Add(Image);
             await _context.SaveChangesAsync();
 
-            return new ImageDTO
+            // Cho vào cuối để giảm bộ nhớ
+            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "WWWRoot", "Images", FileName);
+            using (var Stream = new FileStream(FilePath, FileMode.Create))
             {
-                ImageID = image.ImageID,
-                ImageName = image.ImageName,
-                Status = image.Status,
-                CreatedAt = image.CreatedAt,
-                UpdatedAt = image.UpdatedAt
-            };
+                await ImageFile.CopyToAsync(Stream);
+            }
+
+            return Image;
         }
 
         public async Task<bool> DeleteImageAsync(Guid imageId)
@@ -53,42 +62,27 @@ namespace Application.Data.Repositories
             return true;
         }
 
-        public async Task<IEnumerable<ImageDTO>> GetAllImagesAsync()
+        public async Task<IEnumerable<Image>> GetAllImagesAsync()
         {
-            return await _context.Images
-            .Select(i => new ImageDTO
-            {
-                ImageID = i.ImageID,
-                ImageName = i.ImageName,
-                Status = i.Status,
-                CreatedAt = i.CreatedAt,
-                UpdatedAt = i.UpdatedAt
-            }).ToListAsync();
+            return await _context.Images.ToListAsync();
         }
 
-        public async Task<ImageDTO?> GetImageByIdAsync(Guid imageId)
+        public async Task<Image?> GetImageByIdAsync(Guid imageId)
         {
             var image = await _context.Images.FindAsync(imageId);
-            if (image == null) return null;
-
-            return new ImageDTO
-            {
-                ImageID = image.ImageID,
-                ImageName = image.ImageName,
-                Status = image.Status,
-                CreatedAt = image.CreatedAt,
-                UpdatedAt = image.UpdatedAt
-            };
+            return image == null ? null : image;
         }
 
-        public  async Task<bool> UpdateImageAsync(Guid imageId, ImageDTO imageDto)
+        public async Task<bool> UpdateImageAsync(Guid imageId, ImageDTO imageDto)
         {
             var image = await _context.Images.FindAsync(imageId);
             if (image == null) return false;
 
-            image.ImageName = imageDto.ImageName;
-            image.Status = imageDto.Status;
+            _context.Entry(image).State = EntityState.Modified;
+
             image.UpdatedAt = DateTime.UtcNow;
+            image = Mapper.Map(imageDto, image);
+            _context.Update(image);
 
             await _context.SaveChangesAsync();
             return true;
