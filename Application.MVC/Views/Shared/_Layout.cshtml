@@ -1,18 +1,37 @@
-﻿<!DOCTYPE html>
+﻿@{
+    Random RNG = new Random();
+    int ThemeValueNumber = RNG.Next(0, 10000);
+    switch (ThemeValueNumber)
+    {
+        case 9999:
+            ViewData["ThemePack"] = "~/css/fontprofile_philosopher.css";
+            break;
+        case 666:
+        case 6666:
+            ViewData["ThemePack"] = "~/css/fontprofile_wingdings2.css";
+            break;
+        default:
+            ViewData["ThemePack"] = "~/css/fontprofile_normal.css";
+            break;
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Application.MVC</title>
+    <title>@ViewData["Title"] - Admin Dashboard</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="@ViewData["ThemePack"]" asp-append-version="true"/>
     <link rel="stylesheet" href="~/Application.MVC.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Application.MVC</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Admin Dashboard</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -38,7 +57,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - Application.MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - Website Bán giày - Seed: @ThemeValueNumber
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
-namespace Application.API.Service
+﻿namespace Application.API.Service
 {
     public class CheckingIfThis
     {

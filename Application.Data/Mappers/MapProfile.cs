@@ -37,6 +37,9 @@ namespace Application.Data.Mappers
             CreateMap<Image, ImageDTO>();
             CreateMap<ImageDTO, Image>();
 
+            CreateMap<Size_ProductDetail, Size_ProductDetailDTO>();
+            CreateMap<Size_ProductDetailDTO, Size_ProductDetail>();
+
             // PLEASE use automapper it literally decreases your muscle work by like 83%
         }
     }
