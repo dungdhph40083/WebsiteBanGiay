@@ -17,7 +17,7 @@ namespace Application.API.Controllers
         {
             _allrepo = new AllRepositroies<ShippingMethod>(_context, _context.ShippingMethods);
         }
-        [HttpGet]
+        [HttpGet("get-all")]
         public IEnumerable<ShippingMethod> GetAllItem()
         {
             return _allrepo.GetAllItems();

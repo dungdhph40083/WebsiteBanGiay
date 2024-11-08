@@ -17,7 +17,7 @@ namespace Application.API.Controllers
             _categoryRepository = categoryRepository;
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetAll()
         {
             return Ok(await _categoryRepository.GetAllCategory());
@@ -31,13 +31,13 @@ namespace Application.API.Controllers
 
             return Ok(category);
         }
-        [HttpPost]
+        [HttpPost("create-category")]
         public async Task<ActionResult> Create(CategoryDTO categoryDto)
         {
             await _categoryRepository.AddCategory(categoryDto);
             return CreatedAtAction(nameof(GetById), new { id = categoryDto.CategoryID }, categoryDto);
         }
-        [HttpPut("{id}")]
+        [HttpPut("update-category/{id}")]
         public async Task<ActionResult> Update(Guid id, CategoryDTO categoryDto)
         {
             if (id != categoryDto.CategoryID) return BadRequest();
@@ -48,6 +48,9 @@ namespace Application.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
+            var category = await _categoryRepository.GetByIdCategory(id);
+            if (category == null) return NotFound();
+
             await _categoryRepository.DeleteCategory(id);
             return NoContent();
         }

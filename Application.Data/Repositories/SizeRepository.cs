@@ -30,7 +30,7 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Sizes.Remove(Target);
-                Context.SaveChanges();
+                await Context.SaveChangesAsync(); // Sử dụng await cho SaveChangesAsync
             }
         }
 
