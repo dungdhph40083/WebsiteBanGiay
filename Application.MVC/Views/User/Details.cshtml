@@ -1,0 +1,91 @@
+﻿@model Application.Data.Models.ShoppingCart
+
+@{
+    ViewData["Title"] = "Details of cart entry";
+}
+
+<h1>Cart detail</h1>
+
+<dl class="row">
+    <dt class="col-md-3">ID</dt>
+    <dd class="col-md-9">
+        <i style="font-size: small" class="font-monospace-cascadia">@Model.CartID</i>
+    </dd>
+    <dt class="col-md-3">Username</dt>
+    <dd class="col-md-9">@Model.User?.Username<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">@Model.UserID</i>
+    </dd>
+    <dt class="col-md-3">Product</dt>
+    <dd class="col-md-9">
+        @Model.Product?.Name<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">@Model.ProductID</i>
+    </dd>
+        <dt class="col-md-3">Size</dt>
+    <dd class="col-md-9">@Model.Size?.Name<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">@Model.SizeID</i>
+    </dd>
+        <dt class="col-md-3">Color</dt>
+    <dd class="col-md-9">@Model.Color?.ColorName<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">@Model.ColorID</i>
+    </dd>
+        <dt class="col-md-3">Voucher code</dt>
+    <dd class="col-md-9">@(Model.Voucher?.VoucherCode ?? "NONE")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">@Model.VoucherID</i>
+    </dd>
+        <dt class="col-md-3">Order date</dt>
+    <dd class="col-md-9">@Model.DateAdded.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss")
+        &nbsp;
+    </dd>
+        <dt class="col-md-3">Amount in cart</dt>
+    <dd class="col-md-9">
+        @Model.QuantityCart
+        &nbsp;
+    </dd>
+    <dt class="col-md-3">Unit price</dt>
+    <dd class="col-md-9">
+        @Model.Product!.Price.ToString("#,##0")
+        &nbsp;
+    </dd>
+    <dt class="col-md-3">Total price</dt>
+    <dd class="col-md-9">
+        @((Model.QuantityCart * Model.Product!.Price).ToString("#,##0"))
+        &nbsp;
+    </dd>
+    <dt class="col-md-3">Discount</dt>
+    <dd class="col-md-9">
+        @if (Model.Voucher!.DiscountPrice > 0)
+        {
+            @Model.Voucher!.DiscountPrice.ToString("#,##0")
+        }
+        else if (@Model.Voucher!.DiscountPercent > 0)
+        {
+            @Model.Voucher!.DiscountPercent <text>%</text>
+        }
+        else
+        {
+            <text>None</text>
+        }
+        &nbsp;
+    </dd>
+    <dt class="col-md-3">Finalized price</dt>
+    <dd class="col-md-9">
+        @if (Model.Voucher!.DiscountPrice > 0)
+        {
+            @((Model.QuantityCart * Model.Product!.Price - Model.Voucher!.DiscountPrice).ToString("#,##0"))
+        }
+        else if (@Model.Voucher!.DiscountPercent > 0)
+        {
+            @((Model.QuantityCart * Model.Product!.Price * (1 - (Model.Voucher!.DiscountPercent))).ToString("#,##0"))
+        }
+        else
+        {
+            <text>None</text>
+        }
+        &nbsp;
+    </dd>
+    <dt class="col-md-3">Is checked out?</dt>
+    <dd class="col-md-9">
+        @(Model.IsCheckedOut ? "Yes" : "No")
+        &nbsp;
+    </dd>
+</dl>

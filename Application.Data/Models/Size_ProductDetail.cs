@@ -12,12 +12,12 @@ namespace Application.Data.Models
 	{
 		[Key]
 		public Guid Size_ProductDetail_ID { get; set; }
-		[ForeignKey(nameof(Product))]
-		public Guid ProductID { get; set; }
+		[ForeignKey(nameof(ProductDetail))]
+		public Guid ProductDetailID { get; set; }
 		[ForeignKey(nameof(Size))]
 		public Guid SizeID { get; set; }
 
-		public virtual Product? Product { get; set; }
+		public virtual ProductDetail? ProductDetail { get; set; }
 		public virtual Size? Size { get; set; }
 	}			
 }

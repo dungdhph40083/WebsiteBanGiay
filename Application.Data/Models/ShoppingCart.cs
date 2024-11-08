@@ -16,6 +16,8 @@ namespace Application.Data.Models
 		[ForeignKey(nameof(User))]
 		public Guid? UserID { get; set; }
 		public int QuantityCart { get; set; }
+		[ForeignKey(nameof(Product))]
+		public Guid? ProductID { get; set; }
 		[ForeignKey(nameof(Size))]
 		public Guid? SizeID { get; set; }
 		[ForeignKey(nameof(Color))]
@@ -31,6 +33,6 @@ namespace Application.Data.Models
 		public virtual Voucher? Voucher { get; set; }
 		public virtual Size? Size { get; set; }
 		public virtual Color? Color { get; set; }
-
+		public virtual Product? Product { get; set; }
 	}
 }

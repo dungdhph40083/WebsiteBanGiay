@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -17,6 +18,9 @@ namespace Application.Data.Models
 		public Guid? CategoryID { get; set; }
 		[ForeignKey(nameof(Product))]
 		public Guid? ProductID {  get; set; }
+		public int UsesLeft { get; set; }
+		[MaxLength(80)]
+		public string VoucherCode { get; set; } = null!;
 		public long DiscountPrice { get; set; }
 		[Precision(5, 2)]
 		public decimal DiscountPercent { get; set; }
@@ -26,5 +30,5 @@ namespace Application.Data.Models
 		public byte Status { get; set; }
 		public virtual Category? Category { get; set; }
 		public virtual Product? Product { get; set; }
-	}
+    }
 }

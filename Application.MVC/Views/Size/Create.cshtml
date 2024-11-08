@@ -1,0 +1,22 @@
+﻿@model Application.Data.DTOs.SizeDTO;
+
+@{
+    ViewData["Title"] = "Add product size";
+}
+
+<h1>Add product size</h1>
+
+<form asp-action="Create" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="Name" class="form-label">Size name</label>
+            <input type="text" asp-for="Name" class="form-input" aria-label="Input size name">
+            <span asp-validation-for="Name">Required!</span>
+        </div>
+        <div class="col-md-6 mt-4">
+            <label asp-for="Status" class="form-label">Size</label>
+            <input asp-for="Status" class="form-input" aria-label="Is available?">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

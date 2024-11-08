@@ -1,0 +1,31 @@
+﻿@model Application.Data.DTOs.User_RoleDTO;
+
+@{
+    ViewData["Title"] = "Update product size";
+}
+
+<h1>Update product size</h1>
+
+<form asp-action="Edit" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="UserID" class="form-label">Username</label>
+            <select asp-for="UserID" class="form-select" aria-label="Select user to assign role" asp-items="@ViewBag.Users">
+                <option selected hidden value="">(No user specified)</option>
+            </select>
+            <span asp-validation-for="UserID">Username is required!</span>
+        </div>
+        <div class="col-md-6 mt-4">
+            <label asp-for="RoleID" class="form-label">Role</label>
+            <select asp-for="RoleID" class="form-select" aria-label="Select user to assign role" asp-items="@ViewBag.Roles">
+                <option selected value="">No role</option>
+            </select>
+            @* <span asp-validation-for="RoleID">Role is required!</span> *@
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+
+<div class="alert alert-warning" role="alert">
+    Only use this edit function to edit typos! (Like it matters anyway...)
+</div>

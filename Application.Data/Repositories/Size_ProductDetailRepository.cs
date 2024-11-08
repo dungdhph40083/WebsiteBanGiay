@@ -38,12 +38,18 @@ namespace Application.Data.Repositories
 
         public Task<List<Size_ProductDetail>> GetSize_ProductDetails()
         {
-            return Context.Size_ProductDetails.ToListAsync();
+            return Context.Size_ProductDetails
+                .Include(UU => UU.Size)
+                .Include(UU => UU.ProductDetail).ThenInclude(WW => WW!.Product)
+                .ToListAsync();
         }
 
         public async Task<Size_ProductDetail?> GetSize_ProductDetailByID(Guid TargetID)
         {
-            var Target = await Context.Size_ProductDetails.FindAsync(TargetID);
+            var Target = await Context.Size_ProductDetails
+                .Include(UU => UU.Size)
+                .Include(UU => UU.ProductDetail).ThenInclude(WW => WW!.Product)
+                .FirstOrDefaultAsync(x => x.Size_ProductDetail_ID == TargetID);
             return Target;
         }
 

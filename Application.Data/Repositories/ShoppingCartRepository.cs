@@ -39,14 +39,26 @@ namespace Application.Data.Repositories
             }
         }
 
+
+
         public async Task<ShoppingCart?> GetShoppingCartByID(Guid TargetID)
         {
-            return await Context.ShoppingCarts.FindAsync(TargetID);
+            return await Context.ShoppingCarts
+                .Include(UU => UU.User)
+                .Include(UU => UU.Voucher)
+                .Include(UU => UU.Size)
+                .Include(UU => UU.Color)
+                .Include(UU => UU.Product).FirstOrDefaultAsync(x => x.CartID == TargetID);
         }
 
         public async Task<List<ShoppingCart>> GetShoppingCarts()
         {
-            return await Context.ShoppingCarts.ToListAsync();
+            return await Context.ShoppingCarts
+                .Include(UU => UU.User)
+                .Include(UU => UU.Voucher)
+                .Include(UU => UU.Size)
+                .Include(UU => UU.Color)
+                .Include(UU => UU.Product).ToListAsync();
         }
 
         public async Task<ShoppingCart?> Update(Guid TargetID, ShoppingCartDTO UpdatedShoppingCart)
