@@ -52,11 +52,11 @@ foreign key (ImageID) references Images(ImageID)
 )
 
 insert into Products values
-('6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Giày Adidas 8152',				N'Adidas 8152 dành cho thể thao và thời trang, giúp giảm mỏi chân khi vận động nặng',	172000, '2ac06cd1-492f-47f2-bdc3-6e8ce031b3ab', GETDATE(), GETDATE()),
-('a785be42-a9de-44f8-b826-7bc9151eea9b', N'Giày Adidas A83',				N'Adidas A83 dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',					144000, '7fcf6f9a-7352-423a-8bf9-612d542b3522', GETDATE(), GETDATE()),
-('87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Giày Adidas Đen-trắng Galaxy 5', N'Adidas Đen-trắng nam tính, thời trang hot nhất',										126000, '05f20b0f-6979-4e82-a727-cb24f626d478', GETDATE(), GETDATE()),
-('61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Giày Adidas Da bò',				N'Adidas Da bò hiếm có, đẹp mắt, hợp gu',												193000, '79ba4596-0578-45ad-8109-a7d5029ab4d9', GETDATE(), GETDATE()),
-('4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Giày Adidas Trắng sọc đen',		N'Adidas Trắng sọc đen dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',		126000, '8d59af65-660c-4a93-a91c-754218be7de3', GETDATE(), GETDATE())
+('6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Giày Adidas 8152',				N'Adidas 8152 dành cho thể thao và thời trang, giúp giảm mỏi chân khi vận động nặng',	 '2ac06cd1-492f-47f2-bdc3-6e8ce031b3ab', 172000, GETDATE(), GETDATE()),
+('a785be42-a9de-44f8-b826-7bc9151eea9b', N'Giày Adidas A83',				N'Adidas A83 dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',					 '7fcf6f9a-7352-423a-8bf9-612d542b3522', 144000, GETDATE(), GETDATE()),
+('87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Giày Adidas Đen-trắng Galaxy 5', N'Adidas Đen-trắng nam tính, thời trang hot nhất',										 '05f20b0f-6979-4e82-a727-cb24f626d478', 126000, GETDATE(), GETDATE()),
+('61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Giày Adidas Da bò',				N'Adidas Da bò hiếm có, đẹp mắt, hợp gu',												 '79ba4596-0578-45ad-8109-a7d5029ab4d9', 193000, GETDATE(), GETDATE()),
+('4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Giày Adidas Trắng sọc đen',		N'Adidas Trắng sọc đen dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',		 '8d59af65-660c-4a93-a91c-754218be7de3', 126000, GETDATE(), GETDATE())
 
 create table Category_Products
 (
@@ -314,22 +314,22 @@ insert into InventoryLogs values
 create table Size_ProductDetails
 (
 Size_ProductDetail_ID	uniqueidentifier	not null	primary key,
-ProductID				uniqueidentifier,
+ProductDetailID			uniqueidentifier,
 SizeID					uniqueidentifier
 
 constraint FK_Product_Size_ProductDetails
-foreign key (ProductID) references Products(ProductID),
+foreign key (ProductDetailID) references ProductDetails(ProductDetailID),
 
 constraint FK_Size_Size_ProductDetails
 foreign key (SizeID) references Sizes(SizeID)
 )
 
 insert into Size_ProductDetails values
-(NEWID(), '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
-(NEWID(), 'a785be42-a9de-44f8-b826-7bc9151eea9b', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
-(NEWID(), '87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
-(NEWID(), '61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
-(NEWID(), '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'88580723-ab1d-4362-93cd-f1ec0c8206fd')
+(NEWID(), 'ec093371-289f-4f78-a90a-f95a6cb5edec', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
+(NEWID(), '7e7c19ee-161b-4c04-82e9-56ca7676613f', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
+(NEWID(), 'b6ac32d4-d03f-4ce0-9b19-31f41cd77438', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
+(NEWID(), 'c54d8c98-6884-4d21-9100-7ecafce37a56', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
+(NEWID(), 'a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c', N'88580723-ab1d-4362-93cd-f1ec0c8206fd')
 
 create table Inventory_ProductDetails
 (
@@ -377,6 +377,7 @@ VoucherID				uniqueidentifier	not null	primary key,
 CategoryID				uniqueidentifier,
 ProductID				uniqueidentifier,
 UsesLeft				int,
+VoucherCode				varchar(80)			not null	unique		default 'VOUCHER_' + format(GETDATE(), 'ssffffmm'),
 DiscountPrice			bigint,
 DiscountPercent			decimal(5, 2),
 [Description]			nvarchar(MAX),
@@ -392,11 +393,11 @@ foreign key (ProductID) references Products(ProductID)
 )
 
 insert into Vouchers values
-('152847ec-dc80-470a-88c4-1a555ed00632', '0d3a5b93-0087-4d99-bddb-d5dface1fa95', null, 22, 24000, 10, N'Giảm giá khai trương cho mặt hàng thuộc danh mục', GETDATE(), GETDATE(), 1),
-('2e1b811e-c9fc-465f-85db-33d79525535b', '96dbcc88-1558-4bbb-a483-3804b24f086e', null, 22, 24000, 10, N'Giảm giá khai trương cho mặt hàng thuộc danh mục', GETDATE(), GETDATE(), 1),
-('288a4e39-8a4b-4d20-9b7f-aedcfacbcc09', null, '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', 44, 36000, 15, N'Giảm giá khai trương cho mặt hàng này', GETDATE(), GETDATE(), 1),
-('04287033-79a1-4ccf-a09f-211efd446da9', null, 'a785be42-a9de-44f8-b826-7bc9151eea9b', 44, 36000, 15, N'Giảm giá khai trương cho mặt hàng này', GETDATE(), GETDATE(), 1),
-('564ff9b2-8f4c-4e9b-8c83-eae212779591', null, '87e469e0-45ed-4eda-b929-5d3dc3789bf1', 44, 36000, 15, N'Giảm giá khai trương cho mặt hàng này', GETDATE(), GETDATE(), 1)
+('152847ec-dc80-470a-88c4-1a555ed00632', '0d3a5b93-0087-4d99-bddb-d5dface1fa95', null, 22, 'GRAND_OPENING_CATEGORY_1', 24000, 10, N'Giảm giá khai trương cho mặt hàng thuộc danh mục', GETDATE(), GETDATE(), 1),
+('2e1b811e-c9fc-465f-85db-33d79525535b', '96dbcc88-1558-4bbb-a483-3804b24f086e', null, 22, 'GRAND_OPENING_CATEGORY_2', 24000, 10, N'Giảm giá khai trương cho mặt hàng thuộc danh mục', GETDATE(), GETDATE(), 1),
+('288a4e39-8a4b-4d20-9b7f-aedcfacbcc09', null, '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', 44, 'GRAND_OPENING_PRODUCT_11', 36000, 15, N'Giảm giá khai trương cho mặt hàng này', GETDATE(), GETDATE(), 1),
+('04287033-79a1-4ccf-a09f-211efd446da9', null, 'a785be42-a9de-44f8-b826-7bc9151eea9b', 44, 'GRAND_OPENING_PRODUCT_22', 36000, 15, N'Giảm giá khai trương cho mặt hàng này', GETDATE(), GETDATE(), 1),
+('564ff9b2-8f4c-4e9b-8c83-eae212779591', null, '87e469e0-45ed-4eda-b929-5d3dc3789bf1', 44, 'GRAND_OPENING_PRODUCT_33', 36000, 15, N'Giảm giá khai trương cho mặt hàng này', GETDATE(), GETDATE(), 1)
 
 create table Orders
 (
