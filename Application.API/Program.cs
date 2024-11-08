@@ -1,4 +1,4 @@
-using Application.Data.ModelContexts;
+﻿using Application.Data.ModelContexts;
 using Application.Data;
 using Microsoft.EntityFrameworkCore;
 using Application.Data.Repositories.IRepository;
@@ -20,7 +20,6 @@ builder.Services.AddDbContext<GiayDBContext>(Options =>
 {
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay"));
 });
-
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IColorRepository, ColorRepository>();
 builder.Services.AddScoped<ICustomerSupportTicketsRepository, CustomerSupportTicketsRepository>();
@@ -33,8 +32,8 @@ builder.Services.AddScoped<IOrderTracking, OrderTrackingRepository>();
 builder.Services.AddScoped<IOrderDetails, OrderDetailsRepository>();
 builder.Services.AddScoped<IProduct, ProductRepository>();
 builder.Services.AddScoped<IShoppingCart, ShoppingCartRepository>();
-builder.Services.AddScoped<ISize_ProductDetail, Size_ProductDetailRepository>();
 builder.Services.AddScoped<ISize, SizeRepository>();
+builder.Services.AddScoped<ISize_ProductDetail, Size_ProductDetailRepository>();
 builder.Services.AddScoped<IUser_Role, User_RoleRepository>();
 builder.Services.AddScoped<IUser, UserRepository>();
 builder.Services.AddScoped<IVoucher, VoucherRepository>();
@@ -43,12 +42,21 @@ builder.Services.AddScoped<IProductWarranty, ProductWarrantyRepository>();
 builder.Services.AddScoped<IRatings, RatingsRepository>();
 builder.Services.AddScoped<IReturn, ReturnRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Origin",
+                      policy =>
+                      {
+                          policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+                      });
+});
 
 var MapperConfig = new MapperConfiguration(Config =>
 {
     Config.AddProfile(new MapProfile());
 });
 builder.Services.AddSingleton(MapperConfig.CreateMapper());
+
 
 var app = builder.Build();
 
@@ -60,6 +68,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("Origin");
 
 app.UseAuthorization();
 

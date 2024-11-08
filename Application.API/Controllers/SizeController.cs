@@ -16,7 +16,7 @@ namespace Application.API.Controllers
             this.SizeRepo = SizeRepo;
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         public async Task<ActionResult<List<Size>>> Get()
         {
             return await SizeRepo.GetSizes();
@@ -28,13 +28,13 @@ namespace Application.API.Controllers
             return await SizeRepo.GetSizeByID(ID);
         }
 
-        [HttpPost]
+        [HttpPost("create-size")]
         public async Task<ActionResult<Size>> Post([FromBody] SizeDTO NewSize)
         {
             return await SizeRepo.AddSize(NewSize);
         }
 
-        [HttpPut("{ID}")]
+        [HttpPut("update-size/{id}")]
         public async Task<ActionResult<Size?>> Put(Guid ID, [FromBody] SizeDTO UpdatedSize)
         {
             return await SizeRepo.UpdateSize(ID, UpdatedSize);
@@ -43,8 +43,14 @@ namespace Application.API.Controllers
         [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID)
         {
+            var size = await SizeRepo.GetSizeByID(ID);
+            if (size == null)
+            {
+                return NotFound(); // Trả về 404 nếu không tìm thấy
+            }
+
             await SizeRepo.DeleteSize(ID);
-            return Ok();
+            return NoContent();
         }
     }
 }

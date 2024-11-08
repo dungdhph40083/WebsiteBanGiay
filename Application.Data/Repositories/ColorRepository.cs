@@ -26,12 +26,15 @@ namespace Application.Data.Repositories
                 ColorID = Guid.NewGuid(),
                 ColorName = colorDTO.ColorName,
                 Status = colorDTO.Status,
-                CreatedAt = DateTime.Now.Date,
-                UpdatedAt = DateTime.Now.Date
+                CreatedAt = DateTime.UtcNow, 
+                UpdatedAt = DateTime.UtcNow
             };
 
             _context.Colors.Add(color);
             await _context.SaveChangesAsync();
+            colorDTO.ColorID = color.ColorID; 
+            colorDTO.CreatedAt = color.CreatedAt; 
+            colorDTO.UpdatedAt = color.UpdatedAt;
 
             return colorDTO;
         }
@@ -82,7 +85,7 @@ namespace Application.Data.Repositories
             {
                 color.ColorName = colorDTO.ColorName;
                 color.Status = colorDTO.Status;
-                color.UpdatedAt = DateTime.Now.Date;
+                color.UpdatedAt = DateTime.UtcNow; 
 
                 _context.Colors.Update(color);
                 await _context.SaveChangesAsync();

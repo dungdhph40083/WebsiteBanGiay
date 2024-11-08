@@ -23,7 +23,7 @@ namespace Application.Data.Repositories
         {
             var category = new Category
             {
-                CategoryID = Guid.NewGuid(), // Fake ID
+                CategoryID = Guid.NewGuid(), 
                 CategoryName = categoryDto.CategoryName,
                 Description = categoryDto.Description
             };

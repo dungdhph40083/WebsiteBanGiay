@@ -1,7 +1,12 @@
+using Application.Data.Repositories;
+using Application.Data.Repositories.IRepository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

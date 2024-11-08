@@ -16,29 +16,29 @@ namespace Application.API.Controllers
             _colorRepository = colorRepository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllColors()
+        [HttpGet("get-all")]
+        public async Task<ActionResult> GetAllColors()
         {
             var colors = await _colorRepository.GetAllColors();
             return Ok(colors);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetColorById(Guid id)
+        public async Task<ActionResult> GetColorById(Guid id)
         {
             var color = await _colorRepository.GetColorById(id);
             if (color == null) return NotFound();
             return Ok(color);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateColor(ColorDTO colorDTO)
+        [HttpPost("create-color")]
+        public async Task<ActionResult> CreateColor(ColorDTO colorDTO)
         {
             var createdColor = await _colorRepository.CreateColor(colorDTO);
             return CreatedAtAction(nameof(GetColorById), new { id = createdColor.ColorID }, createdColor);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("update-color/{id}")]
         public async Task<IActionResult> UpdateColor(Guid id, ColorDTO colorDTO)
         {
             if (id != colorDTO.ColorID) return BadRequest();

@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Application.Data.DTOs.ColorDTO>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().ColorName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().UpdatedAt)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ColorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @(item.CreatedAt.HasValue ? item.CreatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                </td>
+                <td>
+                    @(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ColorID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ColorID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ColorID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
