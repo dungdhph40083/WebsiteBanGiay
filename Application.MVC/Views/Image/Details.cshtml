@@ -1,0 +1,39 @@
+﻿@model Application.Data.Models.Image
+
+@{
+    ViewData["Title"] = "Image details";
+}
+
+<h1>Image details</h1>
+
+<dl class="row">
+    <dt class="col-md-3">ID</dt>
+    <dd class="col-md-9">
+        <i style="font-size: small" class="font-monospace-cascadia">@Model.ImageID</i>
+    </dd>
+    <dt class="col-md-3">File name</dt>
+    <dd class="col-md-9">
+        @Model.ImageFileName
+    </dd>
+    <dt class="col-md-3">Image title</dt>
+    <dd class="col-md-9">@Model.ImageName
+    </dd>
+    <dt class="col-md-3">Description</dt>
+    <dd class="col-md-9">
+        @Model.ImageDescription<br />
+    </dd>
+    <dt class="col-md-3">Available</dt>
+    <dd class="col-md-9">
+        @Model.Status<br />
+    </dd>
+    <dt class="col-md-3">First uploaded at</dt>
+    <dd class="col-md-9">
+        @Model.CreatedAt.GetValueOrDefault().ToLocalTime()<br />
+    </dd>
+    <dt class="col-md-3">Last updated</dt>
+    <dd class="col-md-9">
+        @Model.UpdatedAt.GetValueOrDefault().ToLocalTime()<br />
+    </dd>
+</dl>
+<hr />
+<img src="..." class="img-fluid" alt="Image displayer">

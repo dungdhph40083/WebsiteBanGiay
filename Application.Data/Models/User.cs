@@ -10,6 +10,8 @@ namespace Application.Data.Models
         [MaxLength(30)]
         public string Username { get; set; } = null!;
         public string Password { get; set; } = null!;
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? Email { get; set; }
         [ForeignKey(nameof(Image))]
         public Guid? ImageID { get; set; }

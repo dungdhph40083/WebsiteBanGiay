@@ -1,0 +1,83 @@
+﻿@using Application.Data.Enums
+@model IEnumerable<Application.Data.Models.Image>;
+
+@{
+    ViewData["Title"] = "Image gallery";
+}
+
+<h1>Image gallery</h1>
+<a type="button" class="btn btn-success mb-2" asp-action="Create">Create new</a>
+
+@if (Model.Count() != 0)
+{
+    <table class="table table-bordered table-striped border-info">
+        <thead class="bg-primary">
+            <tr>
+                <th>File name</th>
+                <th>Image title</th>
+                <th>Status</th>
+                <th>Upload date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Entry in Model)
+            {
+                <tr>
+                    <td>@Entry.ImageFileName</td>
+                    <td>@Entry.ImageName</td>
+                    <td>@(Entry.Status == (int)VisibilityStatus.Locked ? "Unavailable" : "Available")</td>
+                    <td>@Entry.UpdatedAt.GetValueOrDefault().ToLocalTime()</td>
+                    <td>
+                        <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.ImageID)">Edit</a>
+                        <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.ImageID">Details</a>
+                        <button type="button" class="btn btn-danger delete_trigger" data-id="@Entry.ImageID" data-controller="Image" data-action="Delete" data-bs-toggle="modal" data-bs-target="#ModalDelete">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6"></td>
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <h1 class="text-center">No image available.</h1>
+    <p class="text-center">Select "Create new" to upload a new image!</p>
+}
+
+@if (TempData["ErrorLog"]?.ToString() == "ErrorDetails")
+{
+    <div class="alert alert-danger" role="alert">
+        Data not found!
+    </div>
+}
+@if (TempData["ErrorLog"]?.ToString() == "ErrorDelete")
+{
+    <div class="alert alert-danger" role="alert">
+        Something went wrong???
+    </div>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="ModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">STOP RIGHT THERE!!!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-btn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this relation?<br />
+                <span style="font-size:small" class="font-monospace-cascadia">Image ID: <span id="ItemID" class="font-monospace-cascadia"></span></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel-btn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm_deletion">Proceed</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,6 +9,8 @@ namespace Application.Data.DTOs
         [MaxLength(30)]
         public string Username { get; set; } = null!;
         public string Password { get; set; } = null!;
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? Email { get; set; }
         public Guid? ImageID { get; set; }
         public string? Address { get; set; }

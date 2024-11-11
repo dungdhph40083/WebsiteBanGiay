@@ -1,12 +1,13 @@
-﻿@model Application.Data.DTOs.UserDTO;
+﻿@using Application.Data.Enums
+@model Application.Data.DTOs.UserDTO;
 
 @{
-    ViewData["Title"] = "Add item";
+    ViewData["Title"] = "Update image info";
 }
 
-<h1>Add item into shopping cart (Manual)</h1>
+<h1>Update image info</h1>
 
-<form asp-action="Create" method="post">
+<form asp-action="Edit" method="post">
     <div class="row">
         <div class="col-md-6">
             <label asp-for="Username" class="form-label">Username</label>
@@ -60,5 +61,5 @@
             <input asp-for="Status" type="checkbox" class="form-check-input" aria-label="Is available?">
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">Update</button>
 </form>

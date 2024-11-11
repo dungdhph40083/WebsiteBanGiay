@@ -85,6 +85,8 @@ create table Users
 UserID					uniqueidentifier	not null	primary key,
 Username				varchar(30)			not null	unique,
 [Password]				nvarchar(MAX)		not null,
+FirstName				nvarchar(MAX),
+LastName				nvarchar(MAX),
 Email					varchar(MAX),
 ImageID					uniqueidentifier,
 [Address]				nvarchar(MAX),
@@ -98,8 +100,8 @@ foreign key (ImageID) references Images(ImageID)
 )
 
 insert into Users values
-('2aab6663-80a4-44ce-8139-c679be51318c', 'admin', '$2a$14$zKVa.FOju5djwNqTg5jckeibUpOuOEJ4SyQXtGNH7ovseME2ubqpK', 'a@a.com', null, N'Hà Nội', '0123456789', GETDATE(), GETDATE(), 1),
-('911729e5-b813-453f-9c6b-11dfae751464', 'user',  '$2a$14$mNYjhrkDnEgd12KlXSHfxu7/4HdDVvgVUagEEv8M0XXkihvAlKndK', 'a@b.com', null, N'Hà Nội', '0123456789', GETDATE(), GETDATE(), 1)
+('2aab6663-80a4-44ce-8139-c679be51318c', 'admin', '$2a$14$zKVa.FOju5djwNqTg5jckeibUpOuOEJ4SyQXtGNH7ovseME2ubqpK', N'Văn Anh',  N'Nguyễn', 'a@a.com', null, N'Hà Nội', '0123456789', GETDATE(), GETDATE(), 1), -- mật khẩu: admin
+('911729e5-b813-453f-9c6b-11dfae751464', 'user',  '$2a$14$mNYjhrkDnEgd12KlXSHfxu7/4HdDVvgVUagEEv8M0XXkihvAlKndK', N'Văn Bách', N'Trần',   'a@b.com', null, N'Hà Nội', '0123456789', GETDATE(), GETDATE(), 1)  -- mật khẩu: user
 
 create table Roles
 (

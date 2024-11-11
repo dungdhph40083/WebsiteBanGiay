@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\Voucher\" />
     <Folder Include="WWWRoot\images\" />
   </ItemGroup>
 

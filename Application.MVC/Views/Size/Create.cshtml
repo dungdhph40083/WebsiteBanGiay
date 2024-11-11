@@ -14,8 +14,8 @@
             <span asp-validation-for="Name">Required!</span>
         </div>
         <div class="col-md-6 mt-4">
-            <label asp-for="Status" class="form-label">Size</label>
-            <input asp-for="Status" class="form-input" aria-label="Is available?">
+            <label asp-for="Status" class="form-label">Is available</label>
+            <input asp-for="Status" type="checkbox" class="form-check-input" aria-label="Is available?">
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>

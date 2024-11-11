@@ -22,12 +22,9 @@ namespace Application.Data.Repositories
         }
         public async Task<Image> CreateImageAsync(ImageDTO imageDto, IFormFile ImageFile)
         {
-            // This violates SRP but idc anymore
+            DateTime TimeSync = DateTime.UtcNow;
 
-            string UniqueID = new(Enumerable.Repeat(RandomizerChars, 5).Select(Idx => Idx[RNG.Next(Idx.Length)]).ToArray());
-            string FileExtension = Path.GetExtension(ImageFile.FileName);
-            DateTime TimeSync = DateTime.UtcNow; // Để đồng bộ thời gian thêm và cập nhật vì nãy thêm vào dùng 2 cái DateTime.UtcNow nó bị delay một vài milligiây @@
-            string FileName = Path.GetFileNameWithoutExtension(ImageFile.FileName) + $"_{DateTimeOffset.Parse(TimeSync.ToString()).ToUnixTimeSeconds()}_{UniqueID}" + FileExtension;
+            string FileName = await UploadImageAndMetadata(ImageFile, TimeSync);
 
             Image Image = new()
             {
@@ -41,13 +38,6 @@ namespace Application.Data.Repositories
 
             _context.Images.Add(Image);
             await _context.SaveChangesAsync();
-
-            // Cho vào cuối để giảm bộ nhớ
-            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "WWWRoot", "Images", FileName);
-            using (var Stream = new FileStream(FilePath, FileMode.Create))
-            {
-                await ImageFile.CopyToAsync(Stream);
-            }
 
             return Image;
         }
@@ -86,6 +76,21 @@ namespace Application.Data.Repositories
 
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public static async Task<string> UploadImageAndMetadata(IFormFile ImageFile, DateTime TimeSync)
+        {
+            // Để đồng bộ thời gian thêm và cập nhật vì nãy thêm vào dùng 2 cái DateTime.UtcNow nó bị delay một vài milligiây @@
+            string UniqueID = new(Enumerable.Repeat(RandomizerChars, 5).Select(Idx => Idx[RNG.Next(Idx.Length)]).ToArray());
+            string FileExtension = Path.GetExtension(ImageFile.FileName);
+            string FileName = Path.GetFileNameWithoutExtension(ImageFile.FileName) + $"_{DateTimeOffset.Parse(TimeSync.ToString()).ToUnixTimeSeconds()}_{UniqueID}" + FileExtension;
+
+            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "WWWRoot", "Images", FileName);
+            using (var Stream = new FileStream(FilePath, FileMode.Create))
+            {
+                await ImageFile.CopyToAsync(Stream);
+            }
+            return FileName;
         }
     }
 }
