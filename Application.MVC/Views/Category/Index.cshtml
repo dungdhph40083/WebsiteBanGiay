@@ -7,7 +7,7 @@
     <h1>Index</h1>
 
     <p>
-        <a asp-action="Create">Create New</a>
+        <a href="Category/Create">Create New</a>
     </p>
     <table class="table">
         <thead>
@@ -33,7 +33,7 @@
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.CategoryID }) |
                         @Html.ActionLink("Details", "Details", new { id = item.CategoryID }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.CategoryID })
+                    <a href="Category/Delete/@item.CategoryID">Delete</a>
                     </td>
                 </tr>
             }

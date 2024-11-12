@@ -34,9 +34,13 @@ namespace Application.API.Controllers
         [HttpPost("create-category")]
         public async Task<ActionResult> Create(CategoryDTO categoryDto)
         {
-            await _categoryRepository.AddCategory(categoryDto);
-            return CreatedAtAction(nameof(GetById), new { id = categoryDto.CategoryID }, categoryDto);
+            // Gọi phương thức AddCategory và lưu kết quả trả về
+            var createdCategory = await _categoryRepository.AddCategory(categoryDto);
+
+            // Sử dụng CreatedAtAction để trả về thông tin đối tượng vừa tạo
+            return CreatedAtAction(nameof(GetById), new { id = createdCategory.CategoryID }, createdCategory);
         }
+
         [HttpPut("update-category/{id}")]
         public async Task<ActionResult> Update(Guid id, CategoryDTO categoryDto)
         {

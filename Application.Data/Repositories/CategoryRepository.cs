@@ -19,17 +19,24 @@ namespace Application.Data.Repositories
         {
             _context = context;
         }
-        public async Task AddCategory(CategoryDTO categoryDto)
+        public async Task<CategoryDTO> AddCategory(CategoryDTO categoryDto)
         {
             var category = new Category
             {
-                CategoryID = Guid.NewGuid(), 
+                CategoryID = Guid.NewGuid(),
                 CategoryName = categoryDto.CategoryName,
                 Description = categoryDto.Description
             };
 
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
+
+            // Cập nhật lại DTO với thông tin đã lưu
+            categoryDto.CategoryID = category.CategoryID;
+            categoryDto.CategoryName = category.CategoryName;
+            categoryDto.Description = category.Description;
+
+            return categoryDto;
         }
 
         public async Task DeleteCategory(Guid id)

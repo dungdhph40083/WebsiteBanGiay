@@ -11,7 +11,7 @@ namespace Application.Data.Repositories.IRepository
     {
         Task<IEnumerable<CategoryDTO>> GetAllCategory();
         Task<CategoryDTO> GetByIdCategory(Guid id);
-        Task AddCategory(CategoryDTO categoryDto);
+        Task<CategoryDTO> AddCategory(CategoryDTO categoryDto);
         Task UpdateCategory(CategoryDTO categoryDto);
         Task DeleteCategory(Guid id);
     }

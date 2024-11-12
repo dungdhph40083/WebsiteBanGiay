@@ -1,8 +1,6 @@
 ﻿using Application.Data.DTOs;
-using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using static System.Net.WebRequestMethods;
 
 namespace Application.MVC.Controllers
 {
@@ -15,19 +13,20 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Index()
         {
-            string requestURL = "https://localhost:7187/api/Category/get-all";
+            string requestURL = $@"https://localhost:7187/api/Category/get-all";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<List<CategoryDTO>>(response);
             return View(data);
         }
         public ActionResult Details(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Category/{id}";
+            string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<CategoryDTO>(response);
             return View(data);
         }
 
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -35,14 +34,15 @@ namespace Application.MVC.Controllers
 
         // POST: Category/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CategoryDTO categoryDTO)
         {
             string requestURL = $"https://localhost:7187/api/Category/create-category";
             var response = await client.PostAsJsonAsync(requestURL, categoryDTO);
             return RedirectToAction("Index");
         }
-        public IActionResult Edit(Guid id)
+
+        [HttpGet]
+        public ActionResult Edit(Guid id)
         {
             string requestURL = $"https://localhost:7187/api/Category/{id}";
             var response = client.GetStringAsync(requestURL).Result;
@@ -50,19 +50,21 @@ namespace Application.MVC.Controllers
             return View(data);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(CategoryDTO categoryDTO)
         {
-            string requestURL = $"https://localhost:7187/api/Category/update-category/{categoryDTO.CategoryID}";
+            string requestURL = $@"https://localhost:7187/api/Category/update-category/{categoryDTO.CategoryID}";
             var response =client.PutAsJsonAsync(requestURL, categoryDTO).Result;    
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-     
+
+        [HttpGet]
         public ActionResult Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Category/{id}";
+            string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = client.DeleteAsync(requestURL).Result;
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

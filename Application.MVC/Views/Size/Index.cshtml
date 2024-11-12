@@ -46,7 +46,8 @@
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.SizeID }) |
                     @Html.ActionLink("Details", "Details", new { id = item.SizeID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.SizeID })
+                     <a href="Size/Delete/@item.SizeID">Delete</a>
+                   @*  @Html.ActionLink("Delete", "Delete", new { id = item.SizeID }) *@
                 </td>
             </tr>
         }
