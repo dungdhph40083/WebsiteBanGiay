@@ -3,6 +3,8 @@ using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.API.Controllers
 {
@@ -11,20 +13,34 @@ namespace Application.API.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProduct _productRepository;
+        private readonly IImageRepository _imageRepository;
 
-        public ProductController(IProduct productRepository)
+        public ProductController(IProduct productRepository, IImageRepository imageRepository)
         {
             _productRepository = productRepository;
+            _imageRepository = imageRepository;
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<Product>> GetProducts()
+        [HttpGet("get-all")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            return Ok(_productRepository.GetAll());
+            var products = _productRepository.GetAll();
+
+            // Dùng async-await để lấy thông tin Image cho mỗi sản phẩm
+            foreach (var product in products)
+            {
+                if (product.ImageID.HasValue)
+                {
+                    var image = await _imageRepository.GetImageByIdAsync(product.ImageID.Value);
+                    product.Image = image;  // Gán thông tin Image cho sản phẩm
+                }
+            }
+
+            return Ok(products);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Product> GetProduct(Guid id)
+        public async Task<ActionResult<Product>> GetProduct(Guid id)
         {
             var product = _productRepository.GetById(id);
 
@@ -33,29 +49,68 @@ namespace Application.API.Controllers
                 return NotFound();
             }
 
+            // Lấy thông tin Image nếu có ImageID
+            if (product.ImageID.HasValue)
+            {
+                product.Image = await _imageRepository.GetImageByIdAsync(product.ImageID.Value);
+            }
+
             return Ok(product);
         }
 
-        [HttpPost]
-        public ActionResult<Product> PostProduct(Product product)
+        [HttpPost("create_product")]
+        public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-            _productRepository.Add(product);
-            _productRepository.Save();
-            return CreatedAtAction("GetProduct", new { id = product.ProductID }, product);
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult PutProduct(Guid id, Product product)
-        {
-            if (id != product.ProductID)
+            // Kiểm tra nếu có ImageID
+            if (product.ImageID.HasValue)
             {
-                return BadRequest();
+                // Lấy thông tin Image từ ImageID thông qua ImageRepository
+                var image = await _imageRepository.GetImageByIdAsync(product.ImageID.Value);
+
+                if (image != null)
+                {
+                    // Liên kết thông tin Image vào Product
+                    product.Image = image;
+                }
             }
 
-            _productRepository.Update(product);
-            _productRepository.Save();
+            // Thêm sản phẩm vào cơ sở dữ liệu
+             _productRepository.Add(product);
+             _productRepository.Save();
 
-            return NoContent();
+            // Trả về kết quả với thông tin ImageFileName
+            var response = new
+            {
+                ProductID = product.ProductID,
+                Name = product.Name,
+                Price = product.Price,
+                ImageFileName = product.Image?.ImageFileName  
+            };
+
+            return CreatedAtAction("GetProduct", new { id = product.ProductID }, response);
+        }
+
+        [HttpPut("update-product/{id}")]
+        public IActionResult PutProduct(Guid id, [FromBody] Product product)
+        {
+
+            if (product == null || id != product.ProductID)
+            {
+                return BadRequest("Product ID mismatch or product is null.");
+            }
+
+            try
+            {
+                // Update product information in the database
+                 _productRepository.Update(id,product);
+                 _productRepository.Save();
+
+                return Ok(product); // Return the updated product
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]

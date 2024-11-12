@@ -3,6 +3,7 @@
     public class ProductDetailDTO
     {
         public Guid? ProductID { get; set; }
+        public Guid? ImageID { get; set; }
         public string? Material { get; set; }
         public int Quantity { get; set; }
         public long Price { get; set; }

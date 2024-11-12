@@ -18,7 +18,7 @@ namespace Application.API.Controllers
             _imageRepository = imageRepository;
         }
 
-        [HttpGet]
+        [HttpGet()]
         public async Task<ActionResult<IEnumerable<ImageDTO>>> GetImages()
         {
             var images = await _imageRepository.GetAllImagesAsync();
