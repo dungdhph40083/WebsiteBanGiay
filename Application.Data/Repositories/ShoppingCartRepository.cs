@@ -23,7 +23,25 @@ namespace Application.Data.Repositories
         public async Task<ShoppingCart> CreateNew(ShoppingCartDTO NewShoppingCart)
         {
             ShoppingCart ShoppingCart = new() { CartID = Guid.NewGuid() };
+
             ShoppingCart = Mapper.Map(NewShoppingCart, ShoppingCart);
+
+            var ProductItem = Context.Products.Find(ShoppingCart.ProductID);
+            var VoucherItem = Context.Vouchers.Find(ShoppingCart.VoucherID);
+
+            long    ItemPrice          = ProductItem == null ? 0 : ProductItem.Price;
+            long    ItemVoucherPrice   = VoucherItem == null ? 0 : VoucherItem.DiscountPrice;
+            decimal ItemVoucherPercent = VoucherItem == null ? 0 : VoucherItem.DiscountPercent;
+
+            ShoppingCart.RawPrice =
+                ShoppingCart.QuantityCart * ItemPrice;
+
+            ShoppingCart.Discount =
+                (long)(ItemVoucherPercent / 100 * ShoppingCart.RawPrice) + ItemVoucherPrice;
+
+            ShoppingCart.FinalPrice =
+                ShoppingCart.RawPrice - ShoppingCart.Discount;
+
             await Context.ShoppingCarts.AddAsync(ShoppingCart);
             await Context.SaveChangesAsync();
             return ShoppingCart;
@@ -38,9 +56,7 @@ namespace Application.Data.Repositories
                 await Context.SaveChangesAsync();
             }
         }
-
-
-
+        
         public async Task<ShoppingCart?> GetShoppingCartByID(Guid TargetID)
         {
             return await Context.ShoppingCarts
@@ -68,6 +84,23 @@ namespace Application.Data.Repositories
             {
                 Context.Entry(Target).State = EntityState.Modified;
                 var UpdatedTarget = Mapper.Map(UpdatedShoppingCart, Target);
+
+                var ProductItem = Context.Products.Find(Target.ProductID);
+                var VoucherItem = Context.Vouchers.Find(Target.VoucherID);
+
+                long ItemPrice = ProductItem == null ? 0 : ProductItem.Price;
+                long ItemVoucherPrice = VoucherItem == null ? 0 : VoucherItem.DiscountPrice;
+                decimal ItemVoucherPercent = VoucherItem == null ? 0 : VoucherItem.DiscountPercent;
+
+                UpdatedTarget.RawPrice =
+                    UpdatedShoppingCart.QuantityCart * ItemPrice;
+
+                UpdatedTarget.Discount =
+                    (long)(ItemVoucherPercent / 100 * UpdatedTarget.RawPrice) + ItemVoucherPrice;
+
+                UpdatedTarget.FinalPrice =
+                    UpdatedTarget.RawPrice - UpdatedTarget.Discount;
+
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;

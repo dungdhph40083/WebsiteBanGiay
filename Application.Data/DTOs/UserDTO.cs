@@ -16,8 +16,6 @@ namespace Application.Data.DTOs
         public string? Address { get; set; }
         [MaxLength(30)]
         public string? PhoneNumber { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime LastUpdatedOn { get; set; }
         public byte Status { get; set; }
     }
 }

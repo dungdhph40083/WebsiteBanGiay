@@ -17,7 +17,7 @@ namespace Application.Data.Models
 		[ForeignKey(nameof(Category))]
 		public Guid? CategoryID { get; set; }
 		[ForeignKey(nameof(Product))]
-		public Guid? ProductID {  get; set; }
+		public Guid? ProductID { get; set; }
 		public int UsesLeft { get; set; }
 		[MaxLength(80)]
 		public string VoucherCode { get; set; } = null!;

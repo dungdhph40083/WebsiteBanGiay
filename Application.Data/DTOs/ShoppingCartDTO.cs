@@ -12,7 +12,6 @@ namespace Application.Data.DTOs
         public Guid? ColorID { get; set; }
         public Guid? VoucherID { get; set; }
         public int QuantityCart { get; set; }
-        public DateTime? DateAdded { get; set; }
         public bool IsCheckedOut { get; set; }
     }
 }

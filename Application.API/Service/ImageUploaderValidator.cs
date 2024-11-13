@@ -27,19 +27,40 @@ namespace Application.API.Service
         }
         private static bool IsAnImage(IFormFile ImageFile)
         {
-            string PathExtension = Path.GetExtension(ImageFile.FileName);
-            var FileStream = ImageFile.OpenReadStream();
-            byte[] ImageBytes = new byte[FileStream.Length];
-            FileStream.Read(ImageBytes, 0, ImageBytes.Length);
+            byte[] ImageBytes = GetImageBytes(ImageFile);
 
-            if ((   ImageBytes.Take    (JPG_Signature_Start.Length).SequenceEqual(JPG_Signature_Start)
-                &&  ImageBytes.TakeLast(JPG_Signature_End.Length)  .SequenceEqual(JPG_Signature_End))
-                || (ImageBytes.Take    (PNG_Signature_Start.Length).SequenceEqual(PNG_Signature_Start)
-                &&  ImageBytes.TakeLast(PNG_Signature_End.Length)  .SequenceEqual(PNG_Signature_End)))
+            if ((ImageBytes.Take(JPG_Signature_Start.Length).SequenceEqual(JPG_Signature_Start)
+                && ImageBytes.TakeLast(JPG_Signature_End.Length).SequenceEqual(JPG_Signature_End))
+                || (ImageBytes.Take(PNG_Signature_Start.Length).SequenceEqual(PNG_Signature_Start)
+                && ImageBytes.TakeLast(PNG_Signature_End.Length).SequenceEqual(PNG_Signature_End)))
             {
                 return true;
             }
             return false;
+        }
+
+        private static byte[] GetImageBytes(IFormFile ImageFile)
+        {
+            string PathExtension = Path.GetExtension(ImageFile.FileName);
+            var FileStream = ImageFile.OpenReadStream();
+            byte[] ImageBytes = new byte[FileStream.Length];
+            FileStream.Read(ImageBytes, 0, ImageBytes.Length);
+            return ImageBytes;
+        }
+
+        public static string GetMIMEType(byte[] ImageBytes)
+        {
+            if (ImageBytes.Take(JPG_Signature_Start.Length).SequenceEqual(JPG_Signature_Start)
+             && ImageBytes.TakeLast(JPG_Signature_End.Length).SequenceEqual(JPG_Signature_End))
+            {
+                return "image/jpeg";
+            }
+            if (ImageBytes.Take(PNG_Signature_Start.Length).SequenceEqual(PNG_Signature_Start)
+             && ImageBytes.TakeLast(PNG_Signature_End.Length).SequenceEqual(PNG_Signature_End))
+            {
+                return "image/png";
+            }
+            return string.Empty;
         }
     }
 }

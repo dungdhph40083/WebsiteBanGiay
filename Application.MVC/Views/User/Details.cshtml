@@ -1,28 +1,28 @@
-﻿@model Application.Data.Models.User
+﻿@using System.Text.RegularExpressions
+@model Application.Data.Models.User
 
 @{
-    ViewData["Title"] = "Details of cart entry";
+    ViewData["Title"] = "User information";
 }
 
-<h1>Cart detail</h1>
+<h1>User information</h1>
 
 <dl class="row">
     <dt class="col-md-3">ID</dt>
     <dd class="col-md-9">
-        <i style="font-size: small" class="font-monospace-cascadia">@Model.UserID</i>
+        <i class="font-monospace-cascadia">@Model.UserID</i>
     </dd>
     <dt class="col-md-3">Username</dt>
     <dd class="col-md-9">@Model.Username
     </dd>
     <dt class="col-md-3">Password</dt>
     <dd class="col-md-9">
-        @Model.Password
+        @(new String(Enumerable.Repeat('*', (Model.Password.Length)).ToArray()))
     </dd>
         <dt class="col-md-3">Name</dt>
     <dd class="col-md-9">
-        <span class="text-decoration-underline">@Model.LastName</span>
-        <span class="text-decoration-underline">@Model.FirstName</span>
-        <span style="font-size: small">@Model.FirstName @Model.LastName</span>
+        <span>@Model.LastName @Model.FirstName</span>
+        <span style="font-size: small">(@Model.FirstName @Model.LastName)</span>
     </dd>
         <dt class="col-md-3">Phone number</dt>
     <dd class="col-md-9">
@@ -36,14 +36,24 @@
     </dd>
         <dt class="col-md-3">Created date</dt>
     <dd class="col-md-9">
-        @Model.CreatedAt.ToString("d/M/yyyy H:mm:ss")
+        @Model.CreatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss")
     </dd>
     <dt class="col-md-3">Last updated on</dt>
     <dd class="col-md-9">
-        @Model.LastUpdatedOn.ToString("d/M/yyyy H:mm:ss")
+        @Model.LastUpdatedOn.ToLocalTime().ToString("d/M/yyyy H:mm:ss")
     </dd>
     <dt class="col-md-3">Is active?</dt>
     <dd class="col-md-9">
-        @(Model.Status ? "Yes" : "No")
+        @(Model.Status)
+    </dd>
+    <dt class="col-md-3">Has profile picture?</dt>
+    <dd class="col-md-9">
+        @(Model.ImageID != null ? "Yes" : "No")
     </dd>
 </dl>
+@if (Model.ImageID != null)
+{
+    <hr />
+    <img src="@(ViewData["URLFetchImg"])" class="img-fluid" alt="Image displayer">
+    <div class="text-center"><i>@Model.Image?.ImageName</i></div>
+}

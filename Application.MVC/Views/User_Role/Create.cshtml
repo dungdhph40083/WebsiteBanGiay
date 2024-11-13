@@ -17,7 +17,7 @@
         </div>
         <div class="col-md-6 mt-4">
             <label asp-for="RoleID" class="form-label">Role</label>
-            <select asp-for="RoleID" class="form-select" aria-label="Select user to assign role" asp-items="@ViewBag.Roles">
+            <select asp-for="RoleID" class="form-select" aria-label="Select role to assign user" asp-items="@ViewBag.Roles">
                 <option selected value="">No role</option>
             </select>
             @* <span asp-validation-for="RoleID">Role is required!</span> *@

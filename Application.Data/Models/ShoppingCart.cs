@@ -22,9 +22,10 @@ namespace Application.Data.Models
 		public Guid? SizeID { get; set; }
 		[ForeignKey(nameof(Color))]
 		public Guid? ColorID { get; set; }
-		public long? Price { get; set; }
-		public long Discount { get; set;}
-		public DateTime? DateAdded { get; set; }
+		public long RawPrice { get; set; }
+		public long Discount { get; set; }
+		public long FinalPrice { get; set; }
+		public DateTime DateAdded { get; set; }
 		public bool IsCheckedOut { get; set;}
 		[ForeignKey(nameof(Voucher))]
 		public Guid? VoucherID { get; set; }

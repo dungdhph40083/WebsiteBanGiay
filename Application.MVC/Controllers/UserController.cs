@@ -28,6 +28,10 @@ namespace Application.MVC.Controllers
         {
             string URL = $@"https://localhost:7187/api/User/{ID}";
             var Response = await Client.GetFromJsonAsync<User>(URL);
+            if (Response != null && Response.Image != null && Response.Image.ImageFileName != null)
+            {
+                ViewData["URLFetchImg"] = $@"https://localhost:7187/Images/{Response.Image.ImageFileName}";
+            }
             return View(Response);
         }
 
@@ -82,12 +86,32 @@ namespace Application.MVC.Controllers
         // POST: UserController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(UserDTO Input)
+        public async Task<ActionResult> Create(UserDTO Input, IFormFile? ProfilePic)
         {
             try
             {
                 string URL = $@"https://localhost:7187/api/User";
-                var Response = await Client.PostAsJsonAsync(URL, Input);
+                
+                MultipartFormDataContent Contents = new()
+                {
+                    { new StringContent(Input.Username!),           nameof(Input.Username) },
+                    { new StringContent(Input.Password!),           nameof(Input.Password) },
+                    { new StringContent(Input.FirstName ?? ""),     nameof(Input.FirstName) },
+                    { new StringContent(Input.LastName ?? ""),      nameof(Input.LastName) },
+                    { new StringContent(Input.Email ?? ""),         nameof(Input.Email) },
+                    { new StringContent(Guid.NewGuid().ToString()), nameof(Input.ImageID) },
+                    { new StringContent(Input.Address ?? ""),       nameof(Input.Address) },
+                    { new StringContent(Input.PhoneNumber ?? ""),   nameof(Input.PhoneNumber) },
+                    { new StringContent(Input.Status.ToString()),   nameof(Input.Status) },
+                };
+
+                if (ProfilePic != null)
+                {
+                    var ImageStream = new StreamContent(ProfilePic.OpenReadStream());
+                    Contents.Add(ImageStream, nameof(ProfilePic), ProfilePic.FileName);
+                }
+
+                var Response = await Client.PostAsync(URL, Contents);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -113,11 +137,31 @@ namespace Application.MVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         // POST: UserController/Edit/5
-        public async Task<ActionResult> Edit(Guid ID, UserDTO NewInput)
+        public async Task<ActionResult> Edit(Guid ID, UserDTO NewInput, IFormFile? NewProfilePic)
         {
             try
             {
                 string URL = $@"https://localhost:7187/api/User/{ID}";
+
+                MultipartFormDataContent Contents = new()
+                {
+                    { new StringContent(NewInput.Username!),         nameof(NewInput.Username) },
+                    { new StringContent(NewInput.Password!),         nameof(NewInput.Password) },
+                    { new StringContent(NewInput.FirstName ?? ""),   nameof(NewInput.FirstName) },
+                    { new StringContent(NewInput.LastName ?? ""),    nameof(NewInput.LastName) },
+                    { new StringContent(NewInput.Email ?? ""),       nameof(NewInput.Email) },
+                    { new StringContent(Guid.NewGuid().ToString()),  nameof(NewInput.ImageID) },
+                    { new StringContent(NewInput.Address ?? ""),     nameof(NewInput.Address) },
+                    { new StringContent(NewInput.PhoneNumber ?? ""), nameof(NewInput.PhoneNumber) },
+                    { new StringContent(NewInput.Status.ToString()), nameof(NewInput.Status) },
+                };
+
+                if (NewProfilePic != null)
+                {
+                    var ImageStream = new StreamContent(NewProfilePic.OpenReadStream());
+                    Contents.Add(ImageStream, nameof(NewProfilePic), NewProfilePic.FileName);
+                }
+
                 var Response = await Client.PutAsJsonAsync(URL, NewInput);
                 return RedirectToAction(nameof(Index));
             }

@@ -9,17 +9,17 @@
 <dl class="row">
     <dt class="col-md-3">ID</dt>
     <dd class="col-md-9">
-        <i style="font-size: small" class="font-monospace-cascadia">@Model.SizeID</i>
+        <i class="font-monospace-cascadia">@Model.SizeID</i>
     </dd>
     <dt class="col-md-3">Size info</dt>
     <dd class="col-md-9">@Model.Name
     </dd>
     <dt class="col-md-3">Added on</dt>
     <dd class="col-md-9">
-        @Model.CreatedAt<br />
+        @(Model.CreatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss"))<br />
     </dd>
     <dt class="col-md-3">Last edited</dt>
     <dd class="col-md-9">
-        @Model.UpdatedAt<br />
+        @Model.UpdatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss")<br />
     </dd>
 </dl>

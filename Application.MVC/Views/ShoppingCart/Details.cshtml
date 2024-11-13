@@ -9,7 +9,7 @@
 <dl class="row">
     <dt class="col-md-3">ID</dt>
     <dd class="col-md-9">
-        <i style="font-size: small" class="font-monospace-cascadia">@Model.CartID</i>
+        <i class="font-monospace-cascadia">@Model.CartID</i>
     </dd>
     <dt class="col-md-3">Username</dt>
     <dd class="col-md-9">@Model.User?.Username<br />
@@ -33,7 +33,8 @@
         <i style="font-size: x-small" class="font-monospace-cascadia">@Model.VoucherID</i>
     </dd>
         <dt class="col-md-3">Order date</dt>
-    <dd class="col-md-9">@Model.DateAdded.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss")
+    <dd class="col-md-9">
+        @Model.DateAdded.ToLocalTime().ToString("d/M/yyyy H:mm:ss")
         &nbsp;
     </dd>
         <dt class="col-md-3">Amount in cart</dt>
@@ -46,26 +47,25 @@
         @Model.Product!.Price.ToString("#,##0")
         &nbsp;
     </dd>
-    <dt class="col-md-3">Total price</dt>
+    <dt class="col-md-3">Raw price</dt>
     <dd class="col-md-9">
-        @((Model.QuantityCart * Model.Product!.Price).ToString("#,##0"))
+        @((Model.RawPrice).ToString("#,##0"))
         &nbsp;
     </dd>
     <dt class="col-md-3">Discount</dt>
     <dd class="col-md-9">
-        @if (Model.Voucher!.DiscountPrice > 0)
-        {
-            @Model.Voucher!.DiscountPrice.ToString("#,##0")
-        }
-        else if (@Model.Voucher!.DiscountPercent > 0)
-        {
-            @Model.Voucher!.DiscountPercent <text>%</text>
-        }
-        else
-        {
-            <text>None</text>
-        }
-        &nbsp;
+        @((Model.Discount).ToString("#,##0"))<br />
+        <i style="font-size: small" class="font-monospace-cascadia">
+            @if (Model.Voucher != null)
+            {
+                <text>Discount percent: @Model.Voucher.DiscountPercent% (@((Model.RawPrice * Model.Voucher.DiscountPercent / 100).ToString("#,##0")))</text><br />
+                <text>Discount price: &nbsp; @Model.Voucher.DiscountPrice.ToString("#,##0")</text>
+            }
+            else
+            {
+                <text>None</text>
+            }
+        </i>
     </dd>
     <dt class="col-md-3">Finalized price</dt>
     <dd class="col-md-9">

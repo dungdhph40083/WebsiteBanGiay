@@ -1,4 +1,5 @@
-﻿@model Application.Data.DTOs.SizeDTO;
+﻿@using Application.Data.Enums
+@model Application.Data.DTOs.SizeDTO;
 
 @{
     ViewData["Title"] = "Update product size";
@@ -10,17 +11,20 @@
     <div class="row">
         <div class="col-md-6">
             <label asp-for="Name" class="form-label">Size name</label>
-            <input type="text" asp-for="Name" class="form-input" aria-label="Input size name">
+            <input type="text" asp-for="Name" class="form-control" aria-label="Input size name">
             <span asp-validation-for="Name">Required!</span>
         </div>
-        <div class="col-md-6 mt-4">
+        <div class="col-md-6">
             <label asp-for="Status" class="form-label">Size</label>
-            <input asp-for="Status" class="form-input" aria-label="Is available?">
+            <select asp-for="Status" class="form-select" aria-label="Is it available?">
+                <option selected value="@((int)VisibilityStatus.Available)">Available</option>
+                <option value="@((int)VisibilityStatus.Locked)">Unavailable</option>
+            </select>
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Update</button>
 </form>
-
+<br />
 <div class="alert alert-warning" role="alert">
     Only use this edit function to edit typos! (Like it matters anyway...)
 </div>

@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="text-center">
+    <h1>Dashboard</h1>
+</div>
+<hr />
+<div class="row mb-3">
+    <div class="card border-primary">
+        <div class="card-body">
+            <h5 class="card-title">Image manager</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Upload or view images</h6>
+            <p class="card-text">You can manage images here, as well as uploading them manually.</p>
+            <a asp-controller="Image" asp-action="Index" class="btn btn-primary">Go</a>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="card border-primary">
+        <div class="card-body">
+            <h5 class="card-title">Shopping carts</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">View cart entries</h6>
+            <p class="card-text">You can manage shopping cart entries here.</p>
+            <a asp-controller="ShoppingCart" asp-action="Index" class="btn btn-primary">Go</a>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="card border-primary">
+        <div class="card-body">
+            <h5 class="card-title">Product sizes</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Add or delete product sizes</h6>
+            <p class="card-text">You can manage product sizes here.</p>
+            <a asp-controller="Size" asp-action="Index" class="btn btn-primary">Go</a>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="card border-primary">
+        <div class="card-body">
+            <h5 class="card-title">Users</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Manage user information, etc.</h6>
+            <p class="card-text">Manage user accounts.</p>
+            <a asp-controller="User" asp-action="Index" class="btn btn-primary">Go</a>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="card border-primary">
+        <div class="card-body">
+            <h5 class="card-title">Vouchers</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Manage active vouchers and its status</h6>
+            <p class="card-text">Manage product vouchers.</p>
+            <a asp-controller="Voucher" asp-action="Index" class="btn btn-primary">Go</a>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="card border-warning">
+        <div class="card-body">
+            <h5 class="card-title">Size and product relations</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">RELATIONAL</h6>
+            <p class="card-text">You can manage size and product relations here.</p>
+            <a asp-controller="Size_ProductDetail" asp-action="Index" class="btn btn-warning">Go</a>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="card border-warning">
+        <div class="card-body">
+            <h5 class="card-title">User roles relations</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">RELATIONAL</h6>
+            <p class="card-text">You can manage user roles here.</p>
+            <a asp-controller="User_Role" asp-action="Index" class="btn btn-warning">Go</a>
+        </div>
+    </div>
+</div>

@@ -28,7 +28,7 @@
                     <td>@Entry.Product?.Name</td>
                     <td>@Entry.QuantityCart</td>
                     <td>@(Entry.IsCheckedOut ? "Done" : "Not yet")</td>
-                    <td>@(Entry.DateAdded.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss"))</td>
+                    <td>@(Entry.DateAdded.ToLocalTime().ToString("d/M/yyyy H:mm:ss"))</td>
                     <td>
                         <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.CartID)">Edit</a>
                         <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.CartID">Details</a>

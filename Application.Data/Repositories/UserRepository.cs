@@ -4,6 +4,7 @@ using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 using BallsCrypt = BCrypt.Net.BCrypt;
 
 namespace Application.Data.Repositories
@@ -20,8 +21,11 @@ namespace Application.Data.Repositories
 
         public async Task<User> CreateUser(UserDTO NewUser)
         {
-            User User = new() { UserID = Guid.NewGuid() };
+            DateTime DateTimeSync = DateTime.UtcNow;
+
+            User User = new() { UserID = Guid.NewGuid(), CreatedAt = DateTimeSync, LastUpdatedOn = DateTimeSync};
             NewUser.Password = PasswordHasher(NewUser.Password);
+
             User = Mapper.Map(NewUser, User);
             await Context.Users.AddAsync(User);
             await Context.SaveChangesAsync();
@@ -40,7 +44,8 @@ namespace Application.Data.Repositories
 
         public async Task<User?> GetUserByID(Guid TargetID)
         {
-            var Target = await Context.Users.FindAsync(TargetID);
+            var Target = await Context.Users
+                .Include(UU => UU.Image).SingleOrDefaultAsync(x => x.UserID == TargetID);
             return Target;
         }
 
@@ -48,7 +53,6 @@ namespace Application.Data.Repositories
         {
             return Context.Users
                 .Include(UU => UU.Image)
-                .Include(UU => UU.Roles)
                 .ToListAsync();
         }
 
@@ -60,6 +64,7 @@ namespace Application.Data.Repositories
                 Context.Entry(Target).State = EntityState.Modified;
                 UpdatedUser.Password = PasswordHasher(UpdatedUser.Password);
                 var UpdatedTarget = Mapper.Map(UpdatedUser, Target);
+                UpdatedTarget.LastUpdatedOn = DateTime.UtcNow;
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;

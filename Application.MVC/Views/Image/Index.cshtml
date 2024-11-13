@@ -27,7 +27,7 @@
                     <td>@Entry.ImageFileName</td>
                     <td>@Entry.ImageName</td>
                     <td>@(Entry.Status == (int)VisibilityStatus.Locked ? "Unavailable" : "Available")</td>
-                    <td>@Entry.UpdatedAt.GetValueOrDefault().ToLocalTime()</td>
+                    <td>@Entry.UpdatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
                     <td>
                         <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.ImageID)">Edit</a>
                         <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.ImageID">Details</a>
