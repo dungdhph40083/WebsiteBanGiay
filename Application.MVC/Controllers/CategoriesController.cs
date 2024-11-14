@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 
 namespace Application.MVC.Controllers
 {
-    public class CategoryController : Controller
+    public class CategoriesController : Controller
     {
        HttpClient client;
-        public CategoryController()
+        public CategoriesController()
         {
             client = new HttpClient();
         }
