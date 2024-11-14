@@ -68,7 +68,8 @@ namespace Application.API.Controllers
                     break;
                 }
             }
-            return await UserRepo.CreateUser(NewUser);
+            var Response = await UserRepo.CreateUser(NewUser);
+            return CreatedAtAction(nameof(Get), new { ID = Response.UserID }, Response);
         }
 
         [HttpPut("{ID}")]

@@ -2,34 +2,28 @@
 using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Data.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
         private readonly GiayDBContext _context;
+        private readonly IMapper Mapper;
 
-        public CategoryRepository(GiayDBContext context)
+        public CategoryRepository(GiayDBContext context, IMapper Mapper)
         {
             _context = context;
+            this.Mapper = Mapper;
         }
-        public async Task AddCategory(CategoryDTO categoryDto)
+        public async Task<Category> AddCategory(CategoryDTO categoryDto)
         {
-            var category = new Category
-            {
-                CategoryID = Guid.NewGuid(), // Fake ID
-                CategoryName = categoryDto.CategoryName,
-                Description = categoryDto.Description
-            };
-
-            await _context.Categories.AddAsync(category);
+            Category Category = new(){ CategoryID = Guid.NewGuid() };
+            Category = Mapper.Map(categoryDto, Category);
+            await _context.Categories.AddAsync(Category);
             await _context.SaveChangesAsync();
+            return Category;
         }
 
         public async Task DeleteCategory(Guid id)
@@ -42,40 +36,29 @@ namespace Application.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetAllCategory()
+        public async Task<List<Category>> GetAllCategory()
         {
-            return await _context.Categories
-             .Select(c => new CategoryDTO
-             {
-                 CategoryID = c.CategoryID,
-                 CategoryName = c.CategoryName,
-                 Description = c.Description
-             }).ToListAsync();
+            return await _context.Categories.ToListAsync();
         }
 
-        public async Task<CategoryDTO> GetByIdCategory(Guid id)
+        public async Task<Category?> GetByIdCategory(Guid id)
         {
             var category = await _context.Categories.FindAsync(id);
-            if (category == null) return default!;
+            if (category == null) return default;
 
-            return new CategoryDTO
-            {
-                CategoryID = category.CategoryID,
-                CategoryName = category.CategoryName,
-                Description = category.Description
-            };
+            return category;
         }
 
-        public async Task UpdateCategory(CategoryDTO categoryDto)
+        public async Task<Category?> UpdateCategory(Guid TargetID, CategoryDTO categoryDto)
         {
-            var category = await _context.Categories.FindAsync(categoryDto.CategoryID);
-            if (category == null) return;
-
-            category.CategoryName = categoryDto.CategoryName;
-            category.Description = categoryDto.Description;
-
-            _context.Categories.Update(category);
+            var category = await _context.Categories.FindAsync(TargetID);
+            if (category == null) return default;
+            _context.Entry(category).State = EntityState.Modified;
+            var UpdatedTarget = Mapper.Map(categoryDto, category);
+            _context.Update(UpdatedTarget);
             await _context.SaveChangesAsync();
+
+            return UpdatedTarget;
         }
     }
 }

@@ -1,18 +1,14 @@
 ﻿using Application.Data.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Application.Data.Models;
 
 namespace Application.Data.Repositories.IRepository
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<CategoryDTO>> GetAllCategory();
-        Task<CategoryDTO> GetByIdCategory(Guid id);
-        Task AddCategory(CategoryDTO categoryDto);
-        Task UpdateCategory(CategoryDTO categoryDto);
+        Task<List<Category>> GetAllCategory();
+        Task<Category?> GetByIdCategory(Guid id);
+        Task<Category> AddCategory(CategoryDTO categoryDto);
+        Task<Category?> UpdateCategory(Guid TargetID, CategoryDTO categoryDto);
         Task DeleteCategory(Guid id);
     }
 }

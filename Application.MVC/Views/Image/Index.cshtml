@@ -1,5 +1,5 @@
 ﻿@using Application.Data.Enums
-@model IEnumerable<Application.Data.Models.Image>;
+@model IEnumerable<Application.Data.Models.Category>;
 
 @{
     ViewData["Title"] = "Image gallery";
@@ -24,7 +24,7 @@
             @foreach (var Entry in Model)
             {
                 <tr>
-                    <td>@Entry.ImageFileName</td>
+                    @* <td>@Entry.ImageFileName</td>
                     <td>@Entry.ImageName</td>
                     <td>@(Entry.Status == (int)VisibilityStatus.Locked ? "Unavailable" : "Available")</td>
                     <td>@Entry.UpdatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
@@ -32,7 +32,7 @@
                         <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.ImageID)">Edit</a>
                         <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.ImageID">Details</a>
                         <button type="button" class="btn btn-danger delete_trigger" data-id="@Entry.ImageID" data-controller="Image" data-action="Delete" data-bs-toggle="modal" data-bs-target="#ModalDelete">Delete</button>
-                    </td>
+                    </td> *@
                 </tr>
             }
         </tbody>

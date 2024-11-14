@@ -1,0 +1,21 @@
+﻿@model Application.Data.Models.Category
+
+@{
+    ViewData["Title"] = "Category details";
+}
+
+<h1>Category details</h1>
+
+<dl class="row">
+    <dt class="col-md-3">ID</dt>
+    <dd class="col-md-9">
+        <i class="font-monospace-cascadia">@Model.CategoryID</i>
+    </dd>
+    <dt class="col-md-3">Size info</dt>
+    <dd class="col-md-9">@Model.CategoryName
+    </dd>
+    <dt class="col-md-3">Description</dt>
+    <dd class="col-md-9">
+        @Model.Description
+    </dd>
+</dl>

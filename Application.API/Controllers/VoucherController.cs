@@ -31,7 +31,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Voucher>> Post([FromBody] VoucherDTO NewVoucher)
         {
-            return await VoucherRepo.CreateVoucher(NewVoucher);
+            var Response = await VoucherRepo.CreateVoucher(NewVoucher);
+            return CreatedAtAction(nameof(Get), new { ID = Response.VoucherID }, Response);
         }
 
         [HttpPut("{ID}")]

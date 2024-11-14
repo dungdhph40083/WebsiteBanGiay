@@ -31,7 +31,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ShoppingCart>> Post([FromBody] ShoppingCartDTO NewShoppingCart)
         {
-            return await ShoppingCartRepo.CreateNew(NewShoppingCart);
+            var Response = await ShoppingCartRepo.CreateNew(NewShoppingCart);
+            return CreatedAtAction(nameof(Get), new { ID = Response.CartID }, Response);
         }
 
         [HttpPut("{ID}")]

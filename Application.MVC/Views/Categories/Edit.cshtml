@@ -1,0 +1,27 @@
+﻿@using Application.Data.Enums
+@model Application.Data.DTOs.CategoryDTO;
+
+@{
+    ViewData["Title"] = "Update product size";
+}
+
+<h1>Update product size</h1>
+
+<form asp-action="Edit" method="post">
+    <div class="row">
+        <div class="col-md-12">
+            <label asp-for="CategoryName" class="form-label">Category name</label>
+            <input type="text" asp-for="CategoryName" class="form-control" aria-label="Input size name">
+            <span asp-validation-for="CategoryName">Required!</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label asp-for="Description" class="form-label">Description</label>
+            <textarea type="text" asp-for="Description" class="form-control" aria-label="Input size name">
+                69
+            </textarea>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Update</button>
+</form>

@@ -16,6 +16,12 @@ namespace Application.Data.Mappers
             // khi cần dùng mapper thì phải khai báo mới cái "sơ đồ ghép" cho mỗi thằng
             // cần hợp nhất hoặc trích xuất dữ liệu ra
 
+            CreateMap<Category, CategoryDTO>();
+            CreateMap<CategoryDTO, Category>();
+
+            CreateMap<Image, ImageDTO>();
+            CreateMap<ImageDTO, Image>();
+
             CreateMap<ProductDetail, ProductDetailDTO>();
             CreateMap<ProductDetailDTO, ProductDetail>();
             
@@ -33,9 +39,6 @@ namespace Application.Data.Mappers
 
             CreateMap<SizeDTO, Size>();
             CreateMap<Size, SizeDTO>();
-
-            CreateMap<Image, ImageDTO>();
-            CreateMap<ImageDTO, Image>();
 
             CreateMap<Size_ProductDetail, Size_ProductDetailDTO>();
             CreateMap<Size_ProductDetailDTO, Size_ProductDetail>();

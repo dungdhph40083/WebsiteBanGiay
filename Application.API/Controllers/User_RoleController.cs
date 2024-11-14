@@ -31,7 +31,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<User_Role>> Post([FromBody] User_RoleDTO NewUser_Role)
         {
-            return await User_RoleRepo.CreateNew(NewUser_Role);
+            var Response = await User_RoleRepo.CreateNew(NewUser_Role);
+            return CreatedAtAction(nameof(Get), new { ID = Response.User_RoleID }, Response);
         }
 
         [HttpPut("{ID}")]
