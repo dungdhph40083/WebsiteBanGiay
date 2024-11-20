@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.Data.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,10 +12,13 @@ namespace Application.Data.Models
 	public class User_Role
 	{
 		[Key]
-		public Guid User_RoleID { get; set; }
+        [Required(ErrorMessage = ValidateErrorResult.BAD_INPUT)]
+        public Guid User_RoleID { get; set; }
 		[ForeignKey(nameof(User))]
+		[Required(ErrorMessage = ValidateErrorResult.EMPTY_FIELD_NOT_ALLOWED)]
 		public Guid UserID { get; set; }
         [ForeignKey(nameof(Role))]
+        [Required(ErrorMessage = ValidateErrorResult.EMPTY_FIELD_NOT_ALLOWED)]
         public Guid RoleID { get; set; }
 
 		public virtual User? User { get; set; }

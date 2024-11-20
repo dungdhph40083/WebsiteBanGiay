@@ -51,8 +51,6 @@ namespace Application.Data.Mappers
 
             CreateMap<Voucher, VoucherDTO>();
             CreateMap<VoucherDTO, Voucher>();
-
-            // PLEASE use automapper it literally decreases your muscle work by like 83%
         }
     }
 }

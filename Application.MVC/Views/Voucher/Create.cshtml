@@ -45,7 +45,7 @@
         </div>
         <div class="col-md-5">
             <label asp-for="DiscountPrice" class="form-label">Discount price</label>
-            <input asp-for="DiscountPrice" class="form-control" type="number" step="100" min="0" max="@(1e15)" aria-label="" />
+            <input asp-for="DiscountPrice" class="form-control" type="number" step="100" min="0" max="@(1000000000000000)" aria-label="" />
             <span asp-validation-for="DiscountPrice">From 0 to 1 quadrillion.</span>
         </div>
         <div class="col-md-4">

@@ -1,21 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using Application.Data.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Data.Models
 {
 	public class ShoppingCart
 	{
 		[Key]
-		public Guid CartID { get; set; }
+        [Required(ErrorMessage = ValidateErrorResult.EMPTY_FIELD_NOT_ALLOWED)]
+        public Guid CartID { get; set; }
 		[ForeignKey(nameof(User))]
 		public Guid? UserID { get; set; }
-		public int QuantityCart { get; set; }
+        [Range(1, 20, ErrorMessage = ValidateErrorResult.OUT_OF_RANGE)]
+        public int QuantityCart { get; set; }
 		[ForeignKey(nameof(Product))]
 		public Guid? ProductID { get; set; }
 		[ForeignKey(nameof(Size))]
@@ -26,7 +23,8 @@ namespace Application.Data.Models
 		public long Discount { get; set; }
 		public long FinalPrice { get; set; }
 		public DateTime DateAdded { get; set; }
-		public bool IsCheckedOut { get; set;}
+        [Required(ErrorMessage = ValidateErrorResult.EMPTY_FIELD_NOT_ALLOWED)]
+        public bool IsCheckedOut { get; set;}
 		[ForeignKey(nameof(Voucher))]
 		public Guid? VoucherID { get; set; }
 		
