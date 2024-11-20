@@ -3,6 +3,16 @@
 
 // Write your JavaScript code.
 
+const toastTrigger = document.getElementById('liveToastBtn')
+const toastLiveExample = document.getElementById('liveToast')
+
+if (toastTrigger) {
+    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+    toastTrigger.addEventListener('click', () => {
+        toastBootstrap.show()
+    })
+}
+
 $(".delete_trigger").on("click", (event) => {
     event.preventDefault(); // do not accidentally refresh
 

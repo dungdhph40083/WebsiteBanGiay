@@ -19,10 +19,14 @@
         public const string PASSWORD_TOO_SHORT          = "PASSWORD_TOO_SHORT";
         public const string PASSWORD_NOT_SECURE_ENOUGH  = "PASSWORD_NOT_SECURE_ENOUGH";
         public const string BAD_EMAIL_FORMAT            = "BAD_EMAIL_FORMAT";
+        public const string BAD_FORMAT                  = "BAD_FORMAT";
         public const string BAD_USERNAME                = "BAD_USERNAME";
         public const string EMPTY_FIELD_NOT_ALLOWED     = "EMPTY_FIELD_NOT_ALLOWED";
         public const string OUT_OF_STOCK                = "OUT_OF_STOCK";
         public const string BAD_PHONE_NUMBER            = "BAD_PHONE_NUMBER";
         public const string BAD_INPUT                   = "BAD_INPUT";
+        public const string OUT_OF_RANGE                = "OUT_OF_RANGE";
+        public const string INPUT_NOT_UNIQUE            = "INPUT_NOT_UNIQUE";
+        public const string WTF_HOW_DID_IT_FAIL         = "WTF_HOW_DID_IT_FAIL";
     }
 }

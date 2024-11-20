@@ -37,8 +37,6 @@ namespace Application.Data.ModelContexts
                 .IsUnique();
         }
 
-
-		public DbSet<AAAAAAAAAAAAAAAAAAAAA> AAAAAAAAAAAAAAAAAAAAA { get; set; }
         public DbSet<Category> Categories { get; set; }
 		public DbSet<Category_Product> Category_Products { get; set; }
 		public DbSet<Color> Colors { get; set; }

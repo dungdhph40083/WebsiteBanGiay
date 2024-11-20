@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.Data.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Application.Data.DTOs
 {
@@ -10,6 +7,7 @@ namespace Application.Data.DTOs
     {
         public string? ImageName { get; set; }
         public string? ImageDescription { get; set; }
+        [Required(ErrorMessage = "Required.")]
         public byte Status { get; set; }
     }
 }
