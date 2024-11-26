@@ -24,13 +24,13 @@ namespace Application.Data.Mappers
 
             CreateMap<ProductDetail, ProductDetailDTO>();
             CreateMap<ProductDetailDTO, ProductDetail>();
-            
+
             CreateMap<ProductWarranty, ProductWarrantyDTO>();
             CreateMap<ProductWarrantyDTO, ProductWarranty>();
-            
+
             CreateMap<Rating, RatingsDTO>();
             CreateMap<RatingsDTO, Rating>();
-            
+
             CreateMap<Return, ReturnDTO>();
             CreateMap<ReturnDTO, Return>();
 
@@ -39,6 +39,15 @@ namespace Application.Data.Mappers
 
             CreateMap<Size_ProductDetail, Size_ProductDetailDTO>();
             CreateMap<Size_ProductDetailDTO, Size_ProductDetail>();
+            
+            CreateMap<Sale, SaleDTO>();
+            CreateMap<SaleDTO, Sale>();
+            
+            CreateMap<ShippingMethod, ShippingMethodDTO>();
+            CreateMap<ShippingMethodDTO, ShippingMethod>();
+            
+            CreateMap<Role, RoleDTO>();
+            CreateMap<RoleDTO, Role>();
 
             // PLEASE use automapper it literally decreases your muscle work by like 83%
         }

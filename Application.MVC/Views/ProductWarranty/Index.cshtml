@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Application.Data.Models.ProductWarranty>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.WarrantyID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WarrantyPeriod)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WarrantyConditions)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedAt)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.WarrantyID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WarrantyPeriod)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WarrantyConditions)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedAt)
+            </td>
+            <td>
+                    @Html.ActionLink("Update", "Update", new { id = item.WarrantyID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.WarrantyID }) |
+                    <a href="/ProductWarranty/delete?id=@item.WarrantyID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -2,6 +2,7 @@
 {
     public class ProductDetailDTO
     {
+        public Guid ProductDetailID { get; set; }
         public Guid? ProductID { get; set; }
         public string? Material { get; set; }
         public int Quantity { get; set; }

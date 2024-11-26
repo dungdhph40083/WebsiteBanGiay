@@ -41,6 +41,9 @@ builder.Services.AddScoped<IProductDetail, ProductDetailRepository>();
 builder.Services.AddScoped<IProductWarranty, ProductWarrantyRepository>();
 builder.Services.AddScoped<IRatings, RatingsRepository>();
 builder.Services.AddScoped<IReturn, ReturnRepository>();
+builder.Services.AddScoped<ISale, SaleRepository>();
+builder.Services.AddScoped<IRole, RoleRepository>();
+builder.Services.AddScoped<IShippingMethod, ShippingMethodRepository>();
 
 builder.Services.AddCors(options =>
 {

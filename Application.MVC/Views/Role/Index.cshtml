@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Application.Data.Models.Role>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RoleID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoleCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoleName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleName)
+            </td>
+            <td>
+                    @Html.ActionLink("Update", "Update", new { id = item.RoleID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.RoleID }) |
+                    <a href="/Role/delete?ID=@item.RoleID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

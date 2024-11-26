@@ -23,25 +23,25 @@ namespace Application.API.Controllers
         {
             return await returnrepos.GetReturn();
         }
-        [HttpGet("{ID}")]
+        [HttpGet("getbyId")]
         public async Task<ActionResult<Return?>> Get(Guid ID)
         {
             return await returnrepos.GetReturnlByID(ID);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Return>> Post([FromBody] ReturnDTO NewReturn)
         {
             return await returnrepos.CreateNew(NewReturn);
         }
 
-        [HttpPut("{ID}")]
+        [HttpPut("update")]
         public async Task<ActionResult<Return?>> Put(Guid ID, [FromBody] ReturnDTO UpdateReturn)
         {
             return await returnrepos.UpdateExisting(ID, UpdateReturn);
         }
 
-        [HttpDelete("{ID}")]
+        [HttpDelete("delete")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await returnrepos.DeleteExisting(ID);
