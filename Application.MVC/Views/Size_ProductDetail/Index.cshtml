@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Application.Data.Models.Size_ProductDetail>;
+
+@{
+    ViewData["Title"] = "Size & Product detail relations list";
+}
+
+<h1>Size & Product detail relations</h1>
+<a type="button" class="btn btn-success mb-2" asp-action="Create">Create new</a>
+
+@if (Model.Count() != 0)
+{
+    <table class="table table-bordered table-striped border-info">
+        <thead class="bg-primary">
+            <tr>
+                <th>Product name</th>
+                <th>Size</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Entry in Model)
+            {
+                <tr>
+                    <td>@Entry.ProductDetail?.Product?.Name</td>
+                    <td>@Entry.Size?.Name</td>
+                    <td>
+                        <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.Size_ProductDetail_ID)">Edit</a>
+                        <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.Size_ProductDetail_ID">Details</a>
+                        <button type="button" class="btn btn-danger delete_trigger" data-id="@Entry.Size_ProductDetail_ID" data-controller="Size_ProductDetail" data-action="Delete" data-bs-toggle="modal" data-bs-target="#ModalDelete">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6"></td>
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <h1 class="text-center">No relation available.</h1>
+    <p class="text-center">Select "Create new" to create a new relation!</p>
+}
+
+@if (TempData["ErrorLog"]?.ToString() == "ErrorDetails")
+{
+    <div class="alert alert-danger" role="alert">
+        Data not found!
+    </div>
+}
+@if (TempData["ErrorLog"]?.ToString() == "ErrorDelete")
+{
+    <div class="alert alert-danger" role="alert">
+        Something went wrong???
+    </div>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="ModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">STOP RIGHT THERE!!!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-btn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this relation?<br />
+                <span style="font-size:small" class="font-monospace-cascadia">Relation ID: <span id="ItemID" class="font-monospace-cascadia"></span></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel-btn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm_deletion">Proceed</button>
+            </div>
+        </div>
+    </div>
+</div>

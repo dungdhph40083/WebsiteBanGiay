@@ -52,6 +52,7 @@ namespace Application.Data.Repositories
             {
                 Context.Entry(Target).State = EntityState.Modified;
                 var UpdatedTarget = Mapper.Map(UpdatedSize, Target);
+                UpdatedTarget.UpdatedAt = DateTime.UtcNow;
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;

@@ -27,12 +27,15 @@ namespace Application.Data.ModelContexts
             // Configure the context to use SQL Server with the connection string
             optionsBuilder.UseSqlServer(connectionString);
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder ModelBuilder)
         {
-			
+			ModelBuilder.Entity<User>()
+				.HasIndex(Idx => Idx.Username)
+				.IsUnique();
+            ModelBuilder.Entity<User>()
+                .HasIndex(Idx => Idx.Email)
+                .IsUnique();
         }
-
-
 
         public DbSet<Category> Categories { get; set; }
 		public DbSet<Category_Product> Category_Products { get; set; }

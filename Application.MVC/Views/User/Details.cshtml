@@ -1,0 +1,59 @@
+﻿@using System.Text.RegularExpressions
+@model Application.Data.Models.User
+
+@{
+    ViewData["Title"] = "User information";
+}
+
+<h1>User information</h1>
+
+<dl class="row">
+    <dt class="col-md-3">ID</dt>
+    <dd class="col-md-9">
+        <i class="font-monospace-cascadia">@Model.UserID</i>
+    </dd>
+    <dt class="col-md-3">Username</dt>
+    <dd class="col-md-9">@Model.Username
+    </dd>
+    <dt class="col-md-3">Password</dt>
+    <dd class="col-md-9">
+        @(new String(Enumerable.Repeat('*', (Model.Password.Length)).ToArray()))
+    </dd>
+        <dt class="col-md-3">Name</dt>
+    <dd class="col-md-9">
+        <span>@Model.LastName @Model.FirstName</span>
+        <span style="font-size: small">(@Model.FirstName @Model.LastName)</span>
+    </dd>
+        <dt class="col-md-3">Phone number</dt>
+    <dd class="col-md-9">
+        @Model.PhoneNumber
+    </dd>
+        <dt class="col-md-3">Email</dt>
+    <dd class="col-md-9">@Model.Email
+    </dd>
+        <dt class="col-md-3">Address</dt>
+    <dd class="col-md-9">@Model.Address
+    </dd>
+        <dt class="col-md-3">Created date</dt>
+    <dd class="col-md-9">
+        @Model.CreatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss")
+    </dd>
+    <dt class="col-md-3">Last updated on</dt>
+    <dd class="col-md-9">
+        @Model.LastUpdatedOn.ToLocalTime().ToString("d/M/yyyy H:mm:ss")
+    </dd>
+    <dt class="col-md-3">Is active?</dt>
+    <dd class="col-md-9">
+        @(Model.Status)
+    </dd>
+    <dt class="col-md-3">Has profile picture?</dt>
+    <dd class="col-md-9">
+        @(Model.ImageID != null ? "Yes" : "No")
+    </dd>
+</dl>
+@if (Model.ImageID != null)
+{
+    <hr />
+    <img src="@(ViewData["URLFetchImg"])" class="img-fluid" alt="Image displayer">
+    <div class="text-center"><i>@Model.Image?.ImageName</i></div>
+}

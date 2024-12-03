@@ -20,6 +20,7 @@ namespace Application.Data.Repositories
         public async Task<Voucher> CreateVoucher(VoucherDTO NewVoucher)
         {
             Voucher Voucher = new() { VoucherID = Guid.NewGuid() };
+            NewVoucher.VoucherCode = NewVoucher.VoucherCode.ToUpper();
             Voucher = Mapper.Map(NewVoucher, Voucher);
             await Context.Vouchers.AddAsync(Voucher);
             await Context.SaveChangesAsync();
@@ -38,13 +39,19 @@ namespace Application.Data.Repositories
 
         public async Task<Voucher?> GetVoucherByID(Guid TargetID)
         {
-            var Target = await Context.Vouchers.FindAsync(TargetID);
+            var Target = await Context.Vouchers
+                .Include(UU => UU.Category)
+                .Include(UU => UU.Product)
+                .SingleOrDefaultAsync(x => x.VoucherID == TargetID);
             return Target;
         }
 
         public Task<List<Voucher>> GetVouchers()
         {
-            return Context.Vouchers.ToListAsync();
+            return Context.Vouchers
+                .Include(UU => UU.Category)
+                .Include(UU => UU.Product)
+                .ToListAsync();
         }
 
         public async Task<Voucher?> UpdateVoucher(Guid TargetID, VoucherDTO UpdatedVoucher)
@@ -53,7 +60,9 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
+                UpdatedVoucher.VoucherCode = UpdatedVoucher.VoucherCode.ToUpper();
                 var UpdatedTarget = Mapper.Map(UpdatedVoucher, Target);
+                UpdatedTarget.LastUpdatedOn = DateTime.UtcNow;
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;

@@ -1,0 +1,68 @@
+﻿@using Application.Data.Enums
+@model Application.Data.DTOs.VoucherDTO;
+
+@{
+    ViewData["Title"] = "Update product size";
+}
+
+<h1>Update voucher info</h1>
+
+<form asp-action="Edit" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="CategoryID" class="form-label">For category</label>
+            <select asp-for="CategoryID" class="form-select" aria-label="Select category to assign to" asp-items="@ViewBag.Catgs">
+                <option selected hidden value="">(No category specified)</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ProductID" class="form-label">For product</label>
+            <select asp-for="ProductID" class="form-select" aria-label="Select category to assign to" asp-items="@ViewBag.Prods">
+                <option selected hidden value="">(No category specified)</option>
+            </select>
+        </div>
+        <br />
+        <i class="text-center text-decoration-underline">You must enter at least one field in order to use the voucher. (Fields can still be left blank)</i>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <label asp-for="VoucherCode" class="form-label">Voucher code</label>
+            <input asp-for="VoucherCode" class="form-control font-monospace-cascadia" required aria-label="Input voucher code to use" />
+            <span asp-validation-for="VoucherCode">Required, must be unique & has no special characters!</span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="UsesLeft" class="form-label">Uses</label>
+            <input asp-for="UsesLeft" class="form-control" type="number" step="1" min="-1" max="10000000"
+                   aria-label="Input how many uses this voucher can be used. Select -1 for INFINITE USES!!!" />
+            <span asp-validation-for="UsesLeft">Input "-1" for infinite uses!</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <label asp-for="DiscountPercent" class="form-label">Discount %</label>
+            <input asp-for="DiscountPercent" class="form-control" type="number" step="0.01" min="0" max="100" aria-label="Input discount percent" />
+            <span asp-validation-for="DiscountPercent">From 0 to 100%.</span>
+        </div>
+        <div class="col-md-5">
+            <label asp-for="DiscountPrice" class="form-label">Discount price</label>
+            <input asp-for="DiscountPrice" class="form-control" type="number" step="100" min="0" max="@(1e15)" aria-label="" />
+            <span asp-validation-for="DiscountPrice">From 0 to 1 quadrillion.</span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Status" class="form-label">Visibility</label>
+            <select asp-for="Status" class="form-select" aria-label="Is it available?">
+                <option selected value="@((int)VisibilityStatus.Available)">Available</option>
+                <option value="@((int)VisibilityStatus.Locked)">Unavailable</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label asp-for="Description">Description</label>
+            <textarea asp-for="Description" class="form-control" aria-label="Enter voucher description">
+                Voucher giảm giá...
+            </textarea>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Update</button>
+</form>

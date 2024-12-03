@@ -29,12 +29,13 @@
     </dd>
     <dt class="col-md-3">First uploaded at</dt>
     <dd class="col-md-9">
-        @Model.CreatedAt.GetValueOrDefault().ToLocalTime()<br />
+        @Model.CreatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss")<br />
     </dd>
     <dt class="col-md-3">Last updated</dt>
     <dd class="col-md-9">
-        @Model.UpdatedAt.GetValueOrDefault().ToLocalTime()<br />
+        @Model.UpdatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss")<br />
     </dd>
 </dl>
 <hr />
-<img src="..." class="img-fluid" alt="Image displayer">
+<img src="@(ViewData["URLFetchImg"])" class="img-fluid" alt="Image displayer">
+<div class="text-center"><i>@Model.ImageName</i></div>

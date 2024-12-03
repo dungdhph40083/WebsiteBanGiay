@@ -27,6 +27,10 @@ namespace Application.MVC.Controllers
         {
             string URL = $@"https://localhost:7187/api/Image/{ID}";
             var Response = await Client.GetFromJsonAsync<Image>(URL);
+            if (Response != null && Response.ImageFileName != null)
+            {
+                ViewData["URLFetchImg"] = $@"https://localhost:7187/Images/{Response.ImageFileName}";
+            }
             return View(Response);
         }
 
@@ -51,7 +55,8 @@ namespace Application.MVC.Controllers
                 {
                     { new StringContent(Input.ImageName!), nameof(Input.ImageName) },
                     { new StringContent(Input.ImageDescription!), nameof(Input.ImageDescription) },
-                    { new StringContent(Input.Status.ToString()), nameof(Input.Status) }
+                    { new StringContent(Input.Status.ToString()), nameof(Input.Status) },
+                    { ImageStream, nameof(ImageFile), ImageFile.FileName }
                 };
 
                 Contents.Add(ImageStream, nameof(ImageFile), ImageFile.FileName);

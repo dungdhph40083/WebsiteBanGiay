@@ -1,62 +1,109 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
+using NuGet.Protocol;
 
 namespace Application.MVC.Controllers
 {
     public class SizeController : Controller
     {
-        HttpClient client;
-        public SizeController()
+        HttpClient Client = new HttpClient();
+        // GET: SizeController
+
+        [HttpGet]
+        public async Task<ActionResult> Index()
         {
-            client = new HttpClient();
+            string URL = $@"https://localhost:7187/api/Size";
+            var Response = await Client.GetFromJsonAsync<List<Size>>(URL);
+            return View(Response);
         }
-        public ActionResult Index()
+
+        // GET: SizeController/Details/5
+        [HttpGet]
+        public async Task<ActionResult> Details(Guid ID)
         {
-            string requestURL = "https://localhost:7187/api/Size/get-all";
-            var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<List<SizeDTO>>(response);
-            return View(data);
+            string URL = $@"https://localhost:7187/api/Size/{ID}";
+            var Response = await Client.GetFromJsonAsync<Size>(URL);
+            return View(Response);
         }
-        public ActionResult Details(Guid id)
-        {
-            string requestURL = $"https://localhost:7187/api/Size/{id}";
-            var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<SizeDTO>(response);
-            return View(data);
-        }
+
+        // GET: SizeController/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
 
+        // POST: SizeController/Create
         [HttpPost]
-        public async Task<ActionResult> Create(SizeDTO sizeDTO)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(SizeDTO Input)
         {
-            string requestURL = $"https://localhost:7187/api/Size/create-size";
-            var response = await client.PostAsJsonAsync(requestURL, sizeDTO);
-            return RedirectToAction("Index");
-        }
-        public IActionResult Edit(Guid id)
-        {
-            string requestURL = $"https://localhost:7187/api/Size/{id}";
-            var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<SizeDTO>(response);
-            return View(data);
-        }
-        [HttpPost]
-        public ActionResult Edit(SizeDTO sizeDTO)
-        {
-            string requestURL = $"https://localhost:7187/api/Size/update-size/{sizeDTO.SizeID}";
-            var response = client.PutAsJsonAsync(requestURL, sizeDTO).Result;
-            return RedirectToAction("Index");
-        }
-        public ActionResult Delete(Guid id)
-        {
-            string requestURL = $"https://localhost:7187/api/Size/{id}";
-            var response = client.DeleteAsync(requestURL).Result;
-            return RedirectToAction("Index");
+            try
+            {
+                string URL = $@"https://localhost:7187/api/Size";
+                var Response = await Client.PostAsJsonAsync(URL, Input);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return View();
+            }
         }
 
+        // GET: SizeController/Edit/5
+        [HttpGet]
+        public async Task<ActionResult> Edit(Guid ID)
+        {
+            string URL = $@"https://localhost:7187/api/Size/{ID}";
+            var Response = await Client.GetFromJsonAsync<SizeDTO>(URL);
+
+            return View(Response);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        // POST: SizeController/Edit/5
+        public async Task<ActionResult> Edit(Guid ID, SizeDTO NewInput)
+        {
+            try
+            {
+                string URL = $@"https://localhost:7187/api/Size/{ID}";
+                var Response = await Client.PutAsJsonAsync(URL, NewInput);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return View();
+            }
+        }
+
+        // POST: SizeController/Delete/5
+        public async Task<ActionResult> Delete(Guid ID)
+        {
+            try
+            {
+                string URL = $@"https://localhost:7187/api/Size/{ID}";
+                var Response = await Client.DeleteAsync(URL);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return View();
+            }
+        }
     }
 }

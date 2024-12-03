@@ -1,6 +1,11 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
+using NuGet.Protocol;
 
 namespace Application.MVC.Controllers
 {
@@ -26,6 +31,7 @@ namespace Application.MVC.Controllers
             return View(data);
         }
 
+        // GET: CategoriesController/Create
         [HttpGet]
         public ActionResult Create()
         {
@@ -35,12 +41,21 @@ namespace Application.MVC.Controllers
         // POST: Category/Create
         [HttpPost]
         public async Task<ActionResult> Create(CategoryDTO categoryDTO)
-        {
+            {
             string requestURL = $"https://localhost:7187/api/Category/create-category";
             var response = await client.PostAsJsonAsync(requestURL, categoryDTO);
             return RedirectToAction("Index");
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return View();
+            }
         }
 
+        // GET: CategoriesController/Edit/5
         [HttpGet]
         public ActionResult Edit(Guid id)
         {
@@ -49,22 +64,31 @@ namespace Application.MVC.Controllers
             var data = JsonConvert.DeserializeObject<CategoryDTO>(response);
             return View(data);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(CategoryDTO categoryDTO)
         {
             string requestURL = $@"https://localhost:7187/api/Category/update-category/{categoryDTO.CategoryID}";
             var response =client.PutAsJsonAsync(requestURL, categoryDTO).Result;    
-            return RedirectToAction(nameof(Index));
-        }
+                return RedirectToAction(nameof(Index));
+            }
 
 
         [HttpGet]
         public ActionResult Delete(Guid id)
-        {
+            {
             string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = client.DeleteAsync(requestURL).Result;
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return View();
+            }
         }
     }
 }

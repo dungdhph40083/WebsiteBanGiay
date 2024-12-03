@@ -1,0 +1,63 @@
+﻿@model Application.Data.DTOs.ShoppingCartDTO;
+
+@{
+    ViewData["Title"] = "Update content";
+}
+
+<h1>Update item in shopping cart (Manual)</h1>
+
+<form asp-action="Edit" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="UserID" class="form-label">Username</label>
+            <select asp-for="UserID" class="form-select" aria-label="Select an user to add item into" asp-items="@ViewBag.Users">
+                <option selected hidden value="">(No user specified)</option>
+            </select>
+            <span asp-validation-for="UserID">Username is required!</span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="QuantityCart" class="form-label">Quantity to buy</label>
+            <input asp-for="QuantityCart" class="form-control" type="number" aria-label="Choose how many items to buy" step="1" min="1" max="100" />
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <label asp-for="ProductID" class="form-label">Product name</label>
+            <select asp-for="ProductID" class="form-select" aria-label="Select a product to add" asp-items="@ViewBag.Prods">
+                <option selected hidden value="">(No product specified)</option>
+            </select>
+            <span asp-validation-for="ProductID">Product is required!</span>
+        </div>
+        <div class="col-md-3">
+            <label asp-for="SizeID" class="form-label">Size</label>
+            <select asp-for="SizeID" class="form-select" aria-label="Select product size" asp-items="@ViewBag.Sizes">
+                <option selected hidden value="">(No size specified)</option>
+            </select>
+            <span asp-validation-for="SizeID">Size is required!</span>
+        </div>
+        <div class="col-md-3">
+            <label asp-for="ColorID" class="form-label">Product name</label>
+            <select asp-for="ColorID" class="form-select" aria-label="Select product color" asp-items="@ViewBag.Color">
+                <option selected hidden value="">(No color specified)</option>
+            </select>
+            <span asp-validation-for="ColorID">Color is required!</span>
+        </div>
+        <div class="col-md-3">
+            <label asp-for="VoucherID" class="form-label">Product name</label>
+            <select asp-for="VoucherID" class="form-select" aria-label="Select a voucher to use" asp-items="@ViewBag.Vouch">
+                <option selected hidden value="null">(No voucher used)</option>
+            </select>
+            <span asp-validation-for="VoucherID">...</span>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4 text-center">
+            <input asp-for="IsCheckedOut" class="form-check-input" type="checkbox" aria-label="Is checked out?" /> Is checked out
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>

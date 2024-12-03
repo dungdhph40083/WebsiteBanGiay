@@ -85,7 +85,7 @@ namespace Application.Data.Repositories
             string FileExtension = Path.GetExtension(ImageFile.FileName);
             string FileName = Path.GetFileNameWithoutExtension(ImageFile.FileName) + $"_{DateTimeOffset.Parse(TimeSync.ToString()).ToUnixTimeSeconds()}_{UniqueID}" + FileExtension;
 
-            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", FileName);
+            var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "WWWRoot", "Images", FileName);
             using (var Stream = new FileStream(FilePath, FileMode.Create))
             {
                 await ImageFile.CopyToAsync(Stream);

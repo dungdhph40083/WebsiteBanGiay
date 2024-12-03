@@ -13,14 +13,14 @@ namespace Application.Data.Mappers
     {
         public MapProfile()
         {
-            CreateMap<ShoppingCartDTO, ShoppingCart>();
-            CreateMap<ShoppingCart, ShoppingCartDTO>();
-
-            CreateMap<SizeDTO, Size>();
-            CreateMap<Size, SizeDTO>();
-
             // khi cần dùng mapper thì phải khai báo mới cái "sơ đồ ghép" cho mỗi thằng
             // cần hợp nhất hoặc trích xuất dữ liệu ra
+
+            CreateMap<Category, CategoryDTO>();
+            CreateMap<CategoryDTO, Category>();
+
+            CreateMap<Image, ImageDTO>();
+            CreateMap<ImageDTO, Image>();
 
             CreateMap<ProductDetail, ProductDetailDTO>();
             CreateMap<ProductDetailDTO, ProductDetail>();
@@ -34,8 +34,11 @@ namespace Application.Data.Mappers
             CreateMap<Return, ReturnDTO>();
             CreateMap<ReturnDTO, Return>();
 
-            CreateMap<Image, ImageDTO>();
-            CreateMap<ImageDTO, Image>();
+            CreateMap<ShoppingCartDTO, ShoppingCart>();
+            CreateMap<ShoppingCart, ShoppingCartDTO>();
+
+            CreateMap<SizeDTO, Size>();
+            CreateMap<Size, SizeDTO>();
 
             CreateMap<Size_ProductDetail, Size_ProductDetailDTO>();
             CreateMap<Size_ProductDetailDTO, Size_ProductDetail>();
@@ -49,7 +52,14 @@ namespace Application.Data.Mappers
             CreateMap<Role, RoleDTO>();
             CreateMap<RoleDTO, Role>();
 
-            // PLEASE use automapper it literally decreases your muscle work by like 83%
+            CreateMap<User_Role, User_RoleDTO>();
+            CreateMap<User_RoleDTO, User_Role>();
+
+            CreateMap<User, UserDTO>();
+            CreateMap<UserDTO, User>();
+
+            CreateMap<Voucher, VoucherDTO>();
+            CreateMap<VoucherDTO, Voucher>();
         }
     }
 }

@@ -1,41 +1,33 @@
-﻿@model Application.Data.DTOs.SizeDTO
+﻿@using Application.Data.Enums
+@model Application.Data.DTOs.SizeDTO;
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Update product size";
 }
 
-<h1>Edit</h1>
- 
-<h4>Edit</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SizeID" class="control-label"></label>
-                <input asp-for="SizeID" class="form-control" readonly />
-            </div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" type="datetime-local" readonly />
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" type="datetime-local" /> <!-- Để readonly nếu không cần chỉnh sửa -->
-            </div>
+<h1>Update product size</h1>
+
+<form asp-action="Edit" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="Name" class="form-label">Size name</label>
+            <input type="text" asp-for="Name" class="form-control" aria-label="Input size name">
+            <span asp-validation-for="Name">Required!</span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Status" class="form-label">Size</label>
+            <select asp-for="Status" class="form-select" aria-label="Is it available?">
+                <option selected value="@((int)VisibilityStatus.Available)">Available</option>
+                <option value="@((int)VisibilityStatus.Locked)">Unavailable</option>
+            </select>
+        </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+<br />
+<div class="alert alert-warning" role="alert">
+    Only use this edit function to edit typos! (Like it matters anyway...)
 </div>
 

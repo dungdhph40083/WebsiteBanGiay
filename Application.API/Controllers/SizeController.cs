@@ -31,7 +31,8 @@ namespace Application.API.Controllers
         [HttpPost("create-size")]
         public async Task<ActionResult<Size>> Post([FromBody] SizeDTO NewSize)
         {
-            return await SizeRepo.AddSize(NewSize);
+            var Response = await SizeRepo.AddSize(NewSize);
+            return CreatedAtAction(nameof(Get), new { ID = Response.SizeID }, Response);
         }
 
         [HttpPut("update-size/{id}")]

@@ -1,0 +1,25 @@
+﻿@model Application.Data.Models.Size_ProductDetail
+
+@{
+    ViewData["Title"] = "Relation details";
+}
+
+<h1>Relation details</h1>
+
+<dl class="row">
+    <dt class="col-md-3">ID</dt>
+    <dd class="col-md-9">
+        <i class="font-monospace-cascadia">@Model.Size_ProductDetail_ID</i>
+    </dd>
+    <dt class="col-md-3">Product name</dt>
+    <dd class="col-md-9">@Model.ProductDetail?.Product?.Name<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">Product ID: @Model.ProductDetail?.ProductID</i>
+        <br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">Detail ID: &nbsp;@Model.ProductDetailID</i>
+    </dd>
+    <dt class="col-md-3">Size</dt>
+    <dd class="col-md-9">
+        @Model.Size?.Name<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">@Model.SizeID</i>
+    </dd>
+</dl>

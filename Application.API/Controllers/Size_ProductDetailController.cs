@@ -31,7 +31,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Size_ProductDetail>> Post([FromBody] Size_ProductDetailDTO NewSize_ProductDetail)
         {
-            return await Size_ProductDetailRepo.CreateNew(NewSize_ProductDetail);
+            var Response = await Size_ProductDetailRepo.CreateNew(NewSize_ProductDetail);
+            return CreatedAtAction(nameof(Get), new { ID = Response.Size_ProductDetail_ID }, Response);
         }
 
         [HttpPut("{ID}")]

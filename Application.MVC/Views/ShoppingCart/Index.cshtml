@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Application.Data.Models.ShoppingCart>;
+
+@{
+    ViewData["Title"] = "List of shopping cart entries";
+}
+
+<h1>Shopping cart entries</h1>
+<a type="button" class="btn btn-success mb-2" asp-action="Create">Create new</a>
+
+@if (Model.Count() != 0)
+{
+    <table class="table table-bordered table-striped border-info">
+        <thead class="bg-primary">
+            <tr>
+                <th>Username</th>
+                <th>Product</th>
+                <th>Quantity ordered</th>
+                <th>Is checked out</th>
+                <th>Order date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Entry in Model)
+            {
+                <tr>
+                    <td>@Entry.User?.Username</td>
+                    <td>@Entry.Product?.Name</td>
+                    <td>@Entry.QuantityCart</td>
+                    <td>@(Entry.IsCheckedOut ? "Done" : "Not yet")</td>
+                    <td>@(Entry.DateAdded.ToLocalTime().ToString("d/M/yyyy H:mm:ss"))</td>
+                    <td>
+                        <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.CartID)">Edit</a>
+                        <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.CartID">Details</a>
+                        <button type="button" class="btn btn-danger delete_trigger" data-id="@Entry.CartID" data-controller="ShoppingCart" data-action="Delete" data-bs-toggle="modal" data-bs-target="#ModalDelete">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6"></td>
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <h1 class="text-center">No entry available.</h1>
+    <p class="text-center">Select "Create new" to create a new entry manually!</p>
+}
+
+@if (TempData["ErrorLog"]?.ToString() == "ErrorDetails")
+{
+    <div class="alert alert-danger" role="alert">
+        Data not found!
+    </div>
+}
+@if (TempData["ErrorLog"]?.ToString() == "ErrorDelete")
+{
+    <div class="alert alert-danger" role="alert">
+        Something went wrong???
+    </div>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="ModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">STOP RIGHT THERE!!!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-btn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this?<br />
+                <span style="font-size:small" class="font-monospace-cascadia">Cart ID: <span id="ItemID" class="font-monospace-cascadia"></span></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel-btn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm_deletion">Proceed</button>
+            </div>
+        </div>
+    </div>
+</div>

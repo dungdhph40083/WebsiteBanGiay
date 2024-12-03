@@ -7,26 +7,30 @@
 
 <h1>Update image info</h1>
 
-
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-md-9">
             <label asp-for="ImageName" class="form-label">Image title</label>
             <input type="text" asp-for="ImageName" class="form-control" aria-label="Input image name">
             <span asp-validation-for="ImageName">Image title is required!</span>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 md-4">
             <label asp-for="Status" class="form-label">Visibility</label>
             <select asp-for="Status" class="form-select" aria-label="Is it available?">
-                <option value="@((int)VisibilityStatus.Available)">Available</option>
+                <option selected value="@((int)VisibilityStatus.Available)">Available</option>
                 <option value="@((int)VisibilityStatus.Locked)">Unavailable</option>
             </select>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 mb-3">
+        <div class="col-md-12">
             <label asp-for="ImageDescription" class="form-label">Image description</label>
-            <textarea asp-for="ImageDescription" class="form-control" aria-label="Input description"></textarea>
+            <textarea asp-for="ImageDescription" class="form-control" aria-label="Input description">69</textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 mt-3 mb-3">
+            <input type="file" name="ImageFile" class="form-control" accept="image/png, image/jpeg" />
         </div>
     </div>
 

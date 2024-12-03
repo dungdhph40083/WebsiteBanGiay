@@ -1,0 +1,52 @@
+﻿@model Application.Data.Models.Voucher
+
+@{
+    ViewData["Title"] = "Voucher details";
+}
+
+<h1>Voucher details</h1>
+
+<dl class="row">
+    <dt class="col-md-3">Voucher ID</dt>
+    <dd class="col-md-9">
+        <i class="font-monospace-cascadia">@Model.VoucherID</i>
+    </dd>
+    <dt class="col-md-3">Voucher code</dt>
+    <dd class="col-md-9">
+        <i class="font-monospace-cascadia">@Model.VoucherCode</i><br />
+    </dd>
+    <dt class="col-md-3">For category</dt>
+    <dd class="col-md-9">@(Model.Category?.CategoryName ?? "None")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.CategoryID == null ? "None" : Model.CategoryID))</i>
+    </dd>
+    <dt class="col-md-3">For product</dt>
+    <dd class="col-md-9">
+            @(Model.Product?.Name ?? "None")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.ProductID == null ? "None" : Model.ProductID))</i>
+    </dd>
+    <dt class="col-md-3">Uses left</dt>
+    <dd class="col-md-9">
+        @Model.UsesLeft.ToString("#,##0")<br />
+    </dd>
+    <dt class="col-md-3">Discounts</dt>
+    <dd class="col-md-9">
+        @(Model.DiscountPercent <= 0 ? "No discount percent" : $"{Model.DiscountPercent.ToString("#.##")}% discount"),
+        @(Model.DiscountPrice <= 0 ? "no price discount" : $"-{Model.DiscountPrice:#,##0}")
+    </dd>
+    <dt class="col-md-3">Description</dt>
+    <dd class="col-md-9">
+            @Model.Description<br />
+    </dd>
+    <dt class="col-md-3">Status</dt>
+    <dd class="col-md-9">
+            @Model.Status<br />
+    </dd>
+    <dt class="col-md-3">Created at</dt>
+    <dd class="col-md-9">
+        @Model.CreatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss")<br />
+    </dd>
+    <dt class="col-md-3">Last updated on</dt>
+    <dd class="col-md-9">
+        @Model.LastUpdatedOn.ToLocalTime().ToString("d/M/yyyy H:mm:ss")<br />
+    </dd>
+</dl>

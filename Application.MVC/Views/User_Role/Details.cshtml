@@ -1,0 +1,25 @@
+﻿@model Application.Data.Models.User_Role
+
+@{
+    ViewData["Title"] = "Product size details";
+}
+
+<h1>Product size details</h1>
+
+<dl class="row">
+    <dt class="col-md-3">ID</dt>
+    <dd class="col-md-9">
+        <i class="font-monospace-cascadia">@Model.User_RoleID</i>
+    </dd>
+    <dt class="col-md-3">Username</dt>
+    <dd class="col-md-9">@Model.User?.Username<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">User ID: @Model.UserID</i>
+    </dd>
+    <dt class="col-md-3">Role</dt>
+    <dd class="col-md-9">
+        @Model.Role?.RoleName<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">Role code: @Model.Role?.RoleCode</i>
+        <br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">Role ID: &nbsp; @Model.RoleID</i>
+    </dd>
+</dl>

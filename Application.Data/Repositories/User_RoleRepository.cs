@@ -38,13 +38,19 @@ namespace Application.Data.Repositories
 
         public async Task<User_Role?> GetUser_RoleByID(Guid TargetID)
         {
-            var Target = await Context.User_Roles.FindAsync(TargetID);
+            var Target = await Context.User_Roles
+                .Include(UU => UU.User)
+                .Include(UU => UU.Role)
+                .SingleOrDefaultAsync(x => x.User_RoleID == TargetID);
             return Target;
         }
 
         public Task<List<User_Role>> GetUser_Roles()
         {
-            return Context.User_Roles.ToListAsync();
+            return Context.User_Roles
+                .Include(UU => UU.User)
+                .Include(UU => UU.Role)
+                .ToListAsync();
         }
 
         public async Task<User_Role?> UpdateExisting(Guid TargetID, User_RoleDTO UpdatedRelation)
