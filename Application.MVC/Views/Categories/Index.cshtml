@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Application.Data.DTOs.CategoryDTO>
+﻿@model IEnumerable<Application.Data.Models.Category>
 
 @{
     ViewData["Title"] = "Index";
@@ -21,21 +21,21 @@
             </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model)
+        @foreach (var Entry in Model)
             {
                 <tr>
                     <td>@Entry.CategoryName</td>
                     <td>@(Entry.Description?.Length > 30 ? Entry.Description?.Substring(0, 30).Trim() + "..." : Entry.Description)</td>
                     <td>
-                    @Html.DisplayFor(modelItem => item.CategoryName)
+                    @Html.DisplayFor(modelItem => Entry.CategoryName)
                     </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @Html.DisplayFor(modelItem => Entry.Description)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.CategoryID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.CategoryID }) |
-                    <a href="Categories/Delete/@item.CategoryID">Delete</a>
+                    @Html.ActionLink("Edit", "Edit", new { id = Entry.CategoryID }) |
+                    @Html.ActionLink("Details", "Details", new { id = Entry.CategoryID }) |
+                    <a href="Categories/Delete/@Entry.CategoryID">Delete</a>
                 </td>
                 </tr>
             }

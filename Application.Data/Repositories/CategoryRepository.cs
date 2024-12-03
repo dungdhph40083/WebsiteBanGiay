@@ -17,7 +17,7 @@ namespace Application.Data.Repositories
             _context = context;
             this.Mapper = Mapper;
         }
-        public async Task<CategoryDTO> AddCategory(CategoryDTO categoryDto)
+        public async Task<Category> AddCategory(CategoryDTO categoryDto)
         {
             var category = new Category
             {
@@ -29,12 +29,7 @@ namespace Application.Data.Repositories
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
 
-            // Cập nhật lại DTO với thông tin đã lưu
-            categoryDto.CategoryID = category.CategoryID;
-            categoryDto.CategoryName = category.CategoryName;
-            categoryDto.Description = category.Description;
-
-            return categoryDto;
+            return category;
         }
 
         public async Task DeleteCategory(Guid id)

@@ -99,11 +99,9 @@ namespace Application.MVC.Controllers
                 var response = await client.PutAsJsonAsync($"https://localhost:7187/api/ProductDetails/{id}", updatedDetail);
 
                 if (response.IsSuccessStatusCode)
-        {
-            string requestURL = $@"https://localhost:7187/api/ProductDetails/update?ID={ID}";
-            var response = await client.PutAsJsonAsync(requestURL, ProductDetail);
-            return RedirectToAction("Index");
-        }
+                {
+                    return RedirectToAction("Index");
+                }   
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Update failed");

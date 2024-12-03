@@ -40,7 +40,8 @@ namespace Application.MVC.Controllers
 
         // POST: Category/Create
         [HttpPost]
-        public async Task<ActionResult> Create(CategoryDTO categoryDTO)
+        public async Task<ActionResult> Create(CategoryDTO categoryDTO) { 
+            try
             {
             string requestURL = $"https://localhost:7187/api/Category/create-category";
             var response = await client.PostAsJsonAsync(requestURL, categoryDTO);
@@ -67,9 +68,9 @@ namespace Application.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(CategoryDTO categoryDTO)
+        public ActionResult Edit(Guid ID, CategoryDTO categoryDTO)
         {
-            string requestURL = $@"https://localhost:7187/api/Category/update-category/{categoryDTO.CategoryID}";
+            string requestURL = $@"https://localhost:7187/api/Category/update-category/{ID}";
             var response =client.PutAsJsonAsync(requestURL, categoryDTO).Result;    
                 return RedirectToAction(nameof(Index));
             }
@@ -77,6 +78,7 @@ namespace Application.MVC.Controllers
 
         [HttpGet]
         public ActionResult Delete(Guid id)
+        { try
             {
             string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = client.DeleteAsync(requestURL).Result;

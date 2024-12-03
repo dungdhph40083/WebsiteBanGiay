@@ -31,7 +31,7 @@
                 <td>
                     @if (item.Image != null)
                     {
-                        @item.Image.ImageFileName
+                        <img src="https://localhost:7187/Images/@(item.Image.ImageFileName)" class="img-thumbnail" style="width: 150px; height:150px" alt="Thumbnail epic">
                     }
                     else
                     {

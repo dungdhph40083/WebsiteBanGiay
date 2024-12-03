@@ -5,10 +5,10 @@ namespace Application.Data.Repositories.IRepository
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<CategoryDTO>> GetAllCategory();
-        Task<CategoryDTO> GetByIdCategory(Guid id);
-        Task<CategoryDTO> AddCategory(CategoryDTO categoryDto);
-        Task UpdateCategory(CategoryDTO categoryDto);
+        Task<List<Category>> GetAllCategory();
+        Task<Category?> GetByIdCategory(Guid id);
+        Task<Category> AddCategory(CategoryDTO categoryDto);
+        Task<Category?> UpdateCategory(Guid TargetID, CategoryDTO categoryDto);
         Task DeleteCategory(Guid id);
     }
 }
