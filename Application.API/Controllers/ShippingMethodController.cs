@@ -1,4 +1,5 @@
-﻿using Application.Data.ModelContexts;
+﻿using Application.Data.DTOs;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
@@ -11,40 +12,40 @@ namespace Application.API.Controllers
     [ApiController]
     public class ShippingMethodController : ControllerBase
     {
-        private readonly IAllRepositories<ShippingMethod> _allrepo;
-        GiayDBContext _context = new GiayDBContext();
-        public ShippingMethodController()
+        private readonly IShippingMethod ShippingMethodrepos;
+
+        public ShippingMethodController(IShippingMethod ShippingMethodrepos)
         {
-            _allrepo = new AllRepositroies<ShippingMethod>(_context, _context.ShippingMethods);
+            this.ShippingMethodrepos = ShippingMethodrepos;
         }
-        [HttpGet("get-all")]
-        public IEnumerable<ShippingMethod> GetAllItem()
+        [HttpGet]
+        public async Task<ActionResult<List<ShippingMethod>>> get()
         {
-            return _allrepo.GetAllItems();
+            return await ShippingMethodrepos.GetShippingMethod();
         }
-        [HttpPost("Create")]
-        public bool Create(ShippingMethod obj)
+        [HttpGet("getbyId")]
+        public async Task<ActionResult<ShippingMethod?>> Get(Guid ID)
         {
-            ShippingMethod Item = new ShippingMethod();
-            Item.ShippingMethodID = Guid.NewGuid();
-            Item.MethodName = obj.MethodName;
-            Item.ShippingFee = obj.ShippingFee;
-            Item.EstimatedDeliveryTime = DateTime.Now;
-            return _allrepo.CreateItem(Item);
+            return await ShippingMethodrepos.GetShippingMethodlByID(ID);
         }
-        [HttpPut("Update")]
-        public bool Update(ShippingMethod obj)
+
+        [HttpPost("create")]
+        public async Task<ActionResult<ShippingMethod>> Post([FromBody] ShippingMethodDTO NewShippingMethod)
         {
-            ShippingMethod Item = _allrepo.GetAllItems().FirstOrDefault(c => c.ShippingMethodID == obj.ShippingMethodID);
-            Item.MethodName = obj.MethodName;
-            Item.ShippingFee = obj.ShippingFee;
-            return _allrepo.UpdateItem(Item);
+            return await ShippingMethodrepos.CreateNew(NewShippingMethod);
         }
-        [HttpDelete("Delete")]
-        public bool Delete(Guid id)
+
+        [HttpPut("update")]
+        public async Task<ActionResult<ShippingMethod?>> Put(Guid ID, [FromBody] ShippingMethodDTO UpdateShippingMethod)
         {
-            ShippingMethod Item = _allrepo.GetAllItems().FirstOrDefault(c => c.ShippingMethodID == id);
-            return _allrepo.DeleteItem(Item);
+            return await ShippingMethodrepos.UpdateExisting(ID, UpdateShippingMethod);
+        }
+
+        [HttpDelete("delete")]
+        public async Task<ActionResult> Delete(Guid ID)
+        {
+            await ShippingMethodrepos.DeleteExisting(ID);
+            return Ok();
         }
     }
 }

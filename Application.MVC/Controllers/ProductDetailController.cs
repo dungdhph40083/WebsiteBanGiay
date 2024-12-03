@@ -1,6 +1,8 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Models;
+using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Application.MVC.Controllers
 {
@@ -17,7 +19,7 @@ namespace Application.MVC.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 return View("Error");
-            }
+        }
 
             var productDetails = await response.Content.ReadFromJsonAsync<List<ProductDetail>>();
             return View(productDetails);
@@ -36,7 +38,7 @@ namespace Application.MVC.Controllers
                 ViewBag.Images = images ?? new List<Image>();
 
                 return View();
-            }
+        }
             catch (Exception ex)
             {
                 // Log lỗi nếu có
@@ -77,7 +79,7 @@ namespace Application.MVC.Controllers
             var productDetail = await client.GetFromJsonAsync<ProductDetailDTO>($"https://localhost:7187/api/ProductDetails/{id}");
 
             if (productDetail == null)
-            {
+        {
                 return NotFound();
             }
 
@@ -97,9 +99,11 @@ namespace Application.MVC.Controllers
                 var response = await client.PutAsJsonAsync($"https://localhost:7187/api/ProductDetails/{id}", updatedDetail);
 
                 if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
-                }
+        {
+            string requestURL = $@"https://localhost:7187/api/ProductDetails/update?ID={ID}";
+            var response = await client.PutAsJsonAsync(requestURL, ProductDetail);
+            return RedirectToAction("Index");
+        }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Update failed");

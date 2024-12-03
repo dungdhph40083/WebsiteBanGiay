@@ -1,4 +1,5 @@
 ﻿using Application.API.Service;
+using Application.Data.DTOs;
 using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories;
@@ -14,45 +15,40 @@ namespace Application.API.Controllers
     [ApiController]
     public class RoleController : ControllerBase
     {
-        private readonly IAllRepositories<Role> _allrepo;
-        GiayDBContext _context= new GiayDBContext();
-        public RoleController()
+        private readonly IRole Rolerepos;
+
+        public RoleController(IRole Rolerepos)
         {
-            _allrepo = new AllRepositroies<Role>(_context, _context.Roles);
+            this.Rolerepos = Rolerepos;
         }
         [HttpGet]
-        public IEnumerable<Role> GetAllItem()
+        public async Task<ActionResult<List<Role>>> get()
         {
-            return _allrepo.GetAllItems();
+            return await Rolerepos.GetRole();
+        }
+        [HttpGet("getbyId")]
+        public async Task<ActionResult<Role?>> Get(Guid ID)
+        {
+            return await Rolerepos.GetRolelByID(ID);
         }
 
-        [HttpGet("{id}")]
-        public Role Get(Guid id)
+        [HttpPost("create")]
+        public async Task<ActionResult<Role>> Post([FromBody] RoleDTO NewRole)
         {
-            return _allrepo.GetAllItems().FirstOrDefault(c => c.RoleID == id);
+            return await Rolerepos.CreateNew(NewRole);
         }
-        [HttpPost("CreateRole")]
-        public bool Create(Role obj)
+
+        [HttpPut("update")]
+        public async Task<ActionResult<Role?>> Put(Guid ID, [FromBody] RoleDTO UpdateRole)
         {
-            Role Item = new Role();
-            Item.RoleID = Guid.NewGuid();
-            Item.RoleCode = obj.RoleCode;
-            Item.RoleName = obj.RoleName;
-            return _allrepo.CreateItem(Item);
+            return await Rolerepos.UpdateExisting(ID, UpdateRole);
         }
-        [HttpPut("UpdateRole")]
-        public bool UpdateRole(Role obj)
+
+        [HttpDelete("delete")]
+        public async Task<ActionResult> Delete(Guid ID)
         {
-            Role Item = _allrepo.GetAllItems().FirstOrDefault(c => c.RoleID == obj.RoleID);
-            Item.RoleCode = obj.RoleCode;
-            Item.RoleName = obj.RoleName;
-            return _allrepo.UpdateItem(Item);
-        }
-        [HttpDelete("DeleteRole")]
-        public bool Delete(Guid id)
-        {
-            Role Item = _allrepo.GetAllItems().FirstOrDefault(c => c.RoleID == id);
-            return _allrepo.DeleteItem(Item);
+            await Rolerepos.DeleteExisting(ID);
+            return Ok();
         }
     }
 }

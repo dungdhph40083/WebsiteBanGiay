@@ -1,102 +1,88 @@
-﻿@model Application.Data.DTOs.ProductDetailDTO
+﻿@model Application.Data.Models.ProductDetail
 
 @{
-    ViewBag.Title = "Create New Product Detail";
-    var products = ViewBag.Products as List<Application.Data.Models.Product>;
-    var images = ViewBag.Images as List<Application.Data.Models.Image>;
+    ViewData["Title"] = "Update";
 }
 
-<h1>Create</h1>
+<h1>Update</h1>
 
-<h2>Create New Product Detail</h2>
-
-<form asp-action="Create" method="post">
-    <!-- Chọn Product -->
+<h4>ProductDetail</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Update">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-        <label for="ProductID" class="control-label">Product Name</label>
-        <select asp-for="ProductID" class="form-control"
-                asp-items="@(products != null && products.Any() ? new SelectList(products, "ProductID", "Name") : new SelectList(Enumerable.Empty<SelectListItem>()))">
-            <option value="">-- Select Product --</option>
-        </select>
+                <label asp-for="ProductDetailID" class="control-label"></label>
+                <input asp-for="ProductDetailID" class="form-control" />
+                <span asp-validation-for="ProductDetailID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductID" class="control-label"></label>
+                <input asp-for="ProductID" class="form-control" />
                 <span asp-validation-for="ProductID" class="text-danger"></span>
             </div>
-
-    <!-- Chọn Image -->
             <div class="form-group">
-        <label for="ImageID" class="control-label">Image File Name</label>
-        <select asp-for="ImageID" class="form-control"
-                asp-items="@(images != null && images.Any() ? new SelectList(images, "ImageID", "ImageFileName") : new SelectList(Enumerable.Empty<SelectListItem>()))">
-            <option value="">-- Select Image --</option>
-        </select>
+                <label asp-for="ImageID" class="control-label"></label>
+                <input asp-for="ImageID" class="form-control" />
                 <span asp-validation-for="ImageID" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Material" class="control-label"></label>
                 <input asp-for="Material" class="form-control" />
                 <span asp-validation-for="Material" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Quantity" class="control-label"></label>
-        <input asp-for="Quantity" class="form-control" type="number" />
+                <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
-        <input asp-for="Price" class="form-control" type="number" />
+                <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Brand" class="control-label"></label>
                 <input asp-for="Brand" class="form-control" />
                 <span asp-validation-for="Brand" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="PlaceOfOrigin" class="control-label"></label>
                 <input asp-for="PlaceOfOrigin" class="form-control" />
                 <span asp-validation-for="PlaceOfOrigin" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Type" class="control-label"></label>
                 <input asp-for="Type" class="form-control" />
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="WarrantyPeriod" class="control-label"></label>
-        <input asp-for="WarrantyPeriod" class="form-control" type="date" />
+                <input asp-for="WarrantyPeriod" class="form-control" />
                 <span asp-validation-for="WarrantyPeriod" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Instructions" class="control-label"></label>
-        <textarea asp-for="Instructions" class="form-control"></textarea>
+                <input asp-for="Instructions" class="form-control" />
                 <span asp-validation-for="Instructions" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Features" class="control-label"></label>
-        <textarea asp-for="Features" class="form-control"></textarea>
+                <input asp-for="Features" class="form-control" />
                 <span asp-validation-for="Features" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-    <button type="submit" class="btn btn-primary">Create</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

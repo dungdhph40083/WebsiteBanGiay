@@ -4,6 +4,7 @@ using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Application.Data.DTOs;
 
 namespace Application.API.Controllers
 {
@@ -11,53 +12,40 @@ namespace Application.API.Controllers
     [ApiController]
     public class SaleController : ControllerBase
     {
-        private readonly IAllRepositories<Sale> _allrepo;
-        GiayDBContext _context = new GiayDBContext();
+        private readonly ISale Salerepos;
 
-        public SaleController()
+        public SaleController(ISale Salerepos)
         {
-            _allrepo = new AllRepositroies<Sale>(_context, _context.Sales);
+            this.Salerepos = Salerepos;
         }
         [HttpGet]
-        public IEnumerable<Sale> GetAllItem()
+        public async Task<ActionResult<List<Sale>>> get()
         {
-            return _allrepo.GetAllItems();
+            return await Salerepos.GetSale();
         }
-        [HttpGet("{id}")]
-        public Sale Get(Guid id)
+        [HttpGet("getbyId")]
+        public async Task<ActionResult<Sale?>> Get(Guid ID)
         {
-            return _allrepo.GetAllItems().FirstOrDefault(c => c.SaleID == id);
+            return await Salerepos.GetSalelByID(ID);
         }
-        [HttpPost("Create")]
-        public bool Create(Sale obj)
+
+        [HttpPost("create")]
+        public async Task<ActionResult<Sale>> Post([FromBody] SaleDTO NewSale)
         {
-            Sale Item = new Sale();
-            Item.SaleID = Guid.NewGuid();
-            Item.Name = obj.Name;
-            Item.SaleCode = obj.SaleCode;
-            Item.Status = obj.Status;
-            Item.CreatedAt = obj.CreatedAt;
-            Item.UpdatedAt = obj.UpdatedAt;
-            Item.ProductID = obj.ProductID;
-            return _allrepo.CreateItem(Item);
+            return await Salerepos.CreateNew(NewSale);
         }
-        [HttpPut("Update")]
-        public bool Update(Sale obj)
+
+        [HttpPut("update")]
+        public async Task<ActionResult<Sale?>> Put(Guid ID, [FromBody] SaleDTO UpdateSale)
         {
-            Sale Item = _allrepo.GetAllItems().FirstOrDefault(c => c.SaleID == obj.SaleID);
-            Item.Name = obj.Name;
-            Item.SaleCode = obj.SaleCode;
-            Item.Status = obj.Status;
-            Item.CreatedAt = obj.CreatedAt;
-            Item.UpdatedAt = obj.UpdatedAt;
-            Item.ProductID = obj.ProductID;
-            return _allrepo.UpdateItem(Item);
+            return await Salerepos.UpdateExisting(ID, UpdateSale);
         }
-        [HttpDelete("Delete")]
-        public bool Delete(Guid id)
+
+        [HttpDelete("delete")]
+        public async Task<ActionResult> Delete(Guid ID)
         {
-            Sale Item = _allrepo.GetAllItems().FirstOrDefault(c => c.SaleID == id);
-            return _allrepo.DeleteItem(Item);
+            await Salerepos.DeleteExisting(ID);
+            return Ok();
         }
     }
 }

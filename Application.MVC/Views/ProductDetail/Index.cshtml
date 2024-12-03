@@ -1,6 +1,10 @@
 ﻿@model List<Application.Data.Models.ProductDetail>
 
+@{
+    ViewData["Title"] = "Index";
+}
 
+<h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -23,7 +27,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+        <tr>
                 <td>@item.Product?.Name</td> <!-- Lấy Product.Name -->
                 <td>@item.Image?.ImageFileName</td> <!-- Lấy Image.ImageFileName -->
                 <td>@item.Material</td>
@@ -33,12 +37,12 @@
                 <td>@item.PlaceOfOrigin</td>
                 <td>@item.Type</td>
                 <td>@item.WarrantyPeriod.ToShortDateString()</td>
-                    <td>
+            <td>
                         @Html.ActionLink("Edit", "Edit", new { id = item.ProductDetailID }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.ProductDetailID })
-                    </td>
-            </tr>
-        }
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ProductDetailID })
+            </td>
+        </tr>
+}
     </tbody>
 </table>
 
