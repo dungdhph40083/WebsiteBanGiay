@@ -44,8 +44,8 @@ namespace Application.MVC.Controllers
             // A pattern could have improved this but whatever
             // this project is already starting to get confusing
 
-            string URL_Catgs = $@"https://localhost:7187/api/Category/";
-            string URL_Prods = $@"https://localhost:7187/api/Product/";
+            string URL_Catgs = $@"https://localhost:7187/api/Category/get-all";
+            string URL_Prods = $@"https://localhost:7187/api/Product/get-all";
 
             var CatgsList = await Client.GetFromJsonAsync<List<Category>>(URL_Catgs);
             var ProdsList = await Client.GetFromJsonAsync<List<Product>> (URL_Prods);

@@ -38,10 +38,10 @@
                     @Html.DisplayFor(modelItem => item.Status)
                 </td>
                 <td>
-                    @(item.CreatedAt.HasValue ? item.CreatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                    @(item.CreatedAt.HasValue ? item.CreatedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
                 </td>
                 <td>
-                    @(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                    @(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.ColorID }) |

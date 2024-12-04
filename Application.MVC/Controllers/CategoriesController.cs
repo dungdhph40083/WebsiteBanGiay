@@ -20,14 +20,14 @@ namespace Application.MVC.Controllers
         {
             string requestURL = $@"https://localhost:7187/api/Category/get-all";
             var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<List<CategoryDTO>>(response);
+            var data = JsonConvert.DeserializeObject<List<Category>>(response);
             return View(data);
         }
         public ActionResult Details(Guid id)
         {
             string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<CategoryDTO>(response);
+            var data = JsonConvert.DeserializeObject<Category>(response);
             return View(data);
         }
 
@@ -40,7 +40,8 @@ namespace Application.MVC.Controllers
 
         // POST: Category/Create
         [HttpPost]
-        public async Task<ActionResult> Create(CategoryDTO categoryDTO) { 
+        public async Task<ActionResult> Create(CategoryDTO categoryDTO)
+        { 
             try
             {
             string requestURL = $"https://localhost:7187/api/Category/create-category";
@@ -62,7 +63,7 @@ namespace Application.MVC.Controllers
         {
             string requestURL = $"https://localhost:7187/api/Category/{id}";
             var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<CategoryDTO>(response);
+            var data = JsonConvert.DeserializeObject<Category>(response);
             return View(data);
         }
 

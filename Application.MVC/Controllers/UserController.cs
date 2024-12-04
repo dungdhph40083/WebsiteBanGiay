@@ -49,10 +49,10 @@ namespace Application.MVC.Controllers
             // this project is already starting to get confusing
 
             string URL_Users = $@"https://localhost:7187/api/User/";
-            string URL_Color = $@"https://localhost:7187/api/Color/";
+            string URL_Color = $@"https://localhost:7187/api/Color/get-all";
             string URL_Sizes = $@"https://localhost:7187/api/Size/";
             string URL_Vouch = $@"https://localhost:7187/api/Voucher/";
-            string URL_Prods = $@"https://localhost:7187/api/Product/";
+            string URL_Prods = $@"https://localhost:7187/api/Product/get-all";
 
             var UsersList = await Client.GetFromJsonAsync<List<User>>   (URL_Users);
             var ColorList = await Client.GetFromJsonAsync<List<Color>>  (URL_Color);
