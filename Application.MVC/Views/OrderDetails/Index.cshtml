@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Application.Data.DTOs.OrderDetailDto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+ 
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().TotalUnitPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Discount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().SumTotalPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().CreatedAt)
+            </th>
+
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalUnitPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Discount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SumTotalPrice)
+                </td>
+                <td>
+                    @(item.CreatedAt.HasValue ? item.CreatedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.OrderDetailID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.OrderDetailID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.OrderDetailID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

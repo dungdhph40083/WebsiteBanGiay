@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Application.Data.DTOs.PaymentMethodDTO>
+
+@{
+    ViewData["Title"] = "Index";
+}
+ 
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().MethodName)
+            </th>           
+            <th>
+                @Html.DisplayNameFor(model => model.First().Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().UpdatedAt)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MethodName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @(item.CreatedAt.HasValue ? item.CreatedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                </td>
+                <td>
+                    @(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.PaymentMethodID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.PaymentMethodID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.PaymentMethodID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
