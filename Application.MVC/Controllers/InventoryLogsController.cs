@@ -13,14 +13,14 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Index()
         {
-            string requestURL = "https://localhost:7187/api/Color/get-all";
+            string requestURL = "https://localhost:7187/api/InventoryLogs";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<List<InventoryLogDto>>(response);
             return View(data);
         }
         public ActionResult Details(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Color/{id}";
+            string requestURL = $"https://localhost:7187/api/InventoryLogs/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<InventoryLogDto>(response);
             return View(data);
@@ -34,13 +34,13 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(InventoryLogDto inventoryLogDto)
         {
-            string requestURL = $"https://localhost:7187/api/Color/create-color";
+            string requestURL = $"https://localhost:7187/api/InventoryLogs";
             var response = await client.PostAsJsonAsync(requestURL, inventoryLogDto);
             return RedirectToAction("Index");
         }
         public IActionResult Edit(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Color/{id}";
+            string requestURL = $"https://localhost:7187/api/InventoryLogs/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<ColorDTO>(response);
             return View(data);
@@ -48,14 +48,14 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public ActionResult Edit(InventoryLogDto inventoryLogDto)
         {
-            string requestURL = $"https://localhost:7187/api/Color/update-color/{inventoryLogDto.LogID}";
+            string requestURL = $"https://localhost:7187/api/InventoryLogs/{inventoryLogDto.LogID}";
             var response = client.PutAsJsonAsync(requestURL, inventoryLogDto).Result;
             return RedirectToAction("Index");
         }
 
         public ActionResult Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Color/{id}";
+            string requestURL = $"https://localhost:7187/api/InventoryLogs/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");
         }

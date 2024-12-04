@@ -10,7 +10,7 @@ namespace Application.Data.DTOs
 {
     public class PaymentMethodDetailDTO
     {
-        public Guid PaymentMethodDetailID { get; set; }
+        public Guid PaymentMethodDetails { get; set; }
 
         public Guid? PaymentMethodID { get; set; }
         public long TotalMoney { get; set; }
