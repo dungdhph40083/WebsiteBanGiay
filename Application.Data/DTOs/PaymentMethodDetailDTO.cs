@@ -1,17 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Application.Data.Models;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Application.Data.Models
+namespace Application.Data.DTOs
 {
-    public class PaymentMethodDetail
+    public class PaymentMethodDetailDTO
     {
-        [Key]
         public Guid PaymentMethodDetails { get; set; }
-        [ForeignKey(nameof(PaymentMethod))]
+
         public Guid? PaymentMethodID { get; set; }
         public long TotalMoney { get; set; }
         public byte Status { get; set; }
         public string? Description { get; set; }
-        public virtual PaymentMethod? PaymentMethod { get; set; }
     }
 }

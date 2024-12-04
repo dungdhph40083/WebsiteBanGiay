@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Application.Data.DTOs.OderTrackingDTO>
+
+@{
+    ViewData["Title"] = "Index";
+}
+ 
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().TrackingNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().ShippingStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().UpdatedAt)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TrackingNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShippingStatus)
+                </td>
+                <td>
+                    @(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.TrackingID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.TrackingID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.TrackingID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
