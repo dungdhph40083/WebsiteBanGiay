@@ -12,14 +12,14 @@
 <table class="table">
     <thead>
         <tr>
+            @* <th>
+            @Html.DisplayNameFor(model => model.RatingID)
+            </th> *@
             <th>
-                @Html.DisplayNameFor(model => model.RatingID)
+                User
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductID)
+                Product
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Stars)
@@ -34,32 +34,33 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RatingID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stars)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Comment)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateRated)
-            </td>
-            <td>
-                @Html.ActionLink("Update", "Update", new { id=item.RatingID }) |
+        @foreach (var item in Model)
+        {
+            <tr>
+                @* <td>
+            @Html.DisplayFor(modelItem => item.RatingID)
+            </td> *@
+                <td>
+                    @item.User?.Username
+                </td>
+                <td>
+                    @item.Product?.Name
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stars)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Comment)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateRated)
+                </td>
+                <td>
+                    @Html.ActionLink("Update", "Update", new { id = item.RatingID }) |
                     @Html.ActionLink("Details", "Details", new { id = item.RatingID }) |
                     <a href="/Ratings/delete?ID=@item.RatingID">Delete</a>
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

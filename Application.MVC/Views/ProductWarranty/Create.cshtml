@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Create";
+    var products = ViewBag.Products as List<Application.Data.Models.Product>;
+
 }
 
 <h1>Create</h1>
@@ -12,14 +14,17 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+@*             <div class="form-group">
                 <label asp-for="WarrantyID" class="control-label"></label>
                 <input asp-for="WarrantyID" class="form-control" />
                 <span asp-validation-for="WarrantyID" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="ProductID" class="control-label"></label>
-                <input asp-for="ProductID" class="form-control" />
+                 <select asp-for="ProductID" class="form-control"
+                asp-items="@(products != null && products.Any() ? new SelectList(products, "ProductID", "Name") : new SelectList(Enumerable.Empty<SelectListItem>()))">
+            <option value="">-- Chọn Product --</option>
+        </select>
                 <span asp-validation-for="ProductID" class="text-danger"></span>
             </div>
             <div class="form-group">

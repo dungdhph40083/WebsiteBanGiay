@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Create";
+    var products = ViewBag.Products as List<Application.Data.Models.Product>;
+    var users = ViewBag.Users as List<Application.Data.Models.User>;
 }
 
 <h1>Create</h1>
@@ -12,19 +14,25 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="RatingID" class="control-label"></label>
-                <input asp-for="RatingID" class="form-control" />
-                <span asp-validation-for="RatingID" class="text-danger"></span>
-            </div>
+            @*             <div class="form-group">
+            <label asp-for="RatingID" class="control-label"></label>
+            <input asp-for="RatingID" class="form-control" />
+            <span asp-validation-for="RatingID" class="text-danger"></span>
+            </div> *@
             <div class="form-group">
                 <label asp-for="UserID" class="control-label"></label>
-                <input asp-for="UserID" class="form-control" />
+                <select asp-for="UserID" class="form-control"
+                        asp-items="@(users != null && users.Any() ? new SelectList(users, "UserID", "Username") : new SelectList(Enumerable.Empty<SelectListItem>()))">
+                    <option value="">-- Chọn User --</option>
+                </select>
                 <span asp-validation-for="UserID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ProductID" class="control-label"></label>
-                <input asp-for="ProductID" class="form-control" />
+                <select asp-for="ProductID" class="form-control"
+                        asp-items="@(products != null && products.Any() ? new SelectList(products, "ProductID", "Name") : new SelectList(Enumerable.Empty<SelectListItem>()))">
+                    <option value="">-- Chọn Product --</option>
+                </select>
                 <span asp-validation-for="ProductID" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -54,5 +62,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

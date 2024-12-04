@@ -29,16 +29,28 @@ namespace Application.MVC.Controllers
             var ProductWarrantys = JsonConvert.DeserializeObject<ProductWarranty>(response);
             return View(ProductWarrantys);
         }
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ProductWarranty ProductWarranty = new ProductWarranty()
+            try
             {
-                WarrantyID = Guid.NewGuid(),
-            };
-            return View(ProductWarranty);
+                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+
+                ViewBag.Products = products ?? new List<Product>();
+                ProductWarranty ProductWarranty = new ProductWarranty()
+                {
+                    WarrantyID = Guid.NewGuid(),
+                };
+                return View(ProductWarranty);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nếu có
+                Console.WriteLine($"Error: {ex.Message}");
+                return View("Error");
+            }
         }
         [HttpPost]
-        public  async Task<ActionResult> Create(ProductWarranty ProductWarranty)
+        public async Task<ActionResult> Create(ProductWarranty ProductWarranty)
         {
             string requestURL = "https://localhost:7187/api/ProductWarranty/create";
             var response = await client.PostAsJsonAsync(requestURL, ProductWarranty);

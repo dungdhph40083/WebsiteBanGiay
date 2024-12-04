@@ -26,13 +26,26 @@ namespace Application.MVC.Controllers
             var Ratings = JsonConvert.DeserializeObject<Rating>(response);
             return View(Ratings);
         }
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            Rating Rating = new Rating()
+            try
             {
-                RatingID = Guid.NewGuid(),
-            };
-            return View(Rating);
+                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+                var users = await client.GetFromJsonAsync<List<User>>("https://localhost:7187/api/User");
+                ViewBag.Products = products ?? new List<Product>();
+                ViewBag.Users = users ?? new List<User>();
+                Rating Rating = new Rating()
+                {
+                    RatingID = Guid.NewGuid(),
+                };
+                return View(Rating);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nếu có
+                Console.WriteLine($"Error: {ex.Message}");
+                return View("Error");
+            }
         }
         [HttpPost]
         public async Task<ActionResult> Create(Rating Rating)
