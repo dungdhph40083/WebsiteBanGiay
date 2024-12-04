@@ -24,7 +24,8 @@ namespace Application.MVC.GeneralPublic.Controllers
             // Lấy 5 con từ đầu danh sách sau khi được sắp xếp theo ngày từ cuối lên đầu
 
             // Sau đó cho vào ViewBag
-            ViewBag.Top5Products = Products?.OrderByDescending(Req => Req.CreatedAt).Take(5) ?? new List<Product>();
+            ViewBag.Top5Products = Products?
+                .OrderByDescending(Req => Req.CreatedAt).Take(5).ToList() ?? new List<Product>();
         }
 
         public IActionResult Privacy()

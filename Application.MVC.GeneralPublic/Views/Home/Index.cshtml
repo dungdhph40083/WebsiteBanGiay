@@ -1,5 +1,6 @@
 ﻿@{
-    var Top5Products = ViewBag.Top5Products as List<Application.Data.Models.Product>;
+    ViewData["Title"] = "Home";
+    var LatestProducts = ViewBag.Top5Products as List<Application.Data.Models.Product>;
 }
 
 <!-- Main Slider Start -->
@@ -209,39 +210,46 @@
 <div class="featured-product product">
     <div class="container-fluid">
         <div class="section-header">
-            <h1>Featured Product</h1>
+            <h1>Sản phẩm nổi bật</h1>
         </div>
         <div class="row align-items-center product-slider product-slider-4">
-           @foreach(var Product in Top5Products!)
+            @if (LatestProducts != null)
             {
-                <div class="col-lg-3">
-                    <div class="product-item">
-                        <div class="product-title">
-                            <a href="#">@(Product.Name)</a>
-                            <div class="ratting">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
+                @foreach (var Product in LatestProducts)
+                {
+                    <div class="col-lg-3">
+                        <div class="product-item">
+                            <div class="product-title">
+                                <a href="#">@(Product.Name)</a>
+                                <div class="ratting">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="product-image">
-                            <a href="product-detail.html">
-                                <img src="https://localhost:7187/Images/@(Product.Image?.ImageName)" alt="Product Image">
-                            </a>
-                            <div class="product-action">
-                                <a href="#"><i class="fa fa-cart-plus"></i></a>
-                                <a href="#"><i class="fa fa-heart"></i></a>
-                                <a href="#"><i class="fa fa-search"></i></a>
+                            <div class="product-image">
+                                <a href="product-detail.html">
+                                    <img src="https://localhost:7187/Images/@(Product.Image?.ImageFileName)" alt="Product Image">
+                                </a>
+                                <div class="product-action">
+                                    <a href="#"><i class="fa fa-cart-plus"></i></a>
+                                    <a href="#"><i class="fa fa-heart"></i></a>
+                                    <a href="#"><i class="fa fa-search"></i></a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="product-price">
-                            <h3><span>đ</span>@(Product.Price)</h3>
-                            <a class="btn" href=""><i class="fa fa-shopping-cart"></i>Buy Now</a>
+                            <div class="product-price">
+                                <h3>@(Product.Price.ToString("#,##0"))<span>VNĐ</span></h3>
+                                <a class="btn" href=""><i class="fa fa-shopping-cart"></i>Mua</a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
+            }
+            else
+            {
+                <b>Hiện chưa có...</b>
             }
         </div>
     </div>
