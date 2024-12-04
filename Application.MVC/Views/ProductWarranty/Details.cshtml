@@ -4,51 +4,67 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1 class="text-center">Product Warranty Details</h1>
 
-<div>
-    <h4>ProductWarranty</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.WarrantyID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.WarrantyID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.WarrantyPeriod)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.WarrantyPeriod)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.WarrantyConditions)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.WarrantyConditions)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedAt)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Update", "Update", new { id = Model.WarrantyID }) |
-    <a asp-action="Index">Back to List</a>
+<div class="container mt-4">
+    <h4 class="text-center mb-4">Details for Product Warranty</h4>
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <!-- Warranty ID -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.WarrantyID)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.WarrantyID)
+                </dd>
+
+                <!-- Product ID -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.ProductID)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.ProductID)
+                </dd>
+
+                <!-- Warranty Period -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.WarrantyPeriod)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.WarrantyPeriod)
+                </dd>
+
+                <!-- Warranty Conditions -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.WarrantyConditions)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.WarrantyConditions)
+                </dd>
+
+                <!-- Created At -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.CreatedAt)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.CreatedAt)
+                </dd>
+
+                <!-- Updated At -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.UpdatedAt)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.UpdatedAt)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <!-- Update and Back to List buttons -->
+        <a asp-action="Update" class="btn btn-warning btn-lg">Update</a>
+        <a asp-action="Index" class="btn btn-secondary btn-lg ml-2">Back to List</a>
+    </div>
 </div>

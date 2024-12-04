@@ -4,40 +4,53 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1 class="text-center">Create Role</h1>
 
-<h4>Role</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="RoleID" class="control-label"></label>
-                <input asp-for="RoleID" class="form-control" />
-                <span asp-validation-for="RoleID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RoleCode" class="control-label"></label>
-                <input asp-for="RoleCode" class="form-control" />
-                <span asp-validation-for="RoleCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RoleName" class="control-label"></label>
-                <input asp-for="RoleName" class="form-control" />
-                <span asp-validation-for="RoleName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container mt-4">
+    <h4 class="text-center mb-4">Role Information</h4>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- RoleID -->
+                <div class="form-group">
+                    <label asp-for="RoleID" class="control-label"></label>
+                    <input asp-for="RoleID" class="form-control" />
+                    <span asp-validation-for="RoleID" class="text-danger"></span>
+                </div>
+
+                <!-- RoleCode -->
+                <div class="form-group">
+                    <label asp-for="RoleCode" class="control-label"></label>
+                    <input asp-for="RoleCode" class="form-control" />
+                    <span asp-validation-for="RoleCode" class="text-danger"></span>
+                </div>
+
+                <!-- RoleName -->
+                <div class="form-group">
+                    <label asp-for="RoleName" class="control-label"></label>
+                    <input asp-for="RoleName" class="form-control" />
+                    <span asp-validation-for="RoleName" class="text-danger"></span>
+                </div>
+
+                <!-- Submit button -->
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary btn-lg btn-block" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back to list button -->
+    <div class="text-center mt-4">
+        <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

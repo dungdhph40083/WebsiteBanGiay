@@ -27,13 +27,26 @@ namespace Application.MVC.Controllers
             var Sales = JsonConvert.DeserializeObject<Sale>(response);
             return View(Sales);
         }
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            Sale Sale = new Sale()
+            try
             {
-                SaleID = Guid.NewGuid(),
-            };
-            return View(Sale);
+                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+
+                ViewBag.Products = products ?? new List<Product>();
+                Sale Sale = new Sale()
+                {
+                    SaleID = Guid.NewGuid(),
+                };
+                return View(Sale);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nếu có
+                Console.WriteLine($"Error: {ex.Message}");
+                return View("Error");
+            }
+            
         }
         [HttpPost]
         public async Task<ActionResult> Create(Sale Sale)

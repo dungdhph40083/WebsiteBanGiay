@@ -4,62 +4,79 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1 class="text-center">Return List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
-<table class="table">
-    <thead>
+
+<table class="table table-striped table-bordered table-hover">
+    <thead class="thead-dark">
         <tr>
-           @*  <th>
-                @Html.DisplayNameFor(model => model.ReturnID)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.OrderID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reason)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReturnDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RefundAmount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
+            <th>@Html.DisplayNameFor(model => model.OrderID)</th>
+            <th>@Html.DisplayNameFor(model => model.Reason)</th>
+            <th>@Html.DisplayNameFor(model => model.ReturnDate)</th>
+            <th>@Html.DisplayNameFor(model => model.RefundAmount)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-           @*  <td>
-                @Html.DisplayFor(modelItem => item.ReturnID)
-            </td> *@
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reason)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReturnDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RefundAmount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                    @Html.ActionLink("Update", "Update", new { id = item.ReturnID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.ReturnID }) |
-                    <a href="/Returns/delete?ID=@item.ReturnID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.OrderID)</td>
+                <td>@Html.DisplayFor(modelItem => item.Reason)</td>
+                <td>@Html.DisplayFor(modelItem => item.ReturnDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.RefundAmount)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                <td>
+                    <!-- Update Button -->
+                    @Html.ActionLink("Update", "Update", new { id = item.ReturnID }, new { @class = "btn btn-warning btn-sm" }) |
+                    <!-- Details Button -->
+                    @Html.ActionLink("Details", "Details", new { id = item.ReturnID }, new { @class = "btn btn-info btn-sm" }) |
+                    <!-- Delete Button with modal trigger -->
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmDeleteModal" data-id="@item.ReturnID">Delete</button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this return?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <!-- Delete button that will be triggered dynamically -->
+                <a id="deleteButton" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Set the ID of the item to delete when the modal is shown
+        $('#confirmDeleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var returnId = button.data('id'); // Extract the return ID from the data-* attributes
+            var deleteUrl = '/Returns/Delete/' + returnId; // Construct the delete URL
+            var modal = $(this);
+            modal.find('#deleteButton').attr('href', deleteUrl); // Update the delete button's href with the correct URL
+        });
+    </script>
+}

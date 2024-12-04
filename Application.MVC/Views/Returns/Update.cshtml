@@ -4,55 +4,74 @@
     ViewData["Title"] = "Update";
 }
 
-<h1>Update</h1>
+<h1 class="text-center">Update Return</h1>
 
-<h4>Return</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Update">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ReturnID" class="control-label"></label>
-                <input asp-for="ReturnID" class="form-control" />
-                <span asp-validation-for="ReturnID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderID" class="control-label"></label>
-                <input asp-for="OrderID" class="form-control" />
-                <span asp-validation-for="OrderID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reason" class="control-label"></label>
-                <input asp-for="Reason" class="form-control" />
-                <span asp-validation-for="Reason" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ReturnDate" class="control-label"></label>
-                <input asp-for="ReturnDate" class="form-control" />
-                <span asp-validation-for="ReturnDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RefundAmount" class="control-label"></label>
-                <input asp-for="RefundAmount" class="form-control" />
-                <span asp-validation-for="RefundAmount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container mt-4">
+    <h4 class="text-center mb-4">Update Return Information</h4>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Update">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                <!-- Return ID -->
+                <div class="form-group">
+                    <label asp-for="ReturnID" class="control-label font-weight-bold"></label>
+                    <input asp-for="ReturnID" class="form-control" readonly />
+                    <span asp-validation-for="ReturnID" class="text-danger"></span>
+                </div>
+
+                <!-- Order ID -->
+                <div class="form-group">
+                    <label asp-for="OrderID" class="control-label font-weight-bold"></label>
+                    <input asp-for="OrderID" class="form-control" />
+                    <span asp-validation-for="OrderID" class="text-danger"></span>
+                </div>
+
+                <!-- Reason -->
+                <div class="form-group">
+                    <label asp-for="Reason" class="control-label font-weight-bold"></label>
+                    <input asp-for="Reason" class="form-control" />
+                    <span asp-validation-for="Reason" class="text-danger"></span>
+                </div>
+
+                <!-- Return Date -->
+                <div class="form-group">
+                    <label asp-for="ReturnDate" class="control-label font-weight-bold"></label>
+                    <input asp-for="ReturnDate" class="form-control" />
+                    <span asp-validation-for="ReturnDate" class="text-danger"></span>
+                </div>
+
+                <!-- Refund Amount -->
+                <div class="form-group">
+                    <label asp-for="RefundAmount" class="control-label font-weight-bold"></label>
+                    <input asp-for="RefundAmount" class="form-control" />
+                    <span asp-validation-for="RefundAmount" class="text-danger"></span>
+                </div>
+
+                <!-- Status -->
+                <div class="form-group">
+                    <label asp-for="Status" class="control-label font-weight-bold"></label>
+                    <input asp-for="Status" class="form-control" />
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <input type="submit" value="Save Changes" class="btn btn-primary btn-lg btn-block" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back to List Button -->
+    <div class="text-center mt-4">
+        <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

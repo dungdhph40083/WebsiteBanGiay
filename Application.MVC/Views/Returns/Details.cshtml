@@ -4,51 +4,74 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1 class="text-center">Return Details</h1>
 
-<div>
-    <h4>Return</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReturnID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReturnID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Reason)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Reason)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReturnDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReturnDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RefundAmount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RefundAmount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-    </dl>
+<div class="container mt-4">
+    <h4 class="text-center mb-4">Return Information</h4>
+
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <!-- Return ID -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.ReturnID)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.ReturnID)
+                </dd>
+
+                <!-- Order ID -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.OrderID)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.OrderID)
+                </dd>
+
+                <!-- Reason -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Reason)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Reason)
+                </dd>
+
+                <!-- Return Date -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.ReturnDate)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.ReturnDate)
+                </dd>
+
+                <!-- Refund Amount -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.RefundAmount)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.RefundAmount)
+                </dd>
+
+                <!-- Status -->
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Status)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Status)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Update and Back buttons -->
+    <div class="text-center mt-4">
+        @Html.ActionLink("Update", "Update", new { id = Model.ReturnID }, new { @class = "btn btn-primary btn-lg" }) |
+        <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
+    </div>
 </div>
-<div>
-    @Html.ActionLink("Update", "Update", new { id = Model.ReturnID }) |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

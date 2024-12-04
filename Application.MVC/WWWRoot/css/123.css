@@ -1,0 +1,17 @@
+﻿/* Thêm hiệu ứng shadow khi hover trên nút */
+.hover-shadow:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Hiệu ứng khi nút bị focus (chọn) */
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Màu shadow khi focus */
+}
+
+/* Hiệu ứng mượt khi hover */
+.btn:hover {
+    transform: scale(1.05); /* Tăng kích thước nút khi hover */
+    transition: transform 0.2s ease-in-out;
+}

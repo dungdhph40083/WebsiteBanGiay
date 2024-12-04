@@ -1,60 +1,78 @@
 ﻿@model Application.Data.Models.Sale
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Sale Details";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Sale Details</h1>
 
-<div>
-    <h4>Sale</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SaleID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SaleID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SaleCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SaleCode)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductID)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Update", "Update", new { id = Model.SaleID }) |
-    <a asp-action="Index">Back to List</a>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Sale Information</h4>
+            <hr />
+            <dl class="row">
+                <!-- SaleID Field -->
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.SaleID)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.SaleID)
+                </dd>
+
+                <!-- Name Field -->
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+
+                <!-- SaleCode Field -->
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.SaleCode)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.SaleCode)
+                </dd>
+
+                <!-- Status Field -->
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Status)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Status)
+                </dd>
+
+                <!-- CreatedAt Field -->
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.CreatedAt)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.CreatedAt)
+                </dd>
+
+                <!-- UpdatedAt Field -->
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.UpdatedAt)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.UpdatedAt)
+                </dd>
+
+                <!-- ProductID Field -->
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ProductID)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ProductID)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        @Html.ActionLink("Update", "Update", new { id = Model.SaleID }, new { @class = "btn btn-warning btn-lg" }) |
+        <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
+    </div>
 </div>

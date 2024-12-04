@@ -1,63 +1,81 @@
 ﻿@model Application.Data.Models.Sale
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Sale";
+    var products = ViewBag.Products as List<Application.Data.Models.Product>;
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Create Sale</h1>
 
-<h4>Sale</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SaleID" class="control-label"></label>
-                <input asp-for="SaleID" class="form-control" />
-                <span asp-validation-for="SaleID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SaleCode" class="control-label"></label>
-                <input asp-for="SaleCode" class="form-control" />
-                <span asp-validation-for="SaleCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProductID" class="control-label"></label>
-                <input asp-for="ProductID" class="form-control" />
-                <span asp-validation-for="ProductID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Sale Information</h4>
+            <hr />
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- SaleCode Field -->
+                <div class="form-group">
+                    <label asp-for="SaleCode" class="control-label"></label>
+                    <input asp-for="SaleCode" class="form-control" />
+                    <span asp-validation-for="SaleCode" class="text-danger"></span>
+                </div>
+
+                <!-- Status Field -->
+                <div class="form-group">
+                    <label asp-for="Status" class="control-label"></label>
+                    <input asp-for="Status" class="form-control" />
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <!-- CreatedAt Field -->
+                <div class="form-group">
+                    <label asp-for="CreatedAt" class="control-label"></label>
+                    <input asp-for="CreatedAt" class="form-control" />
+                    <span asp-validation-for="CreatedAt" class="text-danger"></span>
+                </div>
+
+                <!-- UpdatedAt Field -->
+                <div class="form-group">
+                    <label asp-for="UpdatedAt" class="control-label"></label>
+                    <input asp-for="UpdatedAt" class="form-control" />
+                    <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+                </div>
+
+                <!-- Product Selection Field -->
+                <div class="form-group">
+                    <label asp-for="ProductID" class="control-label"></label>
+                    <select asp-for="ProductID" class="form-control"
+                            asp-items="@(products != null && products.Any() ? new SelectList(products, "ProductID", "Name") : new SelectList(Enumerable.Empty<SelectListItem>()))">
+                        <option value="">-- Chọn Product --</option>
+                    </select>
+                    <span asp-validation-for="ProductID" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <input type="submit" value="Create Sale" class="btn btn-primary btn-lg" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back to List -->
+    <div class="text-center mt-4">
+        <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
