@@ -150,6 +150,60 @@
     font-family: 'Cascadia Code', 'Cascadia Mono', 'Cascadia'
 }
 
+/*#region Import font: Asap*/
+
+@font-face {
+    font-family: Asap;
+    src: url(../fonts/Asap-Regular.ttf);
+}
+
+@font-face {
+    font-family: Asap;
+    src: url(../fonts/Asap-Italic.ttf);
+    font-style: italic
+}
+
+@font-face {
+    font-family: Asap;
+    src: url(../fonts/Asap-Medium.ttf);
+    font-weight: 500
+}
+
+@font-face {
+    font-family: Asap;
+    src: url(../fonts/Asap-MediumItalic.ttf);
+    font-weight: 500;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Asap;
+    src: url(../fonts/Asap-SemiBold.ttf);
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: Asap;
+    src: url(../fonts/Asap-SemiBoldItalic.ttf);
+    font-weight: 600;
+    font-style: italic
+}
+
+@font-face {
+    font-family: Asap;
+    src: url(../fonts/Asap-Bold.ttf);
+    font-weight: 700
+}
+
+@font-face {
+    font-family: Asap;
+    src: url(../fonts/Asap-BoldItalic.ttf);
+    font-weight: 700;
+    font-style: italic
+}
+
+/*#endregion*/
+
 
 /* ==========================================================================
    0. ELEMENT
@@ -4519,7 +4573,8 @@ Pills vertical
 .table thead th,
 .table th {
     color: #3d405c;
-    font-family: 'Circular Std Medium';
+    font-family: 'Asap';
+    font-weight: 500
 }
 
 .table-bordered {
@@ -4551,7 +4606,8 @@ tr.group,
 tr.group:hover {
     background-color: #5969ff !important;
     color: #fff;
-    font-family: 'Circular Std Medium';
+    font-family: 'Asap';
+    font-weight: 500;
     font-size: 18px;
 }
 
