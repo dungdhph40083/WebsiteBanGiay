@@ -20,7 +20,7 @@ namespace Application.API.Controllers
         }
 
         [HttpGet("get-all")]
-        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetAll()
+        public async Task<ActionResult<List<Category>>> GetAll()
         {
             return Ok(await _categoryRepository.GetAllCategory());
         }
