@@ -22,6 +22,9 @@ namespace Application.Data.Mappers
             CreateMap<Image, ImageDTO>();
             CreateMap<ImageDTO, Image>();
 
+            CreateMap<Product, ProductDTO>();
+            CreateMap<ProductDTO, Product>();
+
             CreateMap<ProductDetail, ProductDetailDTO>();
             CreateMap<ProductDetailDTO, ProductDetail>();
 

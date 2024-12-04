@@ -26,8 +26,6 @@
         @foreach (var Entry in Model)
             {
                 <tr>
-                    <td>@Entry.CategoryName</td>
-                    <td>@(Entry.Description?.Length > 30 ? Entry.Description?.Substring(0, 30).Trim() + "..." : Entry.Description)</td>
                     <td>
                     @Html.DisplayFor(modelItem => Entry.CategoryName)
                     </td>

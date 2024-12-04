@@ -1,8 +1,4 @@
-﻿* {
-    font-family: Asap, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-@font-face {
+﻿@font-face {
     font-family: Asap;
     src: url(../fonts/Asap-Regular.ttf);
 }
