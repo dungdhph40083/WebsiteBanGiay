@@ -13,9 +13,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.First().TrackingNumber)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.First().ShippingStatus)
             </th>
             <th>
@@ -28,9 +25,6 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TrackingNumber)
-                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ShippingStatus)
                 </td>
