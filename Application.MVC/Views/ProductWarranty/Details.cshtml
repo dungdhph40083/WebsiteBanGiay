@@ -1,59 +1,63 @@
 ﻿@model Application.Data.Models.ProductWarranty
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi Tiết";
 }
 
-<h1 class="text-center">Product Warranty Details</h1>
+<h1 class="text-center">Chi Tiết Bảo Hành Sản Phẩm</h1>
 
 <div class="container mt-4">
-    <h4 class="text-center mb-4">Details for Product Warranty</h4>
+    <h4 class="text-center mb-4">Thông Tin Chi Tiết Bảo Hành</h4>
     <div class="card">
         <div class="card-body">
             <dl class="row">
-                <!-- Warranty ID -->
+                <!-- Mã Bảo Hành -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.WarrantyID)
+                    Mã bảo hành
+
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.WarrantyID)
                 </dd>
 
-                <!-- Product ID -->
+                <!-- Mã Sản Phẩm -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.ProductID)
+                    Mã sản phẩm
+
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.ProductID)
                 </dd>
 
-                <!-- Warranty Period -->
+                <!-- Thời Gian Bảo Hành -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.WarrantyPeriod)
+                    Thời hạn bảo hành
+
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.WarrantyPeriod)
                 </dd>
 
-                <!-- Warranty Conditions -->
+                <!-- Điều Kiện Bảo Hành -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.WarrantyConditions)
+                    Điều kiện bảo hành
+
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.WarrantyConditions)
                 </dd>
 
-                <!-- Created At -->
+                <!-- Ngày Tạo -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.CreatedAt)
+                    Ngày Tạo
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.CreatedAt)
                 </dd>
 
-                <!-- Updated At -->
+                <!-- Ngày Cập Nhật -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.UpdatedAt)
+                    Ngày Cập Nhật
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.UpdatedAt)
@@ -63,8 +67,8 @@
     </div>
 
     <div class="text-center mt-4">
-        <!-- Update and Back to List buttons -->
-        <a asp-action="Update" class="btn btn-warning btn-lg">Update</a>
-        <a asp-action="Index" class="btn btn-secondary btn-lg ml-2">Back to List</a>
+        <!-- Nút Cập Nhật và Quay Lại Danh Sách -->
+@*         <a asp-action="Update" class="btn btn-warning btn-lg">Cập Nhật</a> *@
+        <a asp-action="Index" class="btn btn-secondary btn-lg ml-2">Quay Lại Danh Sách</a>
     </div>
 </div>
