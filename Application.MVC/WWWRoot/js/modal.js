@@ -3,15 +3,15 @@
 
 // Write your JavaScript code.
 
-const toastTrigger = document.getElementById('liveToastBtn')
-const toastLiveExample = document.getElementById('liveToast')
-
-if (toastTrigger) {
-    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
-    toastTrigger.addEventListener('click', () => {
-        toastBootstrap.show()
-    })
-}
+// const toastTrigger = document.getElementById('liveToastBtn')
+// const toastLiveExample = document.getElementById('liveToast')
+   
+// if (toastTrigger) {
+//     const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+//     toastTrigger.addEventListener('click', () => {
+//         toastBootstrap.show()
+//     })
+// }
 
 $(".delete_trigger").on("click", (event) => {
     event.preventDefault(); // do not accidentally refresh
@@ -32,7 +32,7 @@ $("#confirm_deletion").on("click", () => {
     var ButtonClose = document.getElementById("close-btn");
     var ButtonCancel = document.getElementById("cancel-btn");
     ButtonTxt.className = "btn btn-info";
-    ButtonTxt.innerText = "Processing...";
+    ButtonTxt.innerText = "Đang xóa...";
     ButtonTxt.setAttribute("disabled", "disabled");
     ButtonClose.setAttribute("disabled", "disabled");
     ButtonCancel.setAttribute("disabled", "disabled");
@@ -53,7 +53,7 @@ $("#confirm_deletion").on("click", () => {
             $("#ModalDelete").modal("hide"); // self explainatory - hides the modal
 
             ButtonTxt.className = "btn btn-danger";
-            ButtonTxt.innerText = "Proceed";
+            ButtonTxt.innerText = "Xóa";
             ButtonTxt.removeAttribute("disabled")
             ButtonClose.removeAttribute("disabled");
             ButtonCancel.removeAttribute("disabled");

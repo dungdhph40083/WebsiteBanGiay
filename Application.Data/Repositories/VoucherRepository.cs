@@ -19,7 +19,9 @@ namespace Application.Data.Repositories
 
         public async Task<Voucher> CreateVoucher(VoucherDTO NewVoucher)
         {
-            Voucher Voucher = new() { VoucherID = Guid.NewGuid() };
+            var DateTimeUtcNow = DateTime.UtcNow;
+
+            Voucher Voucher = new() { VoucherID = Guid.NewGuid(), CreatedAt = DateTimeUtcNow, LastUpdatedOn = DateTimeUtcNow };
             NewVoucher.VoucherCode = NewVoucher.VoucherCode.ToUpper();
             Voucher = Mapper.Map(NewVoucher, Voucher);
             await Context.Vouchers.AddAsync(Voucher);
