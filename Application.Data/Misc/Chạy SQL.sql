@@ -80,29 +80,6 @@ insert into Category_Products values
 (NEWID(), '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', '0d3a5b93-0087-4d99-bddb-d5dface1fa95')
 
 /* region User-Roles */
-create table Users
-(
-UserID					uniqueidentifier	not null	primary key,
-Username				varchar(30)			not null	unique,
-[Password]				nvarchar(MAX)		not null,
-FirstName				nvarchar(MAX),
-LastName				nvarchar(MAX),
-Email					varchar(MAX),
-ImageID					uniqueidentifier,
-[Address]				nvarchar(MAX),
-PhoneNumber				varchar(30),
-CreatedAt				datetime,
-LastUpdatedOn			datetime,
-[Status]				tinyint,
-
-constraint FK_Images_Users
-foreign key (ImageID) references Images(ImageID)
-)
-
-insert into Users values
-('2aab6663-80a4-44ce-8139-c679be51318c', 'admin', '$2a$14$zKVa.FOju5djwNqTg5jckeibUpOuOEJ4SyQXtGNH7ovseME2ubqpK', N'Văn Anh',  N'Nguyễn', 'a@a.com', null, N'Hà Nội', '0123456789', GETDATE(), GETDATE(), 1), -- mật khẩu: admin
-('911729e5-b813-453f-9c6b-11dfae751464', 'user',  '$2a$14$mNYjhrkDnEgd12KlXSHfxu7/4HdDVvgVUagEEv8M0XXkihvAlKndK', N'Văn Bách', N'Trần',   'a@b.com', null, N'Hà Nội', '0123456789', GETDATE(), GETDATE(), 1)  -- mật khẩu: user
-
 create table Roles
 (
 RoleID					uniqueidentifier	not null	primary key,
@@ -115,23 +92,32 @@ insert into Roles values
 ('1bfa7246-60e1-4d82-a469-cdecf867fd01', 'USER', N'Người dùng'),
 ('b463986e-60f1-4029-91c4-1116c4e073e7', 'BANNED', N'Bị cấm')
 
-create table User_Roles
+create table Users
 (
-User_RoleID				uniqueidentifier	not null	primary key,
-UserID					uniqueidentifier,
-RoleID					uniqueidentifier,
+UserID					uniqueidentifier	not null	primary key,
+Username				varchar(30)			not null	unique,
+[Password]				nvarchar(MAX)		not null,
+RoleID					uniqueidentifier	not null,
+FirstName				nvarchar(MAX),
+LastName				nvarchar(MAX),
+Email					varchar(MAX),
+ImageID					uniqueidentifier,
+[Address]				nvarchar(MAX),
+PhoneNumber				varchar(30),
+CreatedAt				datetime,
+LastUpdatedOn			datetime,
+[Status]				tinyint,
 
-constraint FK_Users_User_Roles
-foreign key (UserID) references Users(UserID),
+constraint FK_Images_Users
+foreign key (ImageID) references Images(ImageID),
 
-constraint FK_Roles_User_Roles
+constraint FK_Users_Roles
 foreign key (RoleID) references Roles(RoleID)
 )
 
-insert into User_Roles values
-(NEWID(), '2aab6663-80a4-44ce-8139-c679be51318c', '9ba7bf79-19c1-4611-b44b-69fc8023842e'),
-(NEWID(), '2aab6663-80a4-44ce-8139-c679be51318c', '1bfa7246-60e1-4d82-a469-cdecf867fd01'),
-(NEWID(), '911729e5-b813-453f-9c6b-11dfae751464', '1bfa7246-60e1-4d82-a469-cdecf867fd01')
+insert into Users values
+('2aab6663-80a4-44ce-8139-c679be51318c', 'admin', '$2a$14$zKVa.FOju5djwNqTg5jckeibUpOuOEJ4SyQXtGNH7ovseME2ubqpK', '9ba7bf79-19c1-4611-b44b-69fc8023842e', N'Văn Anh',  N'Nguyễn', 'a@a.com', null, N'Hà Nội', '0123456789', GETDATE(), GETDATE(), 1), -- mật khẩu: admin
+('911729e5-b813-453f-9c6b-11dfae751464', 'user',  '$2a$14$mNYjhrkDnEgd12KlXSHfxu7/4HdDVvgVUagEEv8M0XXkihvAlKndK', '1bfa7246-60e1-4d82-a469-cdecf867fd01', N'Văn Bách', N'Trần',   'a@b.com', null, N'Hà Nội', '0123456789', GETDATE(), GETDATE(), 1)  -- mật khẩu: user
 
 create table Sales
 (
