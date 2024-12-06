@@ -10,23 +10,23 @@ namespace Application.MVC.GeneralPublic.Controllers
     {
         HttpClient Client = new HttpClient();
 
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            await FetchInfo();
+            //await FetchInfo();
             return View();
         }
 
-        private async Task FetchInfo()
-        {
-            string URL_Prods = $@"https://localhost:7187/api/Product/get-all";
+        //private async Task FetchInfo()
+        //{
+        //    string URL_Prods = $@"https://localhost:7187/api/Product/get-all";
 
-            var Products = await Client.GetFromJsonAsync<List<Product>>(URL_Prods);
-            // Lấy 5 con từ đầu danh sách sau khi được sắp xếp theo ngày từ cuối lên đầu
+        //    var Products = await Client.GetFromJsonAsync<List<Product>>(URL_Prods);
+        //    // Lấy 5 con từ đầu danh sách sau khi được sắp xếp theo ngày từ cuối lên đầu
 
-            // Sau đó cho vào ViewBag
-            ViewBag.Top5Products = Products?
-                .OrderByDescending(Req => Req.CreatedAt).Take(5).ToList() ?? new List<Product>();
-        }
+        //    // Sau đó cho vào ViewBag
+        //    ViewBag.Top5Products = Products?
+        //        .OrderByDescending(Req => Req.CreatedAt).Take(5).ToList() ?? new List<Product>();
+        //}
 
         public IActionResult Privacy()
         {
