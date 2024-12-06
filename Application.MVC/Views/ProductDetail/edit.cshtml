@@ -1,9 +1,11 @@
-﻿@model Application.Data.DTOs.ProductDetailDTO
+﻿@using Application.Data.Enums
+@model Application.Data.DTOs.ProductDetailDTO
 
 @{
     ViewBag.Title = "Edit Product Detail";
     var products = ViewBag.Products as List<Application.Data.Models.Product>;
-    var images = ViewBag.Images as List<Application.Data.Models.Image>;
+    var Colors = ViewBag.Colors as List<Application.Data.Models.Color>;
+    var Sizes = ViewBag.Sizes as List<Application.Data.Models.Size>;
 }
 
 
@@ -19,14 +21,33 @@
         <span asp-validation-for="ProductID" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    @* <div class="form-group">
         <label for="ImageID" class="control-label">Image File Name</label>
         <select asp-for="ImageID" class="form-control"
                 asp-items="@(images != null && images.Any() ? new SelectList(images, "ImageID", "ImageFileName") : new SelectList(Enumerable.Empty<SelectListItem>()))">
             <option value="">-- Select Image --</option>
         </select>
         <span asp-validation-for="ImageID" class="text-danger"></span>
+    </div> *@
+
+    <div class="form-group">
+        <label for="ColorID" class="control-label">Color</label>
+        <select asp-for="ColorID" class="form-control"
+                asp-items="@(Colors != null && Colors.Any() ? new SelectList(Colors, "ColorID", "ColorName") : new SelectList(Enumerable.Empty<SelectListItem>()))">
+            <option value=null>Không có màu</option>
+        </select>
+        <span asp-validation-for="ColorID" class="text-danger"></span>
     </div>
+
+    <div class="form-group">
+        <label for="ProductID" class="control-label">Size</label>
+        <select asp-for="SizeID" class="form-control"
+                asp-items="@(Sizes != null && Sizes.Any() ? new SelectList(Sizes, "SizeID", "Name") : new SelectList(Enumerable.Empty<SelectListItem>()))">
+            <option value=null>Không có kích cỡ</option>
+        </select>
+        <span asp-validation-for="SizeID" class="text-danger"></span>
+    </div>
+
 
     <div class="form-group">
         <label asp-for="Material" class="control-label"></label>
@@ -66,6 +87,15 @@
         <label asp-for="WarrantyPeriod" class="control-label"></label>
         <input asp-for="WarrantyPeriod" class="form-control" type="date" />
         <span asp-validation-for="WarrantyPeriod" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Status" class="control-label"></label>
+        <select asp-for="Status" class="form-control">
+            <option value="@((int)VisibilityStatus.Available)">Khả dụng</option>
+            <option value="@((int)VisibilityStatus.Locked)">Hết hàng</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
     </div>
 
     <div class="form-group">

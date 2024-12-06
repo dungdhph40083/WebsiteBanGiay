@@ -14,6 +14,10 @@ namespace Application.Data.Models
 		public Guid ProductDetailID { get; set; }
         [ForeignKey(nameof(Product))]
 		public Guid? ProductID { get; set; }
+		[ForeignKey(nameof(Color))]
+		public Guid? ColorID { get; set; }
+		[ForeignKey(nameof(Size))]
+		public Guid? SizeID { get; set; }
 		[ForeignKey(nameof(Image))]
 		public Guid? ImageID { get; set; }
 		public string? Material { get; set; }
@@ -25,7 +29,11 @@ namespace Application.Data.Models
         public DateTime WarrantyPeriod { get; set; }
 		public string? Instructions { get; set; }
 		public string? Features { get; set; }
+		public byte Status { get; set; }
+		public DateTime UpdatedAt { get; set; }
 		public virtual Product? Product { get; set; }
 		public virtual Image? Image { get; set; }
+		public virtual Color? Color { get; set; }
+		public virtual Size? Size { get; set; }
     }
 }

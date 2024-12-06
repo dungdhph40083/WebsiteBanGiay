@@ -20,7 +20,7 @@ namespace Application.Data.Repositories
         public async Task<ProductDetail> CreateNew(ProductDetailDTO NewDetail)
         {
             // để ko cần phải tự nhập GUID mỗi lần thêm dữ liệu nữa
-            ProductDetail ProductDetail = new() { ProductDetailID = Guid.NewGuid() };
+            ProductDetail ProductDetail = new() { ProductDetailID = Guid.NewGuid(), UpdatedAt = DateTime.UtcNow };
 
             // có hai cách gán dữ liệu vào trong này:
             // cách 1: tự gán giá trị thuộc tính thủ công
@@ -65,6 +65,7 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
+                Target.UpdatedAt = DateTime.UtcNow;
                 var UpdatedTarget = Mapper.Map(UpdatedDetail, Target);
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();

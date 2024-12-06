@@ -26,7 +26,7 @@ namespace Application.Data.Repositories
 
             ShoppingCart = Mapper.Map(NewShoppingCart, ShoppingCart);
 
-            var ProductItem = Context.Products.Find(ShoppingCart.ProductID);
+            var ProductItem = Context.ProductDetails.Find(ShoppingCart.ProductID);
             var VoucherItem = Context.Vouchers.Find(ShoppingCart.VoucherID);
 
             long    ItemPrice          = ProductItem == null ? 0 : ProductItem.Price;
@@ -64,7 +64,8 @@ namespace Application.Data.Repositories
                 .Include(UU => UU.Voucher)
                 .Include(UU => UU.Size)
                 .Include(UU => UU.Color)
-                .Include(UU => UU.Product).FirstOrDefaultAsync(x => x.CartID == TargetID);
+                .Include(UU => UU.Product)
+                .Include(UU => UU.ProductDetail).FirstOrDefaultAsync(x => x.CartID == TargetID);
         }
 
         public async Task<List<ShoppingCart>> GetShoppingCarts()
@@ -74,7 +75,8 @@ namespace Application.Data.Repositories
                 .Include(UU => UU.Voucher)
                 .Include(UU => UU.Size)
                 .Include(UU => UU.Color)
-                .Include(UU => UU.Product).ToListAsync();
+                .Include(UU => UU.Product)
+                .Include(UU => UU.ProductDetail).ToListAsync();
         }
 
         public async Task<ShoppingCart?> Update(Guid TargetID, ShoppingCartDTO UpdatedShoppingCart)
@@ -85,11 +87,11 @@ namespace Application.Data.Repositories
                 Context.Entry(Target).State = EntityState.Modified;
                 var UpdatedTarget = Mapper.Map(UpdatedShoppingCart, Target);
 
-                var ProductItem = Context.Products.Find(Target.ProductID);
+                var ProductItem = Context.ProductDetails.Find(Target.ProductID);
                 var VoucherItem = Context.Vouchers.Find(Target.VoucherID);
 
-                long ItemPrice = ProductItem == null ? 0 : ProductItem.Price;
-                long ItemVoucherPrice = VoucherItem == null ? 0 : VoucherItem.DiscountPrice;
+                long    ItemPrice          = ProductItem == null ? 0 : ProductItem.Price;
+                long    ItemVoucherPrice   = VoucherItem == null ? 0 : VoucherItem.DiscountPrice;
                 decimal ItemVoucherPercent = VoucherItem == null ? 0 : VoucherItem.DiscountPercent;
 
                 UpdatedTarget.RawPrice =

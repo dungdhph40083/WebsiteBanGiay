@@ -1,4 +1,5 @@
-﻿using Application.Data.Models;
+﻿using Application.Data.Enums;
+using Application.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -35,24 +36,22 @@ namespace Application.Data.ModelContexts
             ModelBuilder.Entity<User>()
                 .HasIndex(Idx => Idx.Email)
                 .IsUnique();
+			ModelBuilder.Entity<User>()
+				.Property(Idx => Idx.RoleID)
+				.HasDefaultValue(Guid.Parse(DefaultValues.UserRoleGUID));
         }
 
         public DbSet<Category> Categories { get; set; }
-		public DbSet<Category_Product> Category_Products { get; set; }
 		public DbSet<Color> Colors { get; set; }
-		public DbSet<Color_ProductDetail> Color_ProductDetails { get; set; }
 		public DbSet<CustomerSupportMessage> CustomerSupportMessages { get; set; }
 		public DbSet<CustomerSupportTicket> CustomerSupportTickets { get; set; }
 		public DbSet<Image> Images { get; set; }
-		public DbSet<Inventory_ProductDetail> Inventory_ProductDetails { get; set; }
-		public DbSet<InventoryLog> InventoryLogs { get; set; }
 		public DbSet<Order> Orders { get; set; }
 		public DbSet<OrderDetail> OrderDetails { get; set; }
 		public DbSet<OrderTracking> OrderTrackings { get; set; }
 		public DbSet<PaymentMethod> PaymentMethods { get; set; }
 		public DbSet<PaymentMethodDetail> PaymentMethodDetails { get; set; }
 		public DbSet<Product> Products { get; set; }
-		public DbSet<Size_ProductDetail> Size_ProductDetails { get; set; }
 		public DbSet<ProductDetail> ProductDetails { get; set; }
 		public DbSet<ProductWarranty> ProductWarranties { get; set; }
 		public DbSet<Rating> Ratings { get; set; }

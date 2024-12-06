@@ -1,6 +1,8 @@
-﻿using Application.Data.ModelContexts;
+﻿using Application.Data.DTOs;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,10 +15,12 @@ namespace Application.Data.Repositories
     public class ProductRepository : IProduct
     {
         private readonly GiayDBContext _context;
+        private readonly IMapper Mapper;
 
-        public ProductRepository(GiayDBContext context)
+        public ProductRepository(GiayDBContext context, IMapper Mapper)
         {
             _context = context;
+            this.Mapper = Mapper;
         }
 
         public IEnumerable<Product> GetAll()
@@ -29,16 +33,26 @@ namespace Application.Data.Repositories
             return _context.Products.Include(p => p.Image).FirstOrDefault(p => p.ProductID == id);
         }
 
-        public void Add(Product product)
+        public Product Add(ProductDTO ProductDTO)
         {
-            if (product.ImageID.HasValue)
+            var DateTimeUtcNow = DateTime.UtcNow;
+
+            Product Product = new()
             {
-                product.Image = _context.Images.Find(product.ImageID);
-            }
-            _context.Products.Add(product);
+                ProductID = Guid.NewGuid(),
+                CreatedAt = DateTimeUtcNow,
+                UpdatedAt = DateTimeUtcNow
+            };
+
+            Product = Mapper.Map(ProductDTO, Product);
+
+            _context.Products.Add(Product);
+            _context.SaveChanges();
+
+            return Product;
         }
 
-        public void Update(Guid ID, Product product)
+        public Product Update(Guid ID, ProductDTO ProductDTO)
         {
             var Target = _context.Products.Find(ID);
 
@@ -50,13 +64,13 @@ namespace Application.Data.Repositories
             _context.Entry(Target).State = EntityState.Modified;
 
             // Cập nhật các trường thông tin của sản phẩm
-            Target.Name = product.Name;
-            Target.Description = product.Description;
-            Target.Price = product.Price;
-            Target.ImageID = product.ImageID;
-            Target.UpdatedAt = DateTime.UtcNow;
+
+            Target = Mapper.Map(ProductDTO, Target);
+
             _context.Update(Target);
             _context.SaveChanges();
+
+            return Target;
         }
 
         public void Delete(Guid id)
@@ -65,12 +79,8 @@ namespace Application.Data.Repositories
             if (product != null)
             {
                 _context.Products.Remove(product);
+                _context.SaveChanges();
             }
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
         }
     }
 }

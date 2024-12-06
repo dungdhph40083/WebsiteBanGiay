@@ -8,7 +8,16 @@ namespace Application.MVC.GeneralPublic.Controllers
     public class LoginController : Controller
     {
         HttpClient Client = new HttpClient();
+
+        [HttpGet]
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login()
         {
             return View();
         }

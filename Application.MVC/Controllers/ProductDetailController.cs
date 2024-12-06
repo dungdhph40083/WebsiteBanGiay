@@ -29,22 +29,30 @@ namespace Application.MVC.Controllers
         {
             try
             {
-                // Lấy danh sách Products và Images từ API
-                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
-                var images = await client.GetFromJsonAsync<List<Image>>("https://localhost:7187/api/Image");
-
-                // Nếu API trả về null, khởi tạo danh sách trống
-                ViewBag.Products = products ?? new List<Product>();
-                ViewBag.Images = images ?? new List<Image>();
-
+                await FetchInfo();
                 return View();
-        }
+            }
             catch (Exception ex)
             {
                 // Log lỗi nếu có
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Error: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.Gray;
                 return View("Error");
             }
+        }
+
+        private async Task FetchInfo()
+        {
+            // Lấy danh sách Products và Images từ API
+            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+            var Colors = await client.GetFromJsonAsync<List<Color>>("https://localhost:7187/api/Color/get-all");
+            var Sizes = await client.GetFromJsonAsync<List<Size>>("https://localhost:7187/api/Size");
+
+            // Nếu API trả về null, khởi tạo danh sách trống
+            ViewBag.Products = products ?? new List<Product>();
+            ViewBag.Colors = Colors ?? new List<Color>();
+            ViewBag.Sizes = Sizes ?? new List<Size>();
         }
 
         // POST: ProductDetail/Create
@@ -57,23 +65,26 @@ namespace Application.MVC.Controllers
             }
 
             // Gửi yêu cầu POST đến API
-            var response = await client.PostAsJsonAsync("https://localhost:7187/api/ProductDetails", newProductDetail);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
+                var response = await client.PostAsJsonAsync("https://localhost:7187/api/ProductDetails", newProductDetail);
                 return RedirectToAction("Index"); // Quay lại trang danh sách nếu thành công
+            }
+            catch (Exception Msg)
+            {
+                await FetchInfo();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error: {Msg.Message}");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return View(newProductDetail);
             }
 
             // Nếu có lỗi, hiển thị lại form với thông báo lỗi
-            ModelState.AddModelError(string.Empty, "An error occurred while creating the product detail.");
-            return View(newProductDetail);
         }
 
         public async Task<IActionResult> Edit(Guid id)
         {
-            // Lấy danh sách Products và Images từ API
-            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
-            var images = await client.GetFromJsonAsync<List<Image>>("https://localhost:7187/api/Image");
+            await FetchInfo();
 
             // Lấy thông tin ProductDetail theo ID
             var productDetail = await client.GetFromJsonAsync<ProductDetailDTO>($"https://localhost:7187/api/ProductDetails/{id}");
@@ -82,10 +93,6 @@ namespace Application.MVC.Controllers
         {
                 return NotFound();
             }
-
-            // Gán dữ liệu vào ViewBag để sử dụng trong dropdown
-            ViewBag.Products = products ?? new List<Product>();
-            ViewBag.Images = images ?? new List<Image>();
 
             return View(productDetail);
         }
@@ -108,12 +115,7 @@ namespace Application.MVC.Controllers
                 }
             }
 
-            // Lấy lại danh sách để hiển thị trong trường hợp có lỗi
-            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
-            var images = await client.GetFromJsonAsync<List<Image>>("https://localhost:7187/api/Image");
-
-            ViewBag.Products = products ?? new List<Product>();
-            ViewBag.Images = images ?? new List<Image>();
+            await FetchInfo();
 
             return View(updatedDetail);
         }

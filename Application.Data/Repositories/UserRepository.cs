@@ -1,4 +1,5 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
@@ -27,6 +28,7 @@ namespace Application.Data.Repositories
             NewUser.Password = PasswordHasher(NewUser.Password);
 
             User = Mapper.Map(NewUser, User);
+
             await Context.Users.AddAsync(User);
             await Context.SaveChangesAsync();
             return User;

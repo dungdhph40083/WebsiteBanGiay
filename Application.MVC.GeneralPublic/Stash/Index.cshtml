@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home";
-    var LatestProducts = ViewBag.Top5Products as List<Application.Data.Models.Product>;
+    var LatestProducts = ViewBag.Top5Products as List<Application.Data.Models.ProductDetail>;
 }
 
 <!-- Main Slider Start -->
@@ -220,7 +220,7 @@
                     <div class="col-lg-3">
                         <div class="product-item">
                             <div class="product-title">
-                                <a href="#">@(Product.Name)</a>
+                                <a href="#">@(Product.Product?.Name)</a>
                                 <div class="ratting">
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>

@@ -58,27 +58,6 @@ insert into Products values
 ('61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Giày Adidas Da bò',				N'Adidas Da bò hiếm có, đẹp mắt, hợp gu',												 '79ba4596-0578-45ad-8109-a7d5029ab4d9', 193000, GETDATE(), GETDATE()),
 ('4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Giày Adidas Trắng sọc đen',		N'Adidas Trắng sọc đen dành cho thể thao, giúp giảm mỏi chân khi vận động nặng',		 '8d59af65-660c-4a93-a91c-754218be7de3', 126000, GETDATE(), GETDATE())
 
-create table Category_Products
-(
-Category_Products_ID	uniqueidentifier	not null	primary key,
-ProductID				uniqueidentifier,
-CategoryID				uniqueidentifier,
-
-constraint FK_Categories_Categories_Products
-foreign key (CategoryID) references Categories(CategoryID),
-
-constraint FK_Products_Categories_Products
-foreign key (ProductID) references Products(ProductID)
-)
-
-insert into Category_Products values
-(NEWID(), '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', '0d3a5b93-0087-4d99-bddb-d5dface1fa95'),
-(NEWID(), '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', '96dbcc88-1558-4bbb-a483-3804b24f086e'),
-(NEWID(), 'a785be42-a9de-44f8-b826-7bc9151eea9b', '0d3a5b93-0087-4d99-bddb-d5dface1fa95'),
-(NEWID(), '87e469e0-45ed-4eda-b929-5d3dc3789bf1', '96dbcc88-1558-4bbb-a483-3804b24f086e'),
-(NEWID(), '61ba03de-fbd6-41dd-8ebf-53a400cfa0db', '414f0af6-366f-4bd7-a09d-510193f533ea'),
-(NEWID(), '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', '0d3a5b93-0087-4d99-bddb-d5dface1fa95')
-
 /* region User-Roles */
 create table Roles
 (
@@ -246,6 +225,8 @@ create table ProductDetails
 (
 ProductDetailID			uniqueidentifier	not null	primary key,
 ProductID				uniqueidentifier,
+ColorID					uniqueidentifier,
+SizeID					uniqueidentifier,
 Material				nvarchar(MAX),
 Quantity				int,
 Price					bigint,
@@ -256,108 +237,28 @@ WarrantyPeriod			datetime,
 Instructions			nvarchar(MAX),
 Features				nvarchar(MAX),
 ImageID					uniqueidentifier,
+[Status]				tinyint,
+[UpdatedAt]				datetime
 
 constraint FK_Products_ProductDetails
 foreign key (ProductID) references Products(ProductID),
 
 constraint FK_Images_ProductDetails
-foreign key (ImageID) references Images(ImageID)
-)
+foreign key (ImageID) references Images(ImageID),
 
-insert into ProductDetails values
-('ec093371-289f-4f78-a90a-f95a6cb5edec', '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', N'Mô tả', 69420, 172000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null),
-('7e7c19ee-161b-4c04-82e9-56ca7676613f', 'a785be42-a9de-44f8-b826-7bc9151eea9b', N'Mô tả', 69420, 144000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null),
-('b6ac32d4-d03f-4ce0-9b19-31f41cd77438', '87e469e0-45ed-4eda-b929-5d3dc3789bf1', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null),
-('c54d8c98-6884-4d21-9100-7ecafce37a56', '61ba03de-fbd6-41dd-8ebf-53a400cfa0db', N'Mô tả', 69420, 193000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null),
-('a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c', '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null)
-
-
-create table InventoryLogs
-(
-LogID					uniqueidentifier	not null	primary key,
-SizeID					uniqueidentifier,
-ColorID					uniqueidentifier,
-ProductDetailID			uniqueidentifier,
-QuantityInStock			int,
-[Status]				tinyint,
-UpdatedAt				datetime,
-
-constraint FK_Size_InventoryLogs
-foreign key (SizeID) references Sizes(SizeID),
-
-constraint FK_Color_InventoryLogs
+constraint FK_Colors_ProductDetails
 foreign key (ColorID) references Colors(ColorID),
 
-constraint FK_ProductDetail_InventoryLogs
-foreign key (ProductDetailID) references ProductDetails(ProductDetailID)
-)
-
-insert into InventoryLogs values
-('89837276-d9d8-4847-980e-eb7a93711673', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', 'ec093371-289f-4f78-a90a-f95a6cb5edec', 69420, 1, GETDATE()),
-('d4b2b1da-1a36-49ad-80f2-9480da370f5e', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', '7e7c19ee-161b-4c04-82e9-56ca7676613f', 69420, 1, GETDATE()),
-('3c0ab7ed-a5bc-4723-bb6b-6698a4c31d74', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', 'b6ac32d4-d03f-4ce0-9b19-31f41cd77438', 69420, 1, GETDATE()),
-('8e170bac-b30b-4226-8339-e7fd91532199', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', 'c54d8c98-6884-4d21-9100-7ecafce37a56', 69420, 1, GETDATE()),
-('09b0f4fd-33b9-45df-919b-75cfb3be32ad', '88580723-ab1d-4362-93cd-f1ec0c8206fd', N'0101956c-e127-4be6-8322-f9c46f49594b', 'a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c', 69420, 1, GETDATE())
-
-create table Size_ProductDetails
-(
-Size_ProductDetail_ID	uniqueidentifier	not null	primary key,
-ProductDetailID			uniqueidentifier,
-SizeID					uniqueidentifier
-
-constraint FK_Product_Size_ProductDetails
-foreign key (ProductDetailID) references ProductDetails(ProductDetailID),
-
-constraint FK_Size_Size_ProductDetails
+constraint FK_Sizes_ProductDetails
 foreign key (SizeID) references Sizes(SizeID)
 )
 
-insert into Size_ProductDetails values
-(NEWID(), 'ec093371-289f-4f78-a90a-f95a6cb5edec', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
-(NEWID(), '7e7c19ee-161b-4c04-82e9-56ca7676613f', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
-(NEWID(), 'b6ac32d4-d03f-4ce0-9b19-31f41cd77438', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
-(NEWID(), 'c54d8c98-6884-4d21-9100-7ecafce37a56', N'88580723-ab1d-4362-93cd-f1ec0c8206fd'),
-(NEWID(), 'a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c', N'88580723-ab1d-4362-93cd-f1ec0c8206fd')
-
-create table Inventory_ProductDetails
-(
-Inventory_ProductDetailID	uniqueidentifier	not null	primary key,
-LogID					uniqueidentifier,
-ProductDetailID			uniqueidentifier
-
-constraint FK_Inventory_Inventory_ProductDetails
-foreign key (LogID) references InventoryLogs(LogID),
-
-constraint FK_ProductDetail_Inventory_ProductDetails
-foreign key (ProductDetailID) references ProductDetails(ProductDetailID)
-)
-
-insert into Inventory_ProductDetails values
-(NEWID(), '89837276-d9d8-4847-980e-eb7a93711673', 'ec093371-289f-4f78-a90a-f95a6cb5edec'),
-(NEWID(), 'd4b2b1da-1a36-49ad-80f2-9480da370f5e', '7e7c19ee-161b-4c04-82e9-56ca7676613f'),
-(NEWID(), '3c0ab7ed-a5bc-4723-bb6b-6698a4c31d74', 'b6ac32d4-d03f-4ce0-9b19-31f41cd77438'),
-(NEWID(), '8e170bac-b30b-4226-8339-e7fd91532199', 'c54d8c98-6884-4d21-9100-7ecafce37a56'),
-(NEWID(), '09b0f4fd-33b9-45df-919b-75cfb3be32ad', 'a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c')
-
-create table Color_ProductDetails
-(
-Color_ProductDetailID	uniqueidentifier	not null	primary key,
-ColorID					uniqueidentifier,
-ProductDetailID			uniqueidentifier,
-
-constraint FK_Color_Color_ProductDetails
-foreign key (ColorID) references Colors(ColorID),
-
-constraint FK_ProductDetail_Color_ProductDetails
-foreign key (ProductDetailID) references ProductDetails(ProductDetailID)
-)
-
-insert into Color_ProductDetails values
-(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'ec093371-289f-4f78-a90a-f95a6cb5edec'),
-(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', '7e7c19ee-161b-4c04-82e9-56ca7676613f'),
-(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'b6ac32d4-d03f-4ce0-9b19-31f41cd77438'),
-(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'c54d8c98-6884-4d21-9100-7ecafce37a56'),
-(NEWID(), '0101956c-e127-4be6-8322-f9c46f49594b', 'a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c')
+insert into ProductDetails values
+('ec093371-289f-4f78-a90a-f95a6cb5edec', '6bfe3e5d-9d02-4745-9e05-41ef76a8d693', 'f4e33645-1118-4662-99e2-ff5eeb18bc2c', '9c4dcec5-64d0-4600-9363-d2478dad6823', N'Mô tả', 69420, 172000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null, 1, GETDATE()),
+('7e7c19ee-161b-4c04-82e9-56ca7676613f', 'a785be42-a9de-44f8-b826-7bc9151eea9b', 'f4e33645-1118-4662-99e2-ff5eeb18bc2c', '9c4dcec5-64d0-4600-9363-d2478dad6823', N'Mô tả', 69420, 144000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null, 1, GETDATE()),
+('b6ac32d4-d03f-4ce0-9b19-31f41cd77438', '87e469e0-45ed-4eda-b929-5d3dc3789bf1', 'f4e33645-1118-4662-99e2-ff5eeb18bc2c', '9c4dcec5-64d0-4600-9363-d2478dad6823', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null, 1, GETDATE()),
+('c54d8c98-6884-4d21-9100-7ecafce37a56', '61ba03de-fbd6-41dd-8ebf-53a400cfa0db', 'f4e33645-1118-4662-99e2-ff5eeb18bc2c', '9c4dcec5-64d0-4600-9363-d2478dad6823', N'Mô tả', 69420, 193000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null, 1, GETDATE()),
+('a0ad4a4a-8de5-430d-b5a5-34d0389e5a5c', '4f13dc6f-9b7e-4f96-9a82-d0ea01e3a8a7', 'f4e33645-1118-4662-99e2-ff5eeb18bc2c', '9c4dcec5-64d0-4600-9363-d2478dad6823', N'Mô tả', 69420, 126000, N'Adidas', N'Nước ngoài', N'Giày thể thao & thời trang', GETDATE(), N'Không được sử dụng nước tẩy hoặc giặt ở nhiệt độ quá 65 độ C', N'Thể thao & thời trang', null, 1, GETDATE())
 
 create table Vouchers
 (
@@ -454,6 +355,7 @@ create table ShoppingCarts
 CartID					uniqueidentifier	not null	primary key,
 UserID					uniqueidentifier,
 ProductID				uniqueidentifier,
+ProductDetailID			uniqueidentifier,
 QuantityCart			int,
 SizeID					uniqueidentifier,
 ColorID					uniqueidentifier,
@@ -469,6 +371,9 @@ foreign key (UserID) references Users(UserID),
 
 constraint FK_Product_ShoppingCarts
 foreign key (ProductID) references Products(ProductID),
+
+constraint FK_ProductDetail_ShoppingCarts
+foreign key (ProductDetailID) references ProductDetails(ProductDetailID),
 
 constraint FK_Size_ShoppingCarts
 foreign key (SizeID) references Sizes(SizeID),

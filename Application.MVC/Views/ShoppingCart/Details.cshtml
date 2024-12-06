@@ -44,7 +44,7 @@
     </dd>
     <dt class="col-md-3">Unit price</dt>
     <dd class="col-md-9">
-        @Model.Product!.Price.ToString("#,##0")
+        @Model.ProductDetail?.Price.ToString("#,##0")
         &nbsp;
     </dd>
     <dt class="col-md-3">Raw price</dt>
@@ -71,11 +71,11 @@
     <dd class="col-md-9">
         @if (Model.Voucher!.DiscountPrice > 0)
         {
-            @((Model.QuantityCart * Model.Product!.Price - Model.Voucher!.DiscountPrice).ToString("#,##0"))
+            @((Model.QuantityCart * Model.ProductDetail?.Price - Model.Voucher!.DiscountPrice).GetValueOrDefault().ToString("#,##0"))
         }
         else if (@Model.Voucher!.DiscountPercent > 0)
         {
-            @((Model.QuantityCart * Model.Product!.Price * (1 - (Model.Voucher!.DiscountPercent))).ToString("#,##0"))
+            @((Model.QuantityCart * Model.ProductDetail?.Price * (1 - (Model.Voucher!.DiscountPercent))).GetValueOrDefault().ToString("#,##0"))
         }
         else
         {

@@ -1,4 +1,5 @@
-﻿using Application.Data.Models;
+﻿using Application.Data.DTOs;
+using Application.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,8 @@ namespace Application.Data.Repositories.IRepository
     {
         IEnumerable<Product> GetAll();
         Product GetById(Guid id);
-        void Add(Product product);
-        void Update(Guid id,Product product);
+        Product Add(ProductDTO ProductDTO);
+        Product Update(Guid id,ProductDTO ProductDTO);
         void Delete(Guid id);
-        void Save();
     }
 }

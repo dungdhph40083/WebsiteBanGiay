@@ -34,55 +34,40 @@ namespace Application.MVC.Controllers
             return View(data);
         }
 
-        public async Task<ActionResult> Create()
+        public ActionResult Create()
         {
-            string imageRequestURL = $@"https://localhost:7187/api/Image";
-            var images = await client.GetFromJsonAsync<List<Image>>(imageRequestURL);
-
-            // Kiểm tra nếu images null
-            if (images == null)
-            {
-                images = new List<Image>();
-            }
-
-            // Tạo SelectList cho dropdown
-            ViewBag.Images = new SelectList(images, "ImageID", "ImageFileName");
-
             return View();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Product product)
+        public async Task<ActionResult> Create(ProductDTO product, IFormFile? Image)
         {
-            if (product.ImageID.HasValue)
-            {
-                // Lấy thông tin Image từ API
-                string imageRequestURL = $"https://localhost:7187/api/Image/{product.ImageID}";
-                var image = await client.GetFromJsonAsync<Image>(imageRequestURL);
+            string requestURL = $"https://localhost:7187/api/Product/create_product";
 
-                // Kiểm tra nếu image tồn tại
-                if (image != null)
-                {
-                    // Gán Image vào Product
-                    product.Image = image;
-                }
+            MultipartFormDataContent Contents = new()
+            {
+                { new StringContent(product.Name!),        nameof(product.Name) },
+                { new StringContent(product.Description!), nameof(product.Description) }
+            };
+
+            if (Image != null)
+            {
+                var ImageStream = new StreamContent(Image.OpenReadStream());
+                Contents.Add(ImageStream, nameof(Image), Image.FileName);
             }
 
-
-            string requestURL = $"https://localhost:7187/api/Product/create_product";
-            var response = await client.PostAsJsonAsync(requestURL, product);
+            var response = await client.PostAsync(requestURL, Contents);
 
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
             }
-
-            // Trường hợp tạo thất bại, lấy lại danh sách Image cho dropdown
-            string imageListURL = "https://localhost:7187/api/Image";
-            var images = await client.GetFromJsonAsync<List<Image>>(imageListURL);
-            ViewBag.Images = new SelectList(images, "ImageID", "ImageFileName");
-
-            return View(product);
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                ModelState.AddModelError(string.Empty, $"Update failed: {error}");
+                return View(product); // Trả về form chỉnh sửa với thông báo lỗi
+            }
         }
 
         public async Task<ActionResult> Edit(Guid id)
@@ -95,36 +80,38 @@ namespace Application.MVC.Controllers
                 return NotFound();
             }
 
-            var product = JsonConvert.DeserializeObject<Product>(productResponse);
-
-            // Lấy danh sách tất cả Images từ API
-            string imagesRequestURL = "https://localhost:7187/api/Image";
-            var imagesResponse = await client.GetStringAsync(imagesRequestURL);
-
-            var images = !string.IsNullOrEmpty(imagesResponse)
-                ? JsonConvert.DeserializeObject<List<Image>>(imagesResponse)
-                : new List<Image>();
+            var product = JsonConvert.DeserializeObject<ProductDTO>(productResponse);
 
             // Đưa dữ liệu hình ảnh vào ViewBag để hiển thị trong combobox
-            ViewBag.Images = new SelectList(images, "ImageID", "ImageFileName");
 
             return View(product);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(Guid ID, Product product)
+        public async Task<ActionResult> Edit(Guid ID, ProductDTO product, IFormFile? Image)
         {
             if (product == null)
             {
                 return BadRequest("Invalid product data.");
             }
 
-            product.ProductID = ID;
-
             string requestURL = $"https://localhost:7187/api/Product/update-product/{ID}";
 
             // Sử dụng PUT để gửi dữ liệu cập nhật sản phẩm
-            var response = await client.PutAsJsonAsync(requestURL, product);
+
+            MultipartFormDataContent Contents = new()
+            {
+                { new StringContent(product.Name!),        nameof(product.Name) },
+                { new StringContent(product.Description!), nameof(product.Description) }
+            };
+
+            if (Image != null)
+            {
+                var ImageStream = new StreamContent(Image.OpenReadStream());
+                Contents.Add(ImageStream, nameof(Image), Image.FileName);
+            }
+
+            var response = await client.PutAsync(requestURL, Contents);
 
             if (response.IsSuccessStatusCode)
             {

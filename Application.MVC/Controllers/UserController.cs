@@ -49,39 +49,15 @@ namespace Application.MVC.Controllers
             // A pattern could have improved this but whatever
             // this project is already starting to get confusing
 
-            string URL_Users = $@"https://localhost:7187/api/User/";
-            string URL_Color = $@"https://localhost:7187/api/Color/get-all";
-            string URL_Sizes = $@"https://localhost:7187/api/Size/";
-            string URL_Vouch = $@"https://localhost:7187/api/Voucher/";
-            string URL_Prods = $@"https://localhost:7187/api/Product/get-all";
+            string URL_Roles = $@"https://localhost:7187/api/Role/";
 
-            var UsersList = await Client.GetFromJsonAsync<List<User>>   (URL_Users);
-            var ColorList = await Client.GetFromJsonAsync<List<Color>>  (URL_Color);
-            var SizesList = await Client.GetFromJsonAsync<List<Size>>   (URL_Sizes);
-            var VouchList = await Client.GetFromJsonAsync<List<Voucher>>(URL_Vouch);
-            var ProdsList = await Client.GetFromJsonAsync<List<Product>>(URL_Prods);
+            var RolesList = await Client.GetFromJsonAsync<List<Role>>   (URL_Roles);
 
-            var UsersItems = UsersList?.Where(I => I.Status != 0)
+            var RolesItems = RolesList?
                 .Select(Cb => new SelectListItem
-                   { Text = Cb.Username, Value = Cb.UserID.ToString() }).ToList();
-            var ColorItems = ColorList?.Where(Dont => Dont.Status != 0)
-                .Select(Cb => new SelectListItem
-                   { Text = Cb.ColorName, Value = Cb.ColorID.ToString() }).ToList();
-            var SizesItems = SizesList?.Where(Feel => Feel.Status != 0)
-                .Select(Cb => new SelectListItem
-                   { Text = Cb.Name, Value = Cb.SizeID.ToString() }).ToList();
-            var VouchItems = VouchList?.Where(SoGood => SoGood.Status != 0)
-                .Select(Cb => new SelectListItem
-                   { Text = Cb.VoucherCode, Value = Cb.VoucherID.ToString() }).ToList();
-            var ProdsItems = ProdsList?
-                .Select(Cb => new SelectListItem
-                   { Text = Cb.Name, Value = Cb.ProductID.ToString() }).ToList();
+                   { Text = Cb.RoleName, Value = Cb.RoleID.ToString() }).OrderBy(Ord => Ord.Value).ToList();
 
-            ViewBag.Users = UsersItems;
-            ViewBag.Color = ColorItems;
-            ViewBag.Sizes = SizesItems;
-            ViewBag.Vouch = VouchItems;
-            ViewBag.Prods = ProdsItems;
+            ViewBag.Roles = RolesItems;
         }
 
         // POST: UserController/Create

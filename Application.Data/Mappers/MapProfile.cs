@@ -42,9 +42,6 @@ namespace Application.Data.Mappers
 
             CreateMap<SizeDTO, Size>();
             CreateMap<Size, SizeDTO>();
-
-            CreateMap<Size_ProductDetail, Size_ProductDetailDTO>();
-            CreateMap<Size_ProductDetailDTO, Size_ProductDetail>();
             
             CreateMap<Sale, SaleDTO>();
             CreateMap<SaleDTO, Sale>();
