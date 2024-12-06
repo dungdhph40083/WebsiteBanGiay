@@ -1,5 +1,10 @@
+using Application.Data.ModelContexts;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<GiayDBContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay")));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
