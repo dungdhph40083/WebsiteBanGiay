@@ -2,11 +2,14 @@
 
 @{
     ViewData["Title"] = "Update";
+    var products = ViewBag.Products as List<Application.Data.Models.Product>;
 }
 
-<h1 class="text-center">Update Product Warranty</h1>
+<h1 class="text-center">
+    Cập nhật bảo hành sản phẩm
+</h1>
 
-<h4 class="text-center">Update the warranty details for the selected product</h4>
+<h4 class="text-center">Cập nhật thông tin bảo hành cho sản phẩm đã chọn</h4>
 <hr />
 
 <div class="row justify-content-center">
@@ -16,49 +19,57 @@
 
             <!-- Product Selection -->
             <div class="form-group">
-                <label asp-for="ProductID" class="control-label"></label>
-                <input asp-for="ProductID" class="form-control" readonly />
+                <label asp-for="ProductID" class="control-label">Sản phẩm</label>
+                <select asp-for="ProductID" class="form-control">
+                    <option value="">-- Chọn sản phẩm --</option>
+                    @foreach (var product in products)
+                    {
+                        <option value="@product.ProductID">@product.Name</option>
+                    }
+                </select>
                 <span asp-validation-for="ProductID" class="text-danger"></span>
             </div>
 
             <!-- Warranty Period -->
             <div class="form-group">
-                <label asp-for="WarrantyPeriod" class="control-label"></label>
+                <label asp-for="WarrantyPeriod" class="control-label">Thời hạn bảo hành</label>
                 <input asp-for="WarrantyPeriod" class="form-control" />
                 <span asp-validation-for="WarrantyPeriod" class="text-danger"></span>
             </div>
 
             <!-- Warranty Conditions -->
             <div class="form-group">
-                <label asp-for="WarrantyConditions" class="control-label"></label>
+                <label asp-for="WarrantyConditions" class="control-label">Điều kiện bảo hành</label>
                 <input asp-for="WarrantyConditions" class="form-control" />
                 <span asp-validation-for="WarrantyConditions" class="text-danger"></span>
             </div>
 
-            <!-- CreatedAt -->
+           @*  <!-- CreatedAt -->
             <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
+                <label asp-for="CreatedAt" class="control-label">Đã tạo lúc</label>
                 <input asp-for="CreatedAt" class="form-control" type="datetime-local" readonly />
                 <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
 
             <!-- UpdatedAt -->
+            <!-- UpdatedAt -->
             <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" type="datetime-local" />
+                <label asp-for="UpdatedAt" class="control-label">Đã cập nhật</label>
+                <input asp-for="UpdatedAt" class="form-control" type="datetime-local" readonly />
                 <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-            </div>
+            </div> *@
+
 
             <!-- Submit Button -->
             <div class="form-group text-center">
-                <input type="submit" value="Save Changes" class="btn btn-success btn-lg" />
+                <input type="submit" value="Lưu thay đổi" class="btn btn-success btn-lg" />
             </div>
         </form>
     </div>
 </div>
 
 <div class="text-center mt-3">
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
 </div>
 
 @section Scripts {

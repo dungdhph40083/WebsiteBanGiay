@@ -1,69 +1,69 @@
 ﻿@model Application.Data.Models.Return
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Tạo Mới";
     var orders = ViewBag.Orders as List<Application.Data.Models.Order>;
 }
 
-<h1 class="text-center">Create Return</h1>
+<h1 class="text-center">Tạo Trả Hàng</h1>
 
 <div class="container mt-4">
-    <h4 class="text-center mb-4">Create a New Return</h4>
+    <h4 class="text-center mb-4">Tạo Mục Trả Hàng Mới</h4>
 
     <div class="card">
         <div class="card-body">
             <form asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
-                <!-- Order ID -->
+                <!-- Mã Đơn Hàng -->
                 <div class="form-group">
-                    <label asp-for="OrderID" class="control-label font-weight-bold"></label>
+                    <label asp-for="OrderID" class="control-label font-weight-bold">Mã Đơn Hàng</label>
                     <select asp-for="OrderID" class="form-control"
                             asp-items="@(orders != null && orders.Any() ? new SelectList(orders, "OrderID", "OrderID") : new SelectList(Enumerable.Empty<SelectListItem>()))">
-                        <option value="">-- Select Order ID --</option>
+                        <option value="">-- Chọn Mã Đơn Hàng --</option>
                     </select>
                     <span asp-validation-for="OrderID" class="text-danger"></span>
                 </div>
 
-                <!-- Reason -->
+                <!-- Lý Do -->
                 <div class="form-group">
-                    <label asp-for="Reason" class="control-label font-weight-bold"></label>
+                    <label asp-for="Reason" class="control-label font-weight-bold">Lý Do</label>
                     <input asp-for="Reason" class="form-control" />
                     <span asp-validation-for="Reason" class="text-danger"></span>
                 </div>
 
-                <!-- Return Date -->
+                <!-- Ngày Trả -->
                 <div class="form-group">
-                    <label asp-for="ReturnDate" class="control-label font-weight-bold"></label>
+                    <label asp-for="ReturnDate" class="control-label font-weight-bold">Ngày Trả</label>
                     <input asp-for="ReturnDate" class="form-control" />
                     <span asp-validation-for="ReturnDate" class="text-danger"></span>
                 </div>
 
-                <!-- Refund Amount -->
+                <!-- Số Tiền Hoàn Trả -->
                 <div class="form-group">
-                    <label asp-for="RefundAmount" class="control-label font-weight-bold"></label>
+                    <label asp-for="RefundAmount" class="control-label font-weight-bold">Số Tiền Hoàn Trả</label>
                     <input asp-for="RefundAmount" class="form-control" />
                     <span asp-validation-for="RefundAmount" class="text-danger"></span>
                 </div>
 
-                <!-- Status -->
+                <!-- Trạng Thái -->
                 <div class="form-group">
-                    <label asp-for="Status" class="control-label font-weight-bold"></label>
+                    <label asp-for="Status" class="control-label font-weight-bold">Trạng Thái</label>
                     <input asp-for="Status" class="form-control" />
                     <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
 
-                <!-- Submit Button -->
+                <!-- Nút Gửi -->
                 <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary btn-lg btn-block" />
+                    <input type="submit" value="Tạo Mới" class="btn btn-primary btn-lg btn-block" />
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Back to List Button -->
+    <!-- Nút Quay Lại Danh Sách -->
     <div class="text-center mt-4">
-        <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
+        <a asp-action="Index" class="btn btn-secondary btn-lg">Quay Lại Danh Sách</a>
     </div>
 </div>
 

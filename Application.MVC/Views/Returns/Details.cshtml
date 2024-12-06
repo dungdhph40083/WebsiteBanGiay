@@ -1,60 +1,60 @@
 ﻿@model Application.Data.Models.Return
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi Tiết";
 }
 
-<h1 class="text-center">Return Details</h1>
+<h1 class="text-center">Chi Tiết Trả Hàng</h1>
 
 <div class="container mt-4">
-    <h4 class="text-center mb-4">Return Information</h4>
+    <h4 class="text-center mb-4">Thông Tin Trả Hàng</h4>
 
     <div class="card">
         <div class="card-body">
             <dl class="row">
-                <!-- Return ID -->
+                <!-- Mã Trả Hàng -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.ReturnID)
+                    Mã Trả Hàng
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.ReturnID)
                 </dd>
 
-                <!-- Order ID -->
+                <!-- Mã Đơn Hàng -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.OrderID)
+                    Mã Đơn Hàng
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.OrderID)
                 </dd>
 
-                <!-- Reason -->
+                <!-- Lý Do -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.Reason)
+                    Lý Do
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.Reason)
                 </dd>
 
-                <!-- Return Date -->
+                <!-- Ngày Trả -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.ReturnDate)
+                    Ngày Trả
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.ReturnDate)
                 </dd>
 
-                <!-- Refund Amount -->
+                <!-- Số Tiền Hoàn Trả -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.RefundAmount)
+                    Số Tiền Hoàn Trả
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.RefundAmount)
                 </dd>
 
-                <!-- Status -->
+                <!-- Trạng Thái -->
                 <dt class="col-sm-3 font-weight-bold">
-                    @Html.DisplayNameFor(model => model.Status)
+                    Trạng Thái
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.Status)
@@ -63,10 +63,10 @@
         </div>
     </div>
 
-    <!-- Update and Back buttons -->
+    <!-- Nút Cập Nhật và Quay Lại -->
     <div class="text-center mt-4">
-        @Html.ActionLink("Update", "Update", new { id = Model.ReturnID }, new { @class = "btn btn-primary btn-lg" }) |
-        <a asp-action="Index" class="btn btn-secondary btn-lg">Back to List</a>
+        @Html.ActionLink("Cập Nhật", "Update", new { id = Model.ReturnID }, new { @class = "btn btn-primary btn-lg" }) |
+        <a asp-action="Index" class="btn btn-secondary btn-lg">Quay Lại Danh Sách</a>
     </div>
 </div>
 

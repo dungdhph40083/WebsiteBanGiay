@@ -1,5 +1,6 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Models;
+using Application.Data.Repositories.IRepository;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,44 +34,131 @@ namespace Application.MVC.Controllers
         {
             try
             {
+                // Lấy danh sách sản phẩm từ API
                 var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
 
                 ViewBag.Products = products ?? new List<Product>();
-                ProductWarranty ProductWarranty = new ProductWarranty()
+
+                // Tạo đối tượng ProductWarranty với giá trị mặc định
+                ProductWarranty productWarranty = new ProductWarranty
                 {
                     WarrantyID = Guid.NewGuid(),
+                    CreatedAt = DateTime.Now, // Gán giá trị mặc định cho CreatedAt
+                    UpdatedAt = DateTime.Now  // Gán giá trị mặc định cho UpdatedAt
                 };
-                return View(ProductWarranty);
+                return View(productWarranty);
             }
             catch (Exception ex)
             {
-                // Log lỗi nếu có
+                // Ghi log lỗi và hiển thị trang lỗi
                 Console.WriteLine($"Error: {ex.Message}");
                 return View("Error");
             }
         }
-        [HttpPost]
-        public async Task<ActionResult> Create(ProductWarranty ProductWarranty)
-        {
-            string requestURL = "https://localhost:7187/api/ProductWarranty/create";
-            var response = await client.PostAsJsonAsync(requestURL, ProductWarranty);
-            return RedirectToAction("Index");
-        }
-        public ActionResult Update(Guid id)
-        {
-            string requestURL = $"https://localhost:7187/api/ProductWarranty/getbyId?ID={id}";
-            var response = client.GetStringAsync(requestURL).Result;
-            ProductWarranty ProductWarrantys = JsonConvert.DeserializeObject<ProductWarranty>(response);
-            return View(ProductWarrantys);
 
+        [HttpPost]
+        public async Task<ActionResult> Create(ProductWarranty productWarranty)
+        {
+            try
+            {
+                // Gán lại giá trị CreatedAt và UpdatedAt để đảm bảo ngày giờ chính xác
+                productWarranty.CreatedAt = DateTime.Now;
+                productWarranty.UpdatedAt = DateTime.Now;
+
+                // Gửi yêu cầu POST tới API
+                string requestURL = "https://localhost:7187/api/ProductWarranty/create";
+                var response = await client.PostAsJsonAsync(requestURL, productWarranty);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    // Ghi log lỗi nếu API trả về lỗi
+                    string error = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"API Error: {error}");
+                    ViewBag.ErrorMessage = "Không thể tạo bảo hành. Vui lòng thử lại.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                ViewBag.ErrorMessage = "Đã xảy ra lỗi trong quá trình xử lý.";
+            }
+            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+            ViewBag.Products = products ?? new List<Product>();
+
+            return View(productWarranty);
         }
+        public async Task<IActionResult> Update(Guid id)
+        {
+            try
+            {
+                string requestURL = $"https://localhost:7187/api/ProductWarranty/getbyId?ID={id}";
+                var response = await client.GetStringAsync(requestURL);
+                var ProductWarrantys = JsonConvert.DeserializeObject<ProductWarranty>(response);
+
+                // Lấy danh sách sản phẩm từ API
+                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+                ViewBag.Products = products ?? new List<Product>();
+
+                return View(ProductWarrantys);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+
+                // Nếu xảy ra lỗi, vẫn cần gán danh sách sản phẩm để hiển thị
+                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+                ViewBag.Products = products ?? new List<Product>();
+
+                return View("Error");
+            }
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, ProductWarranty ProductWarranty)
         {
-            string requestURL = $@"https://localhost:7187/api/Sale/update/{ID}";
-            var response = await client.PutAsJsonAsync(requestURL, ProductWarranty);
-            return RedirectToAction("Index");
+            try
+            {
+                // Giữ nguyên CreatedAt, chỉ cập nhật UpdatedAt
+                var existingRequestURL = $"https://localhost:7187/api/ProductWarranty/getbyId?ID={ID}";
+                var existingResponse = await client.GetStringAsync(existingRequestURL);
+                var existingWarranty = JsonConvert.DeserializeObject<ProductWarranty>(existingResponse);
+
+                if (existingWarranty != null)
+                {
+                    ProductWarranty.CreatedAt = existingWarranty.CreatedAt; // Giữ nguyên CreatedAt
+                    ProductWarranty.UpdatedAt = DateTime.Now; // Cập nhật UpdatedAt
+
+                    string requestURL = $"https://localhost:7187/api/ProductWarranty/update?ID={ID}";
+                    var response = await client.PutAsJsonAsync(requestURL, ProductWarranty);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        string error = await response.Content.ReadAsStringAsync();
+                        Console.WriteLine($"API Error: {error}");
+                        ViewBag.ErrorMessage = "Không thể cập nhật bảo hành. Vui lòng thử lại.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                ViewBag.ErrorMessage = "Đã xảy ra lỗi trong quá trình xử lý.";
+            }
+
+            // Lấy lại danh sách sản phẩm để hiển thị trong View
+            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+            ViewBag.Products = products ?? new List<Product>();
+
+            return View(ProductWarranty);
         }
         public ActionResult Delete(Guid id)
         {

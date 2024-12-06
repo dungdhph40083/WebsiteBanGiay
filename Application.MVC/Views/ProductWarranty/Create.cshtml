@@ -5,9 +5,9 @@
     var products = ViewBag.Products as List<Application.Data.Models.Product>;
 }
 
-<h1 class="text-center">Create Product Warranty</h1>
+<h1 class="text-center">Tạo Bảo hành Sản phẩm</h1>
 
-<h4 class="text-center">Create a new warranty for a product</h4>
+<h4 class="text-center">Tạo bảo hành mới cho sản phẩm</h4>
 <hr />
 
 <div class="row justify-content-center">
@@ -17,9 +17,9 @@
 
             <!-- Product Selection -->
             <div class="form-group">
-                <label asp-for="ProductID" class="control-label"></label>
+                <label asp-for="ProductID" class="control-label">Sản phẩm</label>
                 <select asp-for="ProductID" class="form-control">
-                    <option value="">-- Chọn Product --</option>
+                    <option value="">-- Chọn sản phẩm --</option>
                     @foreach (var product in products)
                     {
                         <option value="@product.ProductID">@product.Name</option>
@@ -30,42 +30,48 @@
 
             <!-- Warranty Period -->
             <div class="form-group">
-                <label asp-for="WarrantyPeriod" class="control-label"></label>
-                <input asp-for="WarrantyPeriod" class="form-control" />
+                <label asp-for="WarrantyPeriod" class="control-label">Thời hạn bảo hành</label>
+                <!-- The 'type="date"' input doesn't use the format you set in the model, it defaults to 'yyyy-MM-dd' -->
+                <input asp-for="WarrantyPeriod" class="form-control" type="date" />
                 <span asp-validation-for="WarrantyPeriod" class="text-danger"></span>
             </div>
 
+
+
             <!-- Warranty Conditions -->
             <div class="form-group">
-                <label asp-for="WarrantyConditions" class="control-label"></label>
+                <label asp-for="WarrantyConditions" class="control-label">Điều kiện bảo hành</label>
                 <input asp-for="WarrantyConditions" class="form-control" />
                 <span asp-validation-for="WarrantyConditions" class="text-danger"></span>
             </div>
 
             <!-- CreatedAt -->
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" type="datetime-local" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
+            @* <div class="form-group">
+            <label asp-for="CreatedAt" class="control-label">Đã tạo lúc</label>
+            <input asp-for="CreatedAt" class="form-control" type="datetime-local" readonly
+            value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+            <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
 
             <!-- UpdatedAt -->
             <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" type="datetime-local" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-            </div>
+            <label asp-for="UpdatedAt" class="control-label">Đã cập nhật</label>
+            <input asp-for="UpdatedAt" class="form-control" type="datetime-local" readonly
+            value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+            <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+            </div> *@
+
 
             <!-- Submit Button -->
             <div class="form-group text-center">
-                <input type="submit" value="Create Warranty" class="btn btn-success btn-lg" />
+                <input type="submit" value="Tạo bảo hành" class="btn btn-success btn-lg" />
             </div>
         </form>
     </div>
 </div>
 
 <div class="text-center mt-3">
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
 </div>
 
 @section Scripts {
