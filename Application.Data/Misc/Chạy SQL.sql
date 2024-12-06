@@ -97,7 +97,7 @@ create table Users
 UserID					uniqueidentifier	not null	primary key,
 Username				varchar(30)			not null	unique,
 [Password]				nvarchar(MAX)		not null,
-RoleID					uniqueidentifier	not null,
+RoleID					uniqueidentifier	not null	default '1bfa7246-60e1-4d82-a469-cdecf867fd01',
 FirstName				nvarchar(MAX),
 LastName				nvarchar(MAX),
 Email					varchar(MAX),
@@ -106,7 +106,7 @@ ImageID					uniqueidentifier,
 PhoneNumber				varchar(30),
 CreatedAt				datetime,
 LastUpdatedOn			datetime,
-[Status]				tinyint,
+[Status]				tinyint							default 1,
 
 constraint FK_Images_Users
 foreign key (ImageID) references Images(ImageID),

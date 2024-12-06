@@ -1,23 +1,24 @@
 ﻿@model IEnumerable<Application.Data.Models.User>;
+@using Application.Data.Enums;
 
 @{
-    ViewData["Title"] = "User list";
+    ViewData["Title"] = "Danh sách tài khoản";
 }
 
-<h1>User list</h1>
-<a type="button" class="btn btn-success mb-2" asp-action="Create">Create new</a>
+<h1>Danh sách tài khoản</h1>
+<a type="button" class="btn btn-success mb-2" asp-action="Create">Tạo mới</a>
 
 @if (Model.Count() != 0)
 {
     <table class="table table-bordered table-striped border-info">
         <thead class="bg-primary">
             <tr>
-                <th>Username</th>
-                <th>Fullname</th>
+                <th>Tên người dùng</th>
+                <th>Tên đầy đủ</th>
                 <th>Email</th>
-                <th>Phone number</th>
-                <th>Created at</th>
-                <th>Actions</th>
+                <th>SĐT</th>
+                <th>Thời điểm tạo</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -27,12 +28,12 @@
                     <td>@Entry.Username</td>
                     <td>@Entry.FirstName @Entry.LastName?.Substring(0, 1).</td>
                     <td>@Entry.Email</td>
-                    <td>********@Entry.PhoneNumber?.Substring(8)</td>
+                    <td>••••••••@Entry.PhoneNumber?.Substring(8)</td>
                     <td>@(Entry.CreatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss"))</td>
                     <td>
-                        <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.UserID)">Edit</a>
-                        <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.UserID">Details</a>
-                        <button type="button" class="btn btn-danger delete_trigger" data-id="@Entry.UserID" data-controller="User" data-action="Delete" data-bs-toggle="modal" data-bs-target="#ModalDelete">Delete</button>
+                        <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.UserID)">Sửa</a>
+                        <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.UserID">Chi tiết</a>
+                        <a class="btn @(Entry.Status == 1 ? "btn-danger" : "btn-info")" asp-action="Toggle" asp-route-ID="@(@Entry.UserID)">@(Entry.Status == 1 ? "Khóa" : "Mở")</a>
                     </td>
                 </tr>
             }
@@ -46,39 +47,6 @@
 }
 else
 {
-    <h1 class="text-center">No user available.</h1>
-    <p class="text-center">Select "Create new" to create and register a new user!</p>
+    <h1 class="text-center">Chưa có người dùng.</h1>
+    <p class="text-center">Tạo mới người dùng bằng cách nhấn "<b>Tạo mới</b>"!</p>
 }
-
-@if (TempData["ErrorLog"]?.ToString() == "ErrorDetails")
-{
-    <div class="alert alert-danger" role="alert">
-        Data not found!
-    </div>
-}
-@if (TempData["ErrorLog"]?.ToString() == "ErrorDelete")
-{
-    <div class="alert alert-danger" role="alert">
-        Something went wrong???
-    </div>
-}
-
-<!-- Modal -->
-<div class="modal fade" id="ModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">STOP RIGHT THERE!!!</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-btn" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete this?<br />
-                <span style="font-size:small" class="font-monospace-cascadia">User ID: <span id="ItemID" class="font-monospace-cascadia"></span></span>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel-btn">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirm_deletion">Proceed</button>
-            </div>
-        </div>
-    </div>
-</div>

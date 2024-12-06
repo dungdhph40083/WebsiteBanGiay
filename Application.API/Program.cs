@@ -34,7 +34,6 @@ builder.Services.AddScoped<IProduct, ProductRepository>();
 builder.Services.AddScoped<IShoppingCart, ShoppingCartRepository>();
 builder.Services.AddScoped<ISize, SizeRepository>();
 builder.Services.AddScoped<ISize_ProductDetail, Size_ProductDetailRepository>();
-builder.Services.AddScoped<IUser_Role, User_RoleRepository>();
 builder.Services.AddScoped<IUser, UserRepository>();
 builder.Services.AddScoped<IVoucher, VoucherRepository>();
 builder.Services.AddScoped<IProductDetail, ProductDetailRepository>();

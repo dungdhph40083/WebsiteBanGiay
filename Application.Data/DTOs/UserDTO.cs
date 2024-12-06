@@ -7,28 +7,29 @@ namespace Application.Data.DTOs
 {
     public class UserDTO
     {
-        [MinLength(3, ErrorMessage = "Username too short!")]
-        [MaxLength(30, ErrorMessage = "Username too long!")]
-        [Required(ErrorMessage = "Required.")]
+        [MinLength(3, ErrorMessage = "Tên người dùng quá ngắn!")]
+        [MaxLength(30, ErrorMessage = "Tên người dùng quá dài!")]
+        [Required(ErrorMessage = "Bắt buộc.")]
         public string Username { get; set; } = null!;
-        [MinLength(8, ErrorMessage = "Password too short.")]
+        [MinLength(8, ErrorMessage = "Mật khẩu quá ngắn.")]
         [RegularExpression(
             @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{8,}$",
-            ErrorMessage = "Password isn't secure enough!"
+            ErrorMessage = "Mật khẩu phải có 8 ký tự, bao gồm ký tự viết hoa, viết thường và ký tự đặc biệt."
             )]
-        [Required(ErrorMessage = "Required.")]
+        [Required(ErrorMessage = "Bắt buộc.")]
         public string Password { get; set; } = null!;
+        public Guid? RoleID { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        [EmailAddress(ErrorMessage = "Invalid email!")]
+        [EmailAddress(ErrorMessage = "Email sai!")]
         public string? Email { get; set; }
         public Guid? ImageID { get; set; }
         public string? Address { get; set; }
         // 
-        [Length(9, 30, ErrorMessage = "Phone num. too short/long!")]
-        [RegularExpression(@"^\d*$", ErrorMessage = "Invalid phone number.")]
+        [Length(9, 30, ErrorMessage = "SĐT quá ngắn hoặc quá dài!")]
+        [RegularExpression(@"^\d*$", ErrorMessage = "SĐT không khớp.")]
         public string? PhoneNumber { get; set; }
-        [Required(ErrorMessage = "Invalid.")]
+        [Required(ErrorMessage = "Không khớp.")]
         public byte Status { get; set; }
 
         /*

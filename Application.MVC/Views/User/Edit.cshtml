@@ -2,77 +2,73 @@
 @using Application.Data.Enums;
 
 @{
-    ViewData["Title"] = "Update user information";
+    ViewData["Title"] = "Cập nhật người dùng";
 }
 
-<h1>Update user</h1>
+<h1>Cập nhật người dùng</h1>
 
-@if (ViewData["Error"] != null)
+@if (TempData["Error"] != null)
 {
     <div class="alert alert-danger" role="alert">
-        @ViewData["Error"]
+        @TempData["Error"]
     </div>
 }
 
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-md-4">
-            <label asp-for="Username" class="form-label">Username</label>
+            <label asp-for="Username" class="form-label">Tên người dùng</label>
             <input asp-for="Username" class="form-control" type="text" maxlength="30" required aria-label="Enter unique username">
-            @* <span asp-validation-for="Username"></span> *@
-            <span>Required.</span>
+            <span asp-validation-for="Username"></span>
         </div>
         <div class="col-md-4">
-            <label asp-for="Password" class="form-label">Password</label>
+            <label asp-for="Password" class="form-label">Mật khẩu</label>
             <input asp-for="Password" class="form-control" type="password" required aria-label="Enter a super memorable password">
-            @* <span asp-validation-for="Password"></span> *@
-            <span>VERY required!</span>
+            <span asp-validation-for="Password"></span>
         </div>
         <div class="col-md-4">
-            <label asp-for="Status" class="form-label">Visibility</label>
+            <label asp-for="Status" class="form-label">Trạng thái</label>
             <select asp-for="Status" class="form-select" aria-label="Is it available?">
-                <option selected value="@((int)VisibilityStatus.Available)">Available</option>
-                <option value="@((int)VisibilityStatus.Locked)">Unavailable</option>
+                <option selected value="@((int)VisibilityStatus.Available)">Mở</option>
+                <option value="@((int)VisibilityStatus.Locked)">Khóa</option>
             </select>
             <span>&nbsp;</span>
         </div>
     </div>
     <div class="row">
         <div class="col-md-4">
-            <label asp-for="FirstName" class="form-label">First name</label>
-            <input asp-for="FirstName" class="form-control" type="text" aria-label="Enter first name">
-        </div>
-        <div class="col-md-4">
-            <label asp-for="LastName" class="form-label">Last name</label>
+            <label asp-for="LastName" class="form-label">Họ</label>
             <input asp-for="LastName" class="form-control" type="text" aria-label="Enter last name">
         </div>
         <div class="col-md-4">
-            <label asp-for="PhoneNumber" class="form-label">Phone number</label>
+            <label asp-for="FirstName" class="form-label">Tên</label>
+            <input asp-for="FirstName" class="form-control" type="text" aria-label="Enter first name">
+        </div>
+        <div class="col-md-4">
+            <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
             <input asp-for="PhoneNumber" class="form-control" type="text" maxlength="15" aria-label="Enter your phone number">
         </div>
         <br />
-        <i class="text-center text-decoration-underline">You can always enter these info later.</i>
+        <i class="text-decoration-underline" style="text-align: center">Có thể điền những thông tin này sau.</i>
     </div>
     <div class="row">
         <div class="col-md-8">
             <label asp-for="Email" class="form-label">Email</label>
             <input asp-for="Email" class="form-control" type="text" aria-label="Enter email">
-            <span>Optional, but essential for password reset, etc.</span>
+            <span asp-validation-for="Email"></span>
         </div>
         <div class="col-md-4">
-            <label class="form-label">Profile picture</label>
+            <label class="form-label">Ảnh đại diện</label>
             <input type="file" name="ProfilePic" class="form-control" accept="image/png, image/jpeg" aria-label="Upload profile picture" />
-            <span>Optional.</span>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <label asp-for="Address" class="form-label">Address</label>
-            <textarea asp-for="Address" class="form-control" type="text" aria-label="Enter address"></textarea>
-            <span>Optional.</span>
+            <label asp-for="Address" class="form-label">Địa chỉ</label>
+            <textarea asp-for="Address" class="form-control" style="min-height: 180px" type="text" aria-label="Enter address"></textarea>
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">Update</button>
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
 </form>
 
 @section Scripts {

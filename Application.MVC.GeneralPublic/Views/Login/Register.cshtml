@@ -1,0 +1,70 @@
+﻿@model Application.Data.DTOs.UserDTO
+
+<!-- Login Start -->
+<div class="login">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-6">
+                @if (TempData["FailureBanner"] != null)
+                {
+                    <div class="col-md-12">
+                        <div class="alert alert-danger" role="alert">
+                            Tạo tài khoản không thành công! Lỗi:<br />
+                            @TempData["FailureBanner"]
+                        </div>
+                    </div>
+                }
+                <div class="register-form">
+                    <h1>Đăng ký</h1> <p>Bạn muốn đăng nhập? <a asp-action="Index">Đăng nhập</a></p>
+                    <form asp-action="Register" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label asp-for="Username">Tên người dùng</label>
+                                <input asp-for="Username" class="form-control" type="text" maxlength="30" required placeholder="Tên người dùng">
+                                <span asp-validation-for="Username" class="pt-0" style="font-size: small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Password">Mật khẩu</label>
+                                <input asp-for="Password" class="form-control" type="password" required placeholder="Mật khẩu">
+                                <span asp-validation-for="Password" class="pt-0" style="font-size: small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Email">Email</label>
+                                <input asp-for="Email" class="form-control" type="text" placeholder="Email">
+                                <span asp-validation-for="Email" class="pt-0" style="font-size: small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber">Số điện thoại</label>
+                                <input asp-for="PhoneNumber" class="form-control" type="text" maxlength="30" placeholder="Số điện thoại">
+                                <span asp-validation-for="PhoneNumber" class="pt-0" style="font-size: small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="LastName">Họ</label>
+                                <input asp-for="LastName" class="form-control" type="text" placeholder="Họ">
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="FirstName">Tên</label>
+                                <input asp-for="FirstName" class="form-control" type="text" placeholder="Tên">
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="Address">Địa chỉ</label>
+                                <textarea asp-for="Address" class="form-control pt-2 pb-2" style="min-height: 150px" type="text" placeholder="Địa chỉ"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <button class="btn" type="submit">Đăng ký</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-3"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

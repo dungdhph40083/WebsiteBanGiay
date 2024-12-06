@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Net;
 
 namespace Application.MVC.Controllers
 {
@@ -119,6 +120,7 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(Msg.Message);
                 Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
                 return View();
             }
         }
@@ -162,7 +164,7 @@ namespace Application.MVC.Controllers
                     Contents.Add(ImageStream, nameof(NewProfilePic), NewProfilePic.FileName);
                 }
 
-                var Response = await Client.PutAsJsonAsync(URL, NewInput);
+                var Response = await Client.PutAsync(URL, Contents);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -170,6 +172,34 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(Msg.Message);
                 Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
+                return View();
+            }
+        }
+
+        // PATCH: UserController/Toggle/5
+        public async Task<ActionResult> Toggle(Guid ID)
+        {
+            try
+            {
+                var Content = new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Patch,
+                    RequestUri = new Uri($@"https://localhost:7187/api/User/Toggle/{ID}"),
+                    Headers =
+                    {
+                        { HttpRequestHeader.Accept.ToString(), "*/*" }
+                    }
+                };
+                var Response = await Client.SendAsync(Content);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
                 return View();
             }
         }
@@ -188,6 +218,7 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(Msg.Message);
                 Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
                 return View();
             }
         }

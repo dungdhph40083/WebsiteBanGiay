@@ -55,9 +55,6 @@ namespace Application.Data.Mappers
             CreateMap<Role, RoleDTO>();
             CreateMap<RoleDTO, Role>();
 
-            CreateMap<User_Role, User_RoleDTO>();
-            CreateMap<User_RoleDTO, User_Role>();
-
             CreateMap<User, UserDTO>();
             CreateMap<UserDTO, User>();
 

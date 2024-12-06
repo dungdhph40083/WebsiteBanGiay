@@ -2,58 +2,70 @@
 @model Application.Data.Models.User
 
 @{
-    ViewData["Title"] = "User information";
+    ViewData["Title"] = "Thông tin người dùng";
 }
 
-<h1>User information</h1>
+<h1>Thông tin người dùng</h1>
 
 <dl class="row">
     <dt class="col-md-3">ID</dt>
     <dd class="col-md-9">
         <i class="font-monospace-cascadia">@Model.UserID</i>
     </dd>
-    <dt class="col-md-3">Username</dt>
+    <dt class="col-md-3">Tên người dùng</dt>
     <dd class="col-md-9">@Model.Username
     </dd>
-    <dt class="col-md-3">Password</dt>
+    <dt class="col-md-3">Mật khẩu</dt>
     <dd class="col-md-9">
-        @(new String(Enumerable.Repeat('*', (Model.Password.Length)).ToArray()))
+        @(new String(Enumerable.Repeat((char)8226, (Model.Password.Length)).ToArray()))
+        @* 8226 = "•" *@
     </dd>
-        <dt class="col-md-3">Name</dt>
+        <dt class="col-md-3">Tên đầy đủ</dt>
     <dd class="col-md-9">
         <span>@Model.LastName @Model.FirstName</span>
         <span style="font-size: small">(@Model.FirstName @Model.LastName)</span>
     </dd>
-        <dt class="col-md-3">Phone number</dt>
+        <dt class="col-md-3">SĐT</dt>
     <dd class="col-md-9">
         @Model.PhoneNumber
     </dd>
         <dt class="col-md-3">Email</dt>
     <dd class="col-md-9">@Model.Email
     </dd>
-        <dt class="col-md-3">Address</dt>
+        <dt class="col-md-3">Địa chỉ</dt>
     <dd class="col-md-9">@Model.Address
     </dd>
-        <dt class="col-md-3">Created date</dt>
+        <dt class="col-md-3">Thời điểm tạo</dt>
     <dd class="col-md-9">
         @Model.CreatedAt.ToLocalTime().ToString("d/M/yyyy H:mm:ss")
     </dd>
-    <dt class="col-md-3">Last updated on</dt>
+    <dt class="col-md-3">Cập nhật lần cuối</dt>
     <dd class="col-md-9">
         @Model.LastUpdatedOn.ToLocalTime().ToString("d/M/yyyy H:mm:ss")
     </dd>
-    <dt class="col-md-3">Is active?</dt>
+    <dt class="col-md-3">Trạng thái</dt>
     <dd class="col-md-9">
-        @(Model.Status)
+        @switch (Model.Status)
+        {
+            case 0:
+                <text>Khóa</text>
+                break;
+            case 1:
+                <text>Mở</text>
+                break;
+            default:
+                <text>N/A</text>
+                break;
+        }
     </dd>
-    <dt class="col-md-3">Has profile picture?</dt>
+    <dt class="col-md-3">Ảnh đại diện</dt>
     <dd class="col-md-9">
-        @(Model.ImageID != null ? "Yes" : "No")
+        @(Model.ImageID != null ? "" : "Không có")
     </dd>
 </dl>
 @if (Model.ImageID != null)
 {
     <hr />
-    <img src="@(ViewData["URLFetchImg"])" class="img-fluid" alt="Image displayer">
+    <img src="@(ViewData["URLFetchImg"])" class="img-thumbnail" alt="Image displayer">
     <div class="text-center"><i>@Model.Image?.ImageName</i></div>
 }

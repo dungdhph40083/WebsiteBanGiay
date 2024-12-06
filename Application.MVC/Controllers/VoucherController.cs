@@ -77,6 +77,7 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(Msg.Message);
                 Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
                 return View();
             }
         }
@@ -108,6 +109,7 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(Msg.Message);
                 Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
                 return View();
             }
         }
@@ -126,6 +128,7 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(Msg.Message);
                 Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
                 return View();
             }
         }

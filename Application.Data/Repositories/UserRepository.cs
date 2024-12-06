@@ -72,6 +72,22 @@ namespace Application.Data.Repositories
             else return default;
         }
 
+        public async Task<bool> ToggleUser(Guid TargetID)
+        {
+            var Target = await GetUserByID(TargetID);
+            if (Target != null)
+            {
+                Context.Entry(Target).State = EntityState.Modified;
+                if (Target.Status == 1) Target.Status = 0;
+                else Target.Status = 1;
+
+                Context.Update(Target);
+                await Context.SaveChangesAsync();
+                return true;
+            }
+            else return false;
+        }
+
         public string PasswordHasher(string Password)
         {
             return BallsCrypt.EnhancedHashPassword(Password, 14);

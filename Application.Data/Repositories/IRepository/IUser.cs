@@ -8,7 +8,8 @@ namespace Application.Data.Repositories.IRepository
         Task<List<User>> GetUsers();
         Task<User?> GetUserByID(Guid TargetID);
         Task<User> CreateUser(UserDTO NewUser);
-        Task<User?> UpdateUser (Guid TargetID, UserDTO UpdatedUser);
+        Task<User?> UpdateUser(Guid TargetID, UserDTO UpdatedUser);
+        Task<bool> ToggleUser(Guid TargetID);
         Task DeleteUser(Guid TargetID);
     }
 }

@@ -109,6 +109,14 @@ namespace Application.API.Controllers
             return await UserRepo.UpdateUser(ID, UpdatedUser);
         }
 
+        [HttpPatch("Toggle/{ID}")]
+        public async Task<ActionResult> ToggleUser(Guid ID)
+        {
+            bool Result = await UserRepo.ToggleUser(ID);
+            if (Result) return Ok("SUCCESS");
+            else return BadRequest("FAILURE");
+        }
+
         [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID)
         {

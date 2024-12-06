@@ -20,6 +20,8 @@ namespace Application.Data.Models
             )]
         [Required(ErrorMessage = ValidateErrorResult.EMPTY_FIELD_NOT_ALLOWED)]
         public string Password { get; set; } = null!;
+        [ForeignKey(nameof(Role))]
+        public Guid? RoleID { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         [EmailAddress(ErrorMessage = ValidateErrorResult.BAD_EMAIL_FORMAT)]
@@ -35,5 +37,6 @@ namespace Application.Data.Models
         [Required(ErrorMessage = ValidateErrorResult.BAD_INPUT)]
         public byte Status { get; set; }
         public virtual Image? Image { get; set; }
+        public virtual Role? Role { get; set; }
 	}
 }

@@ -22,31 +22,31 @@
             </select>
         </div>
         <br />
-        <i class="text-center text-decoration-underline">Cần phải điền ít nhất một trường để dùng Voucher. (Các trường vẫn có thể để trống)</i>
+        <i class="text-center text-decoration-underline">Voucher chỉ hiệu lực khi ít nhất một trường đã được điền.</i>
     </div>
     <div class="row">
         <div class="col-md-8">
             <label asp-for="VoucherCode" class="form-label">Mã Voucher</label>
             <input asp-for="VoucherCode" class="form-control font-monospace-cascadia" required aria-label="Input voucher code to use" />
-            <span asp-validation-for="VoucherCode">Mã Voucher phải độc nhất và không chứa ký tự đặc biệt!</span>
+            <span>Mã Voucher phải độc nhất và không chứa ký tự đặc biệt!</span>
         </div>
         <div class="col-md-4">
-            <label asp-for="UsesLeft" class="form-label">Số Voucher</label>
+            <label asp-for="UsesLeft" class="form-label">Số lượng</label>
             <input asp-for="UsesLeft" class="form-control" type="number" placeholder="0" step="1" min="-1" max="10000000"
                    aria-label="Input how many uses this voucher can be used. Select -1 for INFINITE USES!!!" />
-            <span asp-validation-for="UsesLeft">Điến <b>-1</b> để có vô số Voucher này.</span>
+            <span>Điến <b>-1</b> để có vô số Voucher này.</span>
         </div>
     </div>
     <div class="row">
         <div class="col-md-3">
             <label asp-for="DiscountPercent" class="form-label">Giảm giá %</label>
             <input asp-for="DiscountPercent" class="form-control" type="number" placeholder="0" step="0.01" min="0" max="100" aria-label="Input discount percent" />
-            <span asp-validation-for="DiscountPercent">Từ 0 đến 100%.</span>
+            <span>Từ 0 đến 100%.</span>
         </div>
         <div class="col-md-5">
             <label asp-for="DiscountPrice" class="form-label">Giảm giá số</label>
             <input asp-for="DiscountPrice" class="form-control" type="number" placeholder="0" step="100" min="0" max="@(1e15)" aria-label="" />
-            <span asp-validation-for="DiscountPrice">Tối đa: 1,000,000,000,000.</span>
+            <span>Tối đa: 1,000,000,000,000.</span>
         </div>
         <div class="col-md-4">
             <label asp-for="Status" class="form-label">Trạng thái</label>
@@ -58,7 +58,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <label asp-for="Description">Description</label>
+            <label asp-for="Description">Mô tả</label>
             <textarea asp-for="Description" class="form-control" aria-label="Enter voucher description">
                 Voucher giảm giá...
             </textarea>

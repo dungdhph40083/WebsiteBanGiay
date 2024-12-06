@@ -63,9 +63,6 @@ namespace Application.Data.ModelContexts
 		public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 		public DbSet<Size> Sizes { get; set; }
 		public DbSet<User> Users { get; set; }
-		public DbSet<User_Role> User_Roles { get; set; }
 		public DbSet<Voucher> Vouchers { get; set; }
-
-		
 	}
 }
