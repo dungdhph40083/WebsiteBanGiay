@@ -87,7 +87,7 @@ namespace Application.MVC.Controllers
             await FetchInfo();
 
             // Lấy thông tin ProductDetail theo ID
-            var productDetail = await client.GetFromJsonAsync<ProductDetailDTO>($"https://localhost:7187/api/ProductDetails/{id}");
+            var productDetail = await client.GetFromJsonAsync<ProductDetailDTO>($"https://localhost:7187/api/ProductDetails/getbyId?ID={id}");
 
             if (productDetail == null)
         {

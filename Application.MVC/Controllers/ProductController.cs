@@ -46,8 +46,9 @@ namespace Application.MVC.Controllers
 
             MultipartFormDataContent Contents = new()
             {
-                { new StringContent(product.Name!),        nameof(product.Name) },
-                { new StringContent(product.Description!), nameof(product.Description) }
+                { new StringContent(product.Name!),                                nameof(product.Name) },
+                { new StringContent(product.Description!),                         nameof(product.Description) },
+                { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
             };
 
             if (Image != null)
@@ -102,7 +103,8 @@ namespace Application.MVC.Controllers
             MultipartFormDataContent Contents = new()
             {
                 { new StringContent(product.Name!),        nameof(product.Name) },
-                { new StringContent(product.Description!), nameof(product.Description) }
+                { new StringContent(product.Description!), nameof(product.Description) },
+                { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
             };
 
             if (Image != null)
