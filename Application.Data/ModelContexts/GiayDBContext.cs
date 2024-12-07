@@ -44,7 +44,6 @@ namespace Application.Data.ModelContexts
         public DbSet<Category> Categories { get; set; }
 		public DbSet<Color> Colors { get; set; }
 		public DbSet<CustomerSupportMessage> CustomerSupportMessages { get; set; }
-		public DbSet<CustomerSupportTicket> CustomerSupportTickets { get; set; }
 		public DbSet<Image> Images { get; set; }
 		public DbSet<Order> Orders { get; set; }
 		public DbSet<OrderDetail> OrderDetails { get; set; }

@@ -16,14 +16,14 @@ namespace Application.MVC.Controllers
         {
             string requestURL = "https://localhost:7187/api/OrderTracking";
             var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<List<OderTrackingDTO>>(response);
+            var data = JsonConvert.DeserializeObject<List<OrderTrackingDTO>>(response);
             return View(data);
         }
         public ActionResult Details(Guid id)
         {
             string requestURL = $"https://localhost:7187/api/OrderTracking/{id}";
             var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<OderTrackingDTO>(response);
+            var data = JsonConvert.DeserializeObject<OrderTrackingDTO>(response);
             return View(data);
         }
 
@@ -33,24 +33,24 @@ namespace Application.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(OderTrackingDTO oderTrackingDTO)
+        public async Task<ActionResult> Create(OrderTrackingDTO orderTrackingDTO)
         {
             string requestURL = $"https://localhost:7187/api/OrderTracking";
-            var response = await client.PostAsJsonAsync(requestURL, oderTrackingDTO);
+            var response = await client.PostAsJsonAsync(requestURL, orderTrackingDTO);
             return RedirectToAction("Index");
         }
         public IActionResult Edit(Guid id)
         {
             string requestURL = $"https://localhost:7187/api/OrderTracking/{id}";
             var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<OderTrackingDTO>(response);
+            var data = JsonConvert.DeserializeObject<OrderTrackingDTO>(response);
             return View(data);
         }
         [HttpPost]
-        public ActionResult Edit(OderTrackingDTO oderTrackingDTO)
+        public ActionResult Edit(OrderTrackingDTO orderTrackingDTO)
         {
-            string requestURL = $"https://localhost:7187/api/OrderTracking/{oderTrackingDTO.TrackingID}";
-            var response = client.PutAsJsonAsync(requestURL, oderTrackingDTO).Result;
+            string requestURL = $"https://localhost:7187/api/OrderTracking/{orderTrackingDTO.TrackingID}";
+            var response = client.PutAsJsonAsync(requestURL, orderTrackingDTO).Result;
             return RedirectToAction("Index");
         }
 

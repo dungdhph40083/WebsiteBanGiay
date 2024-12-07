@@ -10,9 +10,9 @@ namespace Application.Data.Models
         [ForeignKey(nameof(Order))]
         public Guid? OrderID { get; set; }
         public string? Reason { get; set; }
-        public DateTime ReturnDate { get; set; }
-        public long RefundAmount { get; set; }
-        public byte Status { get; set; }
+        public DateTime? ReturnDate { get; set; }
+        public long? RefundAmount { get; set; }
+        public byte? Status { get; set; }
         public virtual Order? Order { get; set; }
     }
 }

@@ -6,11 +6,11 @@ namespace Application.Data.Models
     public class PaymentMethodDetail
     {
         [Key]
-        public Guid PaymentMethodDetails { get; set; }
+        public Guid PaymentMethodDetailID { get; set; }
         [ForeignKey(nameof(PaymentMethod))]
-        public Guid? PaymentMethodID { get; set; }
-        public long TotalMoney { get; set; }
-        public byte Status { get; set; }
+        public Guid? PaymentMethodID { get; set; } 
+        public long? TotalMoney { get; set; }
+        public byte? Status { get; set; }
         public string? Description { get; set; }
         public virtual PaymentMethod? PaymentMethod { get; set; }
     }

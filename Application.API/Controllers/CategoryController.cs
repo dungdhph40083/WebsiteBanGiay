@@ -19,7 +19,7 @@ namespace Application.API.Controllers
             _categoryRepository = categoryRepository;
         }
 
-        [HttpGet("get-all")]
+        [HttpGet]
         public async Task<ActionResult<List<Category>>> GetAll()
         {
             return Ok(await _categoryRepository.GetAllCategory());
@@ -33,7 +33,7 @@ namespace Application.API.Controllers
 
             return Ok(category);
         }
-        [HttpPost("create-category")]
+        [HttpPost]
         public async Task<ActionResult> Create(CategoryDTO categoryDto)
         {
             // Gọi phương thức AddCategory và lưu kết quả trả về
@@ -43,12 +43,13 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdCategory.CategoryID }, createdCategory);
         }
 
-        [HttpPut("update-category/{id}")]
+        [HttpPatch("{id}")]
         public async Task<ActionResult> Update(Guid id, CategoryDTO categoryDto)
         {
             if (GetById(id) == null) return BadRequest();
             return Ok(await _categoryRepository.UpdateCategory(id, categoryDto));
         }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {

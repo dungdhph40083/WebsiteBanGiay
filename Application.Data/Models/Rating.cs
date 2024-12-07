@@ -20,7 +20,7 @@ namespace Application.Data.Models
 		[Precision(2, 1)]
 		public decimal? Stars {  get; set; }
 		public string? Comment { get; set; }
-		public DateTime? DateRated { get; set; }
+		public DateTime? CreatedAt { get; set; }
 		public virtual User? User { get; set; }
 		public virtual Product? Product { get; set; }
 	}

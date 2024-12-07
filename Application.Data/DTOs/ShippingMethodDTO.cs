@@ -9,7 +9,7 @@ namespace Application.Data.DTOs
     public class ShippingMethodDTO
     {
         public string? MethodName { get; set; }
-        public long ShippingFee { get; set; }
-        public DateTime EstimatedDeliveryTime { get; set; }
+        public long? ShippingFee { get; set; }
+        public DateTime? EstimatedDeliveryTime { get; set; }
     }
 }

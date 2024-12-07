@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.Data.DTOs
 {
-    public class OderTrackingDTO
+    public class OrderTrackingDTO
     {
         public Guid TrackingID { get; set; }
         public Guid? OrderDetailID { get; set; }

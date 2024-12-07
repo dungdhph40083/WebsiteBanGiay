@@ -314,6 +314,7 @@ Price					bigint,
 TotalUnitPrice			bigint,
 SizeID					uniqueidentifier,
 ColorID					uniqueidentifier,
+SaleID					uniqueidentifier,
 VoucherID				uniqueidentifier,
 Discount				int,
 SumTotalPrice			bigint,
@@ -331,6 +332,9 @@ foreign key (SizeID) references Sizes(SizeID),
 
 constraint FK_Color_Orders
 foreign key (ColorID) references Colors(ColorID),
+
+constraint FK_Sale_Orders
+foreign key (SaleID) references Sales(SaleID),
 
 constraint FK_Vouchers_OrderDetails
 foreign key (VoucherID) references Vouchers(VoucherID),
