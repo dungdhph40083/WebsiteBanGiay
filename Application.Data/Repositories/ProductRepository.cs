@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,26 +15,29 @@ namespace Application.Data.Repositories
 {
     public class ProductRepository : IProduct
     {
-        private readonly GiayDBContext _context;
+        private readonly GiayDBContext Context;
         private readonly IMapper Mapper;
 
-        public ProductRepository(GiayDBContext context, IMapper Mapper)
+        public ProductRepository(GiayDBContext Context, IMapper Mapper)
         {
-            _context = context;
+            this.Context = Context;
             this.Mapper = Mapper;
         }
 
-        public IEnumerable<Product> GetAll()
+        public async Task<List<Product>> GetAll()
         {
-            return _context.Products.ToList();
+            return await Context.Products
+                .Include(UU => UU.Image).ToListAsync();
         }
 
-        public Product GetById(Guid id)
+        public async Task<Product?> GetById(Guid id)
         {
-            return _context.Products.Include(p => p.Image).FirstOrDefault(p => p.ProductID == id);
+            return await Context.Products
+                .Include(UU => UU.Image).SingleOrDefaultAsync
+                (x => x.ProductID == id);
         }
 
-        public Product Add(ProductDTO ProductDTO)
+        public async Task<Product> Add(ProductDTO ProductDTO)
         {
             var DateTimeUtcNow = DateTime.UtcNow;
 
@@ -46,40 +50,36 @@ namespace Application.Data.Repositories
 
             Product = Mapper.Map(ProductDTO, Product);
 
-            _context.Products.Add(Product);
-            _context.SaveChanges();
+            await Context.Products.AddAsync(Product);
+            await Context.SaveChangesAsync();
 
             return Product;
         }
 
-        public Product Update(Guid ID, ProductDTO ProductDTO)
+        public async Task<Product?> Update(Guid ID, ProductDTO ProductDTO)
         {
-            var Target = _context.Products.Find(ID);
+            var Target = await Context.Products.FindAsync(ID);
 
-            if (Target == null)
+            if (Target != null)
             {
-                throw new Exception("Product not found."); 
+                Context.Entry(Target).State = EntityState.Modified;
+                Target.UpdatedAt = DateTime.UtcNow;
+
+                Target = Mapper.Map(ProductDTO, Target);
+                Context.Update(Target);
+                await Context.SaveChangesAsync();
+                return Target;
             }
-
-            _context.Entry(Target).State = EntityState.Modified;
-
-            // Cập nhật các trường thông tin của sản phẩm
-
-            Target = Mapper.Map(ProductDTO, Target);
-
-            _context.Update(Target);
-            _context.SaveChanges();
-
-            return Target;
+            else return default;
         }
 
-        public void Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            var product = _context.Products.Find(id);
-            if (product != null)
+            var Product = await Context.Products.FindAsync(id);
+            if (Product != null)
             {
-                _context.Products.Remove(product);
-                _context.SaveChanges();
+                Context.Products.Remove(Product);
+                await Context.SaveChangesAsync();
             }
         }
     }

@@ -19,7 +19,7 @@ namespace Application.Data.Repositories
         {
             _context = context;
         }
-        public async Task<ColorDTO> CreateColor(ColorDTO colorDTO)
+        public async Task<Color> CreateColor(ColorDTO colorDTO)
         {
             var color = new Color
             {
@@ -32,11 +32,8 @@ namespace Application.Data.Repositories
 
             _context.Colors.Add(color);
             await _context.SaveChangesAsync();
-            colorDTO.ColorID = color.ColorID; 
-            colorDTO.CreatedAt = color.CreatedAt; 
-            colorDTO.UpdatedAt = color.UpdatedAt;
 
-            return colorDTO;
+            return color;
         }
 
         public async Task DeleteColor(Guid id)
@@ -49,38 +46,20 @@ namespace Application.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<ColorDTO>> GetAllColors()
+        public async Task<List<Color>> GetAllColors()
         {
             return await _context.Colors
-           .Select(c => new ColorDTO
-           {
-               ColorID = c.ColorID,
-               ColorName = c.ColorName,
-               Status = c.Status,
-               CreatedAt = c.CreatedAt,
-               UpdatedAt = c.UpdatedAt
-           })
            .ToListAsync();
         }
 
-        public async Task<ColorDTO> GetColorById(Guid id)
+        public async Task<Color?> GetColorById(Guid id)
         {
-            var color = await _context.Colors.FindAsync(id);
-            if (color == null) return null;
-
-            return new ColorDTO
-            {
-                ColorID = color.ColorID,
-                ColorName = color.ColorName,
-                Status = color.Status,
-                CreatedAt = color.CreatedAt,
-                UpdatedAt = color.UpdatedAt
-            };
+            return await _context.Colors.FindAsync(id);
         }
 
-        public async Task UpdateColor(ColorDTO colorDTO)
+        public async Task UpdateColor(Guid ID, ColorDTO colorDTO)
         {
-            var color = await _context.Colors.FindAsync(colorDTO.ColorID);
+            var color = await _context.Colors.FindAsync(ID);
             if (color != null)
             {
                 color.ColorName = colorDTO.ColorName;

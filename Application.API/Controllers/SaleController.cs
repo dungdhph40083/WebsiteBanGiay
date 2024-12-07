@@ -23,25 +23,25 @@ namespace Application.API.Controllers
         {
             return await Salerepos.GetSale();
         }
-        [HttpGet("getbyId")]
+        [HttpGet("{ID}")]
         public async Task<ActionResult<Sale?>> Get(Guid ID)
         {
             return await Salerepos.GetSalelByID(ID);
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<ActionResult<Sale>> Post([FromBody] SaleDTO NewSale)
         {
             return await Salerepos.CreateNew(NewSale);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{ID}")]
         public async Task<ActionResult<Sale?>> Put(Guid ID, [FromBody] SaleDTO UpdateSale)
         {
             return await Salerepos.UpdateExisting(ID, UpdateSale);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await Salerepos.DeleteExisting(ID);

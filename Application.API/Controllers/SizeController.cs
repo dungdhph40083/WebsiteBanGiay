@@ -47,7 +47,7 @@ namespace Application.API.Controllers
             var size = await SizeRepo.GetSizeByID(ID);
             if (size == null)
             {
-                return NoContent(); // Trả về 404 nếu không tìm thấy
+                return NotFound(); // Trả về 404 nếu không tìm thấy
             }
 
             await SizeRepo.DeleteSize(ID);

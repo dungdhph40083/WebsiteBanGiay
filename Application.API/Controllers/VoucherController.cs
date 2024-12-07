@@ -42,7 +42,7 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{ID}")]
-        public async Task<ActionResult> Delete(Guid ID)
+        public async Task<ActionResult> Delete(Guid ID) 
         {
             await VoucherRepo.DeleteVoucher(ID);
             return Ok();

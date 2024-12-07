@@ -19,29 +19,29 @@ namespace Application.API.Controllers
             this.ShippingMethodrepos = ShippingMethodrepos;
         }
         [HttpGet]
-        public async Task<ActionResult<List<ShippingMethod>>> get()
+        public async Task<ActionResult<List<ShippingMethod>>> GetAll()
         {
             return await ShippingMethodrepos.GetShippingMethod();
         }
-        [HttpGet("getbyId")]
+        [HttpGet("{ID}")]
         public async Task<ActionResult<ShippingMethod?>> Get(Guid ID)
         {
             return await ShippingMethodrepos.GetShippingMethodlByID(ID);
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<ActionResult<ShippingMethod>> Post([FromBody] ShippingMethodDTO NewShippingMethod)
         {
             return await ShippingMethodrepos.CreateNew(NewShippingMethod);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{ID}")]
         public async Task<ActionResult<ShippingMethod?>> Put(Guid ID, [FromBody] ShippingMethodDTO UpdateShippingMethod)
         {
             return await ShippingMethodrepos.UpdateExisting(ID, UpdateShippingMethod);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await ShippingMethodrepos.DeleteExisting(ID);

@@ -23,25 +23,25 @@ namespace Application.API.Controllers
         {
             return await Rating.GetProductRating();
         }
-        [HttpGet("getbyId")]
+        [HttpGet("{ID}")]
         public async Task<ActionResult<Rating?>> Get(Guid ID)
         {
             return await Rating.GetProductRatinglByID(ID);
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<ActionResult<Rating>> Post([FromBody] RatingsDTO NewRating)
         {
             return await Rating.CreateNew(NewRating);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{ID}")]
         public async Task<ActionResult<Rating?>> Put(Guid ID, [FromBody] RatingsDTO UpdateRating)
         {
             return await Rating.UpdateExisting(ID, UpdateRating);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await Rating.DeleteExisting(ID);

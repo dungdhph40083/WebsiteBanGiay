@@ -46,19 +46,11 @@ namespace Application.API.Controllers
                     return BadRequest("Tệp ảnh không hợp lệ!");
                 case SuccessResult.IMAGE_OK:
                     {
-                        var CreatedImage = await _imageRepository.CreateImageAsync(imageDto, ImageFile);
+                        var CreatedImage = await _imageRepository.CreateImageAsync(ImageFile);
                         return CreatedAtAction(nameof(GetImage), new { id = CreatedImage.ImageID }, CreatedImage);
                     }
 
             }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateImage(Guid id, [FromBody] ImageDTO imageDto)
-        {
-            var result = await _imageRepository.UpdateImageAsync(id, imageDto);
-            if (!result) return NotFound();
-            return NoContent();
         }
 
         [HttpDelete("{id}")]

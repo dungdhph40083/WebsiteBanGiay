@@ -25,7 +25,7 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/ProductWarranty/getbyId?ID={id}";
+            string requestURL = $"https://localhost:7187/api/ProductWarranty/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var ProductWarrantys = JsonConvert.DeserializeObject<ProductWarranty>(response);
             return View(ProductWarrantys);
@@ -35,7 +35,7 @@ namespace Application.MVC.Controllers
             try
             {
                 // Lấy danh sách sản phẩm từ API
-                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/");
 
                 ViewBag.Products = products ?? new List<Product>();
 
@@ -66,7 +66,7 @@ namespace Application.MVC.Controllers
                 productWarranty.UpdatedAt = DateTime.Now;
 
                 // Gửi yêu cầu POST tới API
-                string requestURL = "https://localhost:7187/api/ProductWarranty/create";
+                string requestURL = "https://localhost:7187/api/ProductWarranty/";
                 var response = await client.PostAsJsonAsync(requestURL, productWarranty);
 
                 if (response.IsSuccessStatusCode)
@@ -86,7 +86,7 @@ namespace Application.MVC.Controllers
                 Console.WriteLine($"Error: {ex.Message}");
                 ViewBag.ErrorMessage = "Đã xảy ra lỗi trong quá trình xử lý.";
             }
-            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/");
             ViewBag.Products = products ?? new List<Product>();
 
             return View(productWarranty);
@@ -95,12 +95,12 @@ namespace Application.MVC.Controllers
         {
             try
             {
-                string requestURL = $"https://localhost:7187/api/ProductWarranty/getbyId?ID={id}";
+                string requestURL = $"https://localhost:7187/api/ProductWarranty/{id}";
                 var response = await client.GetStringAsync(requestURL);
                 var ProductWarrantys = JsonConvert.DeserializeObject<ProductWarranty>(response);
 
                 // Lấy danh sách sản phẩm từ API
-                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/");
                 ViewBag.Products = products ?? new List<Product>();
 
                 return View(ProductWarrantys);
@@ -124,7 +124,7 @@ namespace Application.MVC.Controllers
             try
             {
                 // Giữ nguyên CreatedAt, chỉ cập nhật UpdatedAt
-                var existingRequestURL = $"https://localhost:7187/api/ProductWarranty/getbyId?ID={ID}";
+                var existingRequestURL = $"https://localhost:7187/api/ProductWarranty/{ID}";
                 var existingResponse = await client.GetStringAsync(existingRequestURL);
                 var existingWarranty = JsonConvert.DeserializeObject<ProductWarranty>(existingResponse);
 
@@ -133,7 +133,7 @@ namespace Application.MVC.Controllers
                     ProductWarranty.CreatedAt = existingWarranty.CreatedAt; // Giữ nguyên CreatedAt
                     ProductWarranty.UpdatedAt = DateTime.Now; // Cập nhật UpdatedAt
 
-                    string requestURL = $"https://localhost:7187/api/ProductWarranty/update?ID={ID}";
+                    string requestURL = $"https://localhost:7187/api/ProductWarranty/{ID}";
                     var response = await client.PutAsJsonAsync(requestURL, ProductWarranty);
 
                     if (response.IsSuccessStatusCode)
@@ -155,14 +155,14 @@ namespace Application.MVC.Controllers
             }
 
             // Lấy lại danh sách sản phẩm để hiển thị trong View
-            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/");
             ViewBag.Products = products ?? new List<Product>();
 
             return View(ProductWarranty);
         }
         public ActionResult Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/ProductWarranty/delete?ID={id}";
+            string requestURL = $"https://localhost:7187/api/ProductWarranty/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");
         }

@@ -21,7 +21,10 @@ namespace Application.Data.Repositories
         {
             var DateTimeUtcNow = DateTime.UtcNow;
 
-            Voucher Voucher = new() { VoucherID = Guid.NewGuid(), CreatedAt = DateTimeUtcNow, LastUpdatedOn = DateTimeUtcNow };
+            Voucher Voucher = new() {
+                VoucherID = Guid.NewGuid(),
+                CreatedAt = DateTimeUtcNow,
+                UpdatedAt = DateTimeUtcNow };
             NewVoucher.VoucherCode = NewVoucher.VoucherCode.ToUpper();
             Voucher = Mapper.Map(NewVoucher, Voucher);
             await Context.Vouchers.AddAsync(Voucher);
@@ -64,7 +67,7 @@ namespace Application.Data.Repositories
                 Context.Entry(Target).State = EntityState.Modified;
                 UpdatedVoucher.VoucherCode = UpdatedVoucher.VoucherCode.ToUpper();
                 var UpdatedTarget = Mapper.Map(UpdatedVoucher, Target);
-                UpdatedTarget.LastUpdatedOn = DateTime.UtcNow;
+                UpdatedTarget.UpdatedAt = DateTime.UtcNow;
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;

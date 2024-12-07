@@ -63,7 +63,7 @@ namespace Application.Data.Repositories
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;
             }
-            else return default!;
+            else return default;
         }
     }
 }

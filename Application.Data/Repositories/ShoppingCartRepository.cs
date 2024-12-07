@@ -26,21 +26,8 @@ namespace Application.Data.Repositories
 
             ShoppingCart = Mapper.Map(NewShoppingCart, ShoppingCart);
 
-            var ProductItem = Context.ProductDetails.Find(ShoppingCart.ProductID);
-            var VoucherItem = Context.Vouchers.Find(ShoppingCart.VoucherID);
-
-            long    ItemPrice          = ProductItem == null ? 0 : ProductItem.Price;
-            long    ItemVoucherPrice   = VoucherItem == null ? 0 : VoucherItem.DiscountPrice;
-            decimal ItemVoucherPercent = VoucherItem == null ? 0 : VoucherItem.DiscountPercent;
-
-            ShoppingCart.RawPrice =
-                ShoppingCart.QuantityCart * ItemPrice;
-
-            ShoppingCart.Discount =
-                (long)(ItemVoucherPercent / 100 * ShoppingCart.RawPrice) + ItemVoucherPrice;
-
-            ShoppingCart.FinalPrice =
-                ShoppingCart.RawPrice - ShoppingCart.Discount;
+            var ProductItem = Context.Products.Where(x => x.ProductID == ShoppingCart.ProductID);
+            ShoppingCart.Price = ShoppingCart.QuantityCart * ProductItem.First().Price;
 
             await Context.ShoppingCarts.AddAsync(ShoppingCart);
             await Context.SaveChangesAsync();
@@ -64,8 +51,7 @@ namespace Application.Data.Repositories
                 .Include(UU => UU.Voucher)
                 .Include(UU => UU.Size)
                 .Include(UU => UU.Color)
-                .Include(UU => UU.Product)
-                .Include(UU => UU.ProductDetail).FirstOrDefaultAsync(x => x.CartID == TargetID);
+                .Include(UU => UU.Product).FirstOrDefaultAsync(x => x.CartID == TargetID);
         }
 
         public async Task<List<ShoppingCart>> GetShoppingCarts()
@@ -75,8 +61,7 @@ namespace Application.Data.Repositories
                 .Include(UU => UU.Voucher)
                 .Include(UU => UU.Size)
                 .Include(UU => UU.Color)
-                .Include(UU => UU.Product)
-                .Include(UU => UU.ProductDetail).ToListAsync();
+                .Include(UU => UU.Product).ToListAsync();
         }
 
         public async Task<ShoppingCart?> Update(Guid TargetID, ShoppingCartDTO UpdatedShoppingCart)
@@ -87,21 +72,8 @@ namespace Application.Data.Repositories
                 Context.Entry(Target).State = EntityState.Modified;
                 var UpdatedTarget = Mapper.Map(UpdatedShoppingCart, Target);
 
-                var ProductItem = Context.ProductDetails.Find(Target.ProductID);
-                var VoucherItem = Context.Vouchers.Find(Target.VoucherID);
-
-                long    ItemPrice          = ProductItem == null ? 0 : ProductItem.Price;
-                long    ItemVoucherPrice   = VoucherItem == null ? 0 : VoucherItem.DiscountPrice;
-                decimal ItemVoucherPercent = VoucherItem == null ? 0 : VoucherItem.DiscountPercent;
-
-                UpdatedTarget.RawPrice =
-                    UpdatedShoppingCart.QuantityCart * ItemPrice;
-
-                UpdatedTarget.Discount =
-                    (long)(ItemVoucherPercent / 100 * UpdatedTarget.RawPrice) + ItemVoucherPrice;
-
-                UpdatedTarget.FinalPrice =
-                    UpdatedTarget.RawPrice - UpdatedTarget.Discount;
+                var ProductItem = Context.Products.Where(x => x.ProductID == UpdatedShoppingCart.ProductID);
+                UpdatedShoppingCart.Price = UpdatedShoppingCart.QuantityCart * ProductItem.First().Price;
 
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();

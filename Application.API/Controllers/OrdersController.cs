@@ -42,8 +42,7 @@ namespace Application.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
         {
-            if (id != orderDto.OrderID) return BadRequest();
-            var updatedOrder = await _orderRepository.UpdateOrderAsync(orderDto);
+            var updatedOrder = await _orderRepository.UpdateOrderAsync(id, orderDto);
             if (updatedOrder == null) return NotFound();
             return NoContent();
         }

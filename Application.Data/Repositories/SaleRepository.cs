@@ -26,7 +26,13 @@ namespace Application.Data.Repositories
 
         public async Task<Sale> CreateNew(SaleDTO NewSale)
         {
-            Sale sale = new() { SaleID = Guid.NewGuid() };
+            var DateTimeUtcNow = DateTime.UtcNow;
+
+            Sale sale = new() {
+                SaleID = Guid.NewGuid(),
+                CreatedAt = DateTimeUtcNow,
+                UpdatedAt = DateTimeUtcNow
+            };
             sale = Mapper.Map(NewSale, sale);
             await Context.Sales.AddAsync(sale);
             await Context.SaveChangesAsync();
@@ -46,13 +52,15 @@ namespace Application.Data.Repositories
         public Task<List<Sale>> GetSale()
         {
             return Context.Sales
-               .Include(order => order.Product).ToListAsync();
+               .Include(order => order.Product)
+               .Include(Ctg => Ctg.Category).ToListAsync();
         }
 
         public async Task<Sale?> GetSalelByID(Guid TargetID)
         {
             return await Context.Sales
-                    .Include(order => order.Product).SingleOrDefaultAsync(x => x.SaleID == TargetID);
+                    .Include(order => order.Product)
+                    .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.SaleID == TargetID);
         }
 
         public async Task<Sale?> UpdateExisting(Guid TargetID, SaleDTO UpdatedSale)
@@ -61,6 +69,7 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
+                Target.UpdatedAt = DateTime.UtcNow;
                 var UpdatedTarget = Mapper.Map(UpdatedSale, Target);
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();

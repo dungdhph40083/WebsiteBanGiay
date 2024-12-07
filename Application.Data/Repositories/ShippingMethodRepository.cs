@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.Data.Repositories
 {
-    public class ShippingMethodRepository :IShippingMethod
+    public class ShippingMethodRepository : IShippingMethod
     {
         private readonly GiayDBContext Context;
         private readonly IMapper Mapper;

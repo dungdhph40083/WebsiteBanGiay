@@ -19,7 +19,7 @@ namespace Application.API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ShoppingCart>>> Get()
         {
-            return await ShoppingCartRepo.GetShoppingCarts();
+            return await ShoppingCartRepo.GetShoppingCarts(); 
         }
 
         [HttpGet("{ID}")]

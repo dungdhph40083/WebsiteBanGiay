@@ -8,8 +8,7 @@ namespace Application.Data.Repositories.IRepository
     {
         Task<IEnumerable<Image>> GetAllImagesAsync();
         Task<Image?> GetImageByIdAsync(Guid imageId);
-        Task<Image> CreateImageAsync(ImageDTO imageDto, IFormFile File);
-        Task<bool> UpdateImageAsync(Guid imageId, ImageDTO imageDto);
+        Task<Image> CreateImageAsync(IFormFile File);
         Task<bool> DeleteImageAsync(Guid imageId);
     }
 }

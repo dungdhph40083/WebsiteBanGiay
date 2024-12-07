@@ -28,25 +28,25 @@ namespace Application.API.Controllers
             return await ProductDetailRepo.GetProductDetails();
         }
 
-        [HttpGet("getbyId")]
+        [HttpGet("{ID}")]
         public async Task<ActionResult<ProductDetail?>> Get(Guid ID)
         {
             return await ProductDetailRepo.GetProductDetailByID(ID);
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<ActionResult<ProductDetail>> Post([FromBody] ProductDetailDTO NewProductDetail)
         {
             return await ProductDetailRepo.CreateNew(NewProductDetail);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{ID}")]
         public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromBody] ProductDetailDTO UpdateProductDetail)
         {
             return await ProductDetailRepo.UpdateExisting(ID, UpdateProductDetail);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await ProductDetailRepo.DeleteExisting(ID);

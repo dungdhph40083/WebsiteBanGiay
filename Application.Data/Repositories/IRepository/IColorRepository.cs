@@ -1,4 +1,5 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ namespace Application.Data.Repositories.IRepository
 {
     public interface IColorRepository
     {
-        Task<IEnumerable<ColorDTO>> GetAllColors();
-        Task<ColorDTO> GetColorById(Guid id);
-        Task<ColorDTO> CreateColor(ColorDTO colorDTO);
-        Task UpdateColor(ColorDTO colorDTO);
+        Task<List<Color>> GetAllColors();
+        Task<Color?> GetColorById(Guid id);
+        Task<Color> CreateColor(ColorDTO colorDTO);
+        Task UpdateColor(Guid ID, ColorDTO colorDTO);
         Task DeleteColor(Guid id);
     }
 }

@@ -41,9 +41,7 @@ namespace Application.API.Controllers
         [HttpPut("update-color/{id}")]
         public async Task<IActionResult> UpdateColor(Guid id, ColorDTO colorDTO)
         {
-            if (id != colorDTO.ColorID) return BadRequest();
-
-            await _colorRepository.UpdateColor(colorDTO);
+            await _colorRepository.UpdateColor(id, colorDTO);
             return NoContent();
         }
 

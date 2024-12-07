@@ -22,9 +22,9 @@ namespace Application.Data.Repositories
 
         public async Task<User> CreateUser(UserDTO NewUser)
         {
-            DateTime DateTimeSync = DateTime.UtcNow;
+            var DateTimeSync = DateTime.UtcNow;
 
-            User User = new() { UserID = Guid.NewGuid(), CreatedAt = DateTimeSync, LastUpdatedOn = DateTimeSync};
+            User User = new() { UserID = Guid.NewGuid(), CreatedAt = DateTimeSync, UpdatedAt = DateTimeSync};
             NewUser.Password = PasswordHasher(NewUser.Password);
 
             User = Mapper.Map(NewUser, User);
@@ -47,7 +47,8 @@ namespace Application.Data.Repositories
         public async Task<User?> GetUserByID(Guid TargetID)
         {
             var Target = await Context.Users
-                .Include(UU => UU.Image).SingleOrDefaultAsync(x => x.UserID == TargetID);
+                .Include(UU => UU.Image)
+                .Include(RR => RR.Role).SingleOrDefaultAsync(x => x.UserID == TargetID);
             return Target;
         }
 
@@ -55,6 +56,7 @@ namespace Application.Data.Repositories
         {
             return Context.Users
                 .Include(UU => UU.Image)
+                .Include(RR => RR.Role)
                 .ToListAsync();
         }
 
@@ -66,7 +68,7 @@ namespace Application.Data.Repositories
                 Context.Entry(Target).State = EntityState.Modified;
                 UpdatedUser.Password = PasswordHasher(UpdatedUser.Password);
                 var UpdatedTarget = Mapper.Map(UpdatedUser, Target);
-                UpdatedTarget.LastUpdatedOn = DateTime.UtcNow;
+                UpdatedTarget.UpdatedAt = DateTime.UtcNow;
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;

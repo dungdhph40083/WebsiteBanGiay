@@ -20,7 +20,7 @@ namespace Application.Data.Repositories
             _context = context;
             this.Mapper = Mapper;
         }
-        public async Task<Image> CreateImageAsync(ImageDTO imageDto, IFormFile ImageFile)
+        public async Task<Image> CreateImageAsync(IFormFile ImageFile)
         {
             DateTime TimeSync = DateTime.UtcNow;
 
@@ -30,11 +30,7 @@ namespace Application.Data.Repositories
             {
                 ImageID = Guid.NewGuid(),
                 ImageFileName = FileName,
-                CreatedAt = TimeSync,
-                UpdatedAt = TimeSync
             };
-
-            Image = Mapper.Map(imageDto, Image);
 
             _context.Images.Add(Image);
             await _context.SaveChangesAsync();
@@ -61,21 +57,6 @@ namespace Application.Data.Repositories
         {
             var image = await _context.Images.FindAsync(imageId);
             return image == null ? null : image;
-        }
-
-        public async Task<bool> UpdateImageAsync(Guid imageId, ImageDTO imageDto)
-        {
-            var image = await _context.Images.FindAsync(imageId);
-            if (image == null) return false;
-
-            _context.Entry(image).State = EntityState.Modified;
-
-            image.UpdatedAt = DateTime.UtcNow;
-            image = Mapper.Map(imageDto, image);
-            _context.Update(image);
-
-            await _context.SaveChangesAsync();
-            return true;
         }
 
         public static async Task<string> UploadImageAndMetadata(IFormFile ImageFile, DateTime TimeSync)

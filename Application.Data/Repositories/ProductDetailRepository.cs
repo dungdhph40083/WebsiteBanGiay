@@ -20,7 +20,11 @@ namespace Application.Data.Repositories
         public async Task<ProductDetail> CreateNew(ProductDetailDTO NewDetail)
         {
             // để ko cần phải tự nhập GUID mỗi lần thêm dữ liệu nữa
-            ProductDetail ProductDetail = new() { ProductDetailID = Guid.NewGuid(), UpdatedAt = DateTime.UtcNow };
+            ProductDetail ProductDetail = new()
+            {
+                ProductDetailID = Guid.NewGuid(),
+                UpdatedAt = DateTime.UtcNow
+            };
 
             // có hai cách gán dữ liệu vào trong này:
             // cách 1: tự gán giá trị thuộc tính thủ công
@@ -48,7 +52,10 @@ namespace Application.Data.Repositories
             // ?????????????????
             return await Context.ProductDetails
                     .Include(Prod => Prod.Product)
-                    .Include(Img => Img.Image).SingleOrDefaultAsync(x => x.ProductDetailID == TargetID);
+                    .Include(Img => Img.Image)
+                    .Include(Siz => Siz.Size)
+                    .Include(Col => Col.Color)
+                    .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.ProductDetailID == TargetID);
         }
 
         public Task<List<ProductDetail>> GetProductDetails()
@@ -56,7 +63,10 @@ namespace Application.Data.Repositories
             // trích xuất cả dữ liệu image và product bằng cách .Include
             return Context.ProductDetails
                 .Include(Prod => Prod.Product)
-                .Include(Img => Img.Image).ToListAsync();
+                .Include(Img => Img.Image)
+                .Include(Siz => Siz.Size)
+                .Include(Col => Col.Color)
+                .Include(Ctg => Ctg.Category).ToListAsync();
         }
 
         public async Task<ProductDetail?> UpdateExisting(Guid TargetID, ProductDetailDTO UpdatedDetail)
@@ -71,7 +81,7 @@ namespace Application.Data.Repositories
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;
             }
-            else return default!;
+            else return default;
         }
     }
 }

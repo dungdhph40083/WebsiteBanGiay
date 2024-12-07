@@ -10,10 +10,10 @@ namespace Application.Data.Repositories.IRepository
 {
     public interface IProduct
     {
-        IEnumerable<Product> GetAll();
-        Product GetById(Guid id);
-        Product Add(ProductDTO ProductDTO);
-        Product Update(Guid id,ProductDTO ProductDTO);
-        void Delete(Guid id);
+        Task<List<Product>> GetAll();
+        Task<Product?> GetById(Guid id);
+        Task<Product> Add(ProductDTO ProductDTO);
+        Task<Product?> Update(Guid id,ProductDTO ProductDTO);
+        Task Delete(Guid id);
     }
 }

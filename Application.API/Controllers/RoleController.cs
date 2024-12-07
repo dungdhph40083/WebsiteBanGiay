@@ -26,25 +26,25 @@ namespace Application.API.Controllers
         {
             return await Rolerepos.GetRole();
         }
-        [HttpGet("getbyId")]
+        [HttpGet("{ID}")]
         public async Task<ActionResult<Role?>> Get(Guid ID)
         {
             return await Rolerepos.GetRolelByID(ID);
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<ActionResult<Role>> Post([FromBody] RoleDTO NewRole)
         {
             return await Rolerepos.CreateNew(NewRole);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{ID}")]
         public async Task<ActionResult<Role?>> Put(Guid ID, [FromBody] RoleDTO UpdateRole)
         {
             return await Rolerepos.UpdateExisting(ID, UpdateRole);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await Rolerepos.DeleteExisting(ID);

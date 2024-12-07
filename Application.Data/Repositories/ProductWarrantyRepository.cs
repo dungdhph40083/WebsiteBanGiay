@@ -25,7 +25,14 @@ namespace Application.Data.Repositories
 
         public async Task<ProductWarranty> CreateNew(ProductWarrantyDTO NewWarranty)
         {
-            ProductWarranty ProductWarranty = new() { WarrantyID = Guid.NewGuid() };
+            var DateTimeUtcNow = DateTime.UtcNow;
+
+            ProductWarranty ProductWarranty = new()
+            {
+                WarrantyID = Guid.NewGuid(),
+                CreatedAt = DateTimeUtcNow,
+                UpdatedAt = DateTimeUtcNow
+            };
             ProductWarranty = Mapper.Map(NewWarranty, ProductWarranty);
             await Context.ProductWarranties.AddAsync(ProductWarranty);
             await Context.SaveChangesAsync();
@@ -60,12 +67,13 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
+                Target.UpdatedAt = DateTime.UtcNow;
                 var UpdatedTarget = Mapper.Map(UpdatedWarranty, Target);
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;
             }
-            else return default!;
+            else return default;
         }
     }
 }

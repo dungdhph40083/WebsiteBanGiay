@@ -23,25 +23,25 @@ namespace Application.API.Controllers
         {
             return await productWarrantyRepo.GetProductWarranty();
         }
-        [HttpGet("getbyId")]
+        [HttpGet("{ID}")]
         public async Task<ActionResult<ProductWarranty?>> Get(Guid ID)
         {
             return await productWarrantyRepo.GetProductWarrantylByID(ID);
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<ActionResult<ProductWarranty>> Post([FromBody] ProductWarrantyDTO NewWarranty)
         {
             return await productWarrantyRepo.CreateNew(NewWarranty);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{ID}")]
         public async Task<ActionResult<ProductWarranty?>> Put(Guid ID, [FromBody] ProductWarrantyDTO UpdateWarranty)
         {
             return await productWarrantyRepo.UpdateExisting(ID, UpdateWarranty);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await productWarrantyRepo.DeleteExisting(ID);

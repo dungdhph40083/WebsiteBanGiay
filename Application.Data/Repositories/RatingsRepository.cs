@@ -24,7 +24,13 @@ namespace Application.Data.Repositories
         }
         public async Task<Rating> CreateNew(RatingsDTO NewRating)
         {
-            Rating Rating = new() { RatingID = Guid.NewGuid() };
+            var DateTimeUtcNow = DateTime.UtcNow;
+            Rating Rating = new() 
+            {
+                RatingID = Guid.NewGuid(),
+                CreatedAt = DateTimeUtcNow,
+                UpdatedAt = DateTimeUtcNow
+            };
             Rating = Mapper.Map(NewRating, Rating);
             await Context.Ratings.AddAsync(Rating);
             await Context.SaveChangesAsync();
@@ -61,12 +67,13 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
+                Target.UpdatedAt = DateTime.UtcNow;
                 var UpdatedTarget = Mapper.Map(UpdatedRating, Target);
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;
             }
-            else return default!;
+            else return default;
         }
     }
 }

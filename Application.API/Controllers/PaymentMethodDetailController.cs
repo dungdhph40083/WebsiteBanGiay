@@ -41,13 +41,13 @@ namespace Application.API.Controllers
         {
             _paymentMethodDetailRepository.Add(paymentMethodDetail);
             _paymentMethodDetailRepository.Save();
-            return CreatedAtAction("GetPaymentMethodDetail", new { id = paymentMethodDetail.PaymentMethodDetails }, paymentMethodDetail);
+            return CreatedAtAction("GetPaymentMethodDetail", new { id = paymentMethodDetail.PaymentMethodDetailID }, paymentMethodDetail);
         }
 
         [HttpPut("{id}")]
         public IActionResult PutPaymentMethodDetail(Guid id, PaymentMethodDetail paymentMethodDetail)
         {
-            if (id != paymentMethodDetail.PaymentMethodDetails)
+            if (id != paymentMethodDetail.PaymentMethodDetailID)
             {
                 return BadRequest();
             }

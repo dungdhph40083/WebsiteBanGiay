@@ -17,7 +17,13 @@ namespace Application.Data.Repositories
         }
         public async Task<Size> AddSize(SizeDTO NewSize)
         {
-            Size Size = new() { SizeID = Guid.NewGuid() };
+            var DateTimeUtcNow = DateTime.UtcNow;
+
+            Size Size = new() {
+                SizeID = Guid.NewGuid(),
+                CreatedAt = DateTimeUtcNow,
+                UpdatedAt = DateTimeUtcNow
+            };
             Size = Mapper.Map(NewSize, Size);
             await Context.Sizes.AddAsync(Size);
             await Context.SaveChangesAsync();
@@ -51,6 +57,7 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
+                Target.UpdatedAt = DateTime.UtcNow;
                 var UpdatedTarget = Mapper.Map(UpdatedSize, Target);
                 UpdatedTarget.UpdatedAt = DateTime.UtcNow;
                 Context.Update(UpdatedTarget);
