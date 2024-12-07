@@ -9,6 +9,6 @@ namespace Application.Data.DTOs
     public class RoleDTO
     {
         public string RoleCode { get; set; } = null!;
-        public string? RoleName { get; set; }
+        public string? RoleName { get; set; } 
     }
 }

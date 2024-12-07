@@ -8,10 +8,7 @@ namespace Application.Data.Models
         [Key]
         public Guid ShippingMethodID { get; set; }
         public string? MethodName { get; set; }
-        public long ShippingFee { get; set; }
-        public DateTime EstimatedDeliveryTime { get; set; }
-        //public virtual OrderDetail? OrderDetail { get; set; }
-		//public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>(); // Updated navigation property
-
+        public long? ShippingFee { get; set; } 
+        public DateTime? EstimatedDeliveryTime { get; set; }
 	}
 }

@@ -9,7 +9,8 @@ namespace Application.Data.Models
         [Key]
         public long MessageID { get; set; }
         public string? MessageContent { get; set; }
-        [ForeignKey(nameof(CustomerSupportTicket))]
-        public Guid? TicketID { get; set; }
+        [ForeignKey(nameof(User))]
+        public Guid? UserID { get; set; }
+        public virtual User? User { get; set; }
     }
 }

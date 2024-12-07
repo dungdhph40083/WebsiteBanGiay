@@ -13,8 +13,8 @@ namespace Application.Data.Models
 		[Key]
 		public Guid ColorID { get; set; }
 		public string? ColorName { get; set; }
-		public byte Status { get; set; }
+		public byte? Status { get; set; }
 		public DateTime? CreatedAt { get; set; }
-		public DateTime? UpdatedAt { get; set;}
+		public DateTime? UpdatedAt { get; set; }
 	}
 }

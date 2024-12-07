@@ -14,26 +14,27 @@ namespace Application.Data.Models
 		public Guid ProductDetailID { get; set; }
         [ForeignKey(nameof(Product))]
 		public Guid? ProductID { get; set; }
-		[ForeignKey(nameof(Color))]
+        [ForeignKey(nameof(Size))]
+        public Guid? SizeID { get; set; }
+        [ForeignKey(nameof(Color))]
 		public Guid? ColorID { get; set; }
-		[ForeignKey(nameof(Size))]
-		public Guid? SizeID { get; set; }
 		[ForeignKey(nameof(Image))]
 		public Guid? ImageID { get; set; }
-		public string? Material { get; set; }
-		public int Quantity { get; set; }
-		public long Price { get; set; }
+        [ForeignKey(nameof(Category))]
+        public Guid? CategoryID { get; set; }
+        [ForeignKey(nameof(Sale))]
+        public Guid? SaleID { get; set; }
+        public string? Material { get; set; }
+		public int? Quantity { get; set; }
         public string? Brand { get; set; }
         public string? PlaceOfOrigin { get; set; }
-        public string? Type { get; set; }
-        public DateTime WarrantyPeriod { get; set; }
-		public string? Instructions { get; set; }
-		public string? Features { get; set; }
-		public byte Status { get; set; }
-		public DateTime UpdatedAt { get; set; }
+		public byte? Status { get; set; }
+		public DateTime? UpdatedAt { get; set; }
 		public virtual Product? Product { get; set; }
 		public virtual Image? Image { get; set; }
 		public virtual Color? Color { get; set; }
 		public virtual Size? Size { get; set; }
+		public virtual Category? Category { get; set; }
+		public virtual Sale? Sale { get; set; }
     }
 }

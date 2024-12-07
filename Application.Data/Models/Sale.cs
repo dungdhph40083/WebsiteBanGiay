@@ -9,13 +9,17 @@ namespace Application.Data.Models
     {
         [Key]
         public Guid SaleID { get; set; }
-        public string? Name { get; set; }
-        public string? SaleCode { get; set; }
-        public byte Status { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        [ForeignKey(nameof(Category))]
+        public Guid? CategoryID { get; set; }
         [ForeignKey(nameof(Product))]
         public Guid? ProductID { get; set; }
+        public string? Name { get; set; }
+        public DateTime? StartingAt { get; set; }
+        public DateTime? EndingAt { get; set; }
+        public byte? Status { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public virtual Product? Product { get; set; }
+        public virtual Category? Category { get; set; }
     }
 }

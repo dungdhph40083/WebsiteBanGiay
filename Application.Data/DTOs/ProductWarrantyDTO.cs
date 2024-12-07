@@ -9,9 +9,7 @@ namespace Application.Data.DTOs
     public class ProductWarrantyDTO
     {
         public Guid? ProductID { get; set; }
-        public DateTime WarrantyPeriod { get; set; }
+        public DateTime? WarrantyPeriod { get; set; }
         public string? WarrantyConditions { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
     }
 }

@@ -9,10 +9,10 @@ namespace Application.Data.Models
         public Guid WarrantyID { get; set; }
         [ForeignKey(nameof(Product))]
         public Guid? ProductID { get; set; }
-        public DateTime WarrantyPeriod { get; set; }
+        public DateTime? WarrantyPeriod { get; set; }
         public string? WarrantyConditions { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; } 
         public virtual Product? Product { get; set; }
     }
 }

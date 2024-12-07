@@ -7,17 +7,13 @@ namespace Application.Data.Models
     {
 		[Key]
 		public Guid OrderID { get; set; }
-
 		[ForeignKey(nameof(User))]
 		public Guid? UserID { get; set; }
-
-		public DateTime OrderDate { get; set; }
-		public byte Status { get; set; }
+        [ForeignKey(nameof(PaymentMethod))]
+        public Guid? PaymentMethodID { get; set; }
+        public DateTime? OrderDate { get; set; }
+		public byte? Status { get; set; }
 		public string? ShippingAddress { get; set; }
-
-		[ForeignKey(nameof(PaymentMethod))]
-		public Guid? PaymentMethodID { get; set; }
-
 		public virtual User? User { get; set; }
 		public virtual PaymentMethod? PaymentMethod { get; set; }
 	}

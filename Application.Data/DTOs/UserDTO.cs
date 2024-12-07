@@ -7,6 +7,8 @@ namespace Application.Data.DTOs
 {
     public class UserDTO
     {
+        public Guid? RoleID { get; set; }
+        public Guid? ImageID { get; set; }
         [MinLength(3, ErrorMessage = "Tên người dùng quá ngắn!")]
         [MaxLength(30, ErrorMessage = "Tên người dùng quá dài!")]
         [Required(ErrorMessage = "Bắt buộc.")]
@@ -18,19 +20,17 @@ namespace Application.Data.DTOs
             )]
         [Required(ErrorMessage = "Bắt buộc.")]
         public string Password { get; set; } = null!;
-        public Guid? RoleID { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         [EmailAddress(ErrorMessage = "Email sai!")]
         public string? Email { get; set; }
-        public Guid? ImageID { get; set; }
         public string? Address { get; set; }
         // 
         [Length(9, 30, ErrorMessage = "SĐT quá ngắn hoặc quá dài!")]
         [RegularExpression(@"^\d*$", ErrorMessage = "SĐT không khớp.")]
         public string? PhoneNumber { get; set; }
         [Required(ErrorMessage = "Không khớp.")]
-        public byte Status { get; set; }
+        public byte? Status { get; set; }
 
         /*
          * I don't know why I'm constantly getting déjà vu from just looking at this code
