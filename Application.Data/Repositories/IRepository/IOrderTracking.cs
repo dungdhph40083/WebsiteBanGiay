@@ -1,4 +1,5 @@
-﻿using Application.Data.Models;
+﻿using Application.Data.DTOs;
+using Application.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,10 @@ namespace Application.Data.Repositories.IRepository
 {
     public interface IOrderTracking
     {
-        IEnumerable<OrderTracking> GetAll();
-        OrderTracking GetById(Guid id);
-        void Add(OrderTracking orderTracking);
-        void Update(OrderTracking orderTracking);
-        void Delete(int id);
-        void Save();
+        Task<List<OrderTracking>> GetAll();
+        Task<OrderTracking?> GetById(Guid id);
+        Task<OrderTracking> Add(OrderTrackingDTO orderTracking);
+        Task<OrderTracking?> Update(Guid ID, OrderTrackingDTO orderTracking);
+        Task Delete(Guid ID);
     }
 }

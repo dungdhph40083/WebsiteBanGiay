@@ -38,11 +38,11 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(GetColorById), new { id = createdColor.ColorID }, createdColor);
         }
 
-        [HttpPut("update-color/{id}")]
+        [HttpPatch("update-color/{id}")]
         public async Task<IActionResult> UpdateColor(Guid id, ColorDTO colorDTO)
         {
             await _colorRepository.UpdateColor(id, colorDTO);
-            return NoContent();
+            return Ok();
         }
 
         [HttpDelete("{id}")]

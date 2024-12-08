@@ -1,4 +1,5 @@
-﻿using Application.Data.Models;
+﻿using Application.Data.DTOs;
+using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
@@ -40,35 +41,10 @@ namespace Application.API.Controllers
 
         // POST: api/OrderDetails
         [HttpPost]
-        public ActionResult<OrderDetail> PostOrderDetails(OrderDetail orderDetails)
+        public async Task<ActionResult<OrderDetail>> PostOrderDetails(OrderDetailDto orderDetails)
         {
-            _orderDetailsRepository.Add(orderDetails);
-            _orderDetailsRepository.Save();
-            return CreatedAtAction("GetOrderDetails", new { id = orderDetails.OrderDetailID }, orderDetails);
-        }
-
-        // PUT: api/OrderDetails/5
-        [HttpPut("{id}")]
-        public IActionResult PutOrderDetails(Guid id, OrderDetail orderDetails)
-        {
-            if (id != orderDetails.OrderDetailID)
-            {
-                return BadRequest();
-            }
-
-            _orderDetailsRepository.Update(orderDetails);
-            _orderDetailsRepository.Save();
-
-            return NoContent();
-        }
-
-        // DELETE: api/OrderDetails/5
-        [HttpDelete("{id}")]
-        public IActionResult DeleteOrderDetails(int id)
-        {
-            _orderDetailsRepository.Delete(id);
-            _orderDetailsRepository.Save();
-            return NoContent();
+            var Response = await _orderDetailsRepository.Add(orderDetails);
+            return CreatedAtAction(nameof(GetOrderDetails), new { id = Response.OrderDetailID }, orderDetails);
         }
     }
 }

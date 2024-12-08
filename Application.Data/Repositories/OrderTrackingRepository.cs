@@ -1,6 +1,9 @@
-﻿using Application.Data.ModelContexts;
+﻿using Application.Data.DTOs;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,44 +15,61 @@ namespace Application.Data.Repositories
     public class OrderTrackingRepository : IOrderTracking
     {
         private readonly GiayDBContext _context;
+        private readonly IMapper Mapper;
 
-        public OrderTrackingRepository(GiayDBContext context)
+        public OrderTrackingRepository(GiayDBContext context, IMapper Mapper)
         {
             _context = context;
+            this.Mapper = Mapper;
         }
 
-        public IEnumerable<OrderTracking> GetAll()
+        public async Task<List<OrderTracking>> GetAll()
         {
-            return _context.OrderTrackings.ToList();
+            return await _context.OrderTrackings.ToListAsync();
         }
 
-        public OrderTracking GetById(Guid id)
+        public async Task<OrderTracking?> GetById(Guid id)
         {
-            return _context.OrderTrackings.Find(id);
+            return await _context.OrderTrackings.FindAsync(id);
         }
 
-        public void Add(OrderTracking orderTracking)
+        public async Task<OrderTracking> Add(OrderTrackingDTO orderTracking)
         {
-            _context.OrderTrackings.Add(orderTracking);
+            OrderTracking OrderTracking = new() { TrackingID = Guid.NewGuid()};
+            OrderTracking = Mapper.Map(orderTracking, OrderTracking);
+
+            await _context.OrderTrackings.AddAsync(OrderTracking);
+            await _context.SaveChangesAsync();
+
+            return OrderTracking;
         }
 
-        public void Update(OrderTracking orderTracking)
+        public async Task<OrderTracking?> Update(Guid ID, OrderTrackingDTO orderTracking)
         {
-            _context.OrderTrackings.Update(orderTracking);
-        }
-
-        public void Delete(int id)
-        {
-            var orderTracking = _context.OrderTrackings.Find(id);
-            if (orderTracking != null)
+            var Target = await GetById(ID);
+            if (Target != null)
             {
-                _context.OrderTrackings.Remove(orderTracking);
+                _context.Entry(Target).State = EntityState.Modified;
+                Target = Mapper.Map(orderTracking, Target);
+
+                _context.Update(Target);
+                await _context.SaveChangesAsync();
+                return Target;
             }
+            else return default;
         }
 
-        public void Save()
+        public async Task Delete(Guid ID)
         {
-            _context.SaveChanges();
+            var Target = _context.OrderTrackings.Find(ID);
+            if (Target != null)
+            {
+                _context.Entry(Target).State = EntityState.Modified;
+                Target.ShippingStatus = 0;
+
+                _context.Update(Target);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

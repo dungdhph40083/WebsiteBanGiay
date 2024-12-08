@@ -41,7 +41,7 @@ namespace Application.API.Controllers
         {
             _paymentMethodDetailRepository.Add(paymentMethodDetail);
             _paymentMethodDetailRepository.Save();
-            return CreatedAtAction("GetPaymentMethodDetail", new { id = paymentMethodDetail.PaymentMethodDetailID }, paymentMethodDetail);
+            return CreatedAtAction(nameof(GetPaymentMethodDetail), new { id = paymentMethodDetail.PaymentMethodDetailID }, paymentMethodDetail);
         }
 
         [HttpPut("{id}")]

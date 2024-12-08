@@ -1,7 +1,10 @@
 ﻿
+using Application.Data.DTOs;
 using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,44 +16,38 @@ namespace Application.Data.Repositories
 	public class OrderDetailsRepository : IOrderDetails
     {
         private readonly GiayDBContext _context;
+        private readonly IMapper Mapper;
 
-        public OrderDetailsRepository(GiayDBContext context)
+        public OrderDetailsRepository(GiayDBContext context, IMapper Mapper)
         {
             _context = context;
+            this.Mapper = Mapper;
         }
 
-        public IEnumerable<OrderDetail> GetAll()
+        public async Task<List<OrderDetail>> GetAll()
         {
-            return _context.OrderDetails.ToList();
+            return await _context.OrderDetails.ToListAsync();
         }
 
-        public OrderDetail GetById(int id)
+        public async Task<OrderDetail?> GetById(int id)
         {
-            return _context.OrderDetails.Find(id);
+            return await _context.OrderDetails.FindAsync(id);
         }
 
-        public void Add(OrderDetail orderDetails)
+        public async Task<OrderDetail> Add(OrderDetailDto orderDetails)
         {
-            _context.OrderDetails.Add(orderDetails);
-        }
-
-        public void Update(OrderDetail orderDetails)
-        {
-            _context.OrderDetails.Update(orderDetails);
-        }
-
-        public void Delete(int id)
-        {
-            var orderDetails = _context.OrderDetails.Find(id);
-            if (orderDetails != null)
+            OrderDetail OrderDetail = new()
             {
-                _context.OrderDetails.Remove(orderDetails);
-            }
-        }
+                OrderDetailID = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+            };
 
-        public void Save()
-        {
-            _context.SaveChanges();
+            OrderDetail = Mapper.Map(orderDetails, OrderDetail);
+
+            await _context.OrderDetails.AddAsync(OrderDetail);
+            await _context.SaveChangesAsync();
+
+            return OrderDetail;
         }
     }
 }

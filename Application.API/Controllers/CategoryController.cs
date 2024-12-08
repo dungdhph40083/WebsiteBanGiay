@@ -46,7 +46,7 @@ namespace Application.API.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult> Update(Guid id, CategoryDTO categoryDto)
         {
-            if (GetById(id) == null) return BadRequest();
+            // if (GetById(id) == null) return BadRequest();
             return Ok(await _categoryRepository.UpdateCategory(id, categoryDto));
         }
 

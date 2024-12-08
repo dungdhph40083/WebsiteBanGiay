@@ -1,4 +1,5 @@
-﻿using Application.Data.Models;
+﻿using Application.Data.DTOs;
+using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
@@ -18,15 +19,15 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<OrderTracking>> GetOrderTracking()
+        public async Task<ActionResult<List<OrderTracking>>> GetOrderTracking()
         {
-            return Ok(_orderTrackingRepository.GetAll());
+            return await _orderTrackingRepository.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<OrderTracking> GetOrderTracking(Guid id)
+        public async Task<ActionResult<OrderTracking?>> GetOrderTracking(Guid id)
         {
-            var orderTracking = _orderTrackingRepository.GetById(id);
+            var orderTracking = await _orderTrackingRepository.GetById(id);
 
             if (orderTracking == null)
             {
@@ -37,32 +38,27 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<OrderTracking> PostOrderTracking(OrderTracking orderTracking)
+        public async Task<ActionResult<OrderTracking>> PostOrderTracking(OrderTrackingDTO orderTracking)
         {
-            _orderTrackingRepository.Add(orderTracking);
-            _orderTrackingRepository.Save();
-            return CreatedAtAction("GetOrderTracking", new { id = orderTracking.TrackingID }, orderTracking);
+            await _orderTrackingRepository.Add(orderTracking);
+            return CreatedAtAction(nameof(GetOrderTracking), new { id = orderTracking.TrackingID }, orderTracking);
         }
 
         [HttpPut("{id}")]
-        public IActionResult PutOrderTracking(Guid id, OrderTracking orderTracking)
+        public async Task<ActionResult<OrderTracking?>> PutOrderTracking(Guid id, OrderTrackingDTO orderTracking)
         {
-            if (id != orderTracking.TrackingID)
+            var Response = await _orderTrackingRepository.Update(id, orderTracking);
+            if (Response != null)
             {
-                return BadRequest();
+                return Response;
             }
-
-            _orderTrackingRepository.Update(orderTracking);
-            _orderTrackingRepository.Save();
-
-            return NoContent();
+            else return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteOrderTracking(int id)
+        public async Task<ActionResult> DeleteOrderTracking(Guid id)
         {
-            _orderTrackingRepository.Delete(id);
-            _orderTrackingRepository.Save();
+            await _orderTrackingRepository.Delete(id);
             return NoContent();
         }
     }

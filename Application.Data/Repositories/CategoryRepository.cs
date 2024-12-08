@@ -58,13 +58,16 @@ namespace Application.Data.Repositories
         public async Task<Category?> UpdateCategory(Guid TargetID, CategoryDTO categoryDto)
         {
             var category = await _context.Categories.FindAsync(TargetID);
-            if (category == null) return default;
-            _context.Entry(category).State = EntityState.Modified;
-            var UpdatedTarget = Mapper.Map(categoryDto, category);
-            _context.Update(UpdatedTarget);
-            await _context.SaveChangesAsync();
+            if (category != null)
+            {
+                _context.Entry(category).State = EntityState.Modified;
+                var UpdatedTarget = Mapper.Map(categoryDto, category);
+                _context.Update(UpdatedTarget);
+                await _context.SaveChangesAsync();
 
-            return UpdatedTarget;
+                return UpdatedTarget;
+            }
+            else return default;
         }
     }
 }

@@ -36,6 +36,7 @@ namespace Application.Data.Repositories
         public void Update(PaymentMethod paymentMethod)
         {
             _context.PaymentMethods.Update(paymentMethod);
+
         }
 
         public void Delete(int id)

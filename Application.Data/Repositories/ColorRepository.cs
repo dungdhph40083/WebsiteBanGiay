@@ -57,18 +57,21 @@ namespace Application.Data.Repositories
             return await _context.Colors.FindAsync(id);
         }
 
-        public async Task UpdateColor(Guid ID, ColorDTO colorDTO)
+        public async Task<Color?> UpdateColor(Guid ID, ColorDTO colorDTO)
         {
             var color = await _context.Colors.FindAsync(ID);
             if (color != null)
             {
                 color.ColorName = colorDTO.ColorName;
                 color.Status = colorDTO.Status;
-                color.UpdatedAt = DateTime.UtcNow; 
+                color.UpdatedAt = DateTime.UtcNow;
 
                 _context.Colors.Update(color);
                 await _context.SaveChangesAsync();
+
+                return color;
             }
+            else return default;
         }
     }
 }

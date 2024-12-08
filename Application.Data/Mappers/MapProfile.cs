@@ -19,11 +19,20 @@ namespace Application.Data.Mappers
             CreateMap<Category, CategoryDTO>();
             CreateMap<CategoryDTO, Category>();
 
+            CreateMap<CustomerSupportMessage, CustomerSupportMessageDTO>();
+            CreateMap<CustomerSupportMessageDTO, CustomerSupportMessage>();
+
             CreateMap<Image, ImageDTO>();
             CreateMap<ImageDTO, Image>();
 
             CreateMap<Order, OrderDto>();
             CreateMap<OrderDto, Order>();
+
+            CreateMap<OrderDetail, OrderDetailDto>();
+            CreateMap<OrderDetailDto, OrderDetail>();
+
+            CreateMap<OrderTracking, OrderTrackingDTO>();
+            CreateMap<OrderTrackingDTO, OrderTracking>();
 
             CreateMap<Product, ProductDTO>();
             CreateMap<ProductDTO, Product>();
