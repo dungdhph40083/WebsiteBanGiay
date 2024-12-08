@@ -22,12 +22,13 @@ namespace Application.API.Controllers
             return await CustomerSupportMessageRepo.GetAll();
         }
 
-        [HttpGet]
+        [HttpGet("{Time}")]
         public async Task<ActionResult<CustomerSupportMessage?>> Get(long Time)
         {
             return await CustomerSupportMessageRepo.GetMessageByID(Time);
         }
 
+        [HttpPost]
         public async Task<ActionResult<CustomerSupportMessage>> Post(CustomerSupportMessageDTO NewMessage)
         {
             var Response = await CustomerSupportMessageRepo.SendMessage(NewMessage);
