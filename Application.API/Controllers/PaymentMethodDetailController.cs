@@ -27,9 +27,7 @@ namespace Application.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PaymentMethodDetail?>> GetPaymentMethodDetail(Guid id)
         {
-            var Response = await _paymentMethodDetailRepository.GetById(id);
-            if (Response == null) return NoContent();
-            else return Response;
+            return await _paymentMethodDetailRepository.GetById(id);
         }
 
         [HttpPost]
@@ -42,21 +40,14 @@ namespace Application.API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<PaymentMethodDetail?>> PutPaymentMethodDetail(Guid id, PaymentMethodDetailDTO paymentMethodDetail)
         {
-            var Response = await _paymentMethodDetailRepository.Update(id, paymentMethodDetail);
-            if (Response == null) return NotFound();
-            else return Response;
+            return await _paymentMethodDetailRepository.Update(id, paymentMethodDetail);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeletePaymentMethodDetail(Guid id)
         {
-            var Target = await _paymentMethodDetailRepository.GetById(id);
-            if (Target == null) return NoContent();
-            else
-            {
-                await _paymentMethodDetailRepository.Delete(id);
-                return Ok();
-            }
+            await _paymentMethodDetailRepository.Delete(id);
+            return NoContent();
         }
     }
 }

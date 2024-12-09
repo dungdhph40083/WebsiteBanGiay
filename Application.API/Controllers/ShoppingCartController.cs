@@ -45,7 +45,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult> Delete(Guid ID)
         {
             await ShoppingCartRepo.Delete(ID);
-            return Ok();
+            return NoContent();
         }
     }
 }

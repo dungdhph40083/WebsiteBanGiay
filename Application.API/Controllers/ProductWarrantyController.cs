@@ -32,7 +32,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductWarranty>> Post([FromBody] ProductWarrantyDTO NewWarranty)
         {
-            return await productWarrantyRepo.CreateNew(NewWarranty);
+            var Response = await productWarrantyRepo.CreateNew(NewWarranty);
+            return CreatedAtAction(nameof(Get), new { Response.WarrantyID }, Response);
         }
 
         [HttpPut("{ID}")]
@@ -45,7 +46,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult> Delete(Guid ID)
         {
             await productWarrantyRepo.DeleteExisting(ID);
-            return Ok();
+            return NoContent();
         }
     }
 }

@@ -32,7 +32,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Rating>> Post([FromBody] RatingsDTO NewRating)
         {
-            return await Rating.CreateNew(NewRating);
+            var Response = await Rating.CreateNew(NewRating);
+            return CreatedAtAction(nameof(Get), new { Response.RatingID }, Response);
         }
 
         [HttpPut("{ID}")]
@@ -45,7 +46,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult> Delete(Guid ID)
         {
             await Rating.DeleteExisting(ID);
-            return Ok();
+            return NoContent();
         }
     }
 }

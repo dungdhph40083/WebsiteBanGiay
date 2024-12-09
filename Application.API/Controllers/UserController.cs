@@ -33,9 +33,7 @@ namespace Application.API.Controllers
         [HttpGet("{ID}")]
         public async Task<ActionResult<User?>> Get(Guid ID)
         {
-            var Response = await UserRepo.GetUserByID(ID);
-            if (Response == null) return NoContent();
-            else return Ok(Response);
+            return await UserRepo.GetUserByID(ID);
         }
 
         // tạo mới người dùng
@@ -84,9 +82,7 @@ namespace Application.API.Controllers
                         break;
                 }
             }
-            var Response = await UserRepo.UpdateUser(ID, UpdatedUser);
-            if (Response == null) return NotFound();
-            else return Ok(Response);
+            return await UserRepo.UpdateUser(ID, UpdatedUser);
         }
 
         // cập nhật người dùng (1 cái) (2)
@@ -96,14 +92,6 @@ namespace Application.API.Controllers
             bool Result = await UserRepo.ToggleUser(ID);
             if (Result) return Ok("SUCCESS");
             else return BadRequest("FAILURE");
-        }
-
-        // xóa người dùng (1 cái)
-        [HttpDelete("{ID}")]
-        public async Task<ActionResult> Delete(Guid ID)
-        {
-            await UserRepo.DeleteUser(ID);
-            return NoContent();
         }
     }
 }

@@ -32,7 +32,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ShippingMethod>> Post([FromBody] ShippingMethodDTO NewShippingMethod)
         {
-            return await ShippingMethodrepos.CreateNew(NewShippingMethod);
+            var Response = await ShippingMethodrepos.CreateNew(NewShippingMethod);
+            return CreatedAtAction(nameof(Get), new { Response.ShippingMethodID }, Response);
         }
 
         [HttpPut("{ID}")]
@@ -45,7 +46,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult> Delete(Guid ID)
         {
             await ShippingMethodrepos.DeleteExisting(ID);
-            return Ok();
+            return NoContent();
         }
     }
 }

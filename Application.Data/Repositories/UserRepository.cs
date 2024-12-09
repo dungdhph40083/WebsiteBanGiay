@@ -34,15 +34,15 @@ namespace Application.Data.Repositories
             return User;
         }
 
-        public async Task DeleteUser(Guid TargetID)
-        {
-            var Target = await GetUserByID(TargetID);
-            if (Target != null)
-            {
-                Context.Users.Remove(Target);
-                await Context.SaveChangesAsync();
-            }
-        }
+        // public async Task DeleteUser(Guid TargetID)
+        // {
+        //     var Target = await GetUserByID(TargetID);
+        //     if (Target != null)
+        //     {
+        //         Context.Users.Remove(Target);
+        //         await Context.SaveChangesAsync();
+        //     }
+        // }
 
         public async Task<User?> GetUserByID(Guid TargetID)
         {

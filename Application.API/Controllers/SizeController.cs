@@ -25,9 +25,7 @@ namespace Application.API.Controllers
         [HttpGet("{ID}")]
         public async Task<ActionResult<Size?>> Get(Guid ID)
         {
-            var Response = await SizeRepo.GetSizeByID(ID);
-            if (Response == null) return NoContent();
-            else return Ok(Response);
+            return await SizeRepo.GetSizeByID(ID);
         }
 
         [HttpPost]
@@ -40,9 +38,7 @@ namespace Application.API.Controllers
         [HttpPut("{ID}")]
         public async Task<ActionResult<Size?>> Put(Guid ID, [FromBody] SizeDTO UpdatedSize)
         {
-            var Response = await SizeRepo.UpdateSize(ID, UpdatedSize);
-            if (Response == null) return NotFound();
-            else return Response;
+            return await SizeRepo.UpdateSize(ID, UpdatedSize);
         }
 
         [HttpDelete("{ID}")]

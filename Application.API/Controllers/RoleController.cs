@@ -35,7 +35,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Role>> Post([FromBody] RoleDTO NewRole)
         {
-            return await Rolerepos.CreateNew(NewRole);
+            var Response = await Rolerepos.CreateNew(NewRole);
+            return CreatedAtAction(nameof(Get), new { Response.RoleID }, Response);
         }
 
         [HttpPut("{ID}")]
@@ -48,7 +49,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult> Delete(Guid ID)
         {
             await Rolerepos.DeleteExisting(ID);
-            return Ok();
+            return NoContent();
         }
     }
 }

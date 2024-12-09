@@ -37,7 +37,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductDetail>> Post([FromBody] ProductDetailDTO NewProductDetail)
         {
-            return await ProductDetailRepo.CreateNew(NewProductDetail);
+            var Response = await ProductDetailRepo.CreateNew(NewProductDetail);
+            return CreatedAtAction(nameof(Get), new { Response.ProductDetailID }, Response);
         }
 
         [HttpPut("{ID}")]
@@ -50,7 +51,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult> Delete(Guid ID)
         {
             await ProductDetailRepo.DeleteExisting(ID);
-            return Ok();
+            return NoContent();
         }
     }
 }

@@ -32,7 +32,8 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Return>> Post([FromBody] ReturnDTO NewReturn)
         {
-            return await returnrepos.CreateNew(NewReturn);
+            var Response = await returnrepos.CreateNew(NewReturn);
+            return CreatedAtAction(nameof(Get), new { Response.ReturnID }, Response);
         }
 
         [HttpPut("{ID}")]
@@ -45,7 +46,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult> Delete(Guid ID)
         {
             await returnrepos.DeleteExisting(ID);
-            return Ok();
+            return NoContent();
         }
     }
 }

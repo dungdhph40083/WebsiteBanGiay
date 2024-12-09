@@ -10,6 +10,7 @@ namespace Application.Data.Repositories.IRepository
         Task<User> CreateUser(UserDTO NewUser);
         Task<User?> UpdateUser(Guid TargetID, UserDTO UpdatedUser);
         Task<bool> ToggleUser(Guid TargetID);
-        Task DeleteUser(Guid TargetID);
+
+        // Task DeleteUser(Guid TargetID);
     }
 }

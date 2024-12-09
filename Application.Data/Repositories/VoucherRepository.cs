@@ -21,10 +21,13 @@ namespace Application.Data.Repositories
         {
             var DateTimeUtcNow = DateTime.UtcNow;
 
-            Voucher Voucher = new() {
+            Voucher Voucher = new()
+            {
                 VoucherID = Guid.NewGuid(),
                 CreatedAt = DateTimeUtcNow,
-                UpdatedAt = DateTimeUtcNow };
+                UpdatedAt = DateTimeUtcNow
+            };
+
             NewVoucher.VoucherCode = NewVoucher.VoucherCode.ToUpper();
             Voucher = Mapper.Map(NewVoucher, Voucher);
             await Context.Vouchers.AddAsync(Voucher);
