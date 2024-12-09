@@ -23,7 +23,7 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<IActionResult> Index(int page = 1)
         {
             int pageSize = 9;
-            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
 
             if (products != null)
             {

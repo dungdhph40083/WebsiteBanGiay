@@ -16,7 +16,7 @@ namespace Application.MVC.Controllers
         }
         public async Task<ActionResult> Index()
         {
-            string requestURL = "https://localhost:7187/api/Product/get-all";
+            string requestURL = "https://localhost:7187/api/Product";
             var response = await client.GetFromJsonAsync<List<Product>>(requestURL);
 
             if (response == null)
@@ -42,7 +42,7 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductDTO product, IFormFile? Image)
         {
-            string requestURL = $"https://localhost:7187/api/Product/create_product";
+            string requestURL = $"https://localhost:7187/api/Product";
 
             MultipartFormDataContent Contents = new()
             {

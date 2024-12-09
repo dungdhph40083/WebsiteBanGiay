@@ -18,7 +18,7 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Index()
         {
-            string requestURL = $@"https://localhost:7187/api/Category/get-all";
+            string requestURL = $@"https://localhost:7187/api/Category";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<List<Category>>(response);
             return View(data);
@@ -44,7 +44,7 @@ namespace Application.MVC.Controllers
         { 
             try
             {
-            string requestURL = $"https://localhost:7187/api/Category/create-category";
+            string requestURL = $"https://localhost:7187/api/Category";
             var response = await client.PostAsJsonAsync(requestURL, categoryDTO);
             return RedirectToAction("Index");
             }
@@ -68,16 +68,14 @@ namespace Application.MVC.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Guid ID, CategoryDTO categoryDTO)
+        public async Task<ActionResult> Edit(Guid id, CategoryDTO categoryDTO)
         {
-            string requestURL = $@"https://localhost:7187/api/Category/update-category/{ID}";
-            var response =client.PutAsJsonAsync(requestURL, categoryDTO).Result;    
+            string requestURL = $@"https://localhost:7187/api/Category/{id}";
+            var response = await client.PutAsJsonAsync(requestURL, categoryDTO);    
                 return RedirectToAction(nameof(Index));
-            }
+        }
 
 
-        [HttpGet]
         public ActionResult Delete(Guid id)
         { try
             {

@@ -22,7 +22,7 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Sale/getbyId?id={id}";
+            string requestURL = $"https://localhost:7187/api/Sale/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var Sales = JsonConvert.DeserializeObject<Sale>(response);
             return View(Sales);
@@ -31,9 +31,11 @@ namespace Application.MVC.Controllers
         {
             try
             {
-                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+                var categories = await client.GetFromJsonAsync<List<Category>>("https://localhost:7187/api/Category");
 
                 ViewBag.Products = products ?? new List<Product>();
+                ViewBag.Categories = categories ?? new List<Category>();
                 Sale Sale = new Sale()
                 {
                     SaleID = Guid.NewGuid(),
@@ -51,13 +53,18 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Sale Sale)
         {
-            string requestURL = "https://localhost:7187/api/Sale/create";
+            string requestURL = "https://localhost:7187/api/Sale";
             var response = await client.PostAsJsonAsync(requestURL, Sale);
             return RedirectToAction("Index");
         }
-        public ActionResult Update(Guid id)
+        public async Task<ActionResult> Update(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Sale/getbyId?id={id}";
+            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+            var categories = await client.GetFromJsonAsync<List<Category>>("https://localhost:7187/api/Category");
+
+            ViewBag.Products = products ?? new List<Product>();
+            ViewBag.Categories = categories ?? new List<Category>();
+            string requestURL = $"https://localhost:7187/api/Sale/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             Sale Sales = JsonConvert.DeserializeObject<Sale>(response);
             return View(Sales);
@@ -67,13 +74,13 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, Sale Sale)
         {
-            string requestURL = $@"https://localhost:7187/api/Sale/update?id={ID}";
+            string requestURL = $@"https://localhost:7187/api/Sale/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, Sale);
             return RedirectToAction("Index");
         }
         public ActionResult Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Sale/delete?id={id}";
+            string requestURL = $"https://localhost:7187/api/Sale/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");
         }

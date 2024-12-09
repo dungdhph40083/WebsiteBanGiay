@@ -43,7 +43,7 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdCategory.CategoryID }, createdCategory);
         }
 
-        [HttpPatch("{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> Update(Guid id, CategoryDTO categoryDto)
         {
             // if (GetById(id) == null) return BadRequest();

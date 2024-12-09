@@ -7,6 +7,217 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="NewFolder\Image\Create.cshtml" />
+    <None Remove="NewFolder\Image\Details.cshtml" />
+    <None Remove="NewFolder\Image\Edit.cshtml" />
+    <None Remove="NewFolder\Image\Index.cshtml" />
+    <None Remove="NewFolder\OrderDetails\Create.cshtml" />
+    <None Remove="NewFolder\OrderDetails\Details.cshtml" />
+    <None Remove="NewFolder\OrderDetails\Edit.cshtml" />
+    <None Remove="NewFolder\OrderDetails\Index.cshtml" />
+    <None Remove="NewFolder\Orders\Create.cshtml" />
+    <None Remove="NewFolder\Orders\Details.cshtml" />
+    <None Remove="NewFolder\Orders\Edit.cshtml" />
+    <None Remove="NewFolder\Orders\Index.cshtml" />
+    <None Remove="NewFolder\OrderTrackings\Create.cshtml" />
+    <None Remove="NewFolder\OrderTrackings\Details.cshtml" />
+    <None Remove="NewFolder\OrderTrackings\Edit.cshtml" />
+    <None Remove="NewFolder\OrderTrackings\Index.cshtml" />
+    <None Remove="NewFolder\PaymentMethodDetails\Create.cshtml" />
+    <None Remove="NewFolder\PaymentMethodDetails\Details.cshtml" />
+    <None Remove="NewFolder\PaymentMethodDetails\Edit.cshtml" />
+    <None Remove="NewFolder\PaymentMethodDetails\Index.cshtml" />
+    <None Remove="NewFolder\PaymentMethods\Create.cshtml" />
+    <None Remove="NewFolder\PaymentMethods\Details.cshtml" />
+    <None Remove="NewFolder\PaymentMethods\Edit.cshtml" />
+    <None Remove="NewFolder\PaymentMethods\Index.cshtml" />
+    <None Remove="NewFolder\ProductDetail\Create.cshtml" />
+    <None Remove="NewFolder\ProductDetail\Details.cshtml" />
+    <None Remove="NewFolder\ProductDetail\edit.cshtml" />
+    <None Remove="NewFolder\ProductDetail\Index.cshtml" />
+    <None Remove="NewFolder\ProductDetail\Update.cshtml" />
+    <None Remove="NewFolder\ShoppingCart\Create.cshtml" />
+    <None Remove="NewFolder\ShoppingCart\Details.cshtml" />
+    <None Remove="NewFolder\ShoppingCart\Edit.cshtml" />
+    <None Remove="NewFolder\ShoppingCart\Index.cshtml" />
+    <None Remove="NewFolder\User\Create.cshtml" />
+    <None Remove="NewFolder\User\Details.cshtml" />
+    <None Remove="NewFolder\User\Edit.cshtml" />
+    <None Remove="NewFolder\User\Index.cshtml" />
+    <None Remove="NewFolder\Voucher\Create.cshtml" />
+    <None Remove="NewFolder\Voucher\Details.cshtml" />
+    <None Remove="NewFolder\Voucher\Edit.cshtml" />
+    <None Remove="NewFolder\Voucher\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="NewFolder\Image\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Image\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Image\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Image\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\OrderDetails\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\OrderDetails\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\OrderDetails\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\OrderDetails\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Orders\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Orders\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Orders\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Orders\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\OrderTrackings\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\OrderTrackings\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\OrderTrackings\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\OrderTrackings\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\PaymentMethodDetails\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\PaymentMethodDetails\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\PaymentMethodDetails\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\PaymentMethodDetails\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\PaymentMethods\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\PaymentMethods\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\PaymentMethods\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\PaymentMethods\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\ProductDetail\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\ProductDetail\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\ProductDetail\edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\ProductDetail\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\ProductDetail\Update.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\ShoppingCart\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\ShoppingCart\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\ShoppingCart\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\ShoppingCart\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\User\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\User\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\User\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\User\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Voucher\Create.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Voucher\Details.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Voucher\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="NewFolder\Voucher\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
