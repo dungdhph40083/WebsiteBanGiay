@@ -66,7 +66,7 @@ namespace Application.MVC.Controllers
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError(string.Empty, $"Update failed: {error}");
+                ModelState.AddModelError(string.Empty, $"Create failed: {error}");
                 return View(product); // Trả về form chỉnh sửa với thông báo lỗi
             }
         }
@@ -87,6 +87,7 @@ namespace Application.MVC.Controllers
 
             return View(product);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Guid ID, ProductDTO product, IFormFile? Image)
@@ -96,9 +97,7 @@ namespace Application.MVC.Controllers
                 return BadRequest("Invalid product data.");
             }
 
-            string requestURL = $"https://localhost:7187/api/Product/update-product/{ID}";
-
-            // Sử dụng PUT để gửi dữ liệu cập nhật sản phẩm
+            string requestURL = $"https://localhost:7187/api/Product/{ID}";
 
             MultipartFormDataContent Contents = new()
             {
@@ -127,6 +126,7 @@ namespace Application.MVC.Controllers
                 return View(product); // Trả về form chỉnh sửa với thông báo lỗi
             }
         }
+
         public ActionResult Delete(Guid id)
         {
             string requestURL = $"https://localhost:7187/api/Product/{id}";

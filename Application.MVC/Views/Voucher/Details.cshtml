@@ -1,0 +1,59 @@
+﻿@model Application.Data.Models.Voucher
+
+@{
+    ViewData["Title"] = "Mô tả Voucher";
+}
+
+<h1>Mô tả Voucher</h1>
+
+<dl class="row">
+    <dt class="col-md-3">ID</dt>
+    <dd class="col-md-9">
+        <i class="font-monospace-cascadia">@Model.VoucherID</i>
+    </dd>
+    <dt class="col-md-3">Mã Voucher</dt>
+    <dd class="col-md-9">
+        <i class="font-monospace-cascadia">@Model.VoucherCode</i><br />
+    </dd>
+    <dt class="col-md-3">Cho danh mục</dt>
+    <dd class="col-md-9">@(Model.Category?.CategoryName ?? "Không có")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.CategoryID == null ? "Không có" : Model.CategoryID))</i>
+    </dd>
+    <dt class="col-md-3">Cho sản phẩm</dt>
+    <dd class="col-md-9">
+            @(Model.Product?.Name ?? "Không có")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.ProductID == null ? "Không có" : Model.ProductID))</i>
+    </dd>
+    <dt class="col-md-3">Còn lại</dt>
+    <dd class="col-md-9">
+        @Model.UsesLeft.GetValueOrDefault().ToString("#,##0")<br />
+    </dd>
+    <dt class="col-md-3">Giảm giá</dt>
+    <dd class="col-md-9">
+        @(Model.DiscountPrice <= 0 ? "Không giảm giá" : $"-{Model.DiscountPrice:#,##0}")
+    </dd>
+    <dt class="col-md-3">Bắt đầu vào</dt>
+    <dd class="col-md-9">
+        @Model.StartingAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss")
+    </dd>
+    <dt class="col-md-3">Kết thúc vào</dt>
+    <dd class="col-md-9">
+        @Model.EndingAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss")
+    </dd>
+    <dt class="col-md-3">Mô tả</dt>
+    <dd class="col-md-9">
+            @Model.Description<br />
+    </dd>
+    <dt class="col-md-3">Trạng thái</dt>
+    <dd class="col-md-9">
+            @Model.Status<br />
+    </dd>
+    <dt class="col-md-3">Ngày tạo</dt>
+    <dd class="col-md-9">
+        @Model.CreatedAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss")
+    </dd>
+    <dt class="col-md-3">Lần sửa cuối</dt>
+    <dd class="col-md-9">
+        @Model.UpdatedAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss")
+    </dd>
+</dl>

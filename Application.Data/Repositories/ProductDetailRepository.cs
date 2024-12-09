@@ -75,11 +75,16 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
+
                 Target.UpdatedAt = DateTime.UtcNow;
-                var UpdatedTarget = Mapper.Map(UpdatedDetail, Target);
-                Context.Update(UpdatedTarget);
+
+                // DO NOT REMOVE THIS LINE
+                if (UpdatedDetail.ImageID == null) UpdatedDetail.ImageID = Target.ImageID;
+
+                Target = Mapper.Map(UpdatedDetail, Target);
+                Context.Update(Target);
                 await Context.SaveChangesAsync();
-                return UpdatedTarget;
+                return Target;
             }
             else return default;
         }

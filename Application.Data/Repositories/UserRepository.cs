@@ -25,7 +25,8 @@ namespace Application.Data.Repositories
             var DateTimeSync = DateTime.UtcNow;
 
             User User = new() { UserID = Guid.NewGuid(), CreatedAt = DateTimeSync, UpdatedAt = DateTimeSync};
-            NewUser.Password = PasswordHasher(NewUser.Password);
+
+            NewUser.Password = PasswordHasher(NewUser.Password!);
 
             User = Mapper.Map(NewUser, User);
 
@@ -34,15 +35,15 @@ namespace Application.Data.Repositories
             return User;
         }
 
-        // public async Task DeleteUser(Guid TargetID)
-        // {
-        //     var Target = await GetUserByID(TargetID);
-        //     if (Target != null)
-        //     {
-        //         Context.Users.Remove(Target);
-        //         await Context.SaveChangesAsync();
-        //     }
-        // }
+        public async Task DeleteUser(Guid TargetID)
+        {
+            var Target = await GetUserByID(TargetID);
+            if (Target != null)
+            {
+                Context.Users.Remove(Target);
+                await Context.SaveChangesAsync();
+            }
+        }
 
         public async Task<User?> GetUserByID(Guid TargetID)
         {
@@ -66,12 +67,20 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
-                UpdatedUser.Password = PasswordHasher(UpdatedUser.Password);
-                var UpdatedTarget = Mapper.Map(UpdatedUser, Target);
-                UpdatedTarget.UpdatedAt = DateTime.UtcNow;
-                Context.Update(UpdatedTarget);
+
+                // Cập nhật mật khẩu khi mật khẩu ko null
+                if (!string.IsNullOrWhiteSpace(UpdatedUser.Password)) UpdatedUser.Password = PasswordHasher(UpdatedUser.Password);
+                else UpdatedUser.Password = Target.Password;
+                
+                // Ko cập nhật ảnh khi ảnh null
+                if (UpdatedUser.ImageID == null) UpdatedUser.ImageID = Target.ImageID;
+
+                Target = Mapper.Map(UpdatedUser, Target);
+                Target.UpdatedAt = DateTime.UtcNow;
+
+                Context.Update(Target);
                 await Context.SaveChangesAsync();
-                return UpdatedTarget;
+                return Target;
             }
             else return default;
         }
@@ -82,6 +91,7 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
+
                 if (Target.Status == 1) Target.Status = 0;
                 else Target.Status = 1;
 

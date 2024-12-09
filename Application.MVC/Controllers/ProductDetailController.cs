@@ -1,129 +1,132 @@
-﻿//using Application.Data.DTOs;
-//using Application.Data.Models;
-//using Application.Data.Repositories.IRepository;
-//using Microsoft.AspNetCore.Mvc;
-//using Newtonsoft.Json;
+﻿using Application.Data.DTOs;
+using Application.Data.Models;
+using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 
-//namespace Application.MVC.Controllers
-//{
-//    public class ProductDetailController : Controller
-//    {
-//        HttpClient client;
-//        public ProductDetailController()
-//        {
-//            client = new HttpClient();
-//        }
-//        public async Task<ActionResult> Index()
-//        {
-//            var response = await client.GetAsync("https://localhost:7187/api/ProductDetails");
-//            if (!response.IsSuccessStatusCode)
-//            {
-//                return View("Error");
-//        }
+namespace Application.MVC.Controllers
+{
+    public class ProductDetailController : Controller
+    {
+        HttpClient Client = new HttpClient();
 
-//            var productDetails = await response.Content.ReadFromJsonAsync<List<ProductDetail>>();
-//            return View(productDetails);
-//        }
+        public async Task<ActionResult> Index()
+        {
+            string URL = $@"https://localhost:7187/api/ProductDetails";
+            var Response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
+            return View(Response);
+        }
 
-//        public async Task<IActionResult> Create()
-//        {
-//            try
-//            {
-//                await FetchInfo();
-//                return View();
-//            }
-//            catch (Exception ex)
-//            {
-//                // Log lỗi nếu có
-//                Console.ForegroundColor = ConsoleColor.Red;
-//                Console.WriteLine($"Error: {ex.Message}");
-//                Console.ForegroundColor = ConsoleColor.Gray;
-//                return View("Error");
-//            }
-//        }
+        public async Task<IActionResult> Create()
+        {
+            try
+            {
+                await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nếu có
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return View("Error");
+            }
+        }
 
-//        private async Task FetchInfo()
-//        {
-//            // Lấy danh sách Products và Images từ API
-//            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
-//            var Colors = await client.GetFromJsonAsync<List<Color>>("https://localhost:7187/api/Color/get-all");
-//            var Sizes = await client.GetFromJsonAsync<List<Size>>("https://localhost:7187/api/Size");
+        private async Task Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds()
+        {
+            // Lấy danh sách Products và Images từ API
+            var ProductsList = await Client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Products");
+            var ColorsList = await Client.GetFromJsonAsync<List<Color>>("https://localhost:7187/api/Color");
+            var SizesList = await Client.GetFromJsonAsync<List<Size>>("https://localhost:7187/api/Size");
+            var CategoriesList = await Client.GetFromJsonAsync<List<Category>>($@"https://localhost:7187/api/Category");
+            var SalesList = await Client.GetFromJsonAsync<List<Sale>>($@"https://localhost:7187/api/Category");
 
-//            // Nếu API trả về null, khởi tạo danh sách trống
-//            ViewBag.Products = products ?? new List<Product>();
-//            ViewBag.Colors = Colors ?? new List<Color>();
-//            ViewBag.Sizes = Sizes ?? new List<Size>();
-//        }
+            var ProdsItems = ProductsList?
+                .Select(Pls => new SelectListItem
+                { Text = Pls.Name, Value = Pls.ProductID.ToString() }).ToList();
 
-//        // POST: ProductDetail/Create
-//        [HttpPost]
-//        public async Task<ActionResult> Create(ProductDetailDTO newProductDetail)
-//        {
-//            if (!ModelState.IsValid)
-//            {
-//                return View(newProductDetail);
-//            }
+            var ColrsItems = ColorsList?
+                .Select(Help => new SelectListItem
+                { Text = Help.ColorName, Value = Help.ColorID.ToString() }).ToList();
 
-//            // Gửi yêu cầu POST đến API
-//            try
-//            {
-//                var response = await client.PostAsJsonAsync("https://localhost:7187/api/ProductDetails", newProductDetail);
-//                return RedirectToAction("Index"); // Quay lại trang danh sách nếu thành công
-//            }
-//            catch (Exception Msg)
-//            {
-//                await FetchInfo();
-//                Console.ForegroundColor = ConsoleColor.Red;
-//                Console.WriteLine($"Error: {Msg.Message}");
-//                Console.ForegroundColor = ConsoleColor.Gray;
-//                return View(newProductDetail);
-//            }
+            var SizesItems = SizesList?
+                .Select(Im => new SelectListItem
+                { Text = Im.Name, Value = Im.SizeID.ToString() }).ToList();
 
-//            // Nếu có lỗi, hiển thị lại form với thông báo lỗi
-//        }
+            var CatgsItems = CategoriesList?
+                .Select(Being => new SelectListItem
+                { Text = Being.CategoryName, Value = Being.CategoryID.ToString() }).ToList();
 
-//        public async Task<IActionResult> Edit(Guid id)
-//        {
-//            await FetchInfo();
+            var SalesItems = SalesList?
+                .Select(HeldHostage => new SelectListItem
+                { Text = HeldHostage.Name, Value = HeldHostage.SaleID.ToString() }).ToList();
 
-//            // Lấy thông tin ProductDetail theo ID
-//            var productDetail = await client.GetFromJsonAsync<ProductDetailDTO>($"https://localhost:7187/api/ProductDetails/getbyId?ID={id}");
+            // Nếu API trả về null, khởi tạo danh sách trống
+            ViewBag.Products = ProdsItems;
+            ViewBag.Colors = ColrsItems;
+            ViewBag.Sizes = SizesItems;
+            ViewBag.Categories = CatgsItems;
+            ViewBag.Sales = SalesItems;
+        }
 
-//            if (productDetail == null)
-//        {
-//                return NotFound();
-//            }
+        // POST: ProductDetail/Create
+        [HttpPost]
+        public async Task<ActionResult> Create(ProductDetailDTO newProductDetail)
+        {
+            // Gửi yêu cầu POST đến API
+            try
+            {
+                var response = await Client.PostAsJsonAsync("https://localhost:7187/api/ProductDetails", newProductDetail);
+                return RedirectToAction(nameof(Index)); // Quay lại trang danh sách nếu thành công
+            }
+            catch (Exception Msg)
+            {
+                await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error: {Msg.Message}");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return View(newProductDetail);
+            }
 
-//            return View(productDetail);
-//        }
+            // Nếu có lỗi, hiển thị lại form với thông báo lỗi
+        }
 
-//        // POST: ProductDetail/Edit/{id}
-//        [HttpPost]
-//        public async Task<IActionResult> Edit(Guid id, ProductDetailDTO updatedDetail)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                var response = await client.PutAsJsonAsync($"https://localhost:7187/api/ProductDetails/{id}", updatedDetail);
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds();
 
-//                if (response.IsSuccessStatusCode)
-//                {
-//                    return RedirectToAction("Index");
-//                }   
-//                else
-//                {
-//                    ModelState.AddModelError(string.Empty, "Update failed");
-//                }
-//            }
+            // Lấy thông tin ProductDetail theo ID
+            var productDetail = await Client.GetFromJsonAsync<ProductDetailDTO>($"https://localhost:7187/api/ProductDetails/{id}");
+            return View(productDetail);
+        }
 
-//            await FetchInfo();
-
-//            return View(updatedDetail);
-//        }
-//        public ActionResult Delete(Guid id)
-//        {
-//            string requestURL = $"https://localhost:7187/api/ProductDetails/{id}";
-//            var response = client.DeleteAsync(requestURL).Result;
-//            return RedirectToAction("Index");
-//        }
-//    }
-//}
+        // POST: ProductDetail/Edit/{id}
+        [HttpPost]
+        public async Task<IActionResult> Edit(Guid id, ProductDetailDTO updatedDetail)
+        {
+            try
+            {
+                string URL = $@"https://localhost:7187/api/ProductDetails/{id}";
+                var Response = await Client.PutAsJsonAsync(URL, updatedDetail);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
+                return View(updatedDetail);
+            }
+        }
+        public ActionResult Delete(Guid id)
+        {
+            string requestURL = $"https://localhost:7187/api/ProductDetails/{id}";
+            var response = Client.DeleteAsync(requestURL).Result;
+            return RedirectToAction(nameof(Index));
+        }
+    }
+}

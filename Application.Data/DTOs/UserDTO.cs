@@ -18,8 +18,7 @@ namespace Application.Data.DTOs
             @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{8,}$",
             ErrorMessage = "Mật khẩu phải có 8 ký tự, bao gồm ký tự viết hoa, viết thường và ký tự đặc biệt."
             )]
-        [Required(ErrorMessage = "Bắt buộc.")]
-        public string Password { get; set; } = null!;
+        public string? Password { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         [EmailAddress(ErrorMessage = "Email sai!")]

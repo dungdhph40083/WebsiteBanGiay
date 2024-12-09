@@ -9,6 +9,7 @@ using System;
 using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
 using Application.Data.DTOs;
+using Application.Data.Enums;
 
 namespace Application.API.Controllers
 {
@@ -17,9 +18,11 @@ namespace Application.API.Controllers
     public class ProductDetailsController : ControllerBase
     {
         private readonly IProductDetail ProductDetailRepo;
-        public ProductDetailsController(IProductDetail ProductDetailRepo)
+        private readonly IImageRepository ImageRepository;
+        public ProductDetailsController(IProductDetail ProductDetailRepo, IImageRepository ImageRepository)
         {
             this.ProductDetailRepo = ProductDetailRepo;
+            this.ImageRepository = ImageRepository;
         }
 
         [HttpGet]
@@ -35,16 +38,50 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductDetail>> Post([FromBody] ProductDetailDTO NewProductDetail)
+        public async Task<ActionResult<ProductDetail>> Post([FromBody] ProductDetailDTO NewProductDetail, IFormFile? Image)
         {
+            if (Image != null)
+            {
+                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(Image, 4_194_304))
+                {
+                    case ErrorResult.IMAGE_TOO_BIG_ERROR:
+                        return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!");
+                    case ErrorResult.IMAGE_IS_BROKEN_ERROR:
+                    default:
+                        return BadRequest("Tệp ảnh không hợp lệ!");
+                    case SuccessResult.IMAGE_OK:
+                        {
+                            var CreatedImage = await ImageRepository.CreateImageAsync(Image);
+                            NewProductDetail.ImageID = CreatedImage.ImageID;
+                        }
+                        break;
+                }
+            }
             var Response = await ProductDetailRepo.CreateNew(NewProductDetail);
             return CreatedAtAction(nameof(Get), new { Response.ProductDetailID }, Response);
         }
 
         [HttpPut("{ID}")]
-        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromBody] ProductDetailDTO UpdateProductDetail)
+        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromBody] ProductDetailDTO UpdatedProductDetail, IFormFile? Image)
         {
-            return await ProductDetailRepo.UpdateExisting(ID, UpdateProductDetail);
+            if (Image != null)
+            {
+                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(Image, 4_194_304))
+                {
+                    case ErrorResult.IMAGE_TOO_BIG_ERROR:
+                        return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!");
+                    case ErrorResult.IMAGE_IS_BROKEN_ERROR:
+                    default:
+                        return BadRequest("Tệp ảnh không hợp lệ!");
+                    case SuccessResult.IMAGE_OK:
+                        {
+                            var CreatedImage = await ImageRepository.CreateImageAsync(Image);
+                            UpdatedProductDetail.ImageID = CreatedImage.ImageID;
+                        }
+                        break;
+                }
+            }
+            return await ProductDetailRepo.UpdateExisting(ID, UpdatedProductDetail);
         }
 
         [HttpDelete]

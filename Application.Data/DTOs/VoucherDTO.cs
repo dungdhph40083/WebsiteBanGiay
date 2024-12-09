@@ -16,6 +16,8 @@ namespace Application.Data.DTOs
         [Range(0, 1_000_000_000_000_000, ErrorMessage = "Must be 0 ~ 10Q.")]
         public long? DiscountPrice { get; set; }
         public string? Description { get; set; }
+        public DateTime? StartingAt { get; set; }
+        public DateTime? EndingAt { get; set; }
         public byte? Status { get; set; }
     }
 }

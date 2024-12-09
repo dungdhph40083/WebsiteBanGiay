@@ -61,7 +61,7 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = Response.ProductID }, Response);
         }
 
-        [HttpPatch("{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Product?>> PutProduct(Guid id, [FromForm] ProductDTO product, IFormFile? Image)
         {
             // Update product information in the database
@@ -88,9 +88,9 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteProduct(Guid id)
+        public async Task<ActionResult>? DeleteProduct(Guid id)
         {
-            _productRepository.Delete(id);
+            await _productRepository.Delete(id);
             return NoContent();
         }
     }

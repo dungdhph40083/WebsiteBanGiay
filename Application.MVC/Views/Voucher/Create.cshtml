@@ -1,0 +1,73 @@
+﻿@using Application.Data.Enums
+@model Application.Data.DTOs.VoucherDTO;
+
+@{
+    ViewData["Title"] = "Tạo Voucher";
+}
+
+<h1>Tạo Voucher mới</h1>
+
+<form asp-action="Create" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="CategoryID" class="form-label">Danh mục</label>
+            <select asp-for="CategoryID" class="custom-select" aria-label="Select category to assign to" asp-items="@ViewBag.Catgs">
+                <option selected value=null>(Chưa chọn)</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ProductID" class="form-label">Sản phẩm</label>
+            <select asp-for="ProductID" class="custom-select" aria-label="Select category to assign to" asp-items="@ViewBag.Prods">
+                <option selected value=null>(Chưa chọn)</option>
+            </select>
+        </div>
+        <br />
+        <i class="text-center text-decoration-underline">Cần phải điền ít nhất một trường để dùng Voucher. (Các trường vẫn có thể để trống)</i>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <label asp-for="VoucherCode" class="form-label">Mã Voucher</label>
+            <input asp-for="VoucherCode" class="form-control font-monospace-cascadia" required aria-label="Input voucher code to use" />
+            <span>Mã Voucher phải độc nhất và không chứa ký tự đặc biệt!</span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="UsesLeft" class="form-label">Số lượng</label>
+            <input asp-for="UsesLeft" class="form-control" type="number" placeholder="0" step="1" min="-1" max="10000000"
+                   aria-label="Input how many uses this voucher can be used. Select -1 for INFINITE USES!!!" />
+            <span>Điến <b>-1</b> để có vô số Voucher này.</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <label asp-for="DiscountPrice" class="form-label">Giảm giá số</label>
+            <input asp-for="DiscountPrice" class="form-control" type="number" placeholder="0" step="100" min="0" max="@(1e15)" aria-label="" />
+            <span>Tối đa: 1,000,000,000,000.</span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Status" class="form-label">Trạng thái</label>
+            <select asp-for="Status" class="form-control" aria-label="Is it available?">
+                <option selected value="@((int)VisibilityStatus.Available)">Hiệu lực</option>
+                <option value="@((int)VisibilityStatus.Locked)">Hết hiệu lực</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="StartingAt" class="form-label">Bắt đầu vào</label>
+            <input asp-for="StartingAt" class="form-control" type="datetime-local" step="1" required aria-label="Starting date of voucher" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="EndingAt" class="form-label">Kết thúc vào</label>
+            <input asp-for="EndingAt" class="form-control" type="datetime-local" step="1" required aria-label="Ending date of voucher" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label asp-for="Description">Mô tả</label>
+            <textarea asp-for="Description" class="form-control" aria-label="Enter voucher description">
+                Voucher giảm giá...
+            </textarea>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Thêm</button>
+</form>

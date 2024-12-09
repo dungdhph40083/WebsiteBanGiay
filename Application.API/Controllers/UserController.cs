@@ -1,4 +1,5 @@
-﻿using Application.API.Service;
+﻿using Application.API.Models;
+using Application.API.Service;
 using Application.Data.DTOs;
 using Application.Data.Enums;
 using Application.Data.Models;
@@ -7,6 +8,8 @@ using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Diagnostics;
 
 namespace Application.API.Controllers
 {
@@ -40,34 +43,62 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> Post([FromForm] UserDTO NewUser, IFormFile? ProfilePic)
         {
-            if (ProfilePic != null)
+            try
             {
-                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(ProfilePic, 4_194_304))
+                if (ProfilePic != null)
                 {
-                    case ErrorResult.IMAGE_TOO_BIG_ERROR:
-                        return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!");
-                    case ErrorResult.IMAGE_IS_BROKEN_ERROR:
-                    default:
-                        return BadRequest("Tệp ảnh không hợp lệ!");
-                    case SuccessResult.IMAGE_OK:
-                        {
-                            var CreatedImage = await ImageRepo.CreateImageAsync(ProfilePic);
-                            NewUser.ImageID = CreatedImage.ImageID;
-                        }
-                    break;
+                    switch (ImageUploaderValidator.ValidateImageSizeAndHeader(ProfilePic, 4_194_304))
+                    {
+                        case ErrorResult.IMAGE_TOO_BIG_ERROR:
+                            return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!");
+                        case ErrorResult.IMAGE_IS_BROKEN_ERROR:
+                        default:
+                            return BadRequest("Tệp ảnh không hợp lệ!");
+                        case SuccessResult.IMAGE_OK:
+                            {
+                                var CreatedImage = await ImageRepo.CreateImageAsync(ProfilePic);
+                                NewUser.ImageID = CreatedImage.ImageID;
+                            }
+                            break;
+                    }
                 }
+                var Response = await UserRepo.CreateUser(NewUser);
+                return CreatedAtAction(nameof(Get), new { ID = Response.UserID }, Response);
             }
-            var Response = await UserRepo.CreateUser(NewUser);
-            return CreatedAtAction(nameof(Get), new { ID = Response.UserID }, Response);
+            catch (Exception Exc)
+            {
+                if (Exc.HResult == -2147467261)
+                {
+                    var Errors = new ErrorsClass()
+                    {
+                        Password =
+                        [
+                            "Mật khẩu không được để trống."
+                        ]
+                    };
+
+                    var ErrorMsg = new ResponseBodyMimic
+                    {
+                        Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                        Title = "Ome or more validation errors occurred.",
+                        Status = 400,
+                        Errors = Errors,
+                        TraceId = "THERE_IS_NO_TRACE_ID_ONLY_A_CHANGE_OF_WORLDS"
+                    };
+
+                    return StatusCode(400, ErrorMsg);
+                }
+                else throw;
+            }
         }
 
         // cập nhật người dùng (1 cái)
-        [HttpPatch("{ID}")]
-        public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserDTO UpdatedUser, IFormFile? ProfilePic)
+        [HttpPut("{ID}")]
+        public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserDTO UpdatedUser, IFormFile? NewProfilePic)
         {
-            if (ProfilePic != null)
+            if (NewProfilePic != null)
             {
-                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(ProfilePic, 4_194_304))
+                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(NewProfilePic, 4_194_304))
                 {
                     case ErrorResult.IMAGE_TOO_BIG_ERROR:
                         return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!");
@@ -76,7 +107,7 @@ namespace Application.API.Controllers
                         return BadRequest("Tệp ảnh không hợp lệ!");
                     case SuccessResult.IMAGE_OK:
                         {
-                            var CreatedImage = await ImageRepo.CreateImageAsync(ProfilePic);
+                            var CreatedImage = await ImageRepo.CreateImageAsync(NewProfilePic);
                             UpdatedUser.ImageID = CreatedImage.ImageID;
                         }
                         break;
@@ -92,6 +123,14 @@ namespace Application.API.Controllers
             bool Result = await UserRepo.ToggleUser(ID);
             if (Result) return Ok("SUCCESS");
             else return BadRequest("FAILURE");
+        }
+
+        // ko dùng nhưng cần thiết để xóa mấy cái người dùng ma đi
+        [HttpDelete("{ID}")]
+        public async Task<ActionResult> DeleteUser(Guid ID)
+        {
+            await UserRepo.DeleteUser(ID);
+            return NoContent();
         }
     }
 }

@@ -23,10 +23,12 @@ namespace Application.Data.Models
         public string VoucherCode { get; set; } = null!;
         public long? DiscountPrice { get; set; }
 		public string? Description { get; set; }
-		public DateTime? CreatedAt { get; set; }
-		public DateTime? UpdatedAt { get; set;}
+        public DateTime? StartingAt { get; set; }
+        public DateTime? EndingAt { get; set; }
         public byte? Status { get; set; }
-		public virtual Category? Category { get; set; }
+        public DateTime? CreatedAt { get; set; }
+		public DateTime? UpdatedAt { get; set; }
+        public virtual Category? Category { get; set; }
 		public virtual Product? Product { get; set; }
     }
 }

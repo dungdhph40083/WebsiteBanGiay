@@ -1,0 +1,42 @@
+﻿@model List<Application.Data.Models.ProductDetail>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Sản phẩm chi tiết</h1>
+
+<p>
+    <a asp-action="Create">Tạo mới</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Tên SP</th>
+            <th>Kích cỡ</th>
+            <th>Màu</th>
+            <th>Danh mục</th>
+            <th>Chất liệu</th>
+            <th>Xuất xứ</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+                <td>@item.Product?.Name</td>
+                <td>@item.Size?.Name</td>
+                <td>@item.Color?.ColorName</td>
+                <td>@item.Category?.CategoryName</td>
+                <td>@item.Material</td>
+                <td>@item.PlaceOfOrigin</td>
+            <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ProductDetailID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ProductDetailID })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+

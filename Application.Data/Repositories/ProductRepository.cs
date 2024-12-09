@@ -58,12 +58,17 @@ namespace Application.Data.Repositories
 
         public async Task<Product?> Update(Guid ID, ProductDTO ProductDTO)
         {
-            var Target = await Context.Products.FindAsync(ID);
+            var Target = await GetById(ID);
 
             if (Target != null)
             {
                 Context.Entry(Target).State = EntityState.Modified;
                 Target.UpdatedAt = DateTime.UtcNow;
+
+                // nếu ko có ảnh trong form thì nó sẽ ko xóa ảnh
+                // http patch cũng ko được đâu
+                // god dam mit bro....
+                if (ProductDTO.ImageID == null) ProductDTO.ImageID = Target.ImageID;
 
                 Target = Mapper.Map(ProductDTO, Target);
                 Context.Update(Target);
@@ -75,7 +80,7 @@ namespace Application.Data.Repositories
 
         public async Task Delete(Guid id)
         {
-            var Product = await Context.Products.FindAsync(id);
+            var Product = await GetById(id);
             if (Product != null)
             {
                 Context.Products.Remove(Product);
