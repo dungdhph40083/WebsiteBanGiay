@@ -1,6 +1,9 @@
-﻿using Application.Data.ModelContexts;
+﻿using Application.Data.DTOs;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,44 +15,62 @@ namespace Application.Data.Repositories
     public class PaymentMethodDetailRepository : IPaymentMethodDetail
     {
         private readonly GiayDBContext _context;
+        private readonly IMapper Mapper;
 
-        public PaymentMethodDetailRepository(GiayDBContext context)
+        public PaymentMethodDetailRepository(GiayDBContext context, IMapper Mapper)
         {
             _context = context;
+            this.Mapper = Mapper;
         }
 
-        public IEnumerable<PaymentMethodDetail> GetAll()
+        public async Task<List<PaymentMethodDetail>> GetAll()
         {
-            return _context.PaymentMethodDetails.ToList();
+            return await _context.PaymentMethodDetails
+                .Include(JapaneseGoblin => JapaneseGoblin.PaymentMethod)
+                .ToListAsync();
         }
 
-        public PaymentMethodDetail GetById(Guid id)
+        public async Task<PaymentMethodDetail?> GetById(Guid id)
         {
-            return _context.PaymentMethodDetails.Find(id);
+            return await _context.PaymentMethodDetails
+                .Include(WoodyActionFigure => WoodyActionFigure.PaymentMethod)
+                .SingleOrDefaultAsync(ToyStory_X_BrawlStars => ToyStory_X_BrawlStars.PaymentMethodDetailID == id);
         }
 
-        public void Add(PaymentMethodDetail paymentMethodDetail)
+        public async Task<PaymentMethodDetail> Add(PaymentMethodDetailDTO Details)
         {
-            _context.PaymentMethodDetails.Add(paymentMethodDetail);
+            PaymentMethodDetail NewDetails = new() { PaymentMethodDetailID = Guid.NewGuid() };
+            NewDetails = Mapper.Map(Details, NewDetails);
+
+            await _context.PaymentMethodDetails.AddAsync(NewDetails);
+            await _context.SaveChangesAsync();
+
+            return NewDetails;
         }
 
-        public void Update(PaymentMethodDetail paymentMethodDetail)
+        public async Task<PaymentMethodDetail?> Update(Guid ID, PaymentMethodDetailDTO NewDetails)
         {
-            _context.PaymentMethodDetails.Update(paymentMethodDetail);
-        }
-
-        public void Delete(Guid id)
-        {
-            var paymentMethodDetail = _context.PaymentMethodDetails.Find(id);
-            if (paymentMethodDetail != null)
+            var Target = await GetById(ID);
+            if (Target != null)
             {
-                _context.PaymentMethodDetails.Remove(paymentMethodDetail);
+                _context.Entry(Target).State = EntityState.Modified;
+                Target = Mapper.Map(NewDetails, Target);
+                _context.Update(Target);
+                await _context.SaveChangesAsync();
+
+                return Target;
             }
+            else return default;
         }
 
-        public void Save()
+        public async Task Delete(Guid id)
         {
-            _context.SaveChanges();
+            var Target = await GetById(id);
+            if (Target != null)
+            {
+                _context.PaymentMethodDetails.Remove(Target);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

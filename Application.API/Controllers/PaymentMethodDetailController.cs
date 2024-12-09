@@ -1,4 +1,5 @@
-﻿using Application.Data.Models;
+﻿using Application.Data.DTOs;
+using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
@@ -18,52 +19,44 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<PaymentMethodDetail>> GetPaymentMethodDetails()
+        public async Task<ActionResult<List<PaymentMethodDetail>>> GetPaymentMethodDetails()
         {
-            return Ok(_paymentMethodDetailRepository.GetAll());
+            return await _paymentMethodDetailRepository.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<PaymentMethodDetail> GetPaymentMethodDetail(Guid id)
+        public async Task<ActionResult<PaymentMethodDetail?>> GetPaymentMethodDetail(Guid id)
         {
-            var paymentMethodDetail = _paymentMethodDetailRepository.GetById(id);
-
-            if (paymentMethodDetail == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(paymentMethodDetail);
+            var Response = await _paymentMethodDetailRepository.GetById(id);
+            if (Response == null) return NoContent();
+            else return Response;
         }
 
         [HttpPost]
-        public ActionResult<PaymentMethodDetail> PostPaymentMethodDetail(PaymentMethodDetail paymentMethodDetail)
+        public async Task<ActionResult<PaymentMethodDetail>> PostPaymentMethodDetail(PaymentMethodDetailDTO paymentMethodDetail)
         {
-            _paymentMethodDetailRepository.Add(paymentMethodDetail);
-            _paymentMethodDetailRepository.Save();
-            return CreatedAtAction(nameof(GetPaymentMethodDetail), new { id = paymentMethodDetail.PaymentMethodDetailID }, paymentMethodDetail);
+            var Response = await _paymentMethodDetailRepository.Add(paymentMethodDetail);
+            return CreatedAtAction(nameof(GetPaymentMethodDetail), new { id = Response.PaymentMethodDetailID }, paymentMethodDetail);
         }
 
         [HttpPut("{id}")]
-        public IActionResult PutPaymentMethodDetail(Guid id, PaymentMethodDetail paymentMethodDetail)
+        public async Task<ActionResult<PaymentMethodDetail?>> PutPaymentMethodDetail(Guid id, PaymentMethodDetailDTO paymentMethodDetail)
         {
-            if (id != paymentMethodDetail.PaymentMethodDetailID)
-            {
-                return BadRequest();
-            }
-
-            _paymentMethodDetailRepository.Update(paymentMethodDetail);
-            _paymentMethodDetailRepository.Save();
-
-            return NoContent();
+            var Response = await _paymentMethodDetailRepository.Update(id, paymentMethodDetail);
+            if (Response == null) return NotFound();
+            else return Response;
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeletePaymentMethodDetail(Guid id)
+        public async Task<ActionResult> DeletePaymentMethodDetail(Guid id)
         {
-            _paymentMethodDetailRepository.Delete(id);
-            _paymentMethodDetailRepository.Save();
-            return NoContent();
+            var Target = await _paymentMethodDetailRepository.GetById(id);
+            if (Target == null) return NoContent();
+            else
+            {
+                await _paymentMethodDetailRepository.Delete(id);
+                return Ok();
+            }
         }
     }
 }

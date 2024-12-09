@@ -43,6 +43,9 @@ namespace Application.Data.Mappers
             CreateMap<ProductWarranty, ProductWarrantyDTO>();
             CreateMap<ProductWarrantyDTO, ProductWarranty>();
 
+            CreateMap<PaymentMethodDetail, PaymentMethodDetailDTO>();
+            CreateMap<PaymentMethodDetailDTO, PaymentMethodDetail>();
+
             CreateMap<Rating, RatingsDTO>();
             CreateMap<RatingsDTO, Rating>();
 

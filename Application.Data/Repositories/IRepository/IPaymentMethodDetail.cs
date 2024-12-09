@@ -1,4 +1,5 @@
-﻿using Application.Data.Models;
+﻿using Application.Data.DTOs;
+using Application.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,10 @@ namespace Application.Data.Repositories.IRepository
 {
     public interface IPaymentMethodDetail
     {
-        IEnumerable<PaymentMethodDetail> GetAll();
-        PaymentMethodDetail GetById(Guid id);
-        void Add(PaymentMethodDetail paymentMethodDetail);
-        void Update(PaymentMethodDetail paymentMethodDetail);
-        void Delete(Guid id);
-        void Save();
+        Task<List<PaymentMethodDetail>> GetAll();
+        Task<PaymentMethodDetail?> GetById(Guid id);
+        Task<PaymentMethodDetail> Add(PaymentMethodDetailDTO Details);
+        Task<PaymentMethodDetail?> Update(Guid ID, PaymentMethodDetailDTO NewDetails);
+        Task Delete(Guid id);
     }
 }

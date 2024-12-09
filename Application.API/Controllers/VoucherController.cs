@@ -38,14 +38,16 @@ namespace Application.API.Controllers
         [HttpPut("{ID}")]
         public async Task<ActionResult<Voucher?>> Put(Guid ID, [FromBody] VoucherDTO UpdatedVoucher)
         {
-            return await VoucherRepo.UpdateVoucher(ID, UpdatedVoucher);
+            var Response = await VoucherRepo.UpdateVoucher(ID, UpdatedVoucher);
+            if (Response == null) return NotFound();
+            else return Response;
         }
 
         [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID) 
         {
             await VoucherRepo.DeleteVoucher(ID);
-            return Ok();
+            return NoContent();
         }
     }
 }
