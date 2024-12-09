@@ -1,4 +1,5 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,10 @@ namespace Application.API.Controllers
             _colorRepository = colorRepository;
         }
 
-        [HttpGet("get-all")]
-        public async Task<ActionResult> GetAllColors()
+        [HttpGet]
+        public async Task<ActionResult<List<Color>>> GetAllColors()
         {
-            var colors = await _colorRepository.GetAllColors();
-            return Ok(colors);
+            return Ok( await _colorRepository.GetAllColors());
         }
 
         [HttpGet("{id}")]
@@ -31,14 +31,14 @@ namespace Application.API.Controllers
             return Ok(color);
         }
 
-        [HttpPost("create-color")]
+        [HttpPost]
         public async Task<ActionResult> CreateColor(ColorDTO colorDTO)
         {
             var createdColor = await _colorRepository.CreateColor(colorDTO);
             return CreatedAtAction(nameof(GetColorById), new { id = createdColor.ColorID }, createdColor);
         }
 
-        [HttpPatch("update-color/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateColor(Guid id, ColorDTO colorDTO)
         {
             await _colorRepository.UpdateColor(id, colorDTO);

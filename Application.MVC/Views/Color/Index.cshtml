@@ -18,12 +18,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.First().Status)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().UpdatedAt)
-            </th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -36,12 +30,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Status)
-                </td>
-                <td>
-                    @(item.CreatedAt.HasValue ? item.CreatedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
-                </td>
-                <td>
-                    @(item.UpdatedAt.HasValue ? item.UpdatedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.ColorID }) |

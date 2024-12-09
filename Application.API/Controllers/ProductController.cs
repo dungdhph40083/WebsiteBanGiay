@@ -27,7 +27,7 @@ namespace Application.API.Controllers
         // t chỉ xóa đường dẫn thôi
         // kiểu là ko để tên đường dẫn
         // chỉ để http get ko tham số là get hết, http get có tham số là ID là get by ID
-        [HttpGet("get-all")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             var products = await _productRepository.GetAll();
@@ -73,7 +73,7 @@ namespace Application.API.Controllers
             return Ok(product);
         }
 
-        [HttpPost("create_product")]
+        [HttpPost]
         public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO product, IFormFile? Image)
         {
             if (Image != null)
@@ -98,7 +98,7 @@ namespace Application.API.Controllers
             return CreatedAtAction("GetProduct", new { id = Response.ProductID }, Response);
         }
 
-        [HttpPut("update-product/{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutProduct(Guid id, [FromForm] ProductDTO product, IFormFile? Image)
         {
 

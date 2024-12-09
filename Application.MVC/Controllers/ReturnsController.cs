@@ -21,7 +21,7 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Returns/getbyId?ID={id}";
+            string requestURL = $"https://localhost:7187/api/Returns/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var Returns = JsonConvert.DeserializeObject<Return>(response);
             return View(Returns);
@@ -48,13 +48,13 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Return Return)
         {
-            string requestURL = "https://localhost:7187/api/Returns/create";
+            string requestURL = "https://localhost:7187/api/Returns";
             var response = await client.PostAsJsonAsync(requestURL, Return);
             return RedirectToAction("Index");
         }
         public ActionResult Update(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Returns/getbyId?ID={id}";
+            string requestURL = $"https://localhost:7187/api/Returns/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             Return Returns = JsonConvert.DeserializeObject<Return>(response);
             return View(Returns);
@@ -64,13 +64,13 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, Return Return)
         {
-            string requestURL = $@"https://localhost:7187/api/Returns/update?ID={ID}";
+            string requestURL = $@"https://localhost:7187/api/Returns/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, Return);
             return RedirectToAction("Index");
         }
         public ActionResult Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Returns/delete?ID={id}";
+            string requestURL = $"https://localhost:7187/api/Returns/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");
         }

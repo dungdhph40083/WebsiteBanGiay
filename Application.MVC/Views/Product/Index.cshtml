@@ -37,8 +37,8 @@
                         <text>N/A</text>
                     }
                 </td>
-                <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                <td>@item.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@item.CreatedAt?.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@item.UpdatedAt?.ToString("yyyy-MM-dd HH:mm:ss")</td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.ProductID }) |
                     @Html.ActionLink("Details", "Details", new { id = item.ProductID }) |

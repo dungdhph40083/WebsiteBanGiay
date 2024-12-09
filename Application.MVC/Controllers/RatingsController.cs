@@ -21,7 +21,7 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Ratings/getbyId?ID={id}";
+            string requestURL = $"https://localhost:7187/api/Ratings/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var Ratings = JsonConvert.DeserializeObject<Rating>(response);
             return View(Ratings);
@@ -30,7 +30,7 @@ namespace Application.MVC.Controllers
         {
             try
             {
-                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product/get-all");
+                var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
                 var users = await client.GetFromJsonAsync<List<User>>("https://localhost:7187/api/User");
                 ViewBag.Products = products ?? new List<Product>();
                 ViewBag.Users = users ?? new List<User>();
@@ -56,7 +56,7 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Update(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Ratings/getbyId?ID={id}";
+            string requestURL = $"https://localhost:7187/api/Ratings/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             Rating Ratings = JsonConvert.DeserializeObject<Rating>(response);
             return View(Ratings);
@@ -66,13 +66,13 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, Rating Rating)
         {
-            string requestURL = $@"https://localhost:7187/api/Ratings/update?ID={ID}";
+            string requestURL = $@"https://localhost:7187/api/Ratings/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, Rating);
             return RedirectToAction("Index");
         }
         public ActionResult Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Ratings/delete?ID={id}";
+            string requestURL = $"https://localhost:7187/api/Ratings/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");
         }

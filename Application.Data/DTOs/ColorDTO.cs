@@ -10,6 +10,7 @@ namespace Application.Data.DTOs
 {
     public class ColorDTO
     {
+        public Guid ColorID { get; set; }
         public string? ColorName { get; set; }
         public byte? Status { get; set; }
     }

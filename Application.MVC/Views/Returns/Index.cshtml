@@ -6,9 +6,9 @@
 
 <h1 class="text-center">Danh Sách Trả Hàng</h1>
 
-<p>
+@* <p>
     <a asp-action="Create" class="btn btn-primary">Tạo Mới</a>
-</p>
+</p> *@
 
 <table class="table table-striped table-bordered table-hover text-center" style="border: 2px solid black;">
     <thead class="thead-dark">
@@ -35,11 +35,11 @@
                 <td style="border: 2px solid black;">@Html.DisplayFor(modelItem => item.Status)</td>
                 <td style="border: 2px solid black;">
                     <!-- Nút Cập Nhật -->
-                    @Html.ActionLink("Cập Nhật", "Update", new { id = item.ReturnID }, new { @class = "btn btn-warning btn-sm" }) |
+@*                     @Html.ActionLink("Cập Nhật", "Update", new { id = item.ReturnID }, new { @class = "btn btn-warning btn-sm" }) | *@
                     <!-- Nút Chi Tiết -->
-                    @Html.ActionLink("Chi Tiết", "Details", new { id = item.ReturnID }, new { @class = "btn btn-info btn-sm" }) |
+                    @Html.ActionLink("Chi Tiết", "Details", new { id = item.ReturnID }, new { @class = "btn btn-info btn-sm" }) 
                     <!-- Nút Xóa với modal kích hoạt -->
-                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmDeleteModal" data-id="@item.ReturnID">Xóa</button>
+                   @*  <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmDeleteModal" data-id="@item.ReturnID">Xóa</button> *@
                 </td>
             </tr>
             { index++; }

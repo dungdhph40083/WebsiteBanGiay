@@ -21,7 +21,7 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Role/getbyId?id={id}";
+            string requestURL = $"https://localhost:7187/api/Role/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var Roles = JsonConvert.DeserializeObject<Role>(response);
             return View(Roles);
@@ -37,13 +37,13 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Role Role)
         {
-            string requestURL = "https://localhost:7187/api/Role/create";
+            string requestURL = "https://localhost:7187/api/Role/";
             var response = await client.PostAsJsonAsync(requestURL, Role);
             return RedirectToAction("Index");
         }
         public ActionResult Update(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Role/getbyId?id={id}";
+            string requestURL = $"https://localhost:7187/api/Role/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             Role Roles = JsonConvert.DeserializeObject<Role>(response);
             return View(Roles);
@@ -53,13 +53,13 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, Role Role)
         {
-            string requestURL = $@"https://localhost:7187/api/Role/update?id={ID}";
+            string requestURL = $@"https://localhost:7187/api/Role/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, Role);
             return RedirectToAction("Index");
         }
         public ActionResult Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Role/delete?id={id}";
+            string requestURL = $"https://localhost:7187/api/Role/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");
         }

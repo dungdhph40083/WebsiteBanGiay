@@ -21,7 +21,7 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/ShippingMethod/getbyId?id={id}";
+            string requestURL = $"https://localhost:7187/api/ShippingMethod/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var ShippingMethods = JsonConvert.DeserializeObject<ShippingMethod>(response);
             return View(ShippingMethods);
@@ -37,13 +37,13 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ShippingMethod ShippingMethod)
         {
-            string requestURL = "https://localhost:7187/api/ShippingMethod/create";
+            string requestURL = "https://localhost:7187/api/ShippingMethod";
             var response = await client.PostAsJsonAsync(requestURL, ShippingMethod);
             return RedirectToAction("Index");
         }
         public ActionResult Update(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/ShippingMethod/getbyId?id={id}";
+            string requestURL = $"https://localhost:7187/api/ShippingMethod/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             ShippingMethod ShippingMethods = JsonConvert.DeserializeObject<ShippingMethod>(response);
             return View(ShippingMethods);
@@ -53,13 +53,13 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, ShippingMethod ShippingMethod)
         {
-            string requestURL = $@"https://localhost:7187/api/ShippingMethod/update?id={ID}";
+            string requestURL = $@"https://localhost:7187/api/ShippingMethod/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, ShippingMethod);
             return RedirectToAction("Index");
         }
         public ActionResult Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/ShippingMethod/delete?id={id}";
+            string requestURL = $"https://localhost:7187/api/ShippingMethod/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");
         }

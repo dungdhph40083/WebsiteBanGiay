@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Update Sale";
+    var products = ViewBag.Products as List<Application.Data.Models.Product>;
+    var categories = ViewBag.Categories as List<Application.Data.Models.Category>;
 }
 
 <div class="container mt-4">
@@ -21,20 +23,28 @@
                     <span asp-validation-for="SaleID" class="text-danger"></span>
                 </div>
 
+                <div class="form-group">
+                    <label asp-for="CategoryID" class="control-label"></label>
+                    <select asp-for="CategoryID" class="form-control"
+                            asp-items="@(categories != null && categories.Any() ? new SelectList(categories, "CategoryID", "CategoryName") : new SelectList(Enumerable.Empty<SelectListItem>()))">
+                        <option value="">-- Chọn Category --</option>
+                    </select>
+                    <span asp-validation-for="CategoryID" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ProductID" class="control-label"></label>
+                    <select asp-for="ProductID" class="form-control"
+                            asp-items="@(products != null && products.Any() ? new SelectList(products, "ProductID", "Name") : new SelectList(Enumerable.Empty<SelectListItem>()))">
+                        <option value="">-- Chọn Product --</option>
+                    </select>
+                    <span asp-validation-for="ProductID" class="text-danger"></span>
+                </div>
                 <!-- Name Field -->
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-
-                <!-- SaleCode Field -->
-                <div class="form-group">
-                    <label asp-for="SaleCode" class="control-label"></label>
-                    <input asp-for="SaleCode" class="form-control" />
-                    <span asp-validation-for="SaleCode" class="text-danger"></span>
-                </div>
-
                 <!-- Status Field -->
                 <div class="form-group">
                     <label asp-for="Status" class="control-label"></label>
@@ -42,6 +52,18 @@
                     <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
 
+                <!-- CreatedAt Field -->
+                <!-- UpdatedAt Field -->
+                <div class="form-group">
+                    <label asp-for="StartingAt" class="control-label"></label>
+                    <input asp-for="StartingAt" class="form-control" />
+                    <span asp-validation-for="StartingAt" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EndingAt" class="control-label"></label>
+                    <input asp-for="EndingAt" class="form-control" />
+                    <span asp-validation-for="EndingAt" class="text-danger"></span>
+                </div>
                 <!-- CreatedAt Field -->
                 <div class="form-group">
                     <label asp-for="CreatedAt" class="control-label"></label>
@@ -56,12 +78,6 @@
                     <span asp-validation-for="UpdatedAt" class="text-danger"></span>
                 </div>
 
-                <!-- ProductID Field -->
-                <div class="form-group">
-                    <label asp-for="ProductID" class="control-label"></label>
-                    <input asp-for="ProductID" class="form-control" />
-                    <span asp-validation-for="ProductID" class="text-danger"></span>
-                </div>
 
                 <!-- Submit Button -->
                 <div class="form-group">
