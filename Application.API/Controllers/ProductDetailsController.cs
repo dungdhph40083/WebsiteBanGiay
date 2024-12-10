@@ -84,7 +84,7 @@ namespace Application.API.Controllers
             return await ProductDetailRepo.UpdateExisting(ID, UpdatedProductDetail);
         }
 
-        [HttpDelete]
+        [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await ProductDetailRepo.DeleteExisting(ID);

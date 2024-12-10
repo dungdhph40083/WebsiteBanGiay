@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.API", "Applicat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Data", "Application.Data\Application.Data.csproj", "{90786CBD-5E48-4F0B-BCA4-33EDF82D1A23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.MVC.GeneralPublic", "Application.MVC.GeneralPublic\Application.MVC.GeneralPublic.csproj", "{42C29631-CA20-4243-A019-46A12597FEE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.MVC.GeneralPublic", "Application.MVC.GeneralPublic\Application.MVC.GeneralPublic.csproj", "{42C29631-CA20-4243-A019-46A12597FEE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

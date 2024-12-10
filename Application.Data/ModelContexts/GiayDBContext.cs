@@ -39,6 +39,9 @@ namespace Application.Data.ModelContexts
 			ModelBuilder.Entity<User>()
 				.Property(Idx => Idx.RoleID)
 				.HasDefaultValue(Guid.Parse(DefaultValues.UserRoleGUID));
+			ModelBuilder.Entity<ProductDetail>()
+				.HasIndex(Idx => Idx.ProductID)
+				.IsUnique();
         }
 
         public DbSet<Category> Categories { get; set; }

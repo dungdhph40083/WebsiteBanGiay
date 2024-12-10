@@ -45,20 +45,30 @@ namespace Application.Data.Repositories
         {
             return await Context.ProductDetails
                     .Include(Prod => Prod.Product)
-                    .Include(Img => Img.Image)
                     .Include(Siz => Siz.Size)
                     .Include(Col => Col.Color)
+                    .Include(Img => Img.Image)
                     .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.ProductDetailID == TargetID);
         }
 
-        public Task<List<ProductDetail>> GetProductDetails()
+        public async Task<ProductDetail?> GetProductDetailByProductID(Guid TargetID)
+        {
+            return await Context.ProductDetails
+                    .Include(Prod => Prod.Product)
+                    .Include(Siz => Siz.Size)
+                    .Include(Col => Col.Color)
+                    .Include(Img => Img.Image)
+                    .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.ProductID == TargetID);
+        }
+
+        public async Task<List<ProductDetail>> GetProductDetails()
         {
             // trích xuất cả dữ liệu image và product bằng cách .Include
-            return Context.ProductDetails
+            return await Context.ProductDetails
                 .Include(Prod => Prod.Product)
-                .Include(Img => Img.Image)
                 .Include(Siz => Siz.Size)
                 .Include(Col => Col.Color)
+                .Include(Img => Img.Image)
                 .Include(Ctg => Ctg.Category).ToListAsync();
         }
 

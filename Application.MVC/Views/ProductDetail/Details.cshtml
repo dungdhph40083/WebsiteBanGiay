@@ -1,60 +1,68 @@
 ﻿@model Application.Data.Models.ProductDetail
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết sản phẩm";
 }
 
-<h1>Details</h1>
+<h1>Chi tiết sản phẩm</h1>
 
-<div>
-    <h4>ProductDetail</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductDetailID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductDetailID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Material)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Material)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Brand)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlaceOfOrigin)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlaceOfOrigin)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Update", "Update", new { id = Model.ProductDetailID }) |
-    <a asp-action="Index">Back to List</a>
-</div>
+<dl class="row">
+    <dt class="col-md-3">ID</dt>
+    <dd class="col-md-9">
+        <i class="font-monospace-cascadia">@Model.ProductDetailID</i>
+    </dd>
+    <dt class="col-md-3">Sản phẩm</dt>
+    <dd class="col-md-9">
+        @(Model.Product?.Name ?? "Không có")<br />
+        <i class="font-monospace-cascadia">(@(Model.ProductID == null ? "Không có" : Model.ProductID))</i><br />
+    </dd>
+    <dt class="col-md-3">Danh mục</dt>
+    <dd class="col-md-9">
+        @(Model.Category?.CategoryName ?? "Không có")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.CategoryID == null ? "Không có" : Model.CategoryID))</i>
+    </dd>
+    <dt class="col-md-3">Kích cỡ</dt>
+    <dd class="col-md-9">
+        @(Model.Size?.Name ?? "Không có")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.SizeID == null ? "Không có" : Model.SizeID))</i>
+    </dd>
+    <dt class="col-md-3">Màu</dt>
+    <dd class="col-md-9">
+        @(Model.Color?.ColorName ?? "Không có")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.ColorID == null ? "Không có" : Model.ColorID))</i>
+    </dd>
+    <dt class="col-md-3">Thuộc sự kiện</dt>
+    <dd class="col-md-9">
+        @(Model.Sale?.Name ?? "Không có")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.SizeID == null ? "Không có" : Model.SaleID))</i>
+    </dd>
+    <dt class="col-md-3">Chất liệu</dt>
+    <dd class="col-md-9">
+        @(Model.Material ?? "Không có")
+    </dd>
+    <dt class="col-md-3">Nhãn hiệu</dt>
+    <dd class="col-md-9">
+        @(Model.Brand ?? "Không có")
+    </dd>
+    <dt class="col-md-3">Xuất xứ</dt>
+    <dd class="col-md-9">
+        @(Model.PlaceOfOrigin ?? "Không có")
+    </dd>
+    <dt class="col-md-3">Số lượng</dt>
+    <dd class="col-md-9">
+        @(Model.Quantity.GetValueOrDefault().ToString("#,##0") ?? "N/A")
+    </dd>
+    <dt class="col-md-3">Trạng thái</dt>
+    <dd class="col-md-9">
+        @switch (Model.Status)
+        {
+            case 0: <text>Không bán</text> break;
+            case 1: <text>Còn bán</text> break;
+            default: <text>N/A</text> break;
+        }
+    </dd>
+    <dt class="col-md-3">Cập nhật lần cuối</dt>
+    <dd class="col-md-9">
+        @(Model.UpdatedAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss") ?? "N/A")
+    </dd>
+</dl>

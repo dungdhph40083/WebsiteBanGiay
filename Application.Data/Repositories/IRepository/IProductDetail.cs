@@ -7,6 +7,7 @@ namespace Application.Data.Repositories.IRepository
     {
         Task<List<ProductDetail>> GetProductDetails();
         Task<ProductDetail?> GetProductDetailByID(Guid TargetID);
+        Task<ProductDetail?> GetProductDetailByProductID(Guid TargetID);
         Task<ProductDetail> CreateNew(ProductDetailDTO NewDetail);
         Task<ProductDetail?> UpdateExisting(Guid TargetID, ProductDetailDTO UpdatedDetail);
         Task DeleteExisting(Guid TargetID);

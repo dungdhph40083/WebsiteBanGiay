@@ -1,113 +1,86 @@
-﻿@* @using Application.Data.Enums
-@model Application.Data.DTOs.ProductDetailDTO
+﻿@model Application.Data.DTOs.ProductDetailDTO
+@using Application.Data.Enums;
 
 @{
-    ViewBag.Title = "Edit Product Detail";
-    var products = ViewBag.Products as List<Application.Data.Models.Product>;
-    var Colors = ViewBag.Colors as List<Application.Data.Models.Color>;
-    var Sizes = ViewBag.Sizes as List<Application.Data.Models.Size>;
+    ViewData["Title"] = "Cập nhật chi tiết sản phẩm";
 }
 
+<h1>Cập nhật chi tiết sản phẩm</h1>
 
-<h2>Edit Product Detail</h2>
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<form asp-action="Edit" method="post">
-    <div class="form-group">
-        <label for="ProductID" class="control-label">Product Name</label>
-        <select asp-for="ProductID" class="form-control"
-                asp-items="@(products != null && products.Any() ? new SelectList(products, "ProductID", "Name") : new SelectList(Enumerable.Empty<SelectListItem>()))">
-            <option value="">-- Select Product --</option>
-        </select>
-        <span asp-validation-for="ProductID" class="text-danger"></span>
+    <div class="row">
+        <div class="col-md-4">
+            <label asp-for="ProductID" class="form-label">Sản phẩm</label>
+            <select asp-for="ProductID" class="form-control" aria-label="Select category to assign to" asp-items="@ViewBag.Prods">
+                <option selected value=null>(Chưa chọn)</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="CategoryID" class="form-label">Danh mục</label>
+            <select asp-for="CategoryID" class="form-control" aria-label="Select category to assign to" asp-items="@ViewBag.Catgs">
+                <option selected value=null>(Chưa chọn)</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="SizeID" class="form-label">Kích cỡ</label>
+            <select asp-for="SizeID" class="form-control" aria-label="Select size to assign to" asp-items="@ViewBag.Sizes">
+                <option selected value=null>(Chưa chọn)</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label asp-for="ColorID" class="form-label">Màu</label>
+            <select asp-for="ColorID" class="form-control" aria-label="Select color to assign to" asp-items="@ViewBag.Colrs">
+                <option selected value=null>(Chưa chọn)</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="SaleID" class="form-label">Sự kiện</label>
+            <select asp-for="SaleID" class="form-control" aria-label="Select event to assign to" asp-items="@ViewBag.Sales">
+                <option selected value=null>(Chưa chọn)</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Ảnh bìa</label>
+            <input type="file" name="Image" class="form-control-file" accept="image/png, image/jpeg" aria-label="Upload picture" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label asp-for="Material" class="form-label">Chất liệu</label>
+            <input asp-for="Material" type="text" class="form-control" aria-label="Specify product material" />
+        </div>
+        <div class="col-md-8">
+            <label asp-for="Brand" class="form-label">Hãng hiệu</label>
+            <input asp-for="Brand" type="text" class="form-control" aria-label="Specify brand" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="PlaceOfOrigin" class="form-label">Xuất xứ</label>
+            <input asp-for="PlaceOfOrigin" type="text" class="form-control" aria-label="Specify place of origin" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Quantity" class="form-label">Số lượng</label>
+            <input asp-for="Quantity" type="number" step="1" min="1" max="10000000" class="form-control" aria-label="Specify amount of products" />
+        </div>
+        <div class="col-md-2">
+            <label asp-for="Status" class="form-label">Trạng thái</label>
+            <select asp-for="Status" class="form-control">
+                <option value="@((int)VisibilityStatus.Available)" selected>Còn bán</option>
+                <option value="@((int)VisibilityStatus.Locked)" selected>Không bán</option>
+            </select>
+        </div>
     </div>
 
-
-    <div class="form-group">
-        <label for="ColorID" class="control-label">Color</label>
-        <select asp-for="ColorID" class="form-control"
-                asp-items="@(Colors != null && Colors.Any() ? new SelectList(Colors, "ColorID", "ColorName") : new SelectList(Enumerable.Empty<SelectListItem>()))">
-            <option value=null>Không có màu</option>
-        </select>
-        <span asp-validation-for="ColorID" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="ProductID" class="control-label">Size</label>
-        <select asp-for="SizeID" class="form-control"
-                asp-items="@(Sizes != null && Sizes.Any() ? new SelectList(Sizes, "SizeID", "Name") : new SelectList(Enumerable.Empty<SelectListItem>()))">
-            <option value=null>Không có kích cỡ</option>
-        </select>
-        <span asp-validation-for="SizeID" class="text-danger"></span>
-    </div>
-
-
-    <div class="form-group">
-        <label asp-for="Material" class="control-label"></label>
-        <input asp-for="Material" class="form-control" />
-        <span asp-validation-for="Material" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Quantity" class="control-label"></label>
-        <input asp-for="Quantity" class="form-control" type="number" />
-        <span asp-validation-for="Quantity" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Price" class="control-label"></label>
-        <input asp-for="Price" class="form-control" type="number" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Brand" class="control-label"></label>
-        <input asp-for="Brand" class="form-control" />
-        <span asp-validation-for="Brand" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="PlaceOfOrigin" class="control-label"></label>
-        <input asp-for="PlaceOfOrigin" class="form-control" />
-        <span asp-validation-for="PlaceOfOrigin" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Type" class="control-label"></label>
-        <input asp-for="Type" class="form-control" />
-        <span asp-validation-for="Type" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="WarrantyPeriod" class="control-label"></label>
-        <input asp-for="WarrantyPeriod" class="form-control" type="date" />
-        <span asp-validation-for="WarrantyPeriod" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Status" class="control-label"></label>
-        <select asp-for="Status" class="form-control">
-            <option value="@((int)VisibilityStatus.Available)">Khả dụng</option>
-            <option value="@((int)VisibilityStatus.Locked)">Hết hàng</option>
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Instructions" class="control-label"></label>
-        <textarea asp-for="Instructions" class="form-control"></textarea>
-        <span asp-validation-for="Instructions" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Features" class="control-label"></label>
-        <textarea asp-for="Features" class="form-control"></textarea>
-        <span asp-validation-for="Features" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    <button class="btn btn-primary mt-3" type="submit">Cập nhật</button>
 </form>
 
 @section Scripts {
-    @await Html.PartialAsync("_ValidationScriptsPartial")
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
-
- *@

@@ -16,12 +16,14 @@ namespace Application.API.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProduct _productRepository;
+        private readonly IProductDetail ProductDetailRepo;
         private readonly IImageRepository _imageRepository;
 
-        public ProductController(IProduct productRepository, IImageRepository imageRepository)
+        public ProductController(IProduct productRepository, IImageRepository imageRepository, IProductDetail ProductDetailRepo)
         {
             _productRepository = productRepository;
             _imageRepository = imageRepository;
+            this.ProductDetailRepo = ProductDetailRepo;
         }
 
         [HttpGet]
@@ -90,6 +92,11 @@ namespace Application.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult>? DeleteProduct(Guid id)
         {
+            var CheckForRelations = await ProductDetailRepo.GetProductDetailByProductID(id);
+            if (CheckForRelations != null)
+            {
+                await ProductDetailRepo.DeleteExisting(CheckForRelations.ProductDetailID);
+            }
             await _productRepository.Delete(id);
             return NoContent();
         }

@@ -3,16 +3,6 @@
 
 // Write your JavaScript code.
 
-// const toastTrigger = document.getElementById('liveToastBtn')
-// const toastLiveExample = document.getElementById('liveToast')
-   
-// if (toastTrigger) {
-//     const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
-//     toastTrigger.addEventListener('click', () => {
-//         toastBootstrap.show()
-//     })
-// }
-
 $(".delete_trigger").on("click", (event) => {
     event.preventDefault(); // do not accidentally refresh
 
@@ -45,13 +35,9 @@ $("#confirm_deletion").on("click", () => {
             window.location.href = redirect_url; // yup
         })
         .fail((error) => { // if fail
-            if (redirect_url) {
-                window.location.href = redirect_url; // like above
-            }
+            window.location.href = redirect_url; // like above
         })
         .always(() => { // ALWAYS DO THIS WHEN GET
-            $("#ModalDelete").modal("hide"); // self explainatory - hides the modal
-
             ButtonTxt.className = "btn btn-danger";
             ButtonTxt.innerText = "Xóa";
             ButtonTxt.removeAttribute("disabled")

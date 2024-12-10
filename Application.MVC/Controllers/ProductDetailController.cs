@@ -18,7 +18,14 @@ namespace Application.MVC.Controllers
             return View(Response);
         }
 
-        public async Task<IActionResult> Create()
+        public async Task<ActionResult> Details(Guid ID)
+        {
+            string URL = $@"https://localhost:7187/api/ProductDetails/{ID}";
+            var Response = await Client.GetFromJsonAsync<ProductDetail>(URL);
+            return View(Response);
+        }
+
+        public async Task<ActionResult> Create()
         {
             try
             {
@@ -31,18 +38,18 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Error: {ex.Message}");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                return View("Error");
+                return RedirectToAction(nameof(Index));
             }
         }
 
         private async Task Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds()
         {
             // Lấy danh sách Products và Images từ API
-            var ProductsList = await Client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Products");
-            var ColorsList = await Client.GetFromJsonAsync<List<Color>>("https://localhost:7187/api/Color");
-            var SizesList = await Client.GetFromJsonAsync<List<Size>>("https://localhost:7187/api/Size");
+            var ProductsList = await Client.GetFromJsonAsync<List<Product>>($@"https://localhost:7187/api/Product");
+            var ColorsList = await Client.GetFromJsonAsync<List<Color>>($@"https://localhost:7187/api/Color");
+            var SizesList = await Client.GetFromJsonAsync<List<Size>>($@"https://localhost:7187/api/Size");
             var CategoriesList = await Client.GetFromJsonAsync<List<Category>>($@"https://localhost:7187/api/Category");
-            var SalesList = await Client.GetFromJsonAsync<List<Sale>>($@"https://localhost:7187/api/Category");
+            var SalesList = await Client.GetFromJsonAsync<List<Sale>>($@"https://localhost:7187/api/Sale");
 
             var ProdsItems = ProductsList?
                 .Select(Pls => new SelectListItem
@@ -65,10 +72,10 @@ namespace Application.MVC.Controllers
                 { Text = HeldHostage.Name, Value = HeldHostage.SaleID.ToString() }).ToList();
 
             // Nếu API trả về null, khởi tạo danh sách trống
-            ViewBag.Products = ProdsItems;
-            ViewBag.Colors = ColrsItems;
+            ViewBag.Prods = ProdsItems;
+            ViewBag.Colrs = ColrsItems;
             ViewBag.Sizes = SizesItems;
-            ViewBag.Categories = CatgsItems;
+            ViewBag.Catgs = CatgsItems;
             ViewBag.Sales = SalesItems;
         }
 
@@ -90,11 +97,16 @@ namespace Application.MVC.Controllers
                 { new StringContent(Detail.Status.ToString() ?? "1"),    nameof(Detail.Status) }
             };
 
-            // Gửi yêu cầu POST đến API
+            if (Image != null)
+            {
+                var ImageStream = new StreamContent(Image.OpenReadStream());
+                Contents.Add(ImageStream, nameof(Image), Image.FileName);
+            }
+
             try
             {
-                var response = await Client.PostAsync("https://localhost:7187/api/ProductDetails", Contents);
-                return RedirectToAction(nameof(Index)); // Quay lại trang danh sách nếu thành công
+                var response = await Client.PostAsync($@"https://localhost:7187/api/ProductDetails", Contents);
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
             {
@@ -104,27 +116,45 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Gray;
                 return View(Detail);
             }
-
-            // Nếu có lỗi, hiển thị lại form với thông báo lỗi
         }
 
-        public async Task<IActionResult> Edit(Guid id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds();
 
             // Lấy thông tin ProductDetail theo ID
-            var productDetail = await Client.GetFromJsonAsync<ProductDetailDTO>($"https://localhost:7187/api/ProductDetails/{id}");
+            var productDetail = await Client.GetFromJsonAsync<ProductDetailDTO>($@"https://localhost:7187/api/ProductDetails/{id}");
             return View(productDetail);
         }
 
         // POST: ProductDetail/Edit/{id}
         [HttpPost]
-        public async Task<IActionResult> Edit(Guid id, ProductDetailDTO updatedDetail)
+        public async Task<ActionResult> Edit(Guid id, ProductDetailDTO Detail, IFormFile? Image)
         {
+            MultipartFormDataContent Contents = new()
+            {
+                { new StringContent(Detail.ProductID.ToString() ?? ""),  nameof(Detail.ProductID) },
+                { new StringContent(Detail.SizeID.ToString() ?? ""),     nameof(Detail.SizeID) },
+                { new StringContent(Detail.ColorID.ToString() ?? ""),    nameof(Detail.ColorID) },
+                { new StringContent(Detail.CategoryID.ToString() ?? ""), nameof(Detail.CategoryID) },
+                { new StringContent(Detail.SaleID.ToString() ?? ""),     nameof(Detail.SaleID) },
+                { new StringContent(Detail.Material ?? ""),              nameof(Detail.Material) },
+                { new StringContent(Detail.Quantity.ToString() ?? ""),   nameof(Detail.Quantity) },
+                { new StringContent(Detail.Brand ?? ""),                 nameof(Detail.Brand) },
+                { new StringContent(Detail.PlaceOfOrigin ?? ""),         nameof(Detail.PlaceOfOrigin) },
+                { new StringContent(Detail.Status.ToString() ?? "1"),    nameof(Detail.Status) }
+            };
+
+            if (Image != null)
+            {
+                var ImageStream = new StreamContent(Image.OpenReadStream());
+                Contents.Add(ImageStream, nameof(Image), Image.FileName);
+            }
+
             try
             {
                 string URL = $@"https://localhost:7187/api/ProductDetails/{id}";
-                var Response = await Client.PutAsJsonAsync(URL, updatedDetail);
+                var Response = await Client.PutAsync(URL, Contents);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -133,13 +163,13 @@ namespace Application.MVC.Controllers
                 Console.WriteLine(Msg.Message);
                 Console.ForegroundColor = ConsoleColor.Gray;
                 TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
-                return View(updatedDetail);
+                return View(Detail);
             }
         }
-        public ActionResult Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/ProductDetails/{id}";
-            var response = Client.DeleteAsync(requestURL).Result;
+            string requestURL = $@"https://localhost:7187/api/ProductDetails/{id}";
+            var response = await Client.DeleteAsync(requestURL);
             return RedirectToAction(nameof(Index));
         }
     }
