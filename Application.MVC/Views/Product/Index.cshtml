@@ -75,11 +75,20 @@
     }
 </style>
 
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @(ViewBag.Error as string)
+    </div>
+
+    ViewBag.Error = null;
+}
+
 <h1 class="text-center">Danh sách sản phẩm</h1>
 
 <p>
     <a class="btn btn-primary btn-custom" asp-action="Create">
-        <i class="fas fa-plus-circle"></i> Create New
+        <i class="fas fa-plus-circle"></i> Tạo mới
     </a>
 </p>
 
@@ -121,73 +130,36 @@
 
                 <td>
                     <a href="@Url.Action("Edit", new { id = item.ProductID })" class="actions-link btn btn-edit">
-                        <i class="fas fa-edit"></i> Edit
-                    </a> |
+                        <i class="fas fa-edit"></i> Sửa
+                    </a> 
                     <a href="@Url.Action("Details", new { id = item.ProductID })" class="actions-link btn btn-details">
-                        <i class="fas fa-info-circle"></i> Details
-                    </a> |
-                    <a href="#" class="actions-link btn btn-delete" data-toggle="modal" data-target="#deleteModal" data-id="@item.ProductID">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </a>
+                        <i class="fas fa-info-circle"></i> Chi tiết
+                    </a> 
+                    <button type="button" class="actions-link btn btn-delete delete_trigger" data-id="@item.ProductID" data-controller="Product" data-action="Delete" data-toggle="modal" data-target="#ModalDelete"><i class="fas fa-trash-alt"></i> Xóa</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<!-- Modal -->
+<div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Product</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <h1 class="modal-title fs-5" id="DeleteLabel">KHOAN!!! <span style="font-size:x-small">(Khoan?)</span></h1>
+                <button type="button" class="close" data-dismiss="modal" id="close-btn" aria-label="Close">
+                    <i class="fa-cross"></i>
                 </button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete this product?
+                Bạn có chắc chắn để xóa sản phẩm này?<br />
+                <span style="font-size:small" class="font-monospace-cascadia">ID sản phẩm: <span id="ItemID" class="font-monospace-cascadia"></span></span>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <a id="deleteButton" href="#" class="btn btn-danger">Delete</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-btn">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirm_deletion">Xóa</button>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Scripts (jQuery, Bootstrap JS) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    // JavaScript to handle delete modal action
-    $('#deleteModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var productId = button.data('id'); // Extract product id from data-* attributes
-        var deleteUrl = '@Url.Action("Delete", "Product")/' + productId; // Create the delete URL
-
-        // Update the delete button's href with the correct URL
-        $('#deleteButton').attr('href', deleteUrl);
-    });
-
-    // JavaScript to handle searching products in the table
-    function searchProducts() {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("searchInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("productTableBody");
-        tr = table.getElementsByTagName("tr");
-
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td");
-            if (td) {
-                txtValue = td[0].textContent || td[0].innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-        }
-    }
-</script>

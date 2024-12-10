@@ -129,11 +129,21 @@ namespace Application.MVC.Controllers
             }
         }
 
-        public ActionResult Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Product/{id}";
-            var response = client.DeleteAsync(requestURL).Result;
-            return RedirectToAction("Index");
+            try
+            {
+                string requestURL = $"https://localhost:7187/api/Product/{id}";
+                var response = await client.DeleteAsync(requestURL);
+
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception)
+            {
+                ViewBag.Error = "Không thể xóa do sản phẩm vẫn còn quan hệ ở các bảng khác!\n(Sự kiện, voucher, hóa đơn chi tiết)";
+                Console.WriteLine((ViewBag.Error as string).ToJson());
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }
