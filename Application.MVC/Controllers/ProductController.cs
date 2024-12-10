@@ -23,9 +23,11 @@ namespace Application.MVC.Controllers
             {
                 return View(new List<Product>());
             }
+            var sortedResponse = response.OrderByDescending(p => p.CreatedAt).ToList();
 
-            return View(response);
+            return View(sortedResponse);
         }
+
         public ActionResult Details(Guid id)
         {
             string requestURL = $"https://localhost:7187/api/Product/{id}";
