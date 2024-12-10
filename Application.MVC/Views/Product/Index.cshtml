@@ -4,49 +4,190 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<!-- Link to Bootstrap CSS (Ensure you have the correct path or use CDN) -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
 
+<!-- Font Awesome CDN for icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+
+<!-- Custom CSS for additional styling -->
+<style>
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .img-thumbnail {
+        width: 100px; /* Reduced the width */
+        height: 100px; /* Reduced the height */
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .actions-link {
+        text-decoration: none;
+        color: #007bff;
+        font-size: 16px;
+    }
+
+        .actions-link:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+    .btn-custom {
+        border-radius: 20px;
+        padding: 5px 15px;
+        font-size: 16px;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+
+    .btn-edit {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .btn-details {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-details:hover {
+        background-color: #138496;
+    }
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+</style>
+
+<h1 class="text-center">Danh sách sản phẩm</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary btn-custom" asp-action="Create">
+        <i class="fas fa-plus-circle"></i> Create New
+    </a>
 </p>
-<table class="table">
-    <thead>
+
+<!-- Search Box -->
+<div class="mb-3 text-center">
+    <input type="text" id="searchInput" class="form-control w-50" placeholder="Tìm kiếm sản phẩm" onkeyup="searchProducts()">
+</div>
+
+<!-- Table for displaying products -->
+<table class="table table-striped table-bordered table-hover">
+    <thead class="thead-dark">
         <tr>
-            <th>@Html.DisplayNameFor(model => model.First().Name)</th>
-            <th>@Html.DisplayNameFor(model => model.First().Description)</th>
-            <th>@Html.DisplayNameFor(model => model.First().Image.ImageFileName)</th> 
-            <th>@Html.DisplayNameFor(model => model.First().CreatedAt)</th>
-            <th>@Html.DisplayNameFor(model => model.First().UpdatedAt)</th>
-            <th>Actions</th>
+            <th>Tên sản phẩm</th>
+            <th>Ảnh</th>
+            <th>Giá tiền</th>
+            <th>Ngày tạo</th>
+            <th>Ngày cập nhật</th>
+            <th>Hành động</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="productTableBody">
         @foreach (var item in Model)
         {
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
                 <td>
                     @if (item.Image != null)
                     {
-                        <img src="https://localhost:7187/Images/@(item.Image.ImageFileName)" class="img-thumbnail" style="width: 150px; height:150px" alt="Thumbnail epic">
+                        <img src="https://localhost:7187/Images/@(item.Image.ImageFileName)" class="img-thumbnail" alt="Thumbnail epic">
                     }
                     else
                     {
                         <text>N/A</text>
                     }
                 </td>
-                <td>@item.CreatedAt?.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                <td>@item.UpdatedAt?.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@(Convert.ToDecimal(item.Price).ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) VNĐ</td>
+                <td>@item.CreatedAt?.ToString("dd/MM/yyyy | HH:mm")</td>
+                <td>@item.UpdatedAt?.ToString("dd/MM/yyyy | HH:mm")</td>
+
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ProductID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.ProductID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ProductID })
+                    <a href="@Url.Action("Edit", new { id = item.ProductID })" class="actions-link btn btn-edit">
+                        <i class="fas fa-edit"></i> Edit
+                    </a> |
+                    <a href="@Url.Action("Details", new { id = item.ProductID })" class="actions-link btn btn-details">
+                        <i class="fas fa-info-circle"></i> Details
+                    </a> |
+                    <a href="#" class="actions-link btn btn-delete" data-toggle="modal" data-target="#deleteModal" data-id="@item.ProductID">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </a>
                 </td>
             </tr>
         }
     </tbody>
-
 </table>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this product?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="deleteButton" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts (jQuery, Bootstrap JS) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // JavaScript to handle delete modal action
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var productId = button.data('id'); // Extract product id from data-* attributes
+        var deleteUrl = '@Url.Action("Delete", "Product")/' + productId; // Create the delete URL
+
+        // Update the delete button's href with the correct URL
+        $('#deleteButton').attr('href', deleteUrl);
+    });
+
+    // JavaScript to handle searching products in the table
+    function searchProducts() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("productTableBody");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td");
+            if (td) {
+                txtValue = td[0].textContent || td[0].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>

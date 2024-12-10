@@ -25,7 +25,7 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product?>>> GetProducts()
         {
             return await _productRepository.GetAll();
         }
