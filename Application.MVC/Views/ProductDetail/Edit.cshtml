@@ -1,4 +1,4 @@
-﻿@using Application.Data.Enums
+﻿@* @using Application.Data.Enums
 @model Application.Data.DTOs.ProductDetailDTO
 
 @{
@@ -21,14 +21,6 @@
         <span asp-validation-for="ProductID" class="text-danger"></span>
     </div>
 
-    @* <div class="form-group">
-        <label for="ImageID" class="control-label">Image File Name</label>
-        <select asp-for="ImageID" class="form-control"
-                asp-items="@(images != null && images.Any() ? new SelectList(images, "ImageID", "ImageFileName") : new SelectList(Enumerable.Empty<SelectListItem>()))">
-            <option value="">-- Select Image --</option>
-        </select>
-        <span asp-validation-for="ImageID" class="text-danger"></span>
-    </div> *@
 
     <div class="form-group">
         <label for="ColorID" class="control-label">Color</label>
@@ -118,3 +110,4 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }
 
+ *@
