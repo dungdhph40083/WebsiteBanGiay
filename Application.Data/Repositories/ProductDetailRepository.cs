@@ -19,18 +19,12 @@ namespace Application.Data.Repositories
 
         public async Task<ProductDetail> CreateNew(ProductDetailDTO NewDetail)
         {
-            // để ko cần phải tự nhập GUID mỗi lần thêm dữ liệu nữa
             ProductDetail ProductDetail = new()
             {
                 ProductDetailID = Guid.NewGuid(),
                 UpdatedAt = DateTime.UtcNow
             };
 
-            // có hai cách gán dữ liệu vào trong này:
-            // cách 1: tự gán giá trị thuộc tính thủ công
-            // VD: ProductDetail.WarrantyPeriod = DateTime.Now; bla bla bla
-            // cách 2: dùng package gán dữ liệu từ một model con sang model mẹ (AutoMapper)
-            // Source: nguồn >=====<CHẠY SANG>=====> Destination: đích đến
             ProductDetail = Mapper.Map(NewDetail, ProductDetail);
             await Context.ProductDetails.AddAsync(ProductDetail);
             await Context.SaveChangesAsync();
@@ -49,7 +43,6 @@ namespace Application.Data.Repositories
 
         public async Task<ProductDetail?> GetProductDetailByID(Guid TargetID)
         {
-            // ?????????????????
             return await Context.ProductDetails
                     .Include(Prod => Prod.Product)
                     .Include(Img => Img.Image)

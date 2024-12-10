@@ -38,7 +38,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductDetail>> Post([FromBody] ProductDetailDTO NewProductDetail, IFormFile? Image)
+        public async Task<ActionResult<ProductDetail>> Post([FromForm] ProductDetailDTO NewProductDetail, IFormFile? Image)
         {
             if (Image != null)
             {
@@ -62,7 +62,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{ID}")]
-        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromBody] ProductDetailDTO UpdatedProductDetail, IFormFile? Image)
+        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromForm] ProductDetailDTO UpdatedProductDetail, IFormFile? Image)
         {
             if (Image != null)
             {

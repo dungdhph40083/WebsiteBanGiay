@@ -64,7 +64,7 @@ namespace Application.Data.Repositories
             // Để đồng bộ thời gian thêm và cập nhật vì nãy thêm vào dùng 2 cái DateTime.UtcNow nó bị delay một vài milligiây @@
             string UniqueID = new(Enumerable.Repeat(RandomizerChars, 5).Select(Idx => Idx[RNG.Next(Idx.Length)]).ToArray());
             string FileExtension = Path.GetExtension(ImageFile.FileName);
-            string FileName = Path.GetFileNameWithoutExtension(ImageFile.FileName) + $"_{DateTimeOffset.Parse(TimeSync.ToString()).ToString("dd-MM-yyyy_HH-mm-ss-ffff")}_{UniqueID}" + FileExtension;
+            string FileName = Path.GetFileNameWithoutExtension(ImageFile.FileName) + $"_{DateTimeOffset.Parse(TimeSync.ToString()):dd-MM-yyyy_HH-mm-ss}_{UniqueID}" + FileExtension;
 
             var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "WWWRoot", "Images", FileName);
             using (var Stream = new FileStream(FilePath, FileMode.Create))

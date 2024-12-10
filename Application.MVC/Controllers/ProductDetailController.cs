@@ -74,12 +74,26 @@ namespace Application.MVC.Controllers
 
         // POST: ProductDetail/Create
         [HttpPost]
-        public async Task<ActionResult> Create(ProductDetailDTO newProductDetail)
+        public async Task<ActionResult> Create(ProductDetailDTO Detail, IFormFile? Image)
         {
+            MultipartFormDataContent Contents = new()
+            {
+                { new StringContent(Detail.ProductID.ToString() ?? ""),  nameof(Detail.ProductID) },
+                { new StringContent(Detail.SizeID.ToString() ?? ""),     nameof(Detail.SizeID) },
+                { new StringContent(Detail.ColorID.ToString() ?? ""),    nameof(Detail.ColorID) },
+                { new StringContent(Detail.CategoryID.ToString() ?? ""), nameof(Detail.CategoryID) },
+                { new StringContent(Detail.SaleID.ToString() ?? ""),     nameof(Detail.SaleID) },
+                { new StringContent(Detail.Material ?? ""),              nameof(Detail.Material) },
+                { new StringContent(Detail.Quantity.ToString() ?? ""),   nameof(Detail.Quantity) },
+                { new StringContent(Detail.Brand ?? ""),                 nameof(Detail.Brand) },
+                { new StringContent(Detail.PlaceOfOrigin ?? ""),         nameof(Detail.PlaceOfOrigin) },
+                { new StringContent(Detail.Status.ToString() ?? "1"),    nameof(Detail.Status) }
+            };
+
             // Gửi yêu cầu POST đến API
             try
             {
-                var response = await Client.PostAsJsonAsync("https://localhost:7187/api/ProductDetails", newProductDetail);
+                var response = await Client.PostAsync("https://localhost:7187/api/ProductDetails", Contents);
                 return RedirectToAction(nameof(Index)); // Quay lại trang danh sách nếu thành công
             }
             catch (Exception Msg)
@@ -88,7 +102,7 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Error: {Msg.Message}");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                return View(newProductDetail);
+                return View(Detail);
             }
 
             // Nếu có lỗi, hiển thị lại form với thông báo lỗi
