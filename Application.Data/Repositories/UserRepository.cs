@@ -107,14 +107,14 @@ namespace Application.Data.Repositories
             return BallsCrypt.EnhancedHashPassword(Password, 14);
         }
 
-        public async Task<bool> ValidAccount(string Username, string Password)
+        public async Task<Guid?> ValidAccount(string Username, string Password)
         {
             var AccountFind = await Context.Users.SingleOrDefaultAsync(x => x.Username == Username);
             if (AccountFind != null && BallsCrypt.Verify(Password, AccountFind.Password))
             {
-                return true;
+                return AccountFind.UserID;
             }
-            else return false;
+            else return default;
         }
     }
 }

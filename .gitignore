@@ -1,4 +1,4 @@
-Application.API/appsettings.json
+/Application.API/appsettings.json
 /.vs
 /Application.API/bin/Debug/net8.0
 /Application.API/obj
@@ -8,3 +8,4 @@ Application.API/appsettings.json
 /Application.MVC/obj
 /Application.MVC.GeneralPublic/bin/Debug/net8.0
 /Application.MVC.GeneralPublic/obj
+/Application.Data/Migrations

@@ -39,6 +39,22 @@ namespace Application.API.Controllers
             return await UserRepo.GetUserByID(ID);
         }
 
+        [HttpPost("Login")]
+        public async Task<ActionResult<UserSession?>> Login([FromForm] LoginDTO LoginInfo)
+        {
+            var IsValid = await UserRepo.ValidAccount(LoginInfo.Username, LoginInfo.Password);
+            if (IsValid != null)
+            {
+                return new UserSession()
+                {
+                    UserID = IsValid,
+                    Username = LoginInfo.Username,
+                    JWToken = "Not_Yet"
+                };
+            }
+            else return NotFound(null);
+        }
+
         // tạo mới người dùng
         [HttpPost]
         public async Task<ActionResult<User>> Post([FromForm] UserDTO NewUser, IFormFile? ProfilePic)

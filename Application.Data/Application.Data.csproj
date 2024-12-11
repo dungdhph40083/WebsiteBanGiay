@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+	
   <ItemGroup>
     <None Remove="NewFolder\Image\Create.cshtml" />
     <None Remove="NewFolder\Image\Details.cshtml" />
