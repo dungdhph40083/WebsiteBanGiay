@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using Application.Data.Enums
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor;
+
+@{
+    var HttpContext = HttpContextAccessor.HttpContext!;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -24,6 +32,25 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="~/css/style.min.css" rel="stylesheet">
+
+    <style>
+        /* #region hide arrows on number input fields */
+
+        /* chromium */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* #endregion asdasdasd */
+    </style>
+
 </head>
 
 <body>
@@ -41,35 +68,25 @@
             <div class="col-lg-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">My Account</button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <button class="dropdown-item" type="button">Sign in</button>
-                            <button class="dropdown-item" type="button">Sign up</button>
-                        </div>
-                    </div>
-                    <div class="btn-group mx-2">
-                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">USD</button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <button class="dropdown-item" type="button">EUR</button>
-                            <button class="dropdown-item" type="button">GBP</button>
-                            <button class="dropdown-item" type="button">CAD</button>
-                        </div>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">EN</button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <button class="dropdown-item" type="button">FR</button>
-                            <button class="dropdown-item" type="button">AR</button>
-                            <button class="dropdown-item" type="button">RU</button>
-                        </div>
+                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Tài khoản</button>
+                        @if (HttpContext.Session.GetString(nameof(Metadata.UserID)) != null || HttpContext.Session.GetString(nameof(Metadata.Username)) != null)
+                        {
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a asp-controller="Account" asp-action="Login" class="dropdown-item">Đăng nhập</a>
+                                <a asp-controller="Account" asp-action="Signup" class="dropdown-item">Đăng ký</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a asp-controller="Account" asp-action="Login" class="dropdown-item">Đăng nhập</a>
+                                <a asp-controller="Account" asp-action="Signup" class="dropdown-item">Đăng ký</a>
+                            </div>
+                        }
                     </div>
                 </div>
                 <div class="d-inline-flex align-items-center d-block d-lg-none">
-                    <a href="" class="btn px-0 ml-2">
-                        <i class="fas fa-heart text-dark"></i>
-                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
-                    </a>
-                    <a href="" class="btn px-0 ml-2">
+                    <a asp-controller="UserCart" asp-action="Index" class="btn px-0 ml-2">
                         <i class="fas fa-shopping-cart text-dark"></i>
                         <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
                     </a>
@@ -78,7 +95,7 @@
         </div>
         <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
             <div class="col-lg-4">
-                <a href="" class="text-decoration-none">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
                     <span class="h1 text-uppercase text-primary bg-dark px-2">Multi</span>
                     <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Shop</span>
                 </a>
@@ -156,10 +173,6 @@
                             <a href="contact.html" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
-                            <a href="" class="btn px-0">
-                                <i class="fas fa-heart text-primary"></i>
-                                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
-                            </a>
                             <a href="" class="btn px-0 ml-3">
                                 <i class="fas fa-shopping-cart text-primary"></i>
                                 <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>

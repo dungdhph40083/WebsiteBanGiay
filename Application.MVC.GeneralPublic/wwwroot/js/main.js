@@ -83,22 +83,35 @@
         }
     });
 
-
     // Product Quantity
-    $('.quantity button').on('click', function () {
-        var button = $(this);
-        var oldValue = button.parent().parent().find('input').val();
-        if (button.hasClass('btn-plus')) {
-            var newVal = parseFloat(oldValue) + 1;
-        } else {
-            if (oldValue > 0) {
-                var newVal = parseFloat(oldValue) - 1;
-            } else {
-                newVal = 0;
-            }
-        }
-        button.parent().parent().find('input').val(newVal);
-    });
-    
+
+    //$('.quantity button').on('click', function ItemButton(ItemID) {
+    //    var button = $(this);
+
+    //    var Input = document.getElementById("ProductAmount_" + ItemID);
+    //    var PriceSingle = document.getElementById("PriceSingle_" + ItemID);
+    //    var PriceTotal = document.getElementById("PriceTotal_" + ItemID);
+
+    //    var oldValue = Input.val();
+    //    var PriceSingleValue = PriceSingle.val();
+    //    var PriceTotalValue = PriceTotal.val();
+
+    //    if (button.hasClass('btn-plus')) {
+    //        var newVal = parseFloat(oldValue) + 1;
+    //    }
+    //    if (button.hasClass('btn-minus'))
+    //    {
+    //        if (oldValue > 1) {
+    //            var newVal = parseFloat(oldValue) - 1;
+    //        } else {
+    //            newVal = 1;
+    //        }
+    //    }
+    //    Input.val(newVal);
+
+    //    PriceTotal.val(PriceSingleValue * newVal);
+    //    PriceTotal.innerText = ThousandSeparator(PriceTotal.val());
+    //});
+
 })(jQuery);
 

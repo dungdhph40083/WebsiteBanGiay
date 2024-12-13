@@ -1,12 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Data.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
     public class UserCartController : Controller
     {
-        public IActionResult Index()
+        HttpClient Client = new HttpClient();
+
+        public async Task<ActionResult> Index()
         {
-            return View();
+            string URL = $@"HTTPS://LOCALHOST:7187/API/SHOPPINGCART";
+
+            var Response = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
+            return View(Response);
         }
     }
 }

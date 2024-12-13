@@ -13,6 +13,8 @@ builder.Services.AddSession(Options =>
     Options.IdleTimeout = TimeSpan.FromMinutes(14);
 });
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
