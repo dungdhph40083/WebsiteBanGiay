@@ -19,6 +19,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Add2Cart(Guid? ID, int? Quantity, bool? AdditionMode)
         {
+            // Fake data; xóa sau khi có Đăng nhập/Đăng ký!!!
             Guid UserID = Guid.Parse("bbd122d1-8961-4363-820e-3ad1a87064e4");
 
             if (ID != null)
