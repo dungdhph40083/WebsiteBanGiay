@@ -138,7 +138,7 @@ namespace Application.Data.Repositories
             else return default;
         }
 
-        public async Task<ShoppingCart?> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity)
+        public async Task<ShoppingCart?> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity, bool? AdditionMode)
         {
             if (Quantity < 0) Quantity = 0;
 
@@ -162,7 +162,9 @@ namespace Application.Data.Repositories
             {
                 Context.Entry(CartItem).State = EntityState.Modified;
 
-                CartItem.QuantityCart = (Quantity ?? 0);
+                if (AdditionMode == true) CartItem.QuantityCart += (Quantity ?? 0);
+                else CartItem.QuantityCart = (Quantity ?? 0);
+
                 CartItem.Price = CartItem.QuantityCart * CartItem?.ProductDetail?.Product?.Price;
 
                 Console.WriteLine(JsonConvert.SerializeObject(CartItem, Formatting.Indented));

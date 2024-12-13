@@ -54,10 +54,10 @@ namespace Application.API.Controllers
             return NoContent();
         }
 
-        [HttpPut("{UserID}/{ProductDetailID}")]
-        public async Task<ActionResult<ShoppingCart?>> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity)
+        [HttpPut("Add2Cart/{UserID}/{ProductDetailID}")]
+        public async Task<ActionResult<ShoppingCart?>> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity, bool? AdditionMode)
         {
-            var Response = await ShoppingCartRepo.Add2Cart(UserID, ProductDetailID, Quantity);
+            var Response = await ShoppingCartRepo.Add2Cart(UserID, ProductDetailID, Quantity, AdditionMode);
             if (Response != null) return await Get(Response.CartID);
             else return NoContent();
         }
