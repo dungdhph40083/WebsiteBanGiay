@@ -9,3 +9,4 @@
 /Application.MVC.GeneralPublic/bin/Debug/net8.0
 /Application.MVC.GeneralPublic/obj
 /Application.Data/Migrations
+/Application.MVC.GeneralPublic/Views/UserCart/!Sample.cshtml
