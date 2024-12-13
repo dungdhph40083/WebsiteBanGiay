@@ -14,60 +14,86 @@ namespace Application.MVC.GeneralPublic.Controllers
         private readonly GiayDBContext _context;
         HttpClient client;
 
-        public ProductController(GiayDBContext context)
+        private readonly HttpClient _client;
+
+        public ProductController()
         {
-            _context = context;
-            client = new HttpClient();
+            _client = new HttpClient();
         }
 
-        public async Task<IActionResult> Index(string priceRange = "all", int page = 1)
+
+        public async Task<ActionResult> Index(int page = 1, string priceRange = "all")
         {
-            var pageSize = 9;
-            var products = new List<Product>();
+            var products = await _client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+            ViewBag.Orders = products ?? new List<Product>();
 
-            try
+            var details = await _client.GetFromJsonAsync<List<ProductDetail>>("https://localhost:7187/api/ProductDetails");
+            ViewBag.Details = details ?? new List<ProductDetail>();
+
+            decimal minPrice = 0, maxPrice = decimal.MaxValue;
+
+            if (priceRange == "0-1")
             {
-                // Fetch products from the API
-                products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+                minPrice = 99000;
+                maxPrice = 500000;
             }
-            catch (Exception ex)
+            else if (priceRange == "1-2")
             {
-                // Handle potential errors like API call failure
-                // You could log the error or return an appropriate message
-                Console.WriteLine($"Error fetching products: {ex.Message}");
-                products = new List<Product>();
+                minPrice = 500000;
+                maxPrice = 1000000;
             }
-
-            // Lọc theo giá
-            if (!string.IsNullOrEmpty(priceRange) && priceRange != "all")
+            else if (priceRange == "2-3")
             {
-                var priceRanges = new Dictionary<string, (decimal min, decimal max)>
-        {
-            { "0-1", (99000, 500000) },
-            { "1-2", (500000, 1000000) },
-            { "2-3", (1000000, 2000000) },
-            { "3-4", (2000000, 5000000) }
-        };
-
-                if (priceRanges.ContainsKey(priceRange))
-                {
-                    var range = priceRanges[priceRange];
-                    products = products.Where(p => p.Price >= range.min && p.Price <= range.max).ToList();
-                }
+                minPrice = 1000000;
+                maxPrice = 2000000;
+            }
+            else if (priceRange == "3-4")
+            {
+                minPrice = 2000000;
+                maxPrice = 5000000;
             }
 
-            // Phân trang
-            var totalProducts = products.Count();
-            var totalPages = (int)Math.Ceiling(totalProducts / (double)pageSize);
-            var pagedProducts = products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var filteredProducts = details
+                .Where(p => products.Any(prod => prod.ProductID == p.ProductID && prod.Price >= minPrice && prod.Price <= maxPrice))
+                .ToList();
 
-            // Trả về View
-            ViewBag.Products = pagedProducts;
-            ViewBag.TotalPages = totalPages;
+            const int pageSize = 9;
+            var totalProducts = filteredProducts.Count;
+            var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+
+            var productsForCurrentPage = filteredProducts.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
             ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
             ViewBag.SelectedPrice = priceRange;
 
-            return View();
+            return View(productsForCurrentPage);
+        }
+
+
+
+
+        public async Task<ActionResult> Details(Guid ID)
+        {
+            var productss = await _client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+            ViewBag.Products = productss ?? new List<Product>();
+
+            var sizes = await _client.GetFromJsonAsync<List<Size>>("https://localhost:7187/api/Size");
+            ViewBag.Sizes = sizes ?? new List<Size>();
+
+            var colors = await _client.GetFromJsonAsync<List<Color>>("https://localhost:7187/api/Color");
+            ViewBag.Colors = colors ?? new List<Color>();
+
+            string productDetailUrl = $"https://localhost:7187/api/ProductDetails/{ID}";
+            var productDetail = await _client.GetFromJsonAsync<ProductDetail>(productDetailUrl);
+
+
+            if (productDetail == null)
+            {
+                return NotFound();
+            }
+
+            return View(productDetail);
         }
 
 
