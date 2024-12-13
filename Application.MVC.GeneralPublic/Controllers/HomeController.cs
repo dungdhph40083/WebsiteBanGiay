@@ -21,7 +21,6 @@ namespace Application.MVC.GeneralPublic.Controllers
             string URL_Prods = $@"https://localhost:7187/api/ProductDetails";
 
             var Details = await Client.GetFromJsonAsync<List<ProductDetail>>(URL_Prods);
-            Console.WriteLine(JsonConvert.SerializeObject(Details, Formatting.Indented));
             // Lấy 8 con từ đầu danh sách sau khi được sắp xếp theo ngày từ cuối lên đầu
 
             // Sau đó cho vào ViewBag

@@ -98,7 +98,7 @@
                     <span style="font-style: italic;">@Model.Brand</span>
                 </div>
 
-                <form asp-controller="UserCart" asp-action="Add2Cart" asp-route-ID="@ViewContext.RouteData.Values["id"]" asp-route-AdditionMode="false">
+                <form asp-controller="UserCart" asp-action="Add2Cart" asp-route-ID="@ViewContext.RouteData.Values["id"]" asp-route-AdditionMode="true">
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 180px;">
                             <div class="input-group-btn">

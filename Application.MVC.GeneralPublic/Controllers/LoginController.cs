@@ -50,8 +50,6 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                 var Response = await Client.PostAsync(URL, Contents);
 
-                Console.WriteLine(await Response.Content.ReadAsStringAsync());
-
                 if (Response.StatusCode == HttpStatusCode.OK || Response.StatusCode == HttpStatusCode.Created)
                 {
                     TempData["SuccessBanner"] = "SUCCESS";

@@ -192,8 +192,6 @@ namespace Application.Data.Repositories
                 var Response = await CreateNew(NewCart);
                 await Context.SaveChangesAsync();
 
-                Console.WriteLine(JsonConvert.SerializeObject(Response, Formatting.Indented));
-
                 return Response;
             }
         }

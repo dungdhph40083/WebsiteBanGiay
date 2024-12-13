@@ -2,6 +2,7 @@
 using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Drawing;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -19,6 +20,14 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Add2Cart(Guid? ID, int? Quantity, bool? AdditionMode)
         {
+            // TODO:
+            // 1. nút cập nhật giỏ hàng (HARD)
+            // 2. nút xóa (EASY)
+            // 3. căn chỉnh (NORMAL)
+            // 4. thêm cột thông tin (size & màu) (EASY)
+            // 5. làm thông báo thay đổi chưa được lưu (EASY)
+
+
             // Fake data; xóa sau khi có Đăng nhập/Đăng ký!!!
             Guid UserID = Guid.Parse("bbd122d1-8961-4363-820e-3ad1a87064e4");
 
