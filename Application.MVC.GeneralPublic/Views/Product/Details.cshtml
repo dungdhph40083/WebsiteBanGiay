@@ -5,6 +5,7 @@
     var productss = ViewBag.Products as List<Application.Data.Models.Product>;
     var sizes = ViewBag.Sizes as List<Application.Data.Models.Size>;
     var colors = ViewBag.Colors as List<Application.Data.Models.Color>;
+
     var selectedProduct = productss?.FirstOrDefault(p => p.ProductID == Model.ProductID);
     var selectedSize = sizes?.FirstOrDefault(s => s.SizeID == Model.SizeID);
     var selectedColor = colors?.FirstOrDefault(c => c.ColorID == Model.ColorID);
@@ -30,9 +31,9 @@
                     <div class="carousel-inner bg-light">
                         <div class="carousel-item active">
                             <img class="img-fluid w-100 product-image"
-                                 src="https://localhost:7187/Images/@(selectedProduct.Image?.ImageFileName)"
-                                 alt="@selectedProduct.Name"
-                                 style="width: 100%; height: 600px; object-fit: cover;" />
+                                    src="https://localhost:7187/Images/@(selectedProduct.Image?.ImageFileName)"
+                                    alt="@selectedProduct.Name"
+                                    style="width: 100%; height: 600px; object-fit: cover;" />
 
                         </div>
                     </div>
@@ -52,7 +53,7 @@
 
         <div class="col-lg-7 h-auto mb-30">
             <div class="h-100 bg-light p-30">
-                <h3 style="font-size: 2.5rem;">@Model.Product.Name</h3>
+                <h3 style="font-size: 2.5rem;">@Model.Product?.Name</h3>
                 <p></p>
                 <div class="d-flex mb-3">
                     <div class="text-primary mr-2">
@@ -74,22 +75,18 @@
 
                 <div class="d-flex mb-3">
                     <strong class="text-dark mr-3">Sizes:</strong>
-                    <form>
                         <div class="custom-control custom-radio custom-control-inline">
                             <input type="radio" class="custom-control-input" id="size-1" name="size">
                             <label class="custom-control-label" for="size-1">@(selectedSize != null ? selectedSize.Name : "Not available")</label>
                         </div>
-                    </form>
-                    <form>
                         @*   <div class="custom-control custom-radio custom-control-inline">
                         <input type="radio" class="custom-control-input" id="size-1" name="size">
                         <label class="custom-control-label" for="size-1">@(selectedSize != null ? selectedSize.Name : "Not available")</label>
                         </div> *@
-                    </form>
                 </div>
 
                 <div class="d-flex mb-3" style="font-size: 1.2rem;">
-                    <strong class="text-dark mr-3">Colors: </strong>
+                    <strong class="text-dark mr-3">Màu: </strong>
                     <span style="font-style: italic;">@(selectedColor != null ? selectedColor.ColorName : "Not available")</span>
                 </div>
                 <div class="d-flex mb-3" style="font-size: 1.2rem;">
@@ -97,46 +94,40 @@
                     <span style="font-style: italic;">@Model.Material</span>
                 </div>
                 <div class="d-flex mb-3" style="font-size: 1.2rem;">
-                    <strong class="text-dark mr-3">Brand: </strong>
+                    <strong class="text-dark mr-3">Hiệu: </strong>
                     <span style="font-style: italic;">@Model.Brand</span>
                 </div>
 
-                <div class="d-flex align-items-center mb-4 pt-2">
-                    <div class="input-group quantity mr-3" style="width: 135px;">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-minus" style="font-size: 1rem;">
-                                <i class="fa fa-minus"></i>
-                            </button>
+                <form asp-controller="UserCart" asp-action="Add2Cart" asp-route-ID="@ViewContext.RouteData.Values["id"]" asp-route-AdditionMode="false">
+                    <div class="d-flex align-items-center mb-4 pt-2">
+                        <div class="input-group quantity mr-3" style="width: 180px;">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-primary btn-minus" onclick="Remove1Generic()" style="font-size: 1rem;">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input name="Quantity" type="number" class="form-control bg-secondary border-0 text-center" id="ProductAmount" onkeyup="Edit1Generic()" value="1" min="1" max="@Model.Quantity" style="font-size: 1rem;">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-primary btn-plus" onclick="Add1Generic()" style="font-size: 1rem;">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
-                        <input type="text" class="form-control bg-secondary border-0 text-center" value="1" style="font-size: 1rem;">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-plus" style="font-size: 1rem;">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </div>
+                        <div style="font-size: 0.9rem;">@Model.Quantity sản phẩm có sẵn</div>
                     </div>
-                    <div style="font-size: 1.1rem;">@Model.Quantity sản phẩm có sẵn</div>
+                    <button class="btn btn-primary px-4 py-2" style="font-size: 1.2rem;" type="submit">
+                        <i class="fa fa-shopping-cart mr-1"></i> Thêm vào giỏ hàng
+                    </button>
+                </form>
+
+                <div>
+                    <label class="btn btn-secondary" for="toggleImage">Hướng dẫn chọn size</label>
+                    <input type="checkbox" id="toggleImage" style="display: none;" />
+                    <div id="imageContainer">
+                        <div id="closeButton" style="position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; color: white;">&times;</div>
+                        <img src="https://img.vuahanghieu.com/unsafe/0x0/left/top/smart/filters:quality(90)/https://admin.vuahanghieu.com/upload/news/content/2022/09/size-giay-adidas-2-jpg-1663988694-24092022100454.jpg" alt="Hướng dẫn chọn size" />
+                    </div>
                 </div>
-
-                <button class="btn btn-primary px-4 py-2" style="font-size: 1.2rem;">
-                    <i class="fa fa-shopping-cart mr-1"></i> Thêm vào giỏ hàng
-                </button>
-                <p>
-                    <div>
-                        <label for="toggleImage" style="cursor: pointer; color: blue; text-decoration: underline;">Hướng dẫn chọn size</label>
-                        <input type="checkbox" id="toggleImage" style="display: none;" />
-                        <div id="imageContainer">
-                            <div id="closeButton" style="position: absolute; top: 10px; right: 20px; font-size: 30px; cursor: pointer; color: white;">&times;</div>
-                            <img src="https://img.vuahanghieu.com/unsafe/0x0/left/top/smart/filters:quality(90)/https://admin.vuahanghieu.com/upload/news/content/2022/09/size-giay-adidas-2-jpg-1663988694-24092022100454.jpg" alt="Hướng dẫn chọn size" />
-                        </div>
-                    </div>
-
-                    <!-- JavaScript -->
-                    <script>
-                        document.getElementById('closeButton').addEventListener('click', function () {
-                            document.getElementById('toggleImage').checked = false;
-                        });
-                    </script>
             </div>
         </div>
     </div>
@@ -145,7 +136,7 @@
     <div class="col">
         <div class="bg-light p-30">
             <div class="nav nav-tabs mb-4">
-                <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Sự mô tả</a>
+                <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Mô tả</a>
                 @*                 <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-3">Đánh giá sản phẩm (0)</a> *@
             </div>
             <div class="tab-content">
@@ -252,3 +243,11 @@
         }
 
 </style>
+
+<!-- JavaScript -->
+<script>
+    document.getElementById('closeButton').addEventListener('click', function () {
+        document.getElementById('toggleImage').checked = false;
+    });
+</script>
+<script src="~/js/shopping_cart_logic.js"></script>

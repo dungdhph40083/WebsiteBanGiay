@@ -11,7 +11,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly GiayDBContext _context;
+        //private readonly GiayDBContext _context; dont 
         HttpClient client;
 
         private readonly HttpClient _client;
@@ -95,7 +95,5 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             return View(productDetail);
         }
-
-
     }
 }

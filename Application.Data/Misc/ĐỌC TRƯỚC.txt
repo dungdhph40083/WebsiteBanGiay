@@ -1,9 +1,2 @@
 ﻿dùng cái database mdf đi 
 mình ko dùng cái script SQL nữa
-
-
-
-
-
-
-.

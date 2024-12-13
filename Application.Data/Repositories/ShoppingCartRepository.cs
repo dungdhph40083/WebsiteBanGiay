@@ -167,8 +167,6 @@ namespace Application.Data.Repositories
 
                 CartItem.Price = CartItem.QuantityCart * CartItem?.ProductDetail?.Product?.Price;
 
-                Console.WriteLine(JsonConvert.SerializeObject(CartItem, Formatting.Indented));
-
                 if (CartItem!.QuantityCart == 0)
                 {
                     Context.ShoppingCarts.Remove(CartItem);

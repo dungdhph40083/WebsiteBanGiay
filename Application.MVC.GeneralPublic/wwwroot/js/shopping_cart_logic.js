@@ -50,3 +50,35 @@ function Add1(ItemID) {
             ThousandSeparator(parseInt(PriceSingle.innerText.replace(',', '')) * ProductAmount.value);
     }
 }
+
+function Remove1Generic() {
+    var ProductAmount = document.getElementById("ProductAmount");
+    var CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
+
+    if (!isNaN(CurrentQuantity)) {
+        ProductAmount.value = Math.max(CurrentQuantity - 1, 1);
+    }
+}
+
+function Edit1Generic() {
+    var ProductAmount = document.getElementById("ProductAmount");
+    var CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
+    var Max = parseInt(ProductAmount.max);
+
+    if (ProductAmount.value < 0) ProductAmount.value = 1;
+    if (ProductAmount.value > Max) ProductAmount.value = Max;
+}
+
+// +1
+function Add1Generic() {
+    var ProductAmount = document.getElementById("ProductAmount");
+    var CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
+    var Max = ProductAmount.max;
+
+    if (!isNaN(CurrentQuantity)) {
+        if (CurrentQuantity < Max) {
+            ProductAmount.value = CurrentQuantity + 1;
+        }
+        else ProductAmount.value = Max;
+    }
+}
