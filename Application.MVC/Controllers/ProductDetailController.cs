@@ -45,32 +45,55 @@ namespace Application.MVC.Controllers
 
         private async Task Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds()
         {
-            // Lấy danh sách Products và Images từ API
+            // Lấy danh sách Products và ProductDetails từ API
             var ProductsList = await Client.GetFromJsonAsync<List<Product>>($@"https://localhost:7187/api/Product");
+            var ProductDetailsList = await Client.GetFromJsonAsync<List<ProductDetail>>($@"https://localhost:7187/api/ProductDetails");
+
+            // Lọc các sản phẩm chưa được sử dụng trong ProductDetails
+            var AvailableProducts = ProductsList?
+                .Where(product => !ProductDetailsList.Any(detail => detail.ProductID == product.ProductID))
+                .ToList();
+
             var ColorsList = await Client.GetFromJsonAsync<List<Color>>($@"https://localhost:7187/api/Color");
             var SizesList = await Client.GetFromJsonAsync<List<Size>>($@"https://localhost:7187/api/Size");
             var CategoriesList = await Client.GetFromJsonAsync<List<Category>>($@"https://localhost:7187/api/Category");
             var SalesList = await Client.GetFromJsonAsync<List<Sale>>($@"https://localhost:7187/api/Sale");
 
-            var ProdsItems = ProductsList?
-                .Select(Pls => new SelectListItem
-                { Text = Pls.Name, Value = Pls.ProductID.ToString() }).ToList();
+            // Tạo danh sách SelectListItem cho các dropdown
+            var ProdsItems = AvailableProducts?
+                .Select(pls => new SelectListItem
+                {
+                    Text = pls.Name,
+                    Value = pls.ProductID.ToString()
+                }).ToList();
 
             var ColrsItems = ColorsList?
-                .Select(Help => new SelectListItem
-                { Text = Help.ColorName, Value = Help.ColorID.ToString() }).ToList();
+                .Select(help => new SelectListItem
+                {
+                    Text = help.ColorName,
+                    Value = help.ColorID.ToString()
+                }).ToList();
 
             var SizesItems = SizesList?
-                .Select(Im => new SelectListItem
-                { Text = Im.Name, Value = Im.SizeID.ToString() }).ToList();
+                .Select(im => new SelectListItem
+                {
+                    Text = im.Name,
+                    Value = im.SizeID.ToString()
+                }).ToList();
 
             var CatgsItems = CategoriesList?
-                .Select(Being => new SelectListItem
-                { Text = Being.CategoryName, Value = Being.CategoryID.ToString() }).ToList();
+                .Select(being => new SelectListItem
+                {
+                    Text = being.CategoryName,
+                    Value = being.CategoryID.ToString()
+                }).ToList();
 
             var SalesItems = SalesList?
-                .Select(HeldHostage => new SelectListItem
-                { Text = HeldHostage.Name, Value = HeldHostage.SaleID.ToString() }).ToList();
+                .Select(heldHostage => new SelectListItem
+                {
+                    Text = heldHostage.Name,
+                    Value = heldHostage.SaleID.ToString()
+                }).ToList();
 
             // Nếu API trả về null, khởi tạo danh sách trống
             ViewBag.Prods = ProdsItems;
@@ -79,6 +102,7 @@ namespace Application.MVC.Controllers
             ViewBag.Catgs = CatgsItems;
             ViewBag.Sales = SalesItems;
         }
+
 
         // POST: ProductDetail/Create
         [HttpPost]
