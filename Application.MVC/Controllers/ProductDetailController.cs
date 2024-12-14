@@ -15,7 +15,8 @@ namespace Application.MVC.Controllers
         {
             string URL = $@"https://localhost:7187/api/ProductDetails";
             var Response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
-            return View(Response);
+            var sortedResponse = Response.OrderByDescending(p => p.UpdatedAt).ToList();
+            return View(sortedResponse);
         }
 
         public async Task<ActionResult> Details(Guid ID)

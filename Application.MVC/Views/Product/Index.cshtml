@@ -18,8 +18,8 @@
     }
 
     .img-thumbnail {
-        width: 100px; /* Reduced the width */
-        height: 100px; /* Reduced the height */
+        width: 100px;
+        height: 100px;
     }
 
     .table-hover tbody tr:hover {
@@ -117,7 +117,7 @@
                 <td>
                     @if (item.Image != null)
                     {
-                        <img src="https://localhost:7187/Images/@(item.Image.ImageFileName)" class="img-thumbnail" alt="Thumbnail epic">
+                        <img src="https://localhost:7187/Images/@(item.Image.ImageFileName)" class="img-thumbnail" alt="Thumbnail">
                     }
                     else
                     {
@@ -131,10 +131,10 @@
                 <td>
                     <a href="@Url.Action("Edit", new { id = item.ProductID })" class="actions-link btn btn-edit">
                         <i class="fas fa-edit"></i> Sửa
-                    </a> 
+                    </a>
                     <a href="@Url.Action("Details", new { id = item.ProductID })" class="actions-link btn btn-details">
                         <i class="fas fa-info-circle"></i> Chi tiết
-                    </a> 
+                    </a>
                     <button type="button" class="actions-link btn btn-delete delete_trigger" data-id="@item.ProductID" data-controller="Product" data-action="Delete" data-toggle="modal" data-target="#ModalDelete"><i class="fas fa-trash-alt"></i> Xóa</button>
                 </td>
             </tr>
@@ -142,23 +142,75 @@
     </tbody>
 </table>
 
+<!-- Pagination -->
+<div class="d-flex justify-content-center mt-3">
+    <nav>
+        <ul class="pagination">
+            <!-- Previous Page -->
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, pageSize = ViewBag.PageSize })">Trước</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Trước</span>
+                </li>
+            }
+
+            <!-- Page Numbers -->
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                if (i == ViewBag.CurrentPage)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = ViewBag.PageSize })">@i</a>
+                    </li>
+                }
+            }
+
+            <!-- Next Page -->
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize })">Tiếp</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Tiếp</span>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
 <!-- Modal -->
 <div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="DeleteLabel">KHOAN!!! <span style="font-size:x-small">(Khoan?)</span></h1>
-                <button type="button" class="close" data-dismiss="modal" id="close-btn" aria-label="Close">
+                <h1 class="modal-title fs-5" id="DeleteLabel">Cảnh báo</h1>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i class="fa-cross"></i>
                 </button>
             </div>
             <div class="modal-body">
-                Bạn có chắc chắn để xóa sản phẩm này?<br />
+                Bạn có chắc chắn muốn xóa sản phẩm này?<br />
                 <span style="font-size:small" class="font-monospace-cascadia">ID sản phẩm: <span id="ItemID" class="font-monospace-cascadia"></span></span>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-btn">Hủy</button>
-                <button type="button" class="btn btn-danger" id="confirm_deletion">Xóa</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger">Xóa</button>
             </div>
         </div>
     </div>

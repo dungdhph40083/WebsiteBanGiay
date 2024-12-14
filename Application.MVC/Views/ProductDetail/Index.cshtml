@@ -18,6 +18,7 @@
         <thead class="thead-dark">
             <tr>
                 <th>Tên SP</th>
+                <th>Ảnh SP</th>
                 <th>Kích cỡ</th>
                 <th>Màu</th>
                 <th>Danh mục</th>
@@ -31,6 +32,17 @@
             {
                 <tr>
                     <td>@Entry.Product?.Name</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(Entry.Product.Image.ImageFileName))
+                        {
+                            <img src="https://localhost:7187/Images/@(Entry.Product.Image.ImageFileName)" alt="Product Image" style="width: 100px; height: 100px;" />
+                        }
+                        else
+                        {
+                            <span>Chưa có ảnh</span>
+                        }
+                    </td>
+
                     <td>@Entry.Size?.Name</td>
                     <td>@Entry.Color?.ColorName</td>
                     <td>@Entry.Category?.CategoryName</td>
