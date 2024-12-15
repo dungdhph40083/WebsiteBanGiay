@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-md-4">
             <label asp-for="ProductID" class="form-label">Sản phẩm</label>
-            <select asp-for="ProductID" class="form-control" aria-label="Select category to assign to" asp-items="@ViewBag.Prods">
+            <select asp-for="ProductID" class="form-control" aria-label="Select category to assign to" asp-items="@ViewBag.Prods" >
                 <option selected value=null>(Chưa chọn)</option>
             </select>
         </div>
@@ -43,10 +43,10 @@
                 <option selected value=null>(Chưa chọn)</option>
             </select>
         </div>
-        <div class="col-md-4">
+@*         <div class="col-md-4">
             <label class="form-label">Ảnh bìa</label>
             <input type="file" name="Image" class="form-control-file" accept="image/png, image/jpeg" aria-label="Upload picture" />
-        </div>
+        </div> *@
     </div>
     <div class="row">
         <div class="col-md-4">
