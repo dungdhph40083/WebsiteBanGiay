@@ -8,6 +8,7 @@ namespace Application.Data.DTOs
     public class UserDTO
     {
         public Guid? RoleID { get; set; }
+        public Guid? UserID { get; set; }
         public Guid? ImageID { get; set; }
         [MinLength(3, ErrorMessage = "Tên người dùng quá ngắn!")]
         [MaxLength(30, ErrorMessage = "Tên người dùng quá dài!")]

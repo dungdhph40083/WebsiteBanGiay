@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Application.Data.ModelContexts;
 using Application.Data.Models;
+using Newtonsoft.Json;
+using Application.Data.DTOs;
 
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -23,7 +25,7 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<ActionResult> Index()
         {
             string URL = $@"https://localhost:7187/api/User";
-            var Response = await Client.GetFromJsonAsync<List<User>>(URL);
+            var Response = await Client.GetFromJsonAsync<List<UserDTO>>(URL);
 
             if (Response != null && Response.Any())
             {
@@ -36,13 +38,17 @@ namespace Application.MVC.GeneralPublic.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
+            string userRequestURL = "https://localhost:7187/api/User";
+            var userResponse = await Client.GetStringAsync(userRequestURL);
 
-            string url = "https://localhost:7187/api/User";
-            var users = await Client.GetFromJsonAsync<List<User>>(url);
+            if (string.IsNullOrEmpty(userResponse))
+            {
+                return NotFound("User not found.");
+            }
 
+            var users = JsonConvert.DeserializeObject<List<UserDTO>>(userResponse);
 
-            Guid currentUserId = GetCurrentUserId(); 
-
+            Guid currentUserId = GetCurrentUserId();
             var currentUser = users?.FirstOrDefault(u => u.UserID == currentUserId);
 
             if (currentUser == null)
@@ -54,22 +60,39 @@ namespace Application.MVC.GeneralPublic.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(User updatedUser)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, UserDTO updatedUser, IFormFile? ProfilePicture)
         {
-            if (!ModelState.IsValid)
+            if (updatedUser == null)
             {
-                return View(updatedUser);
+                return BadRequest("Invalid user data.");
             }
-            string url = "https://localhost:7187/api/User";
-            var response = await Client.PutAsJsonAsync(url, updatedUser);
+
+            string requestURL = $"https://localhost:7187/api/User/{id}";
+
+            MultipartFormDataContent contents = new()
+    {
+        { new StringContent(updatedUser.Username ?? string.Empty), nameof(updatedUser.Username) },
+        { new StringContent(updatedUser.Email ?? string.Empty), nameof(updatedUser.Email) },
+        { new StringContent(updatedUser.PhoneNumber ?? string.Empty), nameof(updatedUser.PhoneNumber) }
+    };
+
+            if (ProfilePicture != null)
+            {
+                var imageStream = new StreamContent(ProfilePicture.OpenReadStream());
+                contents.Add(imageStream, nameof(ProfilePicture), ProfilePicture.FileName);
+            }
+
+            var response = await Client.PutAsync(requestURL, contents);
 
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Index"); 
+                return RedirectToAction("Index");
             }
             else
             {
-                ModelState.AddModelError("", "Failed to update user profile.");
+                var error = await response.Content.ReadAsStringAsync();
+                ModelState.AddModelError(string.Empty, $"Update failed: {error}");
                 return View(updatedUser);
             }
         }
