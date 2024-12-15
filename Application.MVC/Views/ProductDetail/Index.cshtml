@@ -73,6 +73,33 @@
     .btn-delete:hover {
         background-color: #c82333;
     }
+    /* Tùy chỉnh nút dropdown */
+    .custom-dropdown-btn {
+        background-color: #007bff; /* Màu xanh đậm */
+        color: white;
+        border-radius: 5px;
+    }
+
+        .custom-dropdown-btn:hover {
+            background-color: #0056b3; /* Xanh đậm hơn khi hover */
+            color: white;
+        }
+
+    /* Tùy chỉnh dropdown items */
+    .dropdown-item.text-warning:hover {
+        background-color: #fff3cd; /* Vàng nhạt */
+        color: #856404; /* Vàng đậm */
+    }
+
+    .dropdown-item.text-success:hover {
+        background-color: #d4edda; /* Xanh lá nhạt */
+        color: #155724; /* Xanh lá đậm */
+    }
+
+    .dropdown-item.text-danger:hover {
+        background-color: #f8d7da; /* Đỏ nhạt */
+        color: #721c24; /* Đỏ đậm */
+    }
 </style>
 
 <h1 class="text-center">Sản phẩm chi tiết</h1>
@@ -96,6 +123,7 @@
                 <th>Danh mục</th>
                 <th>Chất liệu</th>
                 <th>Số lượng còn lại</th>
+                <th>Thời gian cập nhật</th>
                 <th>Hành động</th>
             </tr>
         </thead>
@@ -121,17 +149,28 @@
                     <td>@Entry.value.Category?.CategoryName</td>
                     <td>@Entry.value.Material</td>
                     <td>@Entry.value.Quantity.GetValueOrDefault().ToString("#,##0")</td>
+                    <td>@Entry.value.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy | HH:mm")</td>
                     <td>
-                        <a class="actions-link btn btn-edit" asp-action="Edit" asp-route-ID="@Entry.value.ProductDetailID">
-                            <i class="fas fa-edit"></i> Sửa
-                        </a>
-                        <a class="actions-link btn btn-details" asp-action="Details" asp-route-ID="@Entry.value.ProductDetailID">
-                            <i class="fas fa-info-circle"></i> Chi tiết
-                        </a>
-                        <button type="button" class="actions-link btn btn-delete delete_trigger" data-id="@Entry.value.ProductDetailID" data-controller="ProductDetail" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
-                            <i class="fas fa-trash-alt"></i> Xóa
-                        </button>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item text-warning" asp-action="Edit" asp-route-ID="@Entry.value.ProductDetailID">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+                                <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                                <a class="dropdown-item text-success" asp-action="Details" asp-route-ID="@Entry.value.ProductDetailID">
+                                    <i class="fas fa-info-circle"></i> Chi tiết
+                                </a>
+                                <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                                <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@Entry.value.ProductDetailID" data-controller="ProductDetail" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
+                                    <i class="fas fa-trash-alt"></i> Xóa
+                                </button>
+                            </div>
+                        </div>
                     </td>
+
                 </tr>
             }
         </tbody>

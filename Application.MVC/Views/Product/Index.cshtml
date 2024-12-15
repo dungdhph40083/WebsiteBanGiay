@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+<!-- jQuery -->
 <!-- Link to Bootstrap CSS (Ensure you have the correct path or use CDN) -->
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
 
@@ -73,6 +73,27 @@
     .btn-delete:hover {
         background-color: #c82333;
     }
+    /* Thay đổi màu nút thành xanh */
+    /* Tùy chỉnh màu khi hover */
+    .dropdown-item.text-warning:hover {
+        background-color: #fff3cd; /* Nền vàng nhạt */
+        color: #856404; /* Vàng đậm */
+    }
+
+    .dropdown-item.text-success:hover {
+        background-color: #d4edda; /* Nền xanh lá nhạt */
+        color: #155724; /* Xanh lá đậm */
+    }
+
+    .dropdown-item.text-danger:hover {
+        background-color: #f8d7da; /* Nền đỏ nhạt */
+        color: #721c24; /* Đỏ đậm */
+    }
+    /* Tùy chỉnh màu và chiều cao của vạch ngăn cách */
+    .dropdown-divider {
+        border-color: #ddd; /* Màu xám nhạt */
+        margin: 5px 0; /* Khoảng cách trên và dưới */
+    }
 </style>
 
 @if (ViewBag.Error != null)
@@ -135,14 +156,29 @@
 
 
                 <td>
-                    <a href="@Url.Action("Edit", new { id = item.value.ProductID })" class="actions-link btn btn-edit">
-                        <i class="fas fa-edit"></i> Sửa
-                    </a>
-                    <a href="@Url.Action("Details", new { id = item.value.ProductID })" class="actions-link btn btn-details">
-                        <i class="fas fa-info-circle"></i> Chi tiết
-                    </a>
-                    <button type="button" class="actions-link btn btn-delete delete_trigger" data-id="@item.value.ProductID" data-controller="Product" data-action="Delete" data-toggle="modal" data-target="#ModalDelete"><i class="fas fa-trash-alt"></i> Xóa</button>
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item text-warning" href="@Url.Action("Edit", new { id = item.value.ProductID })">
+                                <i class="fas fa-edit"></i> Sửa
+                            </a>
+                            <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                            <a class="dropdown-item text-success" href="@Url.Action("Details", new { id = item.value.ProductID })">
+                                <i class="fas fa-info-circle"></i> Chi tiết
+                            </a>
+                            <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                            <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@item.value.ProductID" data-controller="Product" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
+                                <i class="fas fa-trash-alt"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
                 </td>
+
+
+
+
             </tr>
         }
     </tbody>
