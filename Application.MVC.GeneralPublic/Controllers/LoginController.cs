@@ -1,5 +1,6 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
+using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -27,6 +28,62 @@ namespace Application.MVC.GeneralPublic.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(string usernameOrEmail, string password, bool rememberMe)
+        {
+            if (string.IsNullOrEmpty(usernameOrEmail) || string.IsNullOrEmpty(password))
+            {
+                TempData["Error"] = "Tên người dùng hoặc mật khẩu không được để trống.";
+                return View();
+            }
+            var user = await AuthenticateUser(usernameOrEmail, password);
+
+            if (user != null)
+            {
+                HttpContext.Session.SetString("UserId", user.UserID.ToString());
+                HttpContext.Session.SetString("Username", user.Username);
+
+                if (rememberMe)
+                {
+                    Response.Cookies.Append("RememberMe", user.UserID.ToString(), new CookieOptions
+                    {
+                        Expires = DateTimeOffset.Now.AddDays(30)
+                    });
+                }
+                return RedirectToAction("Index", "Home");
+            }
+
+            TempData["Error"] = "Tên người dùng hoặc mật khẩu không đúng.";
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); 
+            Response.Cookies.Delete("RememberMe"); 
+            return RedirectToAction("Login");
+        }
+
+        private async Task<User> AuthenticateUser(string usernameOrEmail, string password)
+        {
+            string authUrl = $@"https://localhost:7187/api/Auth/Login";
+            var payload = new
+            {
+                UsernameOrEmail = usernameOrEmail,
+                Password = password
+            };
+            var response = await Client.PostAsJsonAsync(authUrl, payload);
+            if (response.IsSuccessStatusCode)
+            {
+
+                var user = await response.Content.ReadFromJsonAsync<User>();
+                return user;
+            }
+            return null;
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

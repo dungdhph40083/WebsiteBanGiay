@@ -72,15 +72,15 @@
                         @if (HttpContext.Session.GetString(nameof(Metadata.UserID)) != null || HttpContext.Session.GetString(nameof(Metadata.Username)) != null)
                         {
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a asp-controller="Account" asp-action="Login" class="dropdown-item">Đăng nhập</a>
-                                <a asp-controller="Account" asp-action="Signup" class="dropdown-item">Đăng ký</a>
+                                <a href="#" onclick="navigateLogin()" class="dropdown-item">Đăng nhập</a>
+                                <a href="#" onclick="navigatePrfile()" class="dropdown-item">Đăng ký</a>
                             </div>
                         }
                         else
                         {
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a asp-controller="Account" asp-action="Login" class="dropdown-item">Đăng nhập</a>
-                                <a asp-controller="Account" asp-action="Signup" class="dropdown-item">Đăng ký</a>
+                                <a href="#" onclick="navigateLogin()" class="dropdown-item">Đăng nhập</a>
+                                <a href="#" onclick="navigatePrfile()" class="dropdown-item">Đăng ký</a>
                             </div>
                         }
                     </div>
@@ -280,8 +280,11 @@
     <script src="~/js/main.js"></script>
  @*    navigation *@
     <script>
-        function navigate() {
+        function navigatePrfile() {
             window.location.href = 'Profile/Index';
+        }
+        function navigateLogin() {
+            window.location.href = 'Login/Index';
         }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
