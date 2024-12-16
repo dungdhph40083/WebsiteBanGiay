@@ -22,10 +22,10 @@ namespace Application.MVC.GeneralPublic.Controllers
         {
             // TODO:
             // 1. nút cập nhật giỏ hàng (HARD)
-            // 2. nút xóa (EASY)
-            // 3. căn chỉnh (NORMAL)
-            // 4. thêm cột thông tin (size & màu) (EASY)
-            // 5. làm thông báo thay đổi chưa được lưu (EASY)
+            // 2. nút xóa (EASY)  DONE
+            // 3. căn chỉnh (NORMAL)  DONE
+            // 4. thêm cột thông tin (size) (EASY)  DONE
+            // 5. làm thông báo thay đổi chưa được lưu (EASY)  DONE
 
 
             // Fake data; xóa sau khi có Đăng nhập/Đăng ký!!!
@@ -50,5 +50,10 @@ namespace Application.MVC.GeneralPublic.Controllers
             else return RedirectToAction(nameof(Index));
         }
 
+        public ActionResult UpdateWholeCart(List<ShoppingCart> Response)
+        {
+            Console.WriteLine(JsonConvert.SerializeObject(Response, Formatting.Indented));
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

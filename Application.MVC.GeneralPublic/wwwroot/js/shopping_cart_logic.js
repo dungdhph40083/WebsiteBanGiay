@@ -2,28 +2,58 @@
 function ThousandSeparator(MyNumber) {
     return MyNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+var Sum = 0;
+var PriceTotalItemsArray = [];
+
+function AddEmUp(ItemPrice) {
+    Sum += parseInt(ItemPrice.innerText.replace(/[$,.\s]/g, ''));
+};
+
+function DisplayTotalPriceOnSidebar() {
+    Sum = 0;
+
+    var PriceTotalSidebar = document.getElementById("PriceTotalSidebar");
+    var ShipFeeTotalSidebar = document.getElementById("ShipFeeTotalSidebar");
+    var GrandTotalSidebar = document.getElementById("GrandTotalSidebar");
+
+    PriceTotalItemsArray = Array.from(document.getElementsByClassName("PriceTotalItems"));
+    PriceTotalItemsArray.forEach(AddEmUp);
+
+    PriceTotalSidebar.innerText = ThousandSeparator(Sum);
+    ShipFeeTotalSidebar.innerText = ThousandSeparator(parseInt(Sum * 0.01));
+    GrandTotalSidebar.innerText = ThousandSeparator(parseInt(Sum * 1.01));
+}
+
 
 // -1
 function Remove1(ItemID) {
-    var ProductAmount = document.getElementById("ProductAmount_" + ItemID);
-    var PriceSingle = document.getElementById("PriceSingle_" + ItemID);
-    var PriceTotal = document.getElementById("PriceTotal_" + ItemID);
+    let ProductAmount = document.getElementById("ProductAmount_" + ItemID);
+    let PriceSingle = document.getElementById("PriceSingle_" + ItemID);
+    let PriceTotal = document.getElementById("PriceTotal_" + ItemID);
 
-    var CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
+    let Notify = document.getElementById("WARNING_WARNING_ALARM");
+    Notify.innerHTML = '<p class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu!</p>';
+
+    let CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
 
     if (!isNaN(CurrentQuantity)) {
         ProductAmount.value = Math.max(CurrentQuantity - 1, 1);
         PriceTotal.innerText =
-            ThousandSeparator(parseInt(PriceSingle.innerText.replace(',', '')) * ProductAmount.value);
+            ThousandSeparator(parseInt(PriceSingle.innerText.replace(/[$,.\s]/g, '')) * ProductAmount.value);
+
+            DisplayTotalPriceOnSidebar();
     }
 }
 
 function Edit1(ItemID) {
-    var ProductAmount = document.getElementById("ProductAmount_" + ItemID);
-    var PriceSingle = document.getElementById("PriceSingle_" + ItemID);
-    var PriceTotal = document.getElementById("PriceTotal_" + ItemID);
+    let ProductAmount = document.getElementById("ProductAmount_" + ItemID);
+    let PriceSingle = document.getElementById("PriceSingle_" + ItemID);
+    let PriceTotal = document.getElementById("PriceTotal_" + ItemID);
 
-    var CurrentQuantity = 1;
+    let Notify = document.getElementById("WARNING_WARNING_ALARM");
+    Notify.innerHTML = '<p class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu!</p>';
+
+    let CurrentQuantity = 1;
 
     if (ProductAmount.value < 0) ProductAmount.value = 1;
 
@@ -32,28 +62,36 @@ function Edit1(ItemID) {
 
     if (!isNaN(CurrentQuantity)) {
         PriceTotal.innerText =
-            ThousandSeparator(parseInt(PriceSingle.innerText.replace(',', '')) * CurrentQuantity);
+            ThousandSeparator(parseInt(PriceSingle.innerText.replace(/[$,.\s]/g, '')) * CurrentQuantity);
+
+        DisplayTotalPriceOnSidebar();
     }
 }
 
 // +1
 function Add1(ItemID) {
-    var ProductAmount = document.getElementById("ProductAmount_" + ItemID);
-    var PriceSingle = document.getElementById("PriceSingle_" + ItemID);
-    var PriceTotal = document.getElementById("PriceTotal_" + ItemID);
+    let ProductAmount = document.getElementById("ProductAmount_" + ItemID);
+    let PriceSingle = document.getElementById("PriceSingle_" + ItemID);
+    let PriceTotal = document.getElementById("PriceTotal_" + ItemID);
 
-    var CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
+    let Notify = document.getElementById("WARNING_WARNING_ALARM");
+    Notify.innerHTML = '<p class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu!</p>';
+
+    let CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
 
     if (!isNaN(CurrentQuantity)) {
         ProductAmount.value = CurrentQuantity + 1;
         PriceTotal.innerText =
-            ThousandSeparator(parseInt(PriceSingle.innerText.replace(',', '')) * ProductAmount.value);
+            ThousandSeparator(parseInt(PriceSingle.innerText.replace(/[$,.\s]/g, '')) * ProductAmount.value);
+
+            DisplayTotalPriceOnSidebar();
     }
 }
 
+
 function Remove1Generic() {
-    var ProductAmount = document.getElementById("ProductAmount");
-    var CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
+    let ProductAmount = document.getElementById("ProductAmount");
+    let CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
 
     if (!isNaN(CurrentQuantity)) {
         ProductAmount.value = Math.max(CurrentQuantity - 1, 1);
@@ -61,9 +99,9 @@ function Remove1Generic() {
 }
 
 function Edit1Generic() {
-    var ProductAmount = document.getElementById("ProductAmount");
-    var CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
-    var Max = parseInt(ProductAmount.max);
+    let ProductAmount = document.getElementById("ProductAmount");
+    let CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
+    let Max = parseInt(ProductAmount.max);
 
     if (ProductAmount.value < 0) ProductAmount.value = 1;
     if (ProductAmount.value > Max) ProductAmount.value = Max;
@@ -71,9 +109,9 @@ function Edit1Generic() {
 
 // +1
 function Add1Generic() {
-    var ProductAmount = document.getElementById("ProductAmount");
-    var CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
-    var Max = ProductAmount.max;
+    let ProductAmount = document.getElementById("ProductAmount");
+    let CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
+    let Max = ProductAmount.max;
 
     if (!isNaN(CurrentQuantity)) {
         if (CurrentQuantity < Max) {
