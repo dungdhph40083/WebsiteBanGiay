@@ -32,12 +32,15 @@ $("#confirm_deletion").on("click", () => {
                 return $(target).parent().parent().hide("slow");
                 // remove or hide but remove is better?
             }
-            window.location.href = redirect_url; // yup
         })
         .fail((error) => { // if fail
-            window.location.href = redirect_url; // like above
+           
         })
         .always(() => { // ALWAYS DO THIS WHEN GET
+            $("#ModalDelete").modal("hide"); // self explainatory - hides the modal
+
+            location = location
+
             ButtonTxt.className = "btn btn-danger";
             ButtonTxt.innerText = "Xóa";
             ButtonTxt.removeAttribute("disabled")

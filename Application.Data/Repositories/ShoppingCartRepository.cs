@@ -5,6 +5,8 @@ using Application.Data.Repositories.IRepository;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Newtonsoft.Json;
+using System.Xml.Linq;
 
 namespace Application.Data.Repositories
 {
@@ -26,11 +28,15 @@ namespace Application.Data.Repositories
 
             ShoppingCart = Mapper.Map(NewShoppingCart, ShoppingCart);
 
-            var ProductItem = Context.Products.Where(x => x.ProductID == ShoppingCart.ProductID);
-            ShoppingCart.Price = ShoppingCart.QuantityCart * ProductItem.First().Price;
+            var ProductItem = await Context.ProductDetails
+                .Include(Xd => Xd.Product)
+                .SingleOrDefaultAsync(Bv => Bv.ProductDetailID == ShoppingCart.ProductDetailID);
+
+            ShoppingCart.Price = ShoppingCart.QuantityCart * ProductItem?.Product?.Price;
 
             await Context.ShoppingCarts.AddAsync(ShoppingCart);
             await Context.SaveChangesAsync();
+
             return ShoppingCart;
         }
 
@@ -47,21 +53,62 @@ namespace Application.Data.Repositories
         public async Task<ShoppingCart?> GetShoppingCartByID(Guid TargetID)
         {
             return await Context.ShoppingCarts
-                .Include(UU => UU.User)
+                //.Include(UU => UU.User)
                 .Include(UU => UU.Voucher)
-                .Include(UU => UU.Size)
-                .Include(UU => UU.Color)
-                .Include(UU => UU.Product).FirstOrDefaultAsync(x => x.CartID == TargetID);
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Category : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Color : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Size : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Sale : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                        .ThenInclude(WW => WW != null ? WW.Image : default)
+                    .FirstOrDefaultAsync(x => x.CartID == TargetID);
+        }
+
+        public async Task<List<ShoppingCart>> GetShoppingCartsByUserID(Guid TargetID)
+        {
+            return await Context.ShoppingCarts
+                //.Include(UU => UU.User)
+                .Include(UU => UU.Voucher)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Category : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Color : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Size : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Sale : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                        .ThenInclude(WW => WW != null ? WW.Image : default)
+                  .Where(UU => UU.UserID.Equals(TargetID)).ToListAsync();
         }
 
         public async Task<List<ShoppingCart>> GetShoppingCarts()
         {
             return await Context.ShoppingCarts
-                .Include(UU => UU.User)
+                //.Include(UU => UU.User)
                 .Include(UU => UU.Voucher)
-                .Include(UU => UU.Size)
-                .Include(UU => UU.Color)
-                .Include(UU => UU.Product).ToListAsync();
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Category : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Color : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Size : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Sale : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                        .ThenInclude(WW => WW != null ? WW.Image : default)
+                    .ToListAsync();
         }
 
         public async Task<ShoppingCart?> Update(Guid TargetID, ShoppingCartDTO UpdatedShoppingCart)
@@ -69,17 +116,84 @@ namespace Application.Data.Repositories
             var Target = await GetShoppingCartByID(TargetID);
             if (Target != null)
             {
-                Context.Entry(Target).State = EntityState.Modified;
-                var UpdatedTarget = Mapper.Map(UpdatedShoppingCart, Target);
+                if (UpdatedShoppingCart.QuantityCart == 0)
+                {
+                    Context.Remove(Target);
+                    await Context.SaveChangesAsync();
+                    return default;
+                }
+                else
+                {
+                    Context.Entry(Target).State = EntityState.Modified;
 
-                var ProductItem = Context.Products.Where(x => x.ProductID == UpdatedShoppingCart.ProductID);
-                UpdatedShoppingCart.Price = UpdatedShoppingCart.QuantityCart * ProductItem.First().Price;
+                    Target = Mapper.Map(UpdatedShoppingCart, Target);
+                    var ProductItem = Context.ProductDetails.Find(Target.ProductDetailID);
+                    Target.Price = UpdatedShoppingCart.QuantityCart * ProductItem?.Product?.Price;
 
-                Context.Update(UpdatedTarget);
-                await Context.SaveChangesAsync();
-                return UpdatedTarget;
+                    Context.Update(Target);
+                    await Context.SaveChangesAsync();
+                    return Target;
+                }
             }
             else return default;
+        }
+
+        public async Task<ShoppingCart?> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity, bool? AdditionMode)
+        {
+            if (Quantity < 0) Quantity = 0;
+
+            var CartItem = await Context.ShoppingCarts
+                    //.Include(UU => UU.User)
+                .Include(UU => UU.Voucher)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Category : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Color : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Size : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Sale : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                        .ThenInclude(WW => WW != null ? WW.Image : default) // hot reload doesn't work
+                .SingleOrDefaultAsync(WW => WW.UserID == UserID && WW.ProductDetailID == ProductDetailID);
+
+            if (CartItem != null)
+            {
+                Context.Entry(CartItem).State = EntityState.Modified;
+
+                if (AdditionMode == true) CartItem.QuantityCart += (Quantity ?? 0);
+                else CartItem.QuantityCart = (Quantity ?? 0);
+
+                CartItem.Price = CartItem.QuantityCart * CartItem?.ProductDetail?.Product?.Price;
+
+                if (CartItem!.QuantityCart == 0)
+                {
+                    Context.ShoppingCarts.Remove(CartItem);
+                    await Context.SaveChangesAsync();
+                    return default;
+                }
+                else
+                {
+                    Context.Update(CartItem!);
+                    await Context.SaveChangesAsync();
+                    return CartItem;
+                }
+            }
+            else
+            {
+                ShoppingCartDTO NewCart = new()
+                {
+                    UserID = UserID,
+                    ProductDetailID = ProductDetailID,
+                    QuantityCart = Quantity ?? 1
+                };
+
+                var Response = await CreateNew(NewCart);
+                await Context.SaveChangesAsync();
+
+                return Response;
+            }
         }
     }
 }

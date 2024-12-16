@@ -18,23 +18,28 @@ namespace Application.Data.Repositories
             this.Mapper = Mapper;
         }
 
-        public async Task<List<CustomerSupportMessage>> GetAll()
+        public  Task<List<CustomerSupportMessage>> GetAll()
         {
-            return await Context.CustomerSupportMessages.ToListAsync();
+            return Context.CustomerSupportMessages
+                .Include(user => user.User).ToListAsync();
         }
 
-        public async Task<CustomerSupportMessage?> GetMessageByID(long Time)
+        public async Task<CustomerSupportMessage?> GetMessageByID(Guid MsgID)
         {
-            return await Context.CustomerSupportMessages.FindAsync(Time);
+            return await Context.CustomerSupportMessages.FindAsync(MsgID);
         }
 
         public async Task<CustomerSupportMessage> SendMessage(CustomerSupportMessageDTO NewMessage)
         {
-            CustomerSupportMessage CustomerSupportMessage = new() { MessageID = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
+            var DateTimeUtcNow = DateTime.UtcNow;
+            CustomerSupportMessage CustomerSupportMessage = new()
+            {
+                MessageID = Guid.NewGuid(),
+                CreatedAt = DateTimeUtcNow,
+            };
             CustomerSupportMessage = Mapper.Map(NewMessage, CustomerSupportMessage);
             await Context.CustomerSupportMessages.AddAsync(CustomerSupportMessage);
             await Context.SaveChangesAsync();
-
             return CustomerSupportMessage;
         }
     }

@@ -45,6 +45,7 @@ namespace Application.Data.Repositories
         {
             return await Context.ProductDetails
                     .Include(Prod => Prod.Product)
+                        .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                     .Include(Siz => Siz.Size)
                     .Include(Col => Col.Color)
                     .Include(Img => Img.Image)
@@ -55,6 +56,7 @@ namespace Application.Data.Repositories
         {
             return await Context.ProductDetails
                     .Include(Prod => Prod.Product)
+                        .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                     .Include(Siz => Siz.Size)
                     .Include(Col => Col.Color)
                     .Include(Img => Img.Image)
@@ -66,6 +68,7 @@ namespace Application.Data.Repositories
             // trích xuất cả dữ liệu image và product bằng cách .Include
             return await Context.ProductDetails
                 .Include(Prod => Prod.Product)
+                    .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                 .Include(Siz => Siz.Size)
                 .Include(Col => Col.Color)
                 .Include(Img => Img.Image)

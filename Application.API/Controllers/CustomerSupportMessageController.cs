@@ -23,9 +23,9 @@ namespace Application.API.Controllers
         }
 
         [HttpGet("{Time}")]
-        public async Task<ActionResult<CustomerSupportMessage?>> Get(long Time)
+        public async Task<ActionResult<CustomerSupportMessage?>> Get(Guid MsgID)
         {
-            return await CustomerSupportMessageRepo.GetMessageByID(Time);
+            return await CustomerSupportMessageRepo.GetMessageByID(MsgID);
         }
 
         [HttpPost]

@@ -19,4 +19,10 @@
     {
         public const string UserRoleGUID = "1bfa7246-60e1-4d82-a469-cdecf867fd01";
     }
+
+    public class Metadata
+    {
+        public const string UserID = "UserID";
+        public const string Username = "Username";
+    }
 }

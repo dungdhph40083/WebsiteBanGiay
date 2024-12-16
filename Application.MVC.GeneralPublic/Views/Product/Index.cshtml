@@ -1,9 +1,11 @@
-﻿@{
-    ViewBag.Title = "Product";
-    var currentPage = ViewBag.CurrentPage as int?;
-    var totalPages = ViewBag.TotalPages as int?;
-    var productss = ViewBag.Products as List<Application.Data.Models.Product>;
+﻿@model IEnumerable<Application.Data.Models.ProductDetail>
+
+@{
+    ViewData["Title"] = "Index";
+    var products = ViewBag.Orders as List<Application.Data.Models.Product>;
+    var selectedPrice = ViewBag.SelectedPrice as string;
 }
+
 <head>
     <style>
         .product-image {
@@ -15,111 +17,114 @@
 </head>
 <div class="container-fluid">
     <div class="row px-xl-5">
-        <!-- Shop Sidebar Start -->
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" href="#">Home</a>
+                <a class="breadcrumb-item text-dark" href="#">Shop</a>
+            </nav>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row px-xl-5">
         <div class="col-lg-3 col-md-4">
-            <!-- Price Filter Start -->
             <h5 class="section-title position-relative text-uppercase mb-3">
                 <span class="bg-secondary pr-3">Lọc theo giá</span>
             </h5>
             <div class="bg-light p-4 mb-30">
                 <form method="get" action="/Product/Index">
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="all" id="price-all" onchange="this.form.submit()" @(ViewBag.SelectedPrice == "all" ? "checked" : "")>
+                        <input type="radio" class="custom-control-input" name="priceRange" value="all" id="price-all" onchange="this.form.submit()" @(selectedPrice == "all" ? "checked" : "")>
                         <label class="custom-control-label" for="price-all">Tất cả giá</label>
                     </div>
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="0-1" id="price-1" onchange="this.form.submit()" @(ViewBag.SelectedPrice == "0-1" ? "checked" : "")>
+                        <input type="radio" class="custom-control-input" name="priceRange" value="0-1" id="price-1" onchange="this.form.submit()" @(selectedPrice == "0-1" ? "checked" : "")>
                         <label class="custom-control-label" for="price-1">99.000 VNĐ - 500.000 VNĐ</label>
                     </div>
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="1-2" id="price-2" onchange="this.form.submit()" @(ViewBag.SelectedPrice == "1-2" ? "checked" : "")>
+                        <input type="radio" class="custom-control-input" name="priceRange" value="1-2" id="price-2" onchange="this.form.submit()" @(selectedPrice == "1-2" ? "checked" : "")>
                         <label class="custom-control-label" for="price-2">500.000 VNĐ - 1.000.000 VNĐ</label>
                     </div>
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="2-3" id="price-3" onchange="this.form.submit()" @(ViewBag.SelectedPrice == "2-3" ? "checked" : "")>
+                        <input type="radio" class="custom-control-input" name="priceRange" value="2-3" id="price-3" onchange="this.form.submit()" @(selectedPrice == "2-3" ? "checked" : "")>
                         <label class="custom-control-label" for="price-3">1.000.000 VNĐ - 2.000.000 VNĐ</label>
                     </div>
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="3-4" id="price-4" onchange="this.form.submit()" @(ViewBag.SelectedPrice == "3-4" ? "checked" : "")>
+                        <input type="radio" class="custom-control-input" name="priceRange" value="3-4" id="price-4" onchange="this.form.submit()" @(selectedPrice == "3-4" ? "checked" : "")>
                         <label class="custom-control-label" for="price-4">2.000.000 VNĐ - 5.000.000 VNĐ</label>
                     </div>
                 </form>
             </div>
-
-            <!-- Price Filter End -->
         </div>
-        <!-- Shop Sidebar End -->
-        <!-- Shop Product List Start -->
         <div class="col-lg-9 col-md-8">
             <div class="row pb-3">
-                <!-- Product List -->
-                <div class="row col-12">
-                    @if (productss != null && productss.Count > 0)
+                @if (products != null && products.Count > 0)
+                {
+                    @foreach (var item in Model)
                     {
-                        foreach (var product in productss)
-                        {
-                            <div class="col-md-4 pb-1">
-                                <div class="product-item bg-light mb-4">
-                                    <div class="product-img position-relative overflow-hidden">
-                                        <img class="img-fluid w-100 product-image" src="https://localhost:7187/Images/@(product.Image?.ImageFileName)" alt="@product.Name">
-                                        <div class="product-action">
-                                            <a class="btn btn-outline-dark btn-square" href="#"><i class="fa fa-shopping-cart"></i></a>
-                                            <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a>
-                                            <a class="btn btn-outline-dark btn-square" href="#"><i class="fa fa-sync-alt"></i></a>
-                                            <a class="btn btn-outline-dark btn-square" href="#"><i class="fa fa-search"></i></a>
-                                        </div>
+                        var product = products?.FirstOrDefault(p => p.ProductID == item.ProductID);
+                        var productName = product?.Name ?? "Không có tên";
+                        var productPrice = product?.Price ?? 0;
+                        var productImage = product?.Image?.ImageFileName;
+
+                        <div class="col-md-4 pb-1">
+                            <div class="product-item bg-light mb-4">
+                                <div class="product-img position-relative overflow-hidden">
+                                    <img class="img-fluid w-100 product-image" src="https://localhost:7187/Images/@productImage" alt="@productName">
+                                    <div class="product-action">
+                                        <a class="btn btn-outline-dark btn-square" asp-controller="UserCart" asp-action="Add2Cart"
+                                            asp-route-ID="@item.ProductDetailID"
+                                            asp-route-Quantity="1"
+                                            asp-route-AdditionMode="true"><i class="fa fa-shopping-cart"></i></a>
+                                        <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a>
+                                        <a class="btn btn-outline-dark btn-square" href="@Url.Action("Details", new { id = item.ProductDetailID })"><i class="fa fa-search"></i></a>
                                     </div>
-                                    <div class="text-center py-4">
-                                        <a class="h6 text-decoration-none text-truncate" href="#">@product.Name</a>
-                                        <div class="d-flex align-items-center justify-content-center mt-2">
-                                            <h5>₫@product.Price.GetValueOrDefault().ToString("N0")</h5> <!-- Hiển thị giá theo VNĐ -->
-                                        </div>
-                                        <div class="d-flex align-items-center justify-content-center mb-1">
-                                            <small class="fa fa-star text-primary mr-1"></small>
-                                            <small class="fa fa-star text-primary mr-1"></small>
-                                            <small class="fa fa-star text-primary mr-1"></small>
-                                            <small class="fa fa-star text-primary mr-1"></small>
-                                            <small class="fa fa-star text-primary mr-1"></small>
-                                            <small>(99)</small>
-                                        </div>
+                                </div>
+                                <div class="text-center py-4">
+                                    <a class="h6 text-decoration-none text-truncate" href="@Url.Action("Details", new { id = item.ProductDetailID })">@productName</a>
+                                    <div class="d-flex align-items-center justify-content-center mt-2">
+                                        <h5>@(Convert.ToDecimal(productPrice).ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) VNĐ</h5>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-center mb-1">
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                        <small>(99)</small>
+                                    </div>
+                                    <div>
+                                        <a class="btn btn-primary" href="@Url.Action("Details", new { id = item.ProductDetailID })">Xem Ngay</a>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <b>Hiện chưa có sản phẩm nào...</b>
+                }
+            </div>
+
+            <div class="col-12">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)">Trước</a>
+                        </li>
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@i">@i</a>
+                            </li>
                         }
-                    }
-                    else
-                    {
-                        <b>Hiện chưa có sản phẩm nào...</b>
-                    }
-                </div>
+                        <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)">Tiếp</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
-        <!-- Shop Product List End -->
     </div>
-
-    <!-- Pagination Start -->
-    <div class="col-12">
-        <nav>
-            <ul class="pagination justify-content-center">
-                <!-- Nút "Previous" (trước) -->
-                <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
-                    <a class="page-link" href="?page=@(currentPage - 1)">Trước</a>
-                </li>
-
-                <!-- Các số trang -->
-                @for (int i = 1; i <= totalPages; i++)
-                {
-                    <li class="page-item @(i == currentPage ? "active" : "")">
-                        <a class="page-link" href="?page=@i">@i</a>
-                    </li>
-                }
-
-                <!-- Nút "Next" (tiếp) -->
-                <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
-                    <a class="page-link" href="?page=@(currentPage + 1)">Tiếp</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    <!-- Pagination End -->
 </div>

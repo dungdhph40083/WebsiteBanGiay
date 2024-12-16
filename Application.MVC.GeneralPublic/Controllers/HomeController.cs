@@ -1,8 +1,8 @@
+using Application.Data.Enums;
 using Application.Data.Models;
-using Application.MVC.GeneralPublic.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Diagnostics;
+using System.Net;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -10,33 +10,22 @@ namespace Application.MVC.GeneralPublic.Controllers
     {
         HttpClient Client = new HttpClient();
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            //await FetchInfo();
+            await FetchInfo();
             return View();
         }
 
-        //private async Task FetchInfo()
-        //{
-        //    string URL_Prods = $@"https://localhost:7187/api/Product/get-all";
-
-        //    var Products = await Client.GetFromJsonAsync<List<Product>>(URL_Prods);
-        //    // Lấy 5 con từ đầu danh sách sau khi được sắp xếp theo ngày từ cuối lên đầu
-
-        //    // Sau đó cho vào ViewBag
-        //    ViewBag.Top5Products = Products?
-        //        .OrderByDescending(Req => Req.CreatedAt).Take(5).ToList() ?? new List<Product>();
-        //}
-
-        public IActionResult Privacy()
+        private async Task FetchInfo()
         {
-            return View();
-        }
+            string URL_Prods = $@"https://localhost:7187/api/ProductDetails";
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var Details = await Client.GetFromJsonAsync<List<ProductDetail>>(URL_Prods);
+            // Lấy 8 con từ đầu danh sách sau khi được sắp xếp theo ngày từ cuối lên đầu
+
+            // Sau đó cho vào ViewBag
+            ViewBag.Top8Products = Details?
+                .OrderByDescending(Req => Req.Product?.CreatedAt).Take(8).ToList() ?? new List<ProductDetail>();
         }
     }
 }

@@ -6,8 +6,6 @@
 
 <!-- Link to Bootstrap CSS (Ensure you have the correct path or use CDN) -->
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-
-<!-- Font Awesome CDN for icons -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 
 <style>
@@ -20,57 +18,44 @@
         background-color: #f1f1f1;
     }
 
-    .actions-link {
-        text-decoration: none;
-        color: #007bff;
-        font-size: 16px;
-    }
-
-        .actions-link:hover {
-            text-decoration: underline;
-            color: #0056b3;
-        }
-
     .btn-custom {
         border-radius: 20px;
         padding: 5px 15px;
         font-size: 16px;
     }
 
-    .btn-edit {
-        background-color: #ffc107;
+    .custom-dropdown-btn {
+        background-color: #007bff; /* Màu xanh đậm */
         color: white;
+        border-radius: 5px;
     }
 
-    .btn-details {
-        background-color: #17a2b8;
-        color: white;
+        .custom-dropdown-btn:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+    .dropdown-item.text-warning:hover {
+        background-color: #fff3cd; /* Vàng nhạt */
+        color: #856404;
     }
 
-    .btn-delete {
-        background-color: #dc3545;
-        color: white;
+    .dropdown-item.text-success:hover {
+        background-color: #d4edda; /* Xanh lá nhạt */
+        color: #155724;
     }
 
-    .btn-edit:hover {
-        background-color: #e0a800;
-    }
-
-    .btn-details:hover {
-        background-color: #138496;
-    }
-
-    .btn-delete:hover {
-        background-color: #c82333;
+    .dropdown-item.text-danger:hover {
+        background-color: #f8d7da; /* Đỏ nhạt */
+        color: #721c24;
     }
 </style>
-
 
 <h1 class="text-center">Danh sách màu sắc</h1>
 
 <p>
     <a class="btn btn-primary btn-custom" asp-action="Create">
-        <i class="fas fa-plus-circle"></i> Create New
+        <i class="fas fa-plus-circle"></i> Tạo mới
     </a>
 </p>
 
@@ -90,15 +75,25 @@
                 <td>@Html.DisplayFor(modelItem => item.ColorName)</td>
                 <td>@Html.DisplayFor(modelItem => item.Status)</td>
                 <td>
-                    <a href="@Url.Action("Edit", new { id = item.ColorID })" class="actions-link btn btn-edit">
-                        <i class="fas fa-edit"></i> Edit
-                    </a> 
-                    <a href="@Url.Action("Details", new { id = item.ColorID })" class="actions-link btn btn-details">
-                        <i class="fas fa-info-circle"></i> Details
-                    </a> 
-                    <a href="@Url.Action("Delete", new { id = item.ColorID })" class="actions-link btn btn-delete">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </a>
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item text-warning" asp-action="Edit" asp-route-id="@item.ColorID">
+                                <i class="fas fa-edit"></i> Sửa
+                            </a>
+                            <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                            <a class="dropdown-item text-success" asp-action="Details" asp-route-id="@item.ColorID">
+                                <i class="fas fa-info-circle"></i> Chi tiết
+                            </a>
+                            <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                            <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.ColorID">
+                                <i class="fas fa-trash-alt"></i> Xóa
+                            </a>
+                        </div>
+                    </div>
                 </td>
             </tr>
         }

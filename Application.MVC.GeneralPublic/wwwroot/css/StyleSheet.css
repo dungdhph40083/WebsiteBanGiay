@@ -1,0 +1,202 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.container-fluid {
+    padding: 20px;
+}
+
+.product-detail-top {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+/* Product Image Section */
+.product-slider-single img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.slider-nav-img img {
+    width: 80px;
+    height: 80px;
+    border: 1px solid #ddd;
+    margin-right: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+    .slider-nav-img img:hover {
+        transform: scale(1.1);
+    }
+
+/* Product Content Section */
+.product-content {
+    padding: 10px 20px;
+}
+
+    .product-content .title h2 {
+        font-size: 28px;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .product-content .ratting i {
+        color: #ff9800;
+        font-size: 16px;
+        margin-right: 2px;
+    }
+
+    .product-content .price h4, .quantity h4, .p-size h4, .p-color h4 {
+        margin: 10px 0 5px;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .product-content .price span {
+        font-size: 18px;
+        color: #e91e63;
+        margin-right: 10px;
+    }
+
+        .product-content .price span:last-child {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+/* Quantity Section */
+.qty {
+    display: flex;
+    align-items: center;
+}
+
+    .qty input {
+        width: 50px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin: 0 5px;
+    }
+
+    .qty .btn-minus, .qty .btn-plus {
+        background-color: #f1f1f1;
+        border: none;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+        .qty .btn-minus:hover, .qty .btn-plus:hover {
+            background-color: #ddd;
+        }
+
+/* Buttons */
+.action .btn {
+    display: inline-block;
+    margin: 10px 5px;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+    .action .btn:hover {
+        background-color: #0056b3;
+    }
+
+/* Product Bottom Tabs */
+.nav-pills .nav-link {
+    color: #007bff;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    margin: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+    .nav-pills .nav-link.active, .nav-pills .nav-link:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+.tab-content {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #fff;
+    margin-top: 10px;
+}
+
+/* Reviews Section */
+.reviews-submitted {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+    .reviews-submitted .reviewer {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .reviews-submitted .ratting i {
+        color: #ff9800;
+    }
+
+.reviews-submit h4 {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.reviews-submit .form input, .reviews-submit .form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.reviews-submit button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #28a745;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .reviews-submit button:hover {
+        background-color: #218838;
+    }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-detail-top .row {
+        flex-direction: column;
+    }
+}
+
+.product-slider-single, .product-content {
+    text-align: center;
+}
+}

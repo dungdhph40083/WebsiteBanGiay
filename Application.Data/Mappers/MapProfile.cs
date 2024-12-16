@@ -51,6 +51,9 @@ namespace Application.Data.Mappers
 
             CreateMap<Rating, RatingsDTO>();
             CreateMap<RatingsDTO, Rating>();
+            
+            CreateMap<CustomerSupportMessage, CustomerSupportMessageDTO>();
+            CreateMap<CustomerSupportMessageDTO, CustomerSupportMessage>();
 
             CreateMap<Return, ReturnDTO>();
             CreateMap<ReturnDTO, Return>();

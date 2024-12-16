@@ -8,10 +8,14 @@ builder.Services.AddDbContext<GiayDBContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddMvc().AddMvcOptions(o => o.AllowEmptyInputInBodyModelBinding = true);
+
 builder.Services.AddSession(Options =>
 {
     Options.IdleTimeout = TimeSpan.FromMinutes(14);
 });
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var app = builder.Build();
 

@@ -1,0 +1,18 @@
+﻿CREATE TABLE [dbo].[Sizes] (
+    [SizeID]    UNIQUEIDENTIFIER NOT NULL,
+    [Name]      NVARCHAR (MAX)   NULL,
+    [Size1]	    int		         null,
+    [Size2]	    int		         null,
+    [Size3]	    int		         null,
+    [Size4]	    int		         null,
+    [Size5]	    int		         null,
+    [Size6]	    int		         null,
+    [Size7]	    int		         null,
+    [Size8]	    int		         null,
+    [Size9]	    int		         null,
+    [Size10]	int		         null,
+    [Status]    TINYINT          NULL,
+    [CreatedAt] DATETIME         NULL,
+    [UpdatedAt] DATETIME         NULL,
+    PRIMARY KEY CLUSTERED ([SizeID] ASC)
+);

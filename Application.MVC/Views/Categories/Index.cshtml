@@ -1,56 +1,117 @@
 ﻿@model IEnumerable<Application.Data.Models.Category>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Category List";
 }
 
-<h1>Index</h1>
+<!-- Link Bootstrap & Font Awesome -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+
+<style>
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .btn-custom {
+        border-radius: 20px;
+        padding: 5px 15px;
+        font-size: 16px;
+    }
+
+    .custom-dropdown-btn {
+        background-color: #007bff; /* Màu xanh đậm */
+        color: white;
+        border-radius: 5px;
+    }
+
+        .custom-dropdown-btn:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+    .dropdown-item.text-warning:hover {
+        background-color: #fff3cd; /* Vàng nhạt */
+        color: #856404;
+    }
+
+    .dropdown-item.text-success:hover {
+        background-color: #d4edda; /* Xanh lá nhạt */
+        color: #155724;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background-color: #f8d7da; /* Đỏ nhạt */
+        color: #721c24;
+    }
+</style>
+
+<h1 class="text-center">Danh sách Danh Mục</h1>
 
 <p>
-    <a href="Categories/Create">Create New</a>
+    <a class="btn btn-primary btn-custom" href="@Url.Action("Create", "Categories")">
+        <i class="fas fa-plus-circle"></i> Tạo mới
+    </a>
 </p>
-@if (Model.Count() != 0)
+
+@if (Model.Any())
 {
-<table class="table">
-    <thead>
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="thead-dark">
             <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CategoryName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
+                <th>Tên danh mục</th>
+                <th>Mô tả</th>
+                <th>Hành động</th>
             </tr>
         </thead>
         <tbody>
-        @foreach (var Entry in Model)
+            @foreach (var category in Model)
             {
                 <tr>
+                    <td>@category.CategoryName</td>
+                    <td>@category.Description</td>
                     <td>
-                    @Html.DisplayFor(modelItem => Entry.CategoryName)
+                        <!-- Dropdown Menu -->
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <!-- Edit -->
+                                <a class="dropdown-item text-warning" asp-action="Edit" asp-route-id="@category.CategoryID">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+                                <div class="dropdown-divider"></div>
+
+                                <!-- Details -->
+                                <a class="dropdown-item text-success" asp-action="Details" asp-route-id="@category.CategoryID">
+                                    <i class="fas fa-info-circle"></i> Chi tiết
+                                </a>
+                                <div class="dropdown-divider"></div>
+
+                                <!-- Delete -->
+                                <!-- Delete -->
+                                <a class="dropdown-item text-danger" href="Categories/Delete/@category.CategoryID">
+                                    <i class="fas fa-trash-alt"></i> Xóa
+                                </a>
+
+                            </div>
+                        </div>
                     </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Entry.Description)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = Entry.CategoryID }) |
-                    @Html.ActionLink("Details", "Details", new { id = Entry.CategoryID }) |
-                    <a href="Categories/Delete/@Entry.CategoryID">Delete</a>
-                </td>
                 </tr>
             }
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
     </table>
 }
 else
 {
-    <h1 class="text-center">No category available.</h1>
-    <p class="text-center">Select "Create new" to create a new category!</p>
+    <h1 class="text-center">Chưa có danh mục nào.</h1>
+    <p class="text-center">Nhấn "Tạo mới" để thêm danh mục.</p>
 }
 
 @if (TempData["ErrorLog"]?.ToString() == "ErrorDetails")
@@ -65,7 +126,6 @@ else
         Something went wrong???
     </div>
 }
-
 <!-- Modal -->
 <div class="modal fade" id="ModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">

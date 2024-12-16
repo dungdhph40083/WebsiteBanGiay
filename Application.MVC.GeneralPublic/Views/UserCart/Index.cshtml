@@ -1,8 +1,5 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model List<Application.Data.Models.ShoppingCart>
+
 <div class="breadcrumb-wrap">
     <div class="container-fluid">
         <ul class="breadcrumb">
@@ -14,67 +11,94 @@
 </div>
 <!-- Breadcrumb End -->
 <!-- Cart Start -->
-<div class="cart-page">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="cart-page-inner">
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Sản phẩm</th>
-                                    <th>Giá tiền</th>
-                                    <th>Số lượng</th>
-                                    <th>Tổng cộng</th>
-                                    <th>Gỡ sản phẩm</th>
-                                </tr>
-                            </thead>
-                            <tbody class="align-middle">
-                                <tr>
-                                    <td>
-                                        <div class="img">
-                                            <a href="#"><img src="img/product-1.jpg" alt="Image"></a>
-                                            <p>Product Name</p>
-                                        </div>
-                                    </td>
-                                    <td>$99</td>
-                                    <td>
-                                        <div class="qty">
-                                            <button class="btn-minus"><i class="fa fa-minus"></i></button>
-                                            <input type="text" value="1">
-                                            <button class="btn-plus"><i class="fa fa-plus"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>$99</td>
-                                    <td><button><i class="fa fa-trash"></i></button></td>
-                                </tr>
-                                
-                            </tbody>
-                        </table>
+<form asp-action="UpdateWholeCart" method="post">
+    <div class="cart-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="cart-page-inner">
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle">
+                                <thead class="thead-dark text-center">
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th>Kích cỡ</th>
+                                        <th>Giá tiền</th>
+                                        <th>Số lượng</th>
+                                        <th>Tổng cộng</th>
+                                        <th>Gỡ sản phẩm</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    @foreach (var Item in Model)
+                                    {
+                                        <tr>
+                                            <input hidden asp-for="@Item.UserID" value="@Item.UserID" />
+                                            <input hidden asp-for="@Item.ProductDetailID" value="@Item.ProductDetailID" />
+                                            <td class="align-middle">
+                                                <a href="#"><img class="img-fluid img-thumbnail" style="width: 150px; height: 150px" src="@($"https://localhost:7187/Images/{Item?.ProductDetail?.Product?.Image?.ImageFileName}")" alt="Image"></a>
+                                                <p>@Item?.ProductDetail?.Product?.Name</p>
+                                            </td>
+                                            <td class="align-middle">
+                                                @Item?.ProductDetail?.Size?.Name
+                                            </td>
+                                            <td class="align-middle" id="PriceSingle_@(Item?.ProductDetailID.ToString() ?? "null")">@Item?.ProductDetail?.Product?.Price.GetValueOrDefault().ToString("#,##0")</td>
+                                            <td class="align-middle">
+                                                <div class="quantity">
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend pr-2">
+                                                            <button class="btn btn-primary btn-minus" onclick="Remove1('@Item?.ProductDetailID.ToString()')" type="button"><i class="fa fa-minus"></i></button>
+                                                        </div>
+                                                        <input class="form-control text-center" placeholder="1" onkeyup="Edit1('@Item?.ProductDetailID.ToString()')" id="ProductAmount_@(Item?.ProductDetailID.ToString() ?? "null")" type="number" asp-for="@(Item!.QuantityCart)" value="@Item?.QuantityCart" min="1" step="1">
+                                                        <div class="input-group-prepend pl-2">
+                                                            <button class="btn btn-primary btn-plus" onclick="Add1('@Item?.ProductDetailID.ToString()')" type="button"><i class="fa fa-plus"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="PriceTotalItems align-middle" id="PriceTotal_@(Item?.ProductDetailID.ToString() ?? "null")">@Item?.Price.GetValueOrDefault().ToString("#,##0")</td>
+                                            <td class="align-middle"><button class="btn btn-danger delete_trigger" onclick="GetCartItemDataToDie('@(Item?.ProductDetailID.ToString())')" data-toggle="modal" data-target="#ModalDelete"><i class="fa fa-trash"></i> Bỏ</button></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="cart-page-inner">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="coupon">
-                                <input type="text" placeholder="Coupon Code">
-                                <button>Apply Code</button>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="cart-summary">
-                                <div class="cart-content">
-                                    <h1>Cart Summary</h1>
-                                    <p>Sub Total<span>$99</span></p>
-                                    <p>Shipping Cost<span>$1</span></p>
-                                    <h2>Grand Total<span>$100</span></h2>
+                <div class="col-lg-4">
+                    <div class="cart-page-inner">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="coupon">
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" type="text" placeholder="Mã Voucher" style="text-transform: UPPERCASE">
+                                        <div class="input-group-prepend pl-2">
+                                            <button class="btn btn-primary" type="button">Dùng</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="cart-btn">
-                                    <button>Update Cart</button>
-                                    <button>Checkout</button>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="cart-summary">
+                                    <div class="cart-content">
+                                        <h2>Tổng kết</h2>
+                                        <div class="row">
+                                            <b class="col-md-5">Chi phí hàng hóa</b>
+                                            <p class="col-md-7 text-right" id="PriceTotalSidebar">@((Model.Sum(x => x.Price)).GetValueOrDefault().ToString("#,##0"))</p>
+                                            <b class="col-md-5">Chi phí giao hàng</b>
+                                            <p class="col-md-7 text-right" id="ShipFeeTotalSidebar">@((Model.Sum(x => x.Price) * 0.01).GetValueOrDefault().ToString("#,##0"))</p>
+                                        </div>
+                                        <hr />
+                                        <div class="row">
+                                            <h4 class="col-md-5">Tổng giá</h4>
+                                            <p class="col-md-7 text-right" id="GrandTotalSidebar">@((Model.Sum(x => x.Price) * 1.01).GetValueOrDefault().ToString("#,##0"))</p>
+                                        </div>
+                                    </div>
+                                    <p id="WARNING_WARNING_ALARM"></p>
+                                    <div class="cart-btn">
+                                        <button type="submit" class="btn btn-primary">Cập nhật giỏ hàng</button>
+                                        <a href="" class="btn btn-success">Thanh toán</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -83,4 +107,28 @@
             </div>
         </div>
     </div>
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="DeleteLabel">Xác nhận</h1>
+@*              <button type="button" class="close" data-dismiss="modal" id="close-btn" aria-label="Close">
+                    <i class="fa fa-exit"></i>
+                </button> *@
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn để loại bỏ sản phẩm khỏi giỏ hàng?<br />
+                <span style="font-size:small" class="font-monospace-cascadia">Hành động này sẽ không được khôi phục lại.</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-btn">Không</button>
+                <button type="button" class="btn btn-danger" id="confirm_deletion">Loại bỏ</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script src="~/js/shopping_cart_logic.js"></script>

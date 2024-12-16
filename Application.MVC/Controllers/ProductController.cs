@@ -14,7 +14,7 @@ namespace Application.MVC.Controllers
         {
             client = new HttpClient();
         }
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int page = 1, int pageSize = 5)
         {
             string requestURL = "https://localhost:7187/api/Product";
             var response = await client.GetFromJsonAsync<List<Product>>(requestURL);
@@ -23,10 +23,27 @@ namespace Application.MVC.Controllers
             {
                 return View(new List<Product>());
             }
+
+            // Sắp xếp sản phẩm theo ngày tạo (mới nhất trước)
             var sortedResponse = response.OrderByDescending(p => p.CreatedAt).ToList();
 
-            return View(sortedResponse);
+            // Tổng số sản phẩm
+            int totalItems = sortedResponse.Count;
+
+            // Tính toán phân trang
+            var pagedData = sortedResponse
+                .Skip((page - 1) * pageSize) // Bỏ qua sản phẩm của các trang trước
+                .Take(pageSize) // Lấy số sản phẩm của trang hiện tại
+                .ToList();
+
+            // Truyền thông tin phân trang sang View qua ViewBag
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            return View(pagedData);
         }
+
 
         public ActionResult Details(Guid id)
         {
@@ -129,11 +146,21 @@ namespace Application.MVC.Controllers
             }
         }
 
-        public ActionResult Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            string requestURL = $"https://localhost:7187/api/Product/{id}";
-            var response = client.DeleteAsync(requestURL).Result;
-            return RedirectToAction("Index");
+            try
+            {
+                string requestURL = $"https://localhost:7187/api/Product/{id}";
+                var response = await client.DeleteAsync(requestURL);
+
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception)
+            {
+                ViewBag.Error = "Không thể xóa do sản phẩm vẫn còn quan hệ ở các bảng khác!\n(Sự kiện, voucher, hóa đơn chi tiết)";
+                Console.WriteLine((ViewBag.Error as string).ToJson());
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

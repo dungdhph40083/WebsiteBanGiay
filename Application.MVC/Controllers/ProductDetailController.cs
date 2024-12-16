@@ -11,12 +11,39 @@ namespace Application.MVC.Controllers
     {
         HttpClient Client = new HttpClient();
 
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int page = 1, int pageSize = 5)
         {
+            // Fetch product details from API
             string URL = $@"https://localhost:7187/api/ProductDetails";
-            var Response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
-            return View(Response);
+            var response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
+
+            // Sort by UpdatedAt (descending)
+            var sortedResponse = response.OrderByDescending(p => p.UpdatedAt).ToList();
+
+            // Total number of items
+            int totalItems = sortedResponse.Count();
+
+            // Calculate total pages
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            // Validate the page number
+            page = (page < 1) ? 1 : (page > totalPages) ? totalPages : page;
+
+            // Get the data for the current page
+            var productDetailsForPage = sortedResponse
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Pass pagination data to the view
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalPages = totalPages;
+
+            // Return the paginated data
+            return View(productDetailsForPage);
         }
+
 
         public async Task<ActionResult> Details(Guid ID)
         {
@@ -44,32 +71,55 @@ namespace Application.MVC.Controllers
 
         private async Task Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds()
         {
-            // Lấy danh sách Products và Images từ API
+            // Lấy danh sách Products và ProductDetails từ API
             var ProductsList = await Client.GetFromJsonAsync<List<Product>>($@"https://localhost:7187/api/Product");
+            var ProductDetailsList = await Client.GetFromJsonAsync<List<ProductDetail>>($@"https://localhost:7187/api/ProductDetails");
+
+            // Lọc các sản phẩm chưa được sử dụng trong ProductDetails
+            var AvailableProducts = ProductsList?
+                .Where(product => !ProductDetailsList.Any(detail => detail.ProductID == product.ProductID))
+                .ToList();
+
             var ColorsList = await Client.GetFromJsonAsync<List<Color>>($@"https://localhost:7187/api/Color");
             var SizesList = await Client.GetFromJsonAsync<List<Size>>($@"https://localhost:7187/api/Size");
             var CategoriesList = await Client.GetFromJsonAsync<List<Category>>($@"https://localhost:7187/api/Category");
             var SalesList = await Client.GetFromJsonAsync<List<Sale>>($@"https://localhost:7187/api/Sale");
 
-            var ProdsItems = ProductsList?
-                .Select(Pls => new SelectListItem
-                { Text = Pls.Name, Value = Pls.ProductID.ToString() }).ToList();
+            // Tạo danh sách SelectListItem cho các dropdown
+            var ProdsItems = AvailableProducts?
+                .Select(pls => new SelectListItem
+                {
+                    Text = pls.Name,
+                    Value = pls.ProductID.ToString()
+                }).ToList();
 
             var ColrsItems = ColorsList?
-                .Select(Help => new SelectListItem
-                { Text = Help.ColorName, Value = Help.ColorID.ToString() }).ToList();
+                .Select(help => new SelectListItem
+                {
+                    Text = help.ColorName,
+                    Value = help.ColorID.ToString()
+                }).ToList();
 
             var SizesItems = SizesList?
-                .Select(Im => new SelectListItem
-                { Text = Im.Name, Value = Im.SizeID.ToString() }).ToList();
+                .Select(im => new SelectListItem
+                {
+                    Text = im.Name,
+                    Value = im.SizeID.ToString()
+                }).ToList();
 
             var CatgsItems = CategoriesList?
-                .Select(Being => new SelectListItem
-                { Text = Being.CategoryName, Value = Being.CategoryID.ToString() }).ToList();
+                .Select(being => new SelectListItem
+                {
+                    Text = being.CategoryName,
+                    Value = being.CategoryID.ToString()
+                }).ToList();
 
             var SalesItems = SalesList?
-                .Select(HeldHostage => new SelectListItem
-                { Text = HeldHostage.Name, Value = HeldHostage.SaleID.ToString() }).ToList();
+                .Select(heldHostage => new SelectListItem
+                {
+                    Text = heldHostage.Name,
+                    Value = heldHostage.SaleID.ToString()
+                }).ToList();
 
             // Nếu API trả về null, khởi tạo danh sách trống
             ViewBag.Prods = ProdsItems;
@@ -78,6 +128,7 @@ namespace Application.MVC.Controllers
             ViewBag.Catgs = CatgsItems;
             ViewBag.Sales = SalesItems;
         }
+
 
         // POST: ProductDetail/Create
         [HttpPost]
@@ -117,10 +168,45 @@ namespace Application.MVC.Controllers
                 return View(Detail);
             }
         }
+        private async Task Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofdss()
+        {
+            // Lấy danh sách Products và Images từ API
+            var ProductsList = await Client.GetFromJsonAsync<List<Product>>($@"https://localhost:7187/api/Product");
+            var ColorsList = await Client.GetFromJsonAsync<List<Color>>($@"https://localhost:7187/api/Color");
+            var SizesList = await Client.GetFromJsonAsync<List<Size>>($@"https://localhost:7187/api/Size");
+            var CategoriesList = await Client.GetFromJsonAsync<List<Category>>($@"https://localhost:7187/api/Category");
+            var SalesList = await Client.GetFromJsonAsync<List<Sale>>($@"https://localhost:7187/api/Sale");
 
+            var ProdsItems = ProductsList?
+                .Select(Pls => new SelectListItem
+                { Text = Pls.Name, Value = Pls.ProductID.ToString() }).ToList();
+
+            var ColrsItems = ColorsList?
+                .Select(Help => new SelectListItem
+                { Text = Help.ColorName, Value = Help.ColorID.ToString() }).ToList();
+
+            var SizesItems = SizesList?
+                .Select(Im => new SelectListItem
+                { Text = Im.Name, Value = Im.SizeID.ToString() }).ToList();
+
+            var CatgsItems = CategoriesList?
+                .Select(Being => new SelectListItem
+                { Text = Being.CategoryName, Value = Being.CategoryID.ToString() }).ToList();
+
+            var SalesItems = SalesList?
+                .Select(HeldHostage => new SelectListItem
+                { Text = HeldHostage.Name, Value = HeldHostage.SaleID.ToString() }).ToList();
+
+            // Nếu API trả về null, khởi tạo danh sách trống
+            ViewBag.Prods = ProdsItems;
+            ViewBag.Colrs = ColrsItems;
+            ViewBag.Sizes = SizesItems;
+            ViewBag.Catgs = CatgsItems;
+            ViewBag.Sales = SalesItems;
+        }
         public async Task<ActionResult> Edit(Guid id)
         {
-            await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds();
+            await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofdss();
 
             // Lấy thông tin ProductDetail theo ID
             var productDetail = await Client.GetFromJsonAsync<ProductDetailDTO>($@"https://localhost:7187/api/ProductDetails/{id}");

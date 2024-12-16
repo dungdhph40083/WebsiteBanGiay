@@ -28,6 +28,12 @@ namespace Application.API.Controllers
             return await ShoppingCartRepo.GetShoppingCartByID(ID);
         }
 
+        [HttpGet("User/{ID}")]
+        public async Task<ActionResult<List<ShoppingCart>>> GetUser(Guid ID)
+        {
+            return await ShoppingCartRepo.GetShoppingCartsByUserID(ID);
+        }
+
         [HttpPost]
         public async Task<ActionResult<ShoppingCart>> Post([FromBody] ShoppingCartDTO NewShoppingCart)
         {
@@ -46,6 +52,14 @@ namespace Application.API.Controllers
         {
             await ShoppingCartRepo.Delete(ID);
             return NoContent();
+        }
+
+        [HttpPut("Add2Cart/{UserID}/{ProductDetailID}")]
+        public async Task<ActionResult<ShoppingCart?>> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity, bool? AdditionMode)
+        {
+            var Response = await ShoppingCartRepo.Add2Cart(UserID, ProductDetailID, Quantity, AdditionMode);
+            if (Response != null) return await Get(Response.CartID);
+            else return NoContent();
         }
     }
 }
