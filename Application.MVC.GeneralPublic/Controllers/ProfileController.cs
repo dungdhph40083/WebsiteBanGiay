@@ -9,6 +9,7 @@ using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Newtonsoft.Json;
 using Application.Data.DTOs;
+using NuGet.Protocol;
 
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -25,7 +26,7 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<ActionResult> Index()
         {
             string URL = $@"https://localhost:7187/api/User";
-            var Response = await Client.GetFromJsonAsync<List<UserDTO>>(URL);
+            var Response = await Client.GetFromJsonAsync<List<User>>(URL);
 
             if (Response != null && Response.Any())
             {
@@ -38,49 +39,47 @@ namespace Application.MVC.GeneralPublic.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
-            string userRequestURL = "https://localhost:7187/api/User";
-            var userResponse = await Client.GetStringAsync(userRequestURL);
+            Guid ID = GetCurrentUserId();
 
-            if (string.IsNullOrEmpty(userResponse))
+            string userRequestURL = $@"https://localhost:7187/api/User/{ID}";
+            var userResponse = await Client.GetFromJsonAsync<UserDTO>(userRequestURL);
+
+            if (userResponse == null)
             {
                 return NotFound("User not found.");
             }
 
-            var users = JsonConvert.DeserializeObject<List<UserDTO>>(userResponse);
-
-            Guid currentUserId = GetCurrentUserId();
-            var currentUser = users?.FirstOrDefault(u => u.UserID == currentUserId);
-
-            if (currentUser == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            return View(currentUser);
+            return View(userResponse);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, UserDTO updatedUser, IFormFile? ProfilePicture)
+        public async Task<IActionResult> Edit(Guid id, UserDTO updatedUser, [FromForm] IFormFile? ProfilePicture)
         {
             if (updatedUser == null)
             {
                 return BadRequest("Invalid user data.");
             }
 
+            id = GetCurrentUserId();
+
             string requestURL = $"https://localhost:7187/api/User/{id}";
 
             MultipartFormDataContent contents = new()
     {
         { new StringContent(updatedUser.Username ?? string.Empty), nameof(updatedUser.Username) },
-        { new StringContent(updatedUser.Email ?? string.Empty), nameof(updatedUser.Email) },
-        { new StringContent(updatedUser.PhoneNumber ?? string.Empty), nameof(updatedUser.PhoneNumber) }
+        { new StringContent(updatedUser.Email ?? string.Empty), nameof(updatedUser.Email) }, 
+        { new StringContent(updatedUser.PhoneNumber ?? string.Empty), nameof(updatedUser.PhoneNumber) },
+        { new StringContent(updatedUser.Address ?? string.Empty), nameof(updatedUser.Address) },
+        { new StringContent(updatedUser.LastName ?? string.Empty), nameof(updatedUser.LastName) },
+        { new StringContent(updatedUser.FirstName ?? string.Empty), nameof(updatedUser.FirstName) },
+        { new StringContent(updatedUser.Status.GetValueOrDefault().ToString() ?? "1"), nameof(updatedUser.Status) },
     };
 
             if (ProfilePicture != null)
             {
                 var imageStream = new StreamContent(ProfilePicture.OpenReadStream());
-                contents.Add(imageStream, nameof(ProfilePicture), ProfilePicture.FileName);
+                contents.Add(imageStream, "NewProfilePic", ProfilePicture.FileName);
             }
 
             var response = await Client.PutAsync(requestURL, contents);

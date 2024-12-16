@@ -1,4 +1,4 @@
-﻿@model Application.Data.DTOs.UserDTO
+﻿@model Application.Data.Models.User
 
 @{
     ViewData["Title"] = "Profile Management";
@@ -7,7 +7,25 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">My Profile</h1>
 
-    <div class="card shadow-sm p-4">
+    <div class="card shadow-sm p-4 position-relative">
+
+        <div style="position: absolute; top: 20px; right: 20px;">
+            @if (Model.Image != null)
+            {
+                <img src="https://localhost:7187/Images/@Model.Image.ImageFileName"
+                     alt="User Avatar"
+                     class="rounded-circle"
+                     style="width: 100px; height: 100px; object-fit: cover; border: 2px solid #ddd;">
+            }
+            else
+            {
+                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                     style="width: 100px; height: 100px;">
+                    <span class="text-white">N/A</span>
+                </div>
+            }
+        </div>
+
         <div class="row mb-3">
             <div class="col-md-4">
                 <label class="font-weight-bold">Username:</label>
@@ -65,6 +83,5 @@
         <div class="text-center mt-4">
             <a asp-action="Edit" class="btn btn-primary">Edit Profile</a>
         </div>
-
     </div>
 </div>
