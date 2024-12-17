@@ -1,63 +1,25 @@
-﻿//using Application.Data.DTOs;
-//using Microsoft.AspNetCore.Mvc;
-//using Newtonsoft.Json;
+﻿using Application.Data.DTOs;
+using Application.Data.Models;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
-//namespace Application.MVC.Controllers
-//{
-//    public class OrdersController : Controller
-//    {
-//        HttpClient client;
-//        public OrdersController()
-//        {
-//            client = new HttpClient();
-//        }
-//        public ActionResult Index()
-//        {
-//            string requestURL = "https://localhost:7187/api/Orders";
-//            var response = client.GetStringAsync(requestURL).Result;
-//            var data = JsonConvert.DeserializeObject<List<OrderDto>>(response);
-//            return View(data);
-//        }
-//        public ActionResult Details(Guid id)
-//        {
-//            string requestURL = $"https://localhost:7187/api/Orders/{id}";
-//            var response = client.GetStringAsync(requestURL).Result;
-//            var data = JsonConvert.DeserializeObject<OrderDto>(response);
-//            return View(data);
-//        }
+namespace Application.MVC.Controllers
+{
+    public class OrdersController : Controller
+    {
+        HttpClient Client = new HttpClient();
+        
+        public async Task<ActionResult> Index()
+        {
+            string URL = "https://localhost:7187/Orders";
 
-//        public ActionResult Create()
-//        {
-//            return View();
-//        }
+            var Response = await Client.GetFromJsonAsync<Order>(URL);
+            return View(Response);
+        }
 
-//        [HttpPost]
-//        public async Task<ActionResult> Create(OrderDto orderDto)
-//        {
-//            string requestURL = $"https://localhost:7187/api/Orders";
-//            var response = await client.PostAsJsonAsync(requestURL, orderDto);
-//            return RedirectToAction("Index");
-//        }
-//        public IActionResult Edit(Guid id)
-//        {
-//            string requestURL = $"https://localhost:7187/api/Orders/{id}";
-//            var response = client.GetStringAsync(requestURL).Result;
-//            var data = JsonConvert.DeserializeObject<OrderDto>(response);
-//            return View(data);
-//        }
-//        [HttpPost]
-//        public ActionResult Edit(OrderDto orderDto)
-//        {
-//            string requestURL = $"https://localhost:7187/api/Orders/{orderDto.OrderID}";
-//            var response = client.PutAsJsonAsync(requestURL, orderDto).Result;
-//            return RedirectToAction("Index");
-//        }
+        public async Task<ActionResult> Create(OrderDto NewOrder)
+        {
 
-//        public ActionResult Delete(Guid id)
-//        {
-//            string requestURL = $"https://localhost:7187/api/Orders/{id}";
-//            var response = client.DeleteAsync(requestURL).Result;
-//            return RedirectToAction("Index");
-//        }
-//    }
-//}
+        }
+    }
+}

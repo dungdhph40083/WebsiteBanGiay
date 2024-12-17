@@ -92,6 +92,25 @@ namespace Application.Data.Repositories
                   .Where(UU => UU.UserID.Equals(TargetID)).ToListAsync();
         }
 
+        public async Task<ShoppingCart?> GetShoppingCartByUserIDAndDetailID(Guid UserID, Guid TargetID)
+        {
+            return await Context.ShoppingCarts
+                //.Include(UU => UU.User)
+                .Include(UU => UU.Voucher)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Category : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Color : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Size : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Sale : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                        .ThenInclude(WW => WW != null ? WW.Image : default) // hot reload doesn't work
+                .SingleOrDefaultAsync(WW => WW.UserID == UserID && WW.ProductDetailID == TargetID);
+        }
+
         public async Task<List<ShoppingCart>> GetShoppingCarts()
         {
             return await Context.ShoppingCarts
@@ -138,25 +157,26 @@ namespace Application.Data.Repositories
             else return default;
         }
 
+        public async Task<ShoppingCart?> ApplyVoucher(Guid UserID, Guid ProductDetailID, string? VoucherCode)
+        {
+            var Target = await GetShoppingCartByUserIDAndDetailID(UserID, ProductDetailID);
+            if (Target != null)
+            {
+                Context.Entry(Target).State = EntityState.Modified;
+
+                var FindVoucher = await Context.Vouchers.SingleOrDefaultAsync(Vc => Vc.VoucherCode == VoucherCode);
+                if (FindVoucher != null)
+                {
+
+                }
+            }
+        }
+
         public async Task<ShoppingCart?> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity, bool? AdditionMode)
         {
             if (Quantity < 0) Quantity = 0;
 
-            var CartItem = await Context.ShoppingCarts
-                    //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
-                .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Category : default)
-                .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Color : default)
-                .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Size : default)
-                .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Sale : default)
-                .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Product : default)
-                        .ThenInclude(WW => WW != null ? WW.Image : default) // hot reload doesn't work
-                .SingleOrDefaultAsync(WW => WW.UserID == UserID && WW.ProductDetailID == ProductDetailID);
+            var CartItem = await GetShoppingCartByUserIDAndDetailID(UserID, ProductDetailID);
 
             if (CartItem != null)
             {

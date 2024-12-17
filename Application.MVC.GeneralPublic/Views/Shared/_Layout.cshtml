@@ -1,9 +1,18 @@
 ﻿@using Application.Data.Enums
-@using Microsoft.AspNetCore.Http;
+@using Application.Data.Models
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
 @inject IHttpContextAccessor HttpContextAccessor;
 
 @{
     var HttpContext = HttpContextAccessor.HttpContext!;
+    var Client = new HttpClient();
+
+    // kế hoạch là lấy GUID từ session hoặc JWT rồi truyền lên...
+    Guid UserID = Guid.Parse("bbd122d1-8961-4363-820e-3ad1a87064e4");
+
+    string URL = $@"https://localhost:7187/ShoppingCart/User/{UserID}";
+    var MyShoppingCart = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
 }
 
 <!DOCTYPE html>
@@ -88,7 +97,7 @@
                 <div class="d-inline-flex align-items-center d-block d-lg-none">
                     <a asp-controller="UserCart" asp-action="Index" class="btn px-0 ml-2">
                         <i class="fas fa-shopping-cart text-dark"></i>
-                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
+                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">@MyShoppingCart?.Count()</span>
                     </a>
                 </div>
             </div>
@@ -175,7 +184,7 @@
                         <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
                             <a asp-controller="UserCart" asp-action="Index" class="btn px-0 ml-3">
                                 <i class="fas fa-shopping-cart text-primary"></i>
-                                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
+                                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">@MyShoppingCart?.Count()</span>
                             </a>
                         </div>
                     </div>

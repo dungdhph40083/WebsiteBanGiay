@@ -24,13 +24,6 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Add2Cart(Guid? ID, int? Quantity, bool? AdditionMode)
         {
-            // TODO:
-            // 1. nút cập nhật giỏ hàng (HARD) DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-            // 2. nút xóa (EASY)  DONE
-            // 3. căn chỉnh (NORMAL)  DONE
-            // 4. thêm cột thông tin (size) (EASY)  DONE
-            // 5. làm thông báo thay đổi chưa được lưu (EASY)  DONE
-
             if (ID != null)
             {
                 try

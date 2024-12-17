@@ -8,7 +8,8 @@
 
     public class SuccessResult
     {
-        public const string IMAGE_OK = "IMAGE_OK";
+        public const string IMAGE_OK                  = "IMAGE_OK";
+        public const string VOUCHER_APPLIANCE_SUCCESS = "VOUCHER_APPLIANCE_SUCCESS";
     }
 
     public class ValidateErrorResult
@@ -28,5 +29,12 @@
         public const string OUT_OF_RANGE                = "OUT_OF_RANGE";
         public const string INPUT_NOT_UNIQUE            = "INPUT_NOT_UNIQUE";
         public const string WTF_HOW_DID_IT_FAIL         = "WTF_HOW_DID_IT_FAIL";
+
+        public const string VOUCHER_EXPIRED             = "VOUCHER_EXPIRED";
+        public const string VOUCHER_IS_PREMATURE        = "VOUCHER_IS_PREMATURE";
+        public const string VOUCHER_RAN_OUT_OF_USES     = "VOUCHER_RAN_OUT_OF_USES";
+        public const string VOUCHER_DOES_NOT_EXIST      = "VOUCHER_DOES_NOT_EXIST";
+        public const string VOUCHER_VALID               = "VOUCHER_VALID";
+        public const string VOUCHER_IS_UNCHANGED        = "VOUCHER_IS_UNCHANGED";
     }
 }
