@@ -11,6 +11,7 @@ namespace Application.Data.Models
 		public Guid? UserID { get; set; }
         [ForeignKey(nameof(PaymentMethod))]
         public Guid? PaymentMethodID { get; set; }
+        public Guid? CartID { get; set; }
         public DateTime? OrderDate { get; set; }
 		public byte? Status { get; set; }
 		public string? ShippingAddress { get; set; }
