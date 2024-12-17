@@ -1,7 +1,13 @@
 using Application.Data.ModelContexts;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient("DefaultClient", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7187/swagger/index.html");
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+});
 
 builder.Services.AddDbContext<GiayDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay")));

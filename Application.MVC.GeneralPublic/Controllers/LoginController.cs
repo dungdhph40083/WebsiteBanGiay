@@ -2,13 +2,22 @@
 using Application.Data.Enums;
 using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
     public class LoginController : Controller
     {
-        HttpClient Client = new HttpClient();
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public LoginController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
 
         [HttpGet]
         public IActionResult Index()
@@ -16,111 +25,90 @@ namespace Application.MVC.GeneralPublic.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
         [ValidateAntiForgeryToken]
         public ActionResult Login()
         {
             return View();
         }
-
-        [HttpGet]
-        public ActionResult Register()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public async Task<IActionResult> Login(string usernameOrEmail, string password, bool rememberMe)
+        public async Task<IActionResult> Login(string Username, string Password, bool RememberMe)
         {
-            if (string.IsNullOrEmpty(usernameOrEmail) || string.IsNullOrEmpty(password))
+            var loginPayload = new
             {
-                TempData["Error"] = "Tên người dùng hoặc mật khẩu không được để trống.";
-                return View();
-            }
-            var user = await AuthenticateUser(usernameOrEmail, password);
+                username = Username,
+                password = Password
+            };
 
-            if (user != null)
+            try
             {
-                HttpContext.Session.SetString("UserId", user.UserID.ToString());
-                HttpContext.Session.SetString("Username", user.Username);
+                var httpClient = _httpClientFactory.CreateClient();
+                var requestContent = new StringContent(JsonSerializer.Serialize(loginPayload), Encoding.UTF8, "application/json");
 
-                if (rememberMe)
+                var response = await httpClient.PostAsync("https://localhost:7187/api/Login/login", requestContent);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    Response.Cookies.Append("RememberMe", user.UserID.ToString(), new CookieOptions
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    var token = JsonSerializer.Deserialize<LoginResponse>(responseData)?.Token;
+
+                    if (!string.IsNullOrEmpty(token))
                     {
-                        Expires = DateTimeOffset.Now.AddDays(30)
-                    });
+
+                        HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions
+                        {
+                            HttpOnly = true,
+                            Secure = true,
+                            Expires = RememberMe ? DateTimeOffset.UtcNow.AddDays(7) : DateTimeOffset.UtcNow.AddHours(1)
+                        });
+
+                        var handler = new JwtSecurityTokenHandler();
+                        var jwtToken = handler.ReadJwtToken(token);
+                        var role = jwtToken.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+
+                        if (role == "Admin")
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else if (role == "User")
+                        {
+                            return RedirectToAction("Index", "Product");
+                        }
+                    }
                 }
-                return RedirectToAction("Index", "Home");
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    TempData["ErrorMessage"] = "Tên người dùng hoặc mật khẩu không đúng.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Có lỗi xảy ra trong quá trình đăng nhập.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Lỗi kết nối: {ex.Message}";
             }
 
-            TempData["Error"] = "Tên người dùng hoặc mật khẩu không đúng.";
-            return View();
+            return RedirectToAction("Register");
         }
+
 
         [HttpGet]
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear(); 
-            Response.Cookies.Delete("RememberMe"); 
+            HttpContext.Response.Cookies.Delete("AuthToken");
             return RedirectToAction("Login");
         }
 
-        private async Task<User> AuthenticateUser(string usernameOrEmail, string password)
+        private class LoginResponse
         {
-            string authUrl = $@"https://localhost:7187/api/Auth/Login";
-            var payload = new
-            {
-                UsernameOrEmail = usernameOrEmail,
-                Password = password
-            };
-            var response = await Client.PostAsJsonAsync(authUrl, payload);
-            if (response.IsSuccessStatusCode)
-            {
-
-                var user = await response.Content.ReadFromJsonAsync<User>();
-                return user;
-            }
-            return null;
+            public string Token { get; set; }
         }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(UserDTO Input)
+        [HttpGet]
+        public ActionResult Register()
         {
-            try
-            {
-                string URL = $@"https://localhost:7187/api/User";
-
-                MultipartFormDataContent Contents = new()
-                {
-                    { new StringContent(Input.Username!),                              nameof(Input.Username) },
-                    { new StringContent(Input.Password!),                              nameof(Input.Password) },
-                    { new StringContent(Input.FirstName ?? ""),                        nameof(Input.FirstName) },
-                    { new StringContent(Input.LastName ?? ""),                         nameof(Input.LastName) },
-                    { new StringContent(Input.Email ?? ""),                            nameof(Input.Email) },
-                    { new StringContent(Input.Address ?? ""),                          nameof(Input.Address) },
-                    { new StringContent(Input.PhoneNumber ?? ""),                      nameof(Input.PhoneNumber) },
-                    { new StringContent(((int)VisibilityStatus.Available).ToString()), nameof(Input.Status) }
-                };
-
-                var Response = await Client.PostAsync(URL, Contents);
-
-                if (Response.StatusCode == HttpStatusCode.OK || Response.StatusCode == HttpStatusCode.Created)
-                {
-                    TempData["SuccessBanner"] = "SUCCESS";
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception Msg)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(Msg.Message);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                TempData["FailureBanner"] = $"{Msg.Message} ({Msg.HResult})";
-                return View();
-            }
+            return View();
         }
     }
 }

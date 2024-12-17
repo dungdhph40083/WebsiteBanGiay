@@ -20,8 +20,7 @@ namespace Application.MVC.GeneralPublic.Controllers
         {
             _client = new HttpClient();
         }
-
-
+       
         public async Task<ActionResult> Index(int page = 1, string priceRange = "all")
         {
             var products = await _client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");

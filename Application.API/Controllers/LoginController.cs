@@ -1,6 +1,13 @@
-﻿using Application.Data.Models;
+﻿using Application.Data.ModelContexts;
+using Application.Data.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Application.API.Controllers
 {
@@ -9,40 +16,57 @@ namespace Application.API.Controllers
 
     public class LoginController : ControllerBase
     {
-        private readonly UserService _userService;
-        public LoginController(UserService userService)
+        private readonly IConfiguration _configuration;
+        private readonly GiayDBContext _context; 
+
+        public LoginController(IConfiguration configuration, GiayDBContext context)
         {
-            _userService = userService;
-        }
-        [HttpPost("register")]
-        public IActionResult Register([FromBody] AuthRequest request)
-        {
-            try
-            {
-                var user = _userService.Register(request.Username, request.Password);
-                return Ok(new
-                {
-                    user.UserID, 
-                    user.Username
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            _configuration = configuration;
+            _context = context;
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] AuthRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var token = _userService.Authenticate(request.Username, request.Password);
-            if (token == null) return Unauthorized(new { message = "Invalid credentials" });
+            if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
+                return BadRequest("Username and password are required.");
 
-            return Ok(new AuthResponse
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Username == request.Username && u.Password == request.Password);
+
+            if (user == null)
+                return Unauthorized("Invalid username or password.");
+
+            var token = GenerateToken(user);
+
+            return Ok(new { Token = token });
+        }
+
+        private string GenerateToken(User user)
+        {
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+            var claims = new List<Claim>
             {
-                Username = request.Username,
-                Token = token
-            });
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim("UserID", user.UserID.ToString()),
+                new Claim(ClaimTypes.Role, user.Role?.RoleName ?? "User"),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
+            var tokenDescriptor = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:TokenLifetimeMinutes"])),
+                signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        }
+        public class LoginRequest
+        {
+            public string Username { get; set; } = null!;
+            public string Password { get; set; } = null!;
         }
     }
 }
