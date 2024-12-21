@@ -7,10 +7,10 @@ namespace Application.Data.Repositories.IRepository
     {
         Task<List<Voucher>> GetVouchers();
         Task<Voucher?> GetVoucherByID(Guid TargetID);
+        Task<Voucher?> GetVoucherByVoucherCode(string VoucherCode);
         Task<Voucher> CreateVoucher(VoucherDTO NewVoucher);
         Task<Voucher?> UpdateVoucher(Guid TargetID, VoucherDTO UpdatedVoucher);
         Task DeleteVoucher(Guid TargetID);
-        Task<string> VoucherValidator(Guid TargetID);
-        Task<string> UseVoucher(Guid VoucherID, Guid CartID);
+        Task<string> VoucherValidator(string VoucherCode);
     }
 }

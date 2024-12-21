@@ -1,4 +1,5 @@
-﻿using Application.Data.Models;
+﻿using Application.Data.Enums;
+using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -13,16 +14,13 @@ namespace Application.MVC.GeneralPublic.Controllers
             _client = httpClientFactory.CreateClient();
         }
 
-        public async Task<IActionResult> Index(Guid ID)
+        public async Task<IActionResult> Index()
         {
             // Gọi API để lấy danh sách người dùng
-            var users = await _client.GetFromJsonAsync<List<User>>("https://localhost:7187/api/User");
-
-            // Tìm user với UserID đã cố định
-            var user = users?.FirstOrDefault(u => u.UserID == UserID);
+            var user = await _client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{UserID}");
 
             // Gọi API để lấy giỏ hàng của người dùng với ID
-            var cartItems = await _client.GetFromJsonAsync<List<ShoppingCart>>($"https://localhost:7187/api/ShoppingCart/User/{ID}");
+            var cartItems = await _client.GetFromJsonAsync<List<ShoppingCart>>($"https://localhost:7187/api/ShoppingCart/User/{UserID}");
 
             // Tính tổng giá trị đơn hàng
             var totalAmount = cartItems?.Sum(item => item.QuantityCart * item.Price) ?? 0;
@@ -33,6 +31,16 @@ namespace Application.MVC.GeneralPublic.Controllers
             ViewBag.TotalAmount = totalAmount;
 
             return View();
+        }
+
+        public ActionResult InstantCheckout(string PaymentMethod)
+        {
+            if (PaymentMethod == PaymentMethods.CashOnDelivery)
+            {
+
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

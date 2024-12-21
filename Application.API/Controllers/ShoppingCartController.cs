@@ -1,4 +1,5 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,11 @@ namespace Application.API.Controllers
     public class ShoppingCartController : ControllerBase
     {
         private readonly IShoppingCart ShoppingCartRepo;
-        public ShoppingCartController(IShoppingCart ShoppingCartRepo)
+        private readonly IVoucher VoucherRepo;
+        public ShoppingCartController(IShoppingCart ShoppingCartRepo, IVoucher VoucherRepo)
         {
             this.ShoppingCartRepo = ShoppingCartRepo;
+            this.VoucherRepo = VoucherRepo;
         }
 
         [HttpGet]
@@ -59,6 +62,27 @@ namespace Application.API.Controllers
         {
             var Response = await ShoppingCartRepo.Add2Cart(UserID, ProductDetailID, Quantity, AdditionMode);
             if (Response != null) return await Get(Response.CartID);
+            else return NoContent();
+        }
+
+        [HttpPatch("ApplyVoucher/{UserID}/{ProductDetailID}")]
+        public async Task<ActionResult<ShoppingCart?>> ApplyVoucher(Guid UserID, Guid ProductDetailID, string VoucherCode)
+        {
+            var Validator = await VoucherRepo.VoucherValidator(VoucherCode);
+            if (Validator == ValidateErrorResult.VOUCHER_VALID)
+            {
+                var Response = await ShoppingCartRepo.ApplyVoucher(UserID, ProductDetailID, VoucherCode);
+                if (Response != null) return Response;
+                else return NoContent();
+            }
+            return ValidationProblem(Validator);
+        }
+
+        [HttpPatch("UnapplyVoucher/{UserID}/{ProductDetailID}")]
+        public async Task<ActionResult<ShoppingCart?>> UnapplyVoucher(Guid UserID, Guid ProductDetailID)
+        {
+            var Response = await ShoppingCartRepo.UnapplyVoucher(UserID, ProductDetailID);
+            if (Response != null) return Response;
             else return NoContent();
         }
     }

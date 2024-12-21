@@ -79,39 +79,9 @@ namespace Application.Data.Repositories
             else return default;
         }
 
-        public async Task<string> UseVoucher(Guid VoucherID, Guid CartID)
+        public async Task<string> VoucherValidator(string VoucherCode)
         {
-            var CartItem = await Context.ShoppingCarts.FindAsync(CartID);
-            if (CartItem == null || CartItem.VoucherID == VoucherID) return ValidateErrorResult.VOUCHER_IS_UNCHANGED;
-
-            var VoucherItem = await Context.Vouchers.FindAsync(VoucherID);
-
-            if (CartItem != null && VoucherItem != null)
-            {
-                Context.ShoppingCarts.Attach(CartItem);
-                Context.Vouchers.Attach(VoucherItem);
-                if (CartItem.VoucherID == null)
-                {
-                    CartItem.VoucherID = VoucherID;
-                    VoucherItem.UsesLeft -= 1;
-
-                    await Context.SaveChangesAsync();
-                    return SuccessResult.VOUCHER_APPLIANCE_SUCCESS;
-                };
-                if (CartItem.VoucherID != null)
-                {
-                    // Add 1 voucher use back to the old Voucher
-                    // and deduct 1 voucher use to the new Voucher
-                    // without breaking anything (like Attach fail, Savechanges fail, etc.)
-                    // good luck me
-                }
-            }
-
-        }
-
-        public async Task<string> VoucherValidator(Guid TargetID)
-        {
-            var Target = await GetVoucherByID(TargetID);
+            var Target = await GetVoucherByVoucherCode(VoucherCode);
             if (Target != null && Target.Status != 0)
             {
                 if (DateTime.UtcNow > Target.EndingAt)
@@ -135,6 +105,14 @@ namespace Application.Data.Repositories
             // public const string VOUCHER_RAN_OUT_OF_USES = "VOUCHER_RAN_OUT_OF_USES";
             // public const string VOUCHER_DOES_NOT_EXIST = "VOUCHER_DOES_NOT_EXIST";
             // public const string VOUCHER_VALID = "VOUCHER_VALID";
+        }
+        public async Task<Voucher?> GetVoucherByVoucherCode(string VoucherCode)
+        {
+            var Target = await Context.Vouchers
+                .Include(UU => UU.Category)
+                .Include(UU => UU.Product)
+                .SingleOrDefaultAsync(x => x.VoucherCode == VoucherCode);
+            return Target;
         }
     }
 }

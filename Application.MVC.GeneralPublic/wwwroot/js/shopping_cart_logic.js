@@ -9,6 +9,11 @@ function AddEmUp(ItemPrice) {
     Sum += parseInt(ItemPrice.innerText.replace(/[$,.\s]/g, ''));
 };
 
+function Notify() {
+    let Notify = document.getElementById("WARNING_WARNING_ALARM");
+    Notify.innerHTML = '<p class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu!</p>';
+}
+
 function DisplayTotalPriceOnSidebar() {
     Sum = 0;
 
@@ -31,8 +36,7 @@ function Remove1(ItemID) {
     let PriceSingle = document.getElementById("PriceSingle_" + ItemID);
     let PriceTotal = document.getElementById("PriceTotal_" + ItemID);
 
-    let Notify = document.getElementById("WARNING_WARNING_ALARM");
-    Notify.innerHTML = '<p class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu!</p>';
+    Notify();
 
     let CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
 
@@ -50,8 +54,7 @@ function Edit1(ItemID) {
     let PriceSingle = document.getElementById("PriceSingle_" + ItemID);
     let PriceTotal = document.getElementById("PriceTotal_" + ItemID);
 
-    let Notify = document.getElementById("WARNING_WARNING_ALARM");
-    Notify.innerHTML = '<p class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu!</p>';
+    Notify();
 
     let CurrentQuantity = 1;
 
@@ -74,10 +77,8 @@ function Add1(ItemID) {
     let PriceSingle = document.getElementById("PriceSingle_" + ItemID);
     let PriceTotal = document.getElementById("PriceTotal_" + ItemID);
 
-    let Notify = document.getElementById("WARNING_WARNING_ALARM");
-    Notify.innerHTML = '<p class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu!</p>';
-
     let CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
+    Notify();
 
     if (!isNaN(CurrentQuantity)) {
         ProductAmount.value = CurrentQuantity + 1;

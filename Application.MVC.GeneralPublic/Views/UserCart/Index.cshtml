@@ -28,6 +28,7 @@
                                             <th>Giá tiền</th>
                                             <th>Số lượng</th>
                                             <th>Tổng cộng</th>
+                                            <th>Mã Voucher</th>
                                             <th>Gỡ sản phẩm</th>
                                         </tr>
                                     </thead>
@@ -58,7 +59,28 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="PriceTotalItems align-middle" id="PriceTotal_@(Model[Idx]?.ProductDetailID.ToString() ?? "null")">@Model[Idx]?.Price.GetValueOrDefault().ToString("#,##0")</td>
+                                                <td class="PriceTotalItems align-middle" id="PriceTotal_@(Model[Idx]?.ProductDetailID.ToString() ?? "null")">
+                                                    @if (Model[Idx]?.ProductDetail?.Sale?.StartingAt.GetValueOrDefault() >= DateTime.UtcNow && Model[Idx]?.ProductDetail?.Sale?.EndingAt.GetValueOrDefault() <= DateTime.UtcNow)
+                                                    {
+                                                        <input hidden id="SaleDiscount_@(Model[Idx]?.ProductDetail?.Sale?.SaleID)"/>
+                                                    }
+                                                        <input hidden id="VoucherDiscount_@(Model[Idx]?.VoucherID)"/>
+                                                    @if ((Model[Idx]?.ProductDetail?.Sale?.StartingAt.GetValueOrDefault() >= DateTime.UtcNow && Model[Idx]?.ProductDetail?.Sale?.EndingAt.GetValueOrDefault() <= DateTime.UtcNow) || Model[Idx]?.VoucherID != null)
+                                                    {
+                                                        <del>@Model[Idx]?.Price.GetValueOrDefault().ToString("#,##0")</del><br />
+                                                        @(((Model[Idx]?.Price ?? 0) - (Model[Idx]?.ProductDetail?.Sale?.DiscountPrice ?? 0) - (Model[Idx]?.Voucher?.DiscountPrice ?? 0)).ToString("#,##0"))
+                                                    }
+                                                    else
+                                                    {
+                                                        @Model[Idx]?.Price.GetValueOrDefault().ToString("#,##0")
+                                                    }
+                                                </td>
+                                                <td class="align-middle">
+                                                    <input class="form-control" type="text" name="VoucherCode" onkeyup="Notify()" placeholder="Mã Voucher" value="@(Model[Idx].VoucherID != null ? Model[Idx].Voucher?.VoucherCode : null)" style="text-transform: UPPERCASE">
+                                                    <div class="input-group-prepend pl-2">
+                                                        <button class="btn btn-primary" type="submit">Dùng</button>
+                                                    </div>
+                                                </td>
                                                 <td class="align-middle"><button class="btn btn-danger delete_trigger" type="button" onclick="GetCartItemDataToDie('@(Model[Idx]?.ProductDetailID.ToString())')" data-toggle="modal" data-target="#ModalDelete"><i class="fa fa-trash"></i> Bỏ</button></td>
                                             </tr>
                                         }
@@ -75,19 +97,6 @@
                 <div class="col-lg-4">
                     <div class="cart-page-inner">
                         <div class="row">
-                            @if (Model.Count() > 0)
-                            {
-                                <div class="col-md-12">
-                                    <div class="coupon">
-                                        <div class="input-group mb-3">
-                                            <input class="form-control" type="text" placeholder="Mã Voucher" style="text-transform: UPPERCASE">
-                                            <div class="input-group-prepend pl-2">
-                                                <button class="btn btn-primary" type="button">Dùng</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
                             <div class="col-md-12">
                                 <div class="cart-summary">
                                     <div class="cart-content">
@@ -109,7 +118,7 @@
                                     {
                                         <div class="cart-btn">
                                             <button type="submit" class="btn btn-primary">Cập nhật giỏ hàng</button>
-                                            <a href="" class="btn btn-success">Thanh toán</a>
+                                            <a asp-controller="Checkout" class="btn btn-success">Thanh toán</a>
                                         </div>
                                     }
                                 </div>
@@ -128,9 +137,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="DeleteLabel">Xác nhận</h1>
-@*              <button type="button" class="close" data-dismiss="modal" id="close-btn" aria-label="Close">
-                    <i class="fa fa-exit"></i>
-                </button> *@
             </div>
             <div class="modal-body">
                 Bạn có chắc chắn để loại bỏ sản phẩm khỏi giỏ hàng?<br />

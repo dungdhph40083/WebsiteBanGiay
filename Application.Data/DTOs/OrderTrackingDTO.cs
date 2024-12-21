@@ -11,7 +11,8 @@ namespace Application.Data.DTOs
     public class OrderTrackingDTO
     {
         public Guid TrackingID { get; set; }
-        public Guid? OrderDetailID { get; set; }
-        public byte? ShippingStatus { get; set; }
+        public Guid? OrderID { get; set; }
+        public byte? Status { get; set; }
+        public bool? HasPaid { get; set; }
     }
 }

@@ -1,18 +1,9 @@
 ﻿@using Application.Data.Enums
-@using Application.Data.Models
-@using Microsoft.AspNetCore.Http
-@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Http;
 @inject IHttpContextAccessor HttpContextAccessor;
 
 @{
     var HttpContext = HttpContextAccessor.HttpContext!;
-    var Client = new HttpClient();
-
-    // kế hoạch là lấy GUID từ session hoặc JWT rồi truyền lên...
-    Guid UserID = Guid.Parse("bbd122d1-8961-4363-820e-3ad1a87064e4");
-
-    string URL = $@"https://localhost:7187/ShoppingCart/User/{UserID}";
-    var MyShoppingCart = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
 }
 
 <!DOCTYPE html>
@@ -97,7 +88,7 @@
                 <div class="d-inline-flex align-items-center d-block d-lg-none">
                     <a asp-controller="UserCart" asp-action="Index" class="btn px-0 ml-2">
                         <i class="fas fa-shopping-cart text-dark"></i>
-                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">@MyShoppingCart?.Count()</span>
+                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
                     </a>
                 </div>
             </div>
@@ -171,21 +162,20 @@
                         <div class="navbar-nav mr-auto py-0">
                             <a href="index.html" class="nav-item nav-link active">Trang chủ</a>
                             <a href="/Product/Index" class="nav-item nav-link">Sản phẩm</a>
-                            <a href="#" class="nav-item nav-link">Giỏ hàng</a>
-                            <a href="/Checkout/Index" class="nav-item nav-link">Thanh toán</a>
+                            <a href="/UserCart/Index" class="nav-item nav-link">Giỏ hàng</a>
+                            <a href="/MyOrders/Index" class="nav-item nav-link">Lịch sử Đơn hàng</a>
                             @* <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
-                                <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                    <a href="cart.html" class="dropdown-item">Shopping Cart</a>
-                                    <a href="checkout.html" class="dropdown-item">Checkout</a>
-                                </div>
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
+                            <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
+                            <a href="cart.html" class="dropdown-item">Shopping Cart</a>
+                            <a href="checkout.html" class="dropdown-item">Checkout</a>
+                            </div>
                             </div> *@
-                            <a href="/Contact/Create" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
                             <a asp-controller="UserCart" asp-action="Index" class="btn px-0 ml-3">
                                 <i class="fas fa-shopping-cart text-primary"></i>
-                                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">@MyShoppingCart?.Count()</span>
+                                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
                             </a>
                         </div>
                     </div>
@@ -271,7 +261,6 @@
         </div>
     </div>
     <!-- Footer End -->
-
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 

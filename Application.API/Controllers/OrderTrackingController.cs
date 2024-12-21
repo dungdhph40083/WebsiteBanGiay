@@ -24,6 +24,12 @@ namespace Application.API.Controllers
             return await _orderTrackingRepository.GetAll();
         }
 
+        [HttpGet("ByOrder/{ID}")]
+        public async Task<ActionResult<List<OrderTracking>>> GetTrackingsByOrderID(Guid ID)
+        {
+            return await _orderTrackingRepository.GetStatusesByOrderID(ID);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderTracking?>> GetOrderTracking(Guid id)
         {
@@ -42,24 +48,6 @@ namespace Application.API.Controllers
         {
             await _orderTrackingRepository.Add(orderTracking);
             return CreatedAtAction(nameof(GetOrderTracking), new { id = orderTracking.TrackingID }, orderTracking);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<OrderTracking?>> PutOrderTracking(Guid id, OrderTrackingDTO orderTracking)
-        {
-            var Response = await _orderTrackingRepository.Update(id, orderTracking);
-            if (Response != null)
-            {
-                return Response;
-            }
-            else return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteOrderTracking(Guid id)
-        {
-            await _orderTrackingRepository.Delete(id);
-            return NoContent();
         }
     }
 }

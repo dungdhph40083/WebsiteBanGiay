@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Newtonsoft.Json;
+using System.Net.NetworkInformation;
 using System.Xml.Linq;
 
 namespace Application.Data.Repositories
@@ -46,6 +47,17 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Context.ShoppingCarts.Remove(Target);
+                await Context.SaveChangesAsync();
+            }
+        }
+
+        // Sử dụng khi muốn làm sạch giỏ hàng hoặc/và **sau khi thanh toán xong & đã in hóa đơn**
+        public async Task DeleteAllFromUserID(Guid TargetID)
+        {
+            var Targets = await GetShoppingCartsByUserID(TargetID);
+            if (Targets != null)
+            {
+                Context.ShoppingCarts.RemoveRange(Targets);
                 await Context.SaveChangesAsync();
             }
         }
@@ -160,16 +172,89 @@ namespace Application.Data.Repositories
         public async Task<ShoppingCart?> ApplyVoucher(Guid UserID, Guid ProductDetailID, string? VoucherCode)
         {
             var Target = await GetShoppingCartByUserIDAndDetailID(UserID, ProductDetailID);
-            if (Target != null)
+            var FindVoucher = await Context.Vouchers.SingleOrDefaultAsync(Vc => Vc.VoucherCode == VoucherCode && Vc.Status != 0);
+
+            if (Target != null && FindVoucher != null)
             {
-                Context.Entry(Target).State = EntityState.Modified;
+                // Nếu như sản phẩm chưa có Voucher:
+                // Gắn Voucher vào trong sản phẩm giỏ hàng đó
+                // Sau đó trừ 1 lần dùng ở Voucher đó
 
-                var FindVoucher = await Context.Vouchers.SingleOrDefaultAsync(Vc => Vc.VoucherCode == VoucherCode);
-                if (FindVoucher != null)
+                // Nếu như sản phẩm đã có Voucher:
+                // Lấy dữ liệu Voucher cũ vả trả lại 1 lần dùng cho Voucher cũ đó
+                // Sau đó tiến hành gắn Voucher mới vào trong sản phẩm giỏ hàng và trừ 1 lần dùng
+                // Nếu gắn Voucher bị giống nhau thì nó sẽ chả làm gì cả
+
+                if (Target.VoucherID != null)
                 {
+                    if (Target.VoucherID != FindVoucher.VoucherID)
+                    {
+                        Context.ShoppingCarts.Attach(Target);
+                        Target.VoucherID = FindVoucher.VoucherID;
+                        Context.Update(Target);
 
+                        Context.Vouchers.Attach(FindVoucher);
+
+                        if (FindVoucher.UsesLeft >= 1) FindVoucher.UsesLeft -= 1;
+                        else return default;
+
+                        Context.Update(FindVoucher);
+
+                        var OldVoucher = await Context.Vouchers.FindAsync(Target.VoucherID);
+                        if (OldVoucher != null)
+                        {
+                            Context.Vouchers.Attach(OldVoucher);
+                            OldVoucher.UsesLeft += 1;
+                            Context.Update(OldVoucher);
+                        }
+
+                        await Context.SaveChangesAsync();
+
+                        return Target;
+                    }
+                    else return default;
+                }
+                else
+                {
+                    Context.ShoppingCarts.Attach(Target);
+                    Target.VoucherID = FindVoucher.VoucherID;
+                    Context.Update(Target);
+
+                    Context.Vouchers.Attach(FindVoucher);
+                    FindVoucher.UsesLeft -= 1;
+                    Context.Update(FindVoucher);
+
+                    await Context.SaveChangesAsync();
+
+                    return Target;
                 }
             }
+            else return default;
+        }
+
+        public async Task<ShoppingCart?> UnapplyVoucher(Guid UserID, Guid ProductDetailID)
+        {
+            var Target = await GetShoppingCartByUserIDAndDetailID(UserID, ProductDetailID);
+            if (Target != null)
+            {
+                var OldVoucher = await Context.Vouchers.FindAsync(Target.VoucherID);
+                if (OldVoucher != null)
+                {
+                    Context.Vouchers.Attach(OldVoucher);
+                    OldVoucher.UsesLeft += 1;
+                    Context.Update(OldVoucher);
+                }
+                else return default;
+
+                Context.ShoppingCarts.Attach(Target);
+                Target.VoucherID = null;
+                Context.Update(Target);
+
+                await Context.SaveChangesAsync();
+
+                return Target;
+            }
+            else return default;
         }
 
         public async Task<ShoppingCart?> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity, bool? AdditionMode)

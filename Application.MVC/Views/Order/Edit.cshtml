@@ -1,0 +1,46 @@
+﻿@using Application.Data.Enums
+@model Application.Data.DTOs.OrderDto
+
+@{
+    ViewData["Title"] = "Cập nhật đơn hàng";
+}
+
+<h1>Cập nhật đơn hàng</h1>
+<hr />
+
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <label asp-for="UserID" class="control-label">Tên người dùng</label>
+            <select asp-for="UserID" asp-items="ViewBag.Users" class="form-control" required>
+                <option hidden value="null">(Chọn người dùng)</option>
+            </select>
+        </div>
+        <div class="col-md-8">
+            <label asp-for="PaymentMethodID" class="control-label">Phương thức thanh toán</label>
+            <select asp-for="UserID" asp-items="ViewBag.PmMts" class="form-control">
+                <option hidden value="null">(Chọn phương thức thanh toán)</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 pb-3">
+            <label asp-for="ShippingAddress" class="control-label">Địa chỉ giao hàng</label>
+            <textarea asp-for="ShippingAddress" class="form-control" style="min-height: 200px" required></textarea>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+</form>
+
+<div>
+    <a asp-action="Index">Về trang trước</a>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,73 @@
+﻿@using System.Text.RegularExpressions
+@model Application.Data.Models.Order
+
+@{
+    ViewData["Title"] = "Thông tin đơn hàng";
+}
+
+<h1>Thông tin đơn hàng</h1>
+
+<div class="row">
+    <dl class="col-md-6">
+        <dt class="col-md-3">ID</dt>
+        <dd class="col-md-9">
+            <i class="font-monospace-cascadia">@Model.OrderID</i>
+        </dd>
+        <dt class="col-md-3">Tên người dùng</dt>
+        <dd class="col-md-9">
+            <p>@Model.User?.Username</p>
+            <i class="font-monospace-cascadia" style="font-size:small">(@Model.UserID)</i>
+        </dd>
+        <dt class="col-md-3">Phương thức thanh toán</dt>
+        <dd class="col-md-9">
+            <p>@Model.PaymentMethod?.MethodName</p>
+            <i class="font-monospace-cascadia" style="font-size:small">(@Model.PaymentMethodID)</i>
+        </dd>
+        <dt class="col-md-3">Ngày đặt đơn</dt>
+        <dd class="col-md-9">
+            <p>@Model.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</p>
+        </dd>
+        <dt class="col-md-3">Tổng tiền</dt>
+        <dd class="col-md-9">
+            <p>@Model.GrandTotal.GetValueOrDefault().ToString("#,##0")</p>
+        </dd>
+        <dt class="col-md-3">Địa chỉ</dt>
+        <dd class="col-md-9">
+            <p>@Model.ShippingAddress</p>
+        </dd>
+        <dt class="col-md-3">Trạng thái</dt>
+        <dd class="col-md-9">
+            <p>
+                @switch (Model.Status)
+                {
+                    case 0:
+                        <text>Bị hủy đơn</text>
+                        break;
+                    case 1:
+                        <text>Đã tạo đơn</text>
+                        break;
+                    case 2:
+                        <text>Đã xác nhận đơn</text>
+                        break;
+                    case 3:
+                        <text>Đã giao đơn</text>
+                        break;
+                    case 4:
+                        <text>Đã hoàn trả</text>
+                        break;
+                    case 5:
+                        <text>Khách đã nhận hàng</text>
+                        break;
+                }
+                @if (Model.HasPaid.GetValueOrDefault())
+                {
+                    <text> & đã thanh toán</text>
+                }
+                else
+                {
+                    <text> & chưa thanh toán</text>
+                }
+            </p>
+        </dd>
+    </dl>
+</div>

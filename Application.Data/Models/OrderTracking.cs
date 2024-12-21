@@ -9,7 +9,9 @@ namespace Application.Data.Models
         public Guid TrackingID { get; set; }
         [ForeignKey(nameof(Order))] 
         public Guid? OrderID { get; set; }
-        public byte? ShippingStatus { get; set; }
+        public byte? Status { get; set; }
+        public bool? HasPaid { get; set; }
+        public DateTime? LogDate { get; set; }
         public virtual Order? Order { get; set; }
     }
 }

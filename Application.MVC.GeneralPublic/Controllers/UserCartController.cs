@@ -55,5 +55,35 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<ActionResult> ApplyVoucher(Guid ID, string VoucherCode)
+        {
+            try
+            {
+                string URL = $@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{UserID}/{ID}?VoucherCode={VoucherCode}";
+                var Response = await Client.PatchAsync(URL, null);
+            }
+            catch (Exception Exc)
+            {
+                Console.WriteLine($"{Exc.Message} ({Exc.HResult})");
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<ActionResult> UnapplyVoucher(Guid ID)
+        {
+            try
+            {
+                string URL = $@"https://localhost:7187/api/ShoppingCart/UnapplyVoucher/{UserID}/{ID}";
+                var Response = await Client.PatchAsync(URL, null);
+            }
+            catch (Exception Exc)
+            {
+                Console.WriteLine($"{Exc.Message} ({Exc.HResult})");
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
