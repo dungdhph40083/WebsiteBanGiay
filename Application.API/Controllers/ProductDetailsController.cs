@@ -10,11 +10,13 @@ using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
 using Application.Data.DTOs;
 using Application.Data.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductDetailsController : ControllerBase
     {
         private readonly IProductDetail ProductDetailRepo;
@@ -26,18 +28,21 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<ProductDetail>>> Get()
         {
             return await ProductDetailRepo.GetProductDetails();
         }
 
         [HttpGet("{ID}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ProductDetail?>> Get(Guid ID)
         {
             return await ProductDetailRepo.GetProductDetailByID(ID);
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProductDetail>> Post([FromForm] ProductDetailDTO NewProductDetail, IFormFile? Image)
         {
             if (Image != null)
@@ -62,6 +67,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{ID}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromForm] ProductDetailDTO UpdatedProductDetail, IFormFile? Image)
         {
             if (Image != null)
@@ -85,6 +91,7 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{ID}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await ProductDetailRepo.DeleteExisting(ID);

@@ -50,7 +50,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = await response.Content.ReadAsStringAsync();
-                    var token = JsonSerializer.Deserialize<LoginResponse>(responseData)?.Token;
+                    var token = JsonSerializer.Deserialize<LoginResponse>(responseData, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true})?.Token;
 
                     if (!string.IsNullOrEmpty(token))
                     {
@@ -64,15 +64,15 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                         var handler = new JwtSecurityTokenHandler();
                         var jwtToken = handler.ReadJwtToken(token);
-                        var role = jwtToken.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+                        var role = jwtToken.Claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
 
                         if (role == "Admin")
                         {
-                            return RedirectToAction("Index", "Home");
+                            return Redirect("https://localhost:7282/#");
                         }
                         else if (role == "User")
                         {
-                            return RedirectToAction("Index", "Product");
+                            return RedirectToAction("index", "Home");
                         }
                     }
                 }
@@ -90,7 +90,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                 TempData["ErrorMessage"] = $"Lỗi kết nối: {ex.Message}";
             }
 
-            return RedirectToAction("Register");
+            return RedirectToAction("index");
         }
 
 

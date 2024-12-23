@@ -13,7 +13,6 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _configuration;

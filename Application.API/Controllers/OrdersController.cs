@@ -1,6 +1,7 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
@@ -18,6 +20,7 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> GetAllOrders()
         {
             var orders = await _orderRepository.GetAllOrdersAsync();
@@ -25,6 +28,7 @@ namespace Application.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> GetOrderById(Guid id)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
@@ -33,6 +37,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderDto orderDto)
         {
             var createdOrder = await _orderRepository.CreateOrderAsync(orderDto);
@@ -40,6 +45,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
         {
             var updatedOrder = await _orderRepository.UpdateOrderAsync(id, orderDto);
@@ -48,6 +54,7 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> DeleteOrder(Guid id)
         {
             var result = await _orderRepository.DeleteOrderAsync(id);

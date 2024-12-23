@@ -2,6 +2,7 @@
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User,Admin")]
     public class OrderTrackingController : ControllerBase
     {
         private readonly IOrderTracking _orderTrackingRepository;
@@ -19,12 +21,14 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<List<OrderTracking>>> GetOrderTracking()
         {
             return await _orderTrackingRepository.GetAll();
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<OrderTracking?>> GetOrderTracking(Guid id)
         {
             var orderTracking = await _orderTrackingRepository.GetById(id);
@@ -38,6 +42,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OrderTracking>> PostOrderTracking(OrderTrackingDTO orderTracking)
         {
             await _orderTrackingRepository.Add(orderTracking);
@@ -45,6 +50,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OrderTracking?>> PutOrderTracking(Guid id, OrderTrackingDTO orderTracking)
         {
             var Response = await _orderTrackingRepository.Update(id, orderTracking);

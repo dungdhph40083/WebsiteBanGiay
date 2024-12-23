@@ -3,6 +3,7 @@ using Application.Data.DTOs;
 using Application.Data.Enums;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ImageController : ControllerBase
     {
         private readonly IImageRepository _imageRepository;
@@ -20,6 +22,7 @@ namespace Application.API.Controllers
         }
 
         [HttpGet()]
+        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<IEnumerable<ImageDTO>>> GetImages()
         {
             var images = await _imageRepository.GetAllImagesAsync();
@@ -27,6 +30,7 @@ namespace Application.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ImageDTO>> GetImage(Guid id)
         {
             var image = await _imageRepository.GetImageByIdAsync(id);
@@ -35,6 +39,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<ImageDTO>> CreateImage([FromForm] ImageDTO imageDto, IFormFile ImageFile)
         {
             switch (ImageUploaderValidator.ValidateImageSizeAndHeader(ImageFile, 4_194_304))
@@ -54,6 +59,7 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> DeleteImage(Guid id)
         {
             var result = await _imageRepository.DeleteImageAsync(id);

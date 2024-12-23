@@ -84,6 +84,10 @@
                             </div>
                         }
                     </div>
+                    <a href="#" onclick="navigateAdmin()" class="btn btn-sm btn-primary ml-2">
+                        <i class="fas fa-user-shield mr-2"></i>
+                        Admin
+                    </a>
                 </div>
                 <div class="d-inline-flex align-items-center d-block d-lg-none">
                     <a asp-controller="UserCart" asp-action="Index" class="btn px-0 ml-2">
@@ -285,6 +289,9 @@
         }
         function navigateLogin() {
             window.location.href = 'Login/Index';
+        }
+        function navigateAdmin() {
+            window.location.href = 'https://localhost:7200/';
         }
     </script>
     @await RenderSectionAsync("Scripts", required: false)

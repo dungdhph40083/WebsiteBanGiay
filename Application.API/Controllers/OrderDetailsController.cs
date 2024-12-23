@@ -2,6 +2,7 @@
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace Application.API.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+    [Authorize]
 	public class OrderDetailsController : ControllerBase
 	{
         private readonly IOrderDetails _orderDetailsRepository;
@@ -20,6 +22,7 @@ namespace Application.API.Controllers
 
         // GET: api/OrderDetails
         [HttpGet]
+        [Authorize(Roles = "User,Admin")]
         public ActionResult<IEnumerable<OrderDetail>> GetOrderDetails()
         {
             return Ok(_orderDetailsRepository.GetAll());
@@ -27,6 +30,7 @@ namespace Application.API.Controllers
 
         // GET: api/OrderDetails/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public ActionResult<OrderDetail> GetOrderDetails(int id)
         {
             var orderDetails = _orderDetailsRepository.GetById(id);
@@ -41,6 +45,7 @@ namespace Application.API.Controllers
 
         // POST: api/OrderDetails
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<OrderDetail>> PostOrderDetails(OrderDetailDto orderDetails)
         {
             var Response = await _orderDetailsRepository.Add(orderDetails);

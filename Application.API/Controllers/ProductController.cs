@@ -36,12 +36,14 @@ namespace Application.API.Controllers
         }
         
         [HttpGet("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<Product?>> GetProduct(Guid id)
         {
             return await _productRepository.GetById(id);
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO product, IFormFile? Image)
         {
             if (Image != null)
@@ -67,6 +69,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Product?>> PutProduct(Guid id, [FromForm] ProductDTO product, IFormFile? Image)
         {
             // Update product information in the database
@@ -93,6 +96,7 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult>? DeleteProduct(Guid id)
         {
             var CheckForRelations = await ProductDetailRepo.GetProductDetailByProductID(id);
