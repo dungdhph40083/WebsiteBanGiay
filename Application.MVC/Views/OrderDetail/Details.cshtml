@@ -1,0 +1,60 @@
+﻿@using System.Text.RegularExpressions;
+@model Application.Data.Models.OrderDetail
+
+@{
+    ViewData["Title"] = "Thông tin người dùng";
+}
+
+<h1>Thông tin người dùng</h1>
+
+<div class="row">
+    <dl class="col-md-6">
+        <dt class="col-md-3">ID chi tiết</dt>
+        <dd class="col-md-9">
+            <i class="font-monospace-cascadia">@Model.OrderDetailID</i>
+        </dd>
+        <dt class="col-md-3">ID đơn hàng</dt>
+        <dd class="col-md-9">
+            <i class="font-monospace-cascadia">@Model.OrderID</i>
+        </dd>
+        <dt class="col-md-3">Mặt hàng</dt>
+        <dd class="col-md-9">
+            <p>@Model.ProductDetail?.Product?.Name</p>
+            <i class="font-monospace-cascadia">(@Model.ProductDetailID)</i>
+        </dd>
+        <dt class="col-md-3">Sự kiện</dt>
+        <dd class="col-md-9">
+            <p>@(Model.Sale?.Name ?? "Không có")</p>
+            <i class="font-monospace-cascadia">(@Model.SaleID ?? "Không có")</i>
+        </dd>
+        <dt class="col-md-3">Voucher</dt>
+        <dd class="col-md-9">
+            <p>@(Model.Voucher?.VoucherCode ?? "Không có")</p>
+            <i class="font-monospace-cascadia">(@Model.SaleID ?? "Không có")</i>
+        </dd>
+        <dt class="col-md-3">Phương thức giao hàng</dt>
+        <dd class="col-md-9">
+            <p>@(Model.ShippingMethod?.MethodName ?? "Không có")</p>
+        </dd>
+        <dt class="col-md-3">Số lượng x đơn giá</dt>
+        <dd class="col-md-9">
+            <p>@(Model.Quantity.GetValueOrDefault().ToString("#,##0") ?? "0") x @(Model.Price.GetValueOrDefault().ToString("#,##0"))</p>
+        </dd>
+        <dt class="col-md-3">Tổng giá hàng</dt>
+        <dd class="col-md-9">
+            <p>@(Model.TotalUnitPrice.GetValueOrDefault().ToString("#,##0") ?? "Không có")</p>
+        </dd>
+        <dt class="col-md-3">Giảm giá</dt>
+        <dd class="col-md-9">
+            <p>@(Model.Discount.GetValueOrDefault().ToString("#,##0") ?? "Không có")</p>
+        </dd>
+        <dt class="col-md-3">Tổng thanh toán</dt>
+        <dd class="col-md-9">
+            <p>@(Model.SumTotalPrice.GetValueOrDefault().ToString("#,##0") ?? "Không có")</p>
+        </dd>
+        <dt class="col-md-3">Ngày đặt</dt>
+        <dd class="col-md-9">
+            <p>@(Model.CreatedAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss") ?? "Không có")</p>
+        </dd>
+    </dl>
+</div>

@@ -1,0 +1,82 @@
+﻿@model IEnumerable<Application.Data.Models.OrderDetail>;
+@using Application.Data.Enums;
+
+@{
+    ViewData["Title"] = "Danh sách đơn hàng CT";
+}
+
+<h1>Danh sách đơn hàng chi tiết</h1>
+@if (Model.Count() > 0)
+{
+    <p>Tổng số đơn hàng: @Model.Count()</p>
+}
+<a class="btn btn-success mb-2" asp-action="Create">Tạo mới</a>
+
+@if (Model.Count() != 0)
+{
+    <table class="table table-bordered table-striped border-info">
+        <thead class="bg-primary">
+            <tr>
+                <th>ID đơn hàng</th>
+                <th>Mặt hàng</th>
+                <th>Số lượng x Đơn giá</th>
+                <th>Tổng giá hàng</th>
+                <th>Giảm giá</th>
+                <th>Tổng thanh toán</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Entry in Model)
+            {
+                <tr>
+                    <td class="font-monospace-cascadia">@Entry.OrderID</td>
+                    <td>@Entry.ProductDetail?.Product?.Name</td>
+                    <td>@Entry.Quantity<br />x<br />@Entry.ProductDetail?.Product?.Price.GetValueOrDefault().ToString("#,##0")</td>
+                    <td>@Entry.TotalUnitPrice.GetValueOrDefault().ToString("#,##0")</td>
+                    <td>@(((Entry.Sale?.DiscountPrice ?? 0) + (Entry.Voucher?.DiscountPrice ?? 0)).ToString("#,##0"))</td>
+                    <td>@Entry.SumTotalPrice.GetValueOrDefault().ToString("#,##0")</td>
+                    <td>
+                        <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.OrderDetailID)">Sửa</a>
+                        <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.OrderDetailID">Chi tiết</a>
+                        <button class="dropdown-item text-danger btn btn-danger delete_trigger" type="button" data-id="@Entry.OrderDetailID" data-controller="OrderDetails" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
+                            <i class="fas fa-trash-alt"></i> Xóa
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6"></td>
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <h1 class="text-center">Chưa có đơn hàng chi tiết.</h1>
+    <p class="text-center">Tạo mới đơn hàng CT bằng cách nhấn "<b>Tạo mới</b>"!</p>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="DeleteLabel">KHOAN!!! <span style="font-size:x-small">(Khoan?)</span></h1>
+                <button type="button" class="close" data-dismiss="modal" id="close-btn" aria-label="Close">
+                    <i class="fa-cross"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn để xóa đơn hàng chi tiết này?<br />
+                <span style="font-size:small" class="font-monospace-cascadia">ID: <span id="ItemID" class="font-monospace-cascadia"></span></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-btn">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirm_deletion">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>

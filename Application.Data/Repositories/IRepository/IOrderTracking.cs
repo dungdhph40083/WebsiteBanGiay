@@ -12,8 +12,7 @@ namespace Application.Data.Repositories.IRepository
     {
         Task<List<OrderTracking>> GetAll();
         Task<OrderTracking?> GetById(Guid id);
+        Task<List<OrderTracking>> GetStatusesByOrderID(Guid ID);
         Task<OrderTracking> Add(OrderTrackingDTO orderTracking);
-        Task<OrderTracking?> Update(Guid ID, OrderTrackingDTO orderTracking);
-        Task Delete(Guid ID);
     }
 }

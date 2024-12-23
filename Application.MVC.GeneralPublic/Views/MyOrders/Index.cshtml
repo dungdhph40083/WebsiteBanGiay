@@ -1,0 +1,87 @@
+﻿@using Application.Data.Enums
+@model List<Application.Data.Models.Order>
+
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                <li class="breadcrumb-item active">Đơn hàng</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <div>
+                    @if (Model.Count() > 0)
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn</th>
+                                    <th>Ngày đặt đơn</th>
+                                    <th>Trạng thái</th>
+                                    <th>Tổng giá</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    @foreach (var Order in Model)
+                                    {
+                                        <tr>
+                                            <td>@(new String(Order.OrderID.ToString().Take(8).ToArray()))...</td>
+                                            <td>@Order.OrderDate.GetValueOrDefault().ToString("d/M/yyyy")</td>
+                                            <td>
+                                                @switch (Order.Status)
+                                                {
+                                                    case (byte)OrderStatus.Canceled:
+                                                    <p>Đã hủy</p>
+                                                        break;
+                                                    case (byte)OrderStatus.Refunded:
+                                                    <p>Đã hoàn trả</p>
+                                                        break;
+                                                    case (byte)OrderStatus.CantRefund:
+                                                    <p>Không hoàn trả nữa</p>
+                                                        break;
+                                                    case (byte)OrderStatus.Refunding:
+                                                    case (byte)OrderStatus.RefundingAgain:
+                                                    <p>Yêu cầu hoàn trả</p>
+                                                        break;
+                                                    case (byte)OrderStatus.Created:
+                                                    <p>Chờ xác nhận</p>
+                                                        break;
+                                                    case (byte)OrderStatus.Processed:
+                                                    <p>Đã xác nhận đơn</p>
+                                                        break;
+                                                    case (byte)OrderStatus.Delivered:
+                                                    <p>Đang vận chuyển</p>
+                                                        break;
+                                                    case (byte)OrderStatus.Arrived:
+                                                    <p>Đã hoàn trả</p>
+                                                        break;
+                                                    case (byte)OrderStatus.Received:
+                                                    case (byte)OrderStatus.ReceivedAgain:
+                                                    <p>Khách đã nhận hàng</p>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>@Order.GrandTotal.GetValueOrDefault().ToString("#,##0")</td>
+                                            <td><a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Order.OrderID">Chi tiết</a></td>
+                                        </tr>
+                                    }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <h1 class="text-center">Hiện không có đơn hàng.</h1>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

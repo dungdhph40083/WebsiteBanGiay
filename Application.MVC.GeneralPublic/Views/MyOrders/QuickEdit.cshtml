@@ -1,0 +1,103 @@
+﻿@using Application.Data.Enums
+@model Application.Data.DTOs.OrderDto
+@{
+    ViewData["Title"] = "Checkout";
+    var user = ViewBag.DefaultUser as Application.Data.Models.User ?? new();
+}
+
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-controller="MyOrders" asp-action="Index">Đơn hàng</a></li>
+                <li class="breadcrumb-item"><a asp-controller="MyOrders" asp-action="Details" asp-route-ID="@Context.GetRouteValue("ID")">Chi tiết</a></li>
+                <li class="breadcrumb-item active">Đổi thông tin</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<form class="p-30" asp-action="QuickEdit">
+    <div class="row px-xl-5">
+        <div class="col-lg-8">
+            <h5 class="section-title position-relative text-uppercase mb-3">
+                <span class="bg-secondary pr-3">Địa chỉ mặc định</span>
+            </h5>
+            <div class="p-30 mb-5">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label>Họ</label>
+                        <input class="form-control" type="text" value="@user?.LastName" readonly>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>Tên</label>
+                        <input class="form-control" type="text" value="@user?.FirstName" readonly>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>E-mail</label>
+                        <input class="form-control" type="email" value="@user?.Email" readonly>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>Số điện thoại</label>
+                        <input class="form-control" type="text" value="@user?.PhoneNumber" readonly>
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <label>Địa chỉ</label>
+                        <input class="form-control" type="text" value="@user?.Address" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" asp-for="HasExternalInfo" class="custom-control-input" id="use-different-address">
+                        <label class="custom-control-label" for="use-different-address">
+                            Sử dụng địa chỉ khác
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="collapse mb-5 @(Model.HasExternalInfo ? "show" : "")" id="shipping-address">
+                <h5 class="section-title position-relative text-uppercase mb-3">
+                    <span class="bg-secondary pr-3">Địa chỉ khác</span>
+                </h5>
+                <div></div>
+                <div class="p-30">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label>Họ</label>
+                            <input asp-for="LastName" class="form-control" type="text" placeholder="Họ khác">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>Tên</label>
+                            <input asp-for="FirstName" class="form-control" type="text" placeholder="Tên khác">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>E-mail</label>
+                            <input asp-for="Email" class="form-control" type="email" placeholder="Email khác">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>Số điện thoại</label>
+                            <input asp-for="PhoneNumber" class="form-control" type="text" placeholder="SĐT khác">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label>Địa chỉ</label>
+                            <textarea style="min-height: 200px" asp-for="ShippingAddress" class="form-control" type="text" placeholder="Địa chỉ khác"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-block btn-primary font-weight-bold py-3">Cập nhật</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.getElementById('use-different-address').addEventListener('change', function () {
+        var collapse = document.getElementById('shipping-address');
+        if (this.checked) {
+            collapse.classList.add('show');
+        } else {
+            collapse.classList.remove('show');
+        }
+    });
+</script>

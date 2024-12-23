@@ -1,10 +1,10 @@
-﻿
-using Application.Data.DTOs;
+﻿using Application.Data.DTOs;
 using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,12 +26,91 @@ namespace Application.Data.Repositories
 
         public async Task<List<OrderDetail>> GetAll()
         {
-            return await _context.OrderDetails.ToListAsync();
+            return await _context.OrderDetails
+                .Include(Pikachu => Pikachu.Voucher)
+                    .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
+                .Include(Pikachu => Pikachu.Voucher)
+                    .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
+                .Include(Pikachu => Pikachu.Sale)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
+                .Include(Pikachu => Pikachu.Sale)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
+                .Include(Pikachu => Pikachu.Order)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Color : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : null)
+                .Include(Pikachu => Pikachu.ShippingMethod)
+                    .ToListAsync();
         }
 
-        public async Task<OrderDetail?> GetById(int id)
+        public async Task<OrderDetail?> GetById(Guid id)
         {
-            return await _context.OrderDetails.FindAsync(id);
+            return await _context.OrderDetails
+                                .Include(Pikachu => Pikachu.Voucher)
+                    .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
+                .Include(Pikachu => Pikachu.Voucher)
+                    .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
+                .Include(Pikachu => Pikachu.Sale)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
+                .Include(Pikachu => Pikachu.Sale)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
+                .Include(Pikachu => Pikachu.Order)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Color : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : null)
+                .Include(Pikachu => Pikachu.ShippingMethod)
+                    .SingleOrDefaultAsync(Crayfish => Crayfish.OrderDetailID == id);
+        }
+
+        public async Task DeleteOrderDetailsFromOrderID(Guid OrderID)
+        {
+            var Targets = await _context.OrderDetails
+                        .Where(Prdc => Prdc.OrderID == OrderID)
+                            .ToListAsync();
+
+            _context.OrderDetails.RemoveRange(Targets);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<OrderDetail>> GetOrderDetailsFromOrderID(Guid OrderID)
+        {
+            return await _context.OrderDetails
+                    .Include(Pikachu => Pikachu.Voucher)
+                        .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
+                    .Include(Pikachu => Pikachu.Voucher)
+                        .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
+                    .Include(Pikachu => Pikachu.Sale)
+                        .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
+                    .Include(Pikachu => Pikachu.Sale)
+                        .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
+                    .Include(Pikachu => Pikachu.Order)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Color : null)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : null)
+                    .Include(Pikachu => Pikachu.ShippingMethod)
+                        .Where(Prdc => Prdc.OrderID == OrderID)
+                            .ToListAsync();
         }
 
         public async Task<OrderDetail> Add(OrderDetailDto orderDetails)
@@ -48,6 +127,66 @@ namespace Application.Data.Repositories
             await _context.SaveChangesAsync();
 
             return OrderDetail;
+        }
+
+        public async Task<List<OrderDetail>> ImportFromUserCart(Guid UserID, Guid OrderID)
+        {
+            var GetOrder = await _context.Orders.FindAsync(OrderID);
+            if (GetOrder == null) return new();
+
+            var MyShoppingCart = await _context.ShoppingCarts
+                //.Include(UU => UU.User)
+                .Include(UU => UU.Voucher)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Category : null)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Color : null)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Size : null)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Sale : null)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : null)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : null)
+                        .ThenInclude(WW => WW != null ? WW.Image : null)
+                  .Where(UU => UU.UserID.Equals(UserID)).ToListAsync();
+
+            if (MyShoppingCart != null)
+            {
+                var MyOrders = new List<OrderDetail>();
+                foreach (var CartItem in MyShoppingCart)
+                {
+                    OrderDetail NewDetail = new()
+                    {
+                        OrderDetailID = Guid.NewGuid(),
+                        OrderID = OrderID,
+                        ProductDetailID = CartItem.ProductDetailID,
+                        ShippingMethodID = null,
+                        VoucherID = CartItem.VoucherID,
+                        SaleID = CartItem.ProductDetail?.SaleID,
+                        Quantity = CartItem.QuantityCart,
+                        Price = CartItem.ProductDetail?.Product?.Price,
+                        TotalUnitPrice = CartItem.ProductDetail?.Product?.Price * CartItem.QuantityCart,
+                        Discount = CartItem.Voucher?.DiscountPrice + CartItem.ProductDetail?.Sale?.DiscountPrice ?? 0, // Nếu bị null thì để mặc định là 0. Bắt buộc phải là số dương.
+                        SumTotalPrice = CartItem.ProductDetail?.Product?.Price * CartItem.QuantityCart - (CartItem.Voucher?.DiscountPrice + CartItem.ProductDetail?.Sale?.DiscountPrice ?? 0), // Tương tự...
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    MyOrders.Add(NewDetail);
+                }
+                await _context.OrderDetails.AddRangeAsync(MyOrders);
+                await _context.SaveChangesAsync();
+
+                _context.Orders.Attach(GetOrder);
+
+                GetOrder.GrandTotal = MyOrders.Sum(S => S.SumTotalPrice);
+
+                _context.Update(GetOrder);
+                await _context.SaveChangesAsync();
+
+                return MyOrders;
+            }
+            else return new();
         }
     }
 }

@@ -27,6 +27,12 @@ namespace Application.API.Controllers
             return await _orderTrackingRepository.GetAll();
         }
 
+        [HttpGet("ByOrder/{ID}")]
+        public async Task<ActionResult<List<OrderTracking>>> GetTrackingsByOrderID(Guid ID)
+        {
+            return await _orderTrackingRepository.GetStatusesByOrderID(ID);
+        }
+
         [HttpGet("{id}")]
         [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<OrderTracking?>> GetOrderTracking(Guid id)

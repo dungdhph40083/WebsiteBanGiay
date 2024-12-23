@@ -13,7 +13,10 @@ namespace Application.Data.Repositories.IRepository
         Task<Order> CreateOrderAsync(OrderDto orderDto);
         Task<List<Order>> GetAllOrdersAsync();
         Task<Order?> GetOrderByIdAsync(Guid orderId);
+        Task<List<Order>> GetOrdersByUserID(Guid UserID);
         Task<Order?> UpdateOrderAsync(Guid ID, OrderDto orderDto);
         Task<bool> DeleteOrderAsync(Guid orderId);
+        Task<Order?> UpdateOrderStatus(Guid ID, byte StatusCode);
+        Task<Order?> UpdateOrderHasPaid(Guid ID, bool Toggle);
     }
 }
