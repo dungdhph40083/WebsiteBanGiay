@@ -1,0 +1,204 @@
+﻿@using Application.Data.Enums
+@model Application.Data.Models.Order
+@{
+    var OrderItems = ViewBag.OrderItems as List<Application.Data.Models.OrderDetail> ?? new List<Application.Data.Models.OrderDetail>();
+}
+
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-controller="MyOrders" asp-action="Index">Đơn hàng</a></li>
+                <li class="breadcrumb-item active">Chi tiết</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <table class="table table-borderless">
+                <thead>
+                    <tr>
+                        <th>Ảnh sản phẩm</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Kích cỡ</th>
+                        <th>Màu</th>
+                        <th>Voucher</th>
+                        <th>Đơn giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var Item in OrderItems)
+                    {
+                        <tr>
+                            <td>
+                                @if (Item.ProductDetail?.Product?.Image != null)
+                                {
+                                    <img src="https://localhost:7187/Images/@(Item.ProductDetail?.Product?.Image?.ImageFileName)" class="img-thumbnail" alt="Ảnh hàng" />
+                                }
+                                else
+                                {
+                                    <span>Chưa có ảnh</span>
+                                }
+                            </td>
+                            <td>@Item.ProductDetail?.Product?.Name</td>
+                            <td>@Item.Quantity</td>
+                            <td>@Item.ProductDetail?.Size?.Name</td>
+                            <td>@Item.ProductDetail?.Color?.ColorName</td>
+                            <td>@Item.Voucher?.VoucherCode</td>
+                            <td><b>@Item.SumTotalPrice.GetValueOrDefault().ToString("#,##0")</b></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr />
+    <dl class="row px-xl-5">
+        <dt class="col-md-6 text-uppercase">Phí ship</dt>
+        <dd class="col-md-6">
+            @((Model.GrandTotal.GetValueOrDefault() * 0.01).ToString("#,##0"))
+        </dd>
+        <dt class="col-md-6 text-uppercase">Tên người dùng</dt>
+        <dd class="col-md-6">
+            @(Model.LastName + " " + Model.FirstName)
+        </dd>
+        <dt class="col-md-6 text-uppercase">Email</dt>
+        <dd class="col-md-6">
+            @(Model.Email ?? "Không có")
+        </dd>
+        <dt class="col-md-6 text-uppercase">Số điện thoại</dt>
+        <dd class="col-md-6">
+            @(Model.PhoneNumber ?? "Không có")
+        </dd>
+        <dt class="col-md-6 text-uppercase">Địa chỉ giao hàng</dt>
+        <dd class="col-md-6">
+            @Model.ShippingAddress
+        </dd>
+        <dt class="col-md-6 text-uppercase">Trạng thái đơn hàng</dt>
+        <dd class="col-md-6">
+            @switch (Model.Status)
+            {
+                case (byte)OrderStatus.Canceled:
+                    <p>Đã hủy</p>
+                    break;
+                case (byte)OrderStatus.Refunded:
+                    <p>Đã hoàn trả</p>
+                    break;
+                case (byte)OrderStatus.CantRefund:
+                    <p>Không hoàn trả nữa</p>
+                    break;
+                case (byte)OrderStatus.Refunding:
+                case (byte)OrderStatus.RefundingAgain:
+                    <p>Yêu cầu hoàn trả</p>
+                    break;
+                case (byte)OrderStatus.Created:
+                    <p>Chờ xác nhận</p>
+                    break;
+                case (byte)OrderStatus.Processed:
+                    <p>Đã xác nhận đơn</p>
+                    break;
+                case (byte)OrderStatus.Delivered:
+                    <p>Đang vận chuyển</p>
+                    break;
+                case (byte)OrderStatus.Arrived:
+                    <p>Đã hoàn trả</p>
+                    break;
+                case (byte)OrderStatus.Received:
+                case (byte)OrderStatus.ReceivedAgain:
+                    <p>Đã nhận hàng</p>
+                    break;
+            }
+        </dd>
+        <dt class="col-md-6 text-uppercase">Tổng tiền</dt>
+        <dd class="col-md-6">
+            @((Model.GrandTotal.GetValueOrDefault() * 1.01).ToString("#,##0"))
+        </dd>
+    </dl>
+
+    <div class="row px-xl-5 ml-1 mr-1">
+        @switch (Model.Status)
+        {
+            case (byte)OrderStatus.Refunding:
+            case (byte)OrderStatus.RefundingAgain:
+                <div class="dropdown">
+                    <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                        Hủy yêu cầu trả hàng
+                    </button>
+                    <div class="dropdown-menu text-center mt-2 mb-2" style="width: 80px">
+                        <h3>Xác nhận</h3>
+                        <p>Điều này sẽ hủy yêu cầu trả hàng.</p>
+                        <a class="btn btn-success" style="width: 120px" asp-action="DestroyRequest2Refund" asp-route-ID="@Model.OrderID">Xác nhận</a>
+                        <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
+                    </div>
+                </div>
+                break;
+            case (byte)OrderStatus.Created:
+                <a class="btn btn-primary mr-2" asp-action="QuickEdit" asp-route-ID="@Model.OrderID">Đổi thông tin</a>
+                <div class="dropdown">
+                    <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                        Hủy đơn
+                    </button>
+                    <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                        <h3>Xác nhận</h3>
+                        <p>
+                            Điều này sẽ <span style="text-decoration: underline">hủy toàn bộ</span> đơn hàng.<br />
+                        Sau khi hủy đơn hàng, bạn vẫn có thể xem lại chi tiết đơn hàng, nhưng sẽ không thể thực hiện thao tác gì.<br />
+                        <b class="text-danger">Thao tác này là vĩnh viễn và không thể khôi phục lại.</b>
+                           </p>
+                        <a class="btn btn-success" style="width: 120px" asp-action="DestroyOrder" asp-route-ID="@Model.OrderID">Xác nhận</a>
+                        <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
+                    </div>
+                </div>
+                break;
+            case (byte)OrderStatus.Processed:
+                <a class="btn btn-primary mr-2" asp-action="QuickEdit" asp-route-ID="@Model.OrderID">Đổi thông tin</a>
+                break;
+            case (byte)OrderStatus.Delivered:
+                <p>Đang vận chuyển</p>
+                break;
+            case (byte)OrderStatus.Arrived:
+                <div class="dropdown">
+                    <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                        Xác nhận đã nhận hàng
+                    </button>
+                    <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                        <h3>Xác nhận</h3>
+                        <a class="btn btn-success" style="width: 120px" asp-action="ReceivedOrder" asp-route-ID="@Model.OrderID">Xác nhận</a>
+                        <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
+                    </div>
+                </div>
+                break;
+            case (byte)OrderStatus.Received:
+                <div class="dropdown">
+                    <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                        Yêu cầu trả hàng
+                    </button>
+                    <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                        <h3>Xác nhận</h3>
+                        <p>Điều này sẽ yêu cầu trả hàng.</p>
+                        <a class="btn btn-success" style="width: 120px" asp-action="Request2Refund" asp-route-ID="@Model.OrderID">Xác nhận</a>
+                        <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
+                    </div>
+                </div>
+                break;
+            case (byte)OrderStatus.ReceivedAgain:
+                <div class="dropdown">
+                    <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                        Yêu cầu trả hàng
+                    </button>
+                    <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                        <h3>Xác nhận</h3>
+                        <p>Điều này sẽ yêu cầu trả hàng.</p>
+                        <a class="btn btn-success" style="width: 120px" asp-action="Request2RefundAgain" asp-route-ID="@Model.OrderID">Xác nhận</a>
+                        <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
+                    </div>
+                </div>
+                break;
+        }
+    </div>
+</div>

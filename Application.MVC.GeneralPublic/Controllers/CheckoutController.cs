@@ -1,6 +1,9 @@
-﻿using Application.Data.Enums;
+﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using NuGet.Protocol;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -33,14 +36,47 @@ namespace Application.MVC.GeneralPublic.Controllers
             return View();
         }
 
-        public ActionResult InstantCheckout(string PaymentMethod)
+        public async Task<ActionResult> InstantCheckout(OrderDto Details, string PaymentMethod, bool HasExternalInfo)
         {
+            Details.UserID = UserID;
+            Details.HasExternalInfo = true;
+            if (!HasExternalInfo)
+            {
+                string URL = $@"https://localhost:7187/api/User/{UserID}";
+                var UserData = await _client.GetFromJsonAsync<User>(URL);
+
+                Details.HasExternalInfo = false;
+                Details.FirstName = UserData!.FirstName;
+                Details.LastName = UserData!.LastName;
+                Details.Email = UserData!.Email;
+                Details.PhoneNumber = UserData!.PhoneNumber;
+                Details.ShippingAddress = UserData!.Address;
+            }
+
             if (PaymentMethod == PaymentMethods.CashOnDelivery)
             {
 
-            }
+                try
+                {
+                    string URL = $@"https://localhost:7187/api/OrderDetails/Checkout?PaymentMethod={PaymentMethods.CashOnDelivery}";
+                    var Response = await _client.PostAsJsonAsync(URL, Details);
 
-            return RedirectToAction(nameof(Index));
+                    var Content = JsonConvert.DeserializeObject<List<OrderDetail>>
+                        (await Response.Content.ReadAsStringAsync());
+
+                    var RouteID = Content?.First().OrderID;
+
+                    return RedirectToAction(nameof(MyOrdersController.Details), Controller2String.Eat(nameof(MyOrdersController)), new {ID = RouteID});
+                }
+                catch (Exception Msg)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(Msg.Message);
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else return RedirectToAction(nameof(Index));
         }
     }
 }

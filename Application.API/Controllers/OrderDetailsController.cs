@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Application.API.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class OrderDetailsController : ControllerBase
-	{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class OrderDetailsController : ControllerBase
+    {
         private readonly IOrderDetails _orderDetailsRepository;
         private readonly IOrderRepository OrderRepository;
         private readonly IShoppingCart ShoppingCartRepository;
@@ -25,16 +25,22 @@ namespace Application.API.Controllers
 
         // GET: api/OrderDetails
         [HttpGet]
-        public ActionResult<IEnumerable<OrderDetail>> GetOrderDetails()
+        public async Task<ActionResult<List<OrderDetail>>> GetOrderDetails()
         {
-            return Ok(_orderDetailsRepository.GetAll());
+            return await _orderDetailsRepository.GetAll();
+        }
+
+        [HttpGet("Order/{ID}")]
+        public async Task<ActionResult<List<OrderDetail>>> GetOrderDetailsFromOrderID(Guid ID)
+        {
+            return await _orderDetailsRepository.GetOrderDetailsFromOrderID(ID);
         }
 
         // GET: api/OrderDetails/5
         [HttpGet("{id}")]
-        public ActionResult<OrderDetail> GetOrderDetails(Guid ID)
+        public async Task<ActionResult<OrderDetail>> GetOrderDetails(Guid ID)
         {
-            var orderDetails = _orderDetailsRepository.GetById(ID);
+            var orderDetails = await _orderDetailsRepository.GetById(ID);
 
             if (orderDetails == null)
             {
@@ -61,12 +67,19 @@ namespace Application.API.Controllers
                 var OrderDetailsCreatedResponse =
                     await _orderDetailsRepository.ImportFromUserCart(NewOrder.UserID.GetValueOrDefault(), CreatedOrder.OrderID);
 
-                return await _orderDetailsRepository.GetOrderDetailsFromOrderID(CreatedOrder.OrderID);
+                var Thingies = await _orderDetailsRepository.GetOrderDetailsFromOrderID(CreatedOrder.OrderID);
+
+                if (Thingies != null)
+                {
+                    await ShoppingCartRepository.DeleteAllFromUserID(NewOrder.UserID.GetValueOrDefault());
+                    return Thingies;
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
-            {
-                return NotFound();
-            }
+            else return NotFound();
         }
     }
 }

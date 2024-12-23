@@ -13,6 +13,6 @@ namespace Application.Data.DTOs
         public Guid TrackingID { get; set; }
         public Guid? OrderID { get; set; }
         public byte? Status { get; set; }
-        public bool? HasPaid { get; set; }
+        public bool HasPaid { get; set; }
     }
 }

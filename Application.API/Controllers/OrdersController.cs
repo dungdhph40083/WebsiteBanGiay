@@ -13,18 +13,26 @@ namespace Application.API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDetails OrderDetailsRepository;
         private readonly IOrderTracking OrderTrackingRepo;
 
-        public OrdersController(IOrderRepository orderRepository, IOrderTracking OrderTrackingRepo)
+        public OrdersController(IOrderRepository orderRepository, IOrderTracking OrderTrackingRepo, IOrderDetails OrderDetailsRepository)
         {
             _orderRepository = orderRepository;
             this.OrderTrackingRepo = OrderTrackingRepo;
+            this.OrderDetailsRepository = OrderDetailsRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
             var orders = await _orderRepository.GetAllOrdersAsync();
+            return Ok(orders);
+        }
+        [HttpGet("User/{ID}")]
+        public async Task<IActionResult> GetOrdersByUserID(Guid ID)
+        {
+            var orders = await _orderRepository.GetOrdersByUserID(ID);
             return Ok(orders);
         }
 
@@ -43,12 +51,12 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(GetOrderById), new { id = createdOrder.OrderID }, createdOrder);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Order>> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
         {
             var updatedOrder = await _orderRepository.UpdateOrderAsync(id, orderDto);
             if (updatedOrder == null) return NotFound();
-            return NoContent();
+            return updatedOrder;
         }
 
         [HttpPatch("UpdateStatus/{id}")]
@@ -90,6 +98,7 @@ namespace Application.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(Guid id)
         {
+            await OrderDetailsRepository.DeleteOrderDetailsFromOrderID(id);
             var result = await _orderRepository.DeleteOrderAsync(id);
             if (!result) return NotFound();
             return NoContent();

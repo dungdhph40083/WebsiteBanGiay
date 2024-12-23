@@ -11,12 +11,12 @@ namespace Application.Data.Models
         public Guid? OrderID { get; set; }
         [ForeignKey(nameof(ProductDetail))]
         public Guid? ProductDetailID { get; set; }
-        [ForeignKey(nameof(Sale))]
-        public Guid? SaleID { get; set; }
         [ForeignKey(nameof(ShippingMethod))]
         public Guid? ShippingMethodID { get; set; }
         [ForeignKey(nameof(Voucher))]
         public Guid? VoucherID { get; set; }
+        [ForeignKey(nameof(Sale))]
+        public Guid? SaleID { get; set; }
         public int? Quantity { get; set; }
         public long? Price { get; set; }
         public long? TotalUnitPrice { get; set; }

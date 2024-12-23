@@ -59,7 +59,7 @@
                         <text>Khách đã nhận hàng</text>
                         break;
                 }
-                @if (Model.HasPaid.GetValueOrDefault())
+                @if (Model.HasPaid)
                 {
                     <text> & đã thanh toán</text>
                 }

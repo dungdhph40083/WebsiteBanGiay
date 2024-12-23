@@ -1,5 +1,4 @@
-﻿
-using Application.Data.DTOs;
+﻿using Application.Data.DTOs;
 using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
@@ -29,24 +28,24 @@ namespace Application.Data.Repositories
         {
             return await _context.OrderDetails
                 .Include(Pikachu => Pikachu.Voucher)
-                    .ThenInclude(Charizard => Charizard != null ? Charizard.Product : default)
+                    .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
                 .Include(Pikachu => Pikachu.Voucher)
-                    .ThenInclude(Charizard => Charizard != null ? Charizard.Category : default)
+                    .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
                 .Include(Pikachu => Pikachu.Sale)
-                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : default)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
                 .Include(Pikachu => Pikachu.Sale)
-                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : default)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
                 .Include(Pikachu => Pikachu.Order)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Product : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Category : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Color : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Color : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Size : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : null)
                 .Include(Pikachu => Pikachu.ShippingMethod)
                     .ToListAsync();
         }
@@ -55,54 +54,64 @@ namespace Application.Data.Repositories
         {
             return await _context.OrderDetails
                                 .Include(Pikachu => Pikachu.Voucher)
-                    .ThenInclude(Charizard => Charizard != null ? Charizard.Product : default)
+                    .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
                 .Include(Pikachu => Pikachu.Voucher)
-                    .ThenInclude(Charizard => Charizard != null ? Charizard.Category : default)
+                    .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
                 .Include(Pikachu => Pikachu.Sale)
-                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : default)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
                 .Include(Pikachu => Pikachu.Sale)
-                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : default)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
                 .Include(Pikachu => Pikachu.Order)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Product : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Category : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Color : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Color : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Size : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
-                    .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : default)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : null)
                 .Include(Pikachu => Pikachu.ShippingMethod)
                     .SingleOrDefaultAsync(Crayfish => Crayfish.OrderDetailID == id);
         }
 
-        public async Task<List<OrderDetail>?> GetOrderDetailsFromOrderID(Guid OrderID)
-            {
-                return await _context.OrderDetails
-                        .Include(Pikachu => Pikachu.Voucher)
-                            .ThenInclude(Charizard => Charizard != null ? Charizard.Product : default)
-                        .Include(Pikachu => Pikachu.Voucher)
-                            .ThenInclude(Charizard => Charizard != null ? Charizard.Category : default)
-                        .Include(Pikachu => Pikachu.Sale)
-                            .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : default)
-                        .Include(Pikachu => Pikachu.Sale)
-                            .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : default)
-                        .Include(Pikachu => Pikachu.Order)
-                        .Include(Pikachu => Pikachu.ProductDetail)
-                            .ThenInclude(Buizel => Buizel != null ? Buizel.Product : default)
-                        .Include(Pikachu => Pikachu.ProductDetail)
-                            .ThenInclude(Buizel => Buizel != null ? Buizel.Category : default)
-                        .Include(Pikachu => Pikachu.ProductDetail)
-                            .ThenInclude(Buizel => Buizel != null ? Buizel.Color : default)
-                        .Include(Pikachu => Pikachu.ProductDetail)
-                            .ThenInclude(Buizel => Buizel != null ? Buizel.Size : default)
-                        .Include(Pikachu => Pikachu.ProductDetail)
-                            .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : default)
-                        .Include(Pikachu => Pikachu.ShippingMethod)
-                            .Where(Prdc => Prdc.OrderID == OrderID)
-                                .ToListAsync();
-            }
+        public async Task DeleteOrderDetailsFromOrderID(Guid OrderID)
+        {
+            var Targets = await _context.OrderDetails
+                        .Where(Prdc => Prdc.OrderID == OrderID)
+                            .ToListAsync();
+
+            _context.OrderDetails.RemoveRange(Targets);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<OrderDetail>> GetOrderDetailsFromOrderID(Guid OrderID)
+        {
+            return await _context.OrderDetails
+                    .Include(Pikachu => Pikachu.Voucher)
+                        .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
+                    .Include(Pikachu => Pikachu.Voucher)
+                        .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
+                    .Include(Pikachu => Pikachu.Sale)
+                        .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
+                    .Include(Pikachu => Pikachu.Sale)
+                        .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
+                    .Include(Pikachu => Pikachu.Order)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Color : null)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
+                    .Include(Pikachu => Pikachu.ProductDetail)
+                        .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : null)
+                    .Include(Pikachu => Pikachu.ShippingMethod)
+                        .Where(Prdc => Prdc.OrderID == OrderID)
+                            .ToListAsync();
+        }
 
         public async Task<OrderDetail> Add(OrderDetailDto orderDetails)
         {
@@ -129,18 +138,18 @@ namespace Application.Data.Repositories
                 //.Include(UU => UU.User)
                 .Include(UU => UU.Voucher)
                 .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Category : default)
+                    .ThenInclude(VV => VV != null ? VV.Category : null)
                 .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Color : default)
+                    .ThenInclude(VV => VV != null ? VV.Color : null)
                 .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Size : default)
+                    .ThenInclude(VV => VV != null ? VV.Size : null)
                 .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Sale : default)
+                    .ThenInclude(VV => VV != null ? VV.Sale : null)
                 .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                    .ThenInclude(VV => VV != null ? VV.Product : null)
                 .Include(UU => UU.ProductDetail)
-                    .ThenInclude(VV => VV != null ? VV.Product : default)
-                        .ThenInclude(WW => WW != null ? WW.Image : default)
+                    .ThenInclude(VV => VV != null ? VV.Product : null)
+                        .ThenInclude(WW => WW != null ? WW.Image : null)
                   .Where(UU => UU.UserID.Equals(UserID)).ToListAsync();
 
             if (MyShoppingCart != null)

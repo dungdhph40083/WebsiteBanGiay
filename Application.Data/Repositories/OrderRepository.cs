@@ -74,6 +74,17 @@ namespace Application.Data.Repositories
             return order;
         }
 
+        public async Task<List<Order>> GetOrdersByUserID(Guid UserID)
+        {
+            var Orders = await _context.Orders
+                .Include(ASD => ASD.User)
+                .Include (ASF => ASF.PaymentMethod)
+                .Where(x => x.UserID == UserID)
+                .ToListAsync();
+
+            return Orders;
+        }
+
         public async Task<Order?> UpdateOrderAsync(Guid ID, OrderDto orderDto)
         {
             var order = await GetOrderByIdAsync(ID);

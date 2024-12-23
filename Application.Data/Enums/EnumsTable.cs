@@ -13,7 +13,7 @@
         Delivered = 7,      // Đã giao đơn cho ĐV vận chuyển
         Arrived = 8,        // Đơn hàng thành công
         Received = 9,       // Khách đã nhận hàng
-        ReceivedAgain = 10, // Khách đã nhận hàng sau khi đổi trả thất bải
+        ReceivedAgain = 10, // Khách đã nhận hàng sau khi đổi trả thất bại
         Bepis = 11          // Bepis
     }
 
