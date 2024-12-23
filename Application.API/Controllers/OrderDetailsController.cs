@@ -28,7 +28,7 @@ namespace Application.API.Controllers
         // GET: api/OrderDetails
         [HttpGet]
         [Authorize(Roles = "User,Admin")]
-        public ActionResult<IEnumerable<OrderDetail>> GetOrderDetails()
+        public async Task<IEnumerable<OrderDetail>> GetOrderDetails()
         {
             return await _orderDetailsRepository.GetAll();
         }
@@ -42,9 +42,9 @@ namespace Application.API.Controllers
         // GET: api/OrderDetails/5
         [HttpGet("{id}")]
         [Authorize(Roles = "User,Admin")]
-        public ActionResult<OrderDetail> GetOrderDetails(int id)
+        public async Task<ActionResult<OrderDetail>> GetOrderDetails(Guid id)
         {
-            var orderDetails = await _orderDetailsRepository.GetById(ID);
+            var orderDetails =  await _orderDetailsRepository.GetById(id);
 
             if (orderDetails == null)
             {
