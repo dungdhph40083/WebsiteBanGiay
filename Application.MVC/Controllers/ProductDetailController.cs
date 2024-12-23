@@ -4,16 +4,20 @@ using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class ProductDetailController : Controller
     {
         HttpClient Client = new HttpClient();
-
+        private readonly HttpClient _httpClient;
+        public ProductDetailController()
+        {
+            _httpClient = new HttpClient();
+        }
         public async Task<ActionResult> Index(int page = 1, int pageSize = 5)
         {
-            // Fetch product details from API
             string URL = $@"https://localhost:7187/api/ProductDetails";
             var response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
 
@@ -54,6 +58,12 @@ namespace Application.MVC.Controllers
 
         public async Task<ActionResult> Create()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
             {
                 await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds();
@@ -134,6 +144,12 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductDetailDTO Detail, IFormFile? Image)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             MultipartFormDataContent Contents = new()
             {
                 { new StringContent(Detail.ProductID.ToString() ?? ""),  nameof(Detail.ProductID) },
@@ -209,6 +225,13 @@ namespace Application.MVC.Controllers
             await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofdss();
 
             // Lấy thông tin ProductDetail theo ID
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             var productDetail = await Client.GetFromJsonAsync<ProductDetailDTO>($@"https://localhost:7187/api/ProductDetails/{id}");
             return View(productDetail);
         }
@@ -217,6 +240,13 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(Guid id, ProductDetailDTO Detail, IFormFile? Image)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             MultipartFormDataContent Contents = new()
             {
                 { new StringContent(Detail.ProductID.ToString() ?? ""),  nameof(Detail.ProductID) },
@@ -254,6 +284,13 @@ namespace Application.MVC.Controllers
         }
         public async Task<ActionResult> Delete(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = $@"https://localhost:7187/api/ProductDetails/{id}";
             var response = await Client.DeleteAsync(requestURL);
             return RedirectToAction(nameof(Index));

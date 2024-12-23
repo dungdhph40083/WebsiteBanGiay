@@ -6,18 +6,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class CategoriesController : Controller
     {
        HttpClient client;
+        private readonly HttpClient _client;
         public CategoriesController()
         {
             client = new HttpClient();
         }
         public ActionResult Index()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $@"https://localhost:7187/api/Category";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<List<Category>>(response);
@@ -25,6 +33,12 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Details(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<Category>(response);
@@ -41,7 +55,13 @@ namespace Application.MVC.Controllers
         // POST: Category/Create
         [HttpPost]
         public async Task<ActionResult> Create(CategoryDTO categoryDTO)
-        { 
+        {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
             {
             string requestURL = $"https://localhost:7187/api/Category";
@@ -61,6 +81,12 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public ActionResult Edit(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $"https://localhost:7187/api/Category/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<Category>(response);
@@ -70,6 +96,12 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(Guid id, CategoryDTO categoryDTO)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = await client.PutAsJsonAsync(requestURL, categoryDTO);    
                 return RedirectToAction(nameof(Index));
@@ -77,7 +109,14 @@ namespace Application.MVC.Controllers
 
 
         public ActionResult Delete(Guid id)
-        { try
+        {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            try
             {
             string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = client.DeleteAsync(requestURL).Result;

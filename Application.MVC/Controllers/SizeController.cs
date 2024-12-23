@@ -6,17 +6,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class SizeController : Controller
     {
         HttpClient Client = new HttpClient();
+        private readonly HttpClient _httpClient;
+        public SizeController()
+        {
+            _httpClient = new HttpClient();
+        }
         // GET: SizeController
 
         [HttpGet]
         public async Task<ActionResult> Index()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string URL = $@"https://localhost:7187/api/Size";
             var Response = await Client.GetFromJsonAsync<List<Size>>(URL);
             return View(Response);
@@ -26,6 +39,13 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Details(Guid ID)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string URL = $@"https://localhost:7187/api/Size/{ID}";
             var Response = await Client.GetFromJsonAsync<Size>(URL);
             return View(Response);
@@ -43,6 +63,13 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(SizeDTO Input)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string URL = $@"https://localhost:7187/api/Size";
@@ -62,6 +89,13 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(Guid ID)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string URL = $@"https://localhost:7187/api/Size/{ID}";
             var Response = await Client.GetFromJsonAsync<SizeDTO>(URL);
 
@@ -73,6 +107,13 @@ namespace Application.MVC.Controllers
         // POST: SizeController/Edit/5
         public async Task<ActionResult> Edit(Guid ID, SizeDTO NewInput)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string URL = $@"https://localhost:7187/api/Size/{ID}";
@@ -91,6 +132,13 @@ namespace Application.MVC.Controllers
         // POST: SizeController/Delete/5
         public async Task<ActionResult> Delete(Guid ID)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string URL = $@"https://localhost:7187/api/Size/{ID}";

@@ -54,7 +54,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                     if (!string.IsNullOrEmpty(token))
                     {
-
+                        HttpContext.Session.SetString("JwtToken", token);
                         HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions
                         {
                             HttpOnly = true,
