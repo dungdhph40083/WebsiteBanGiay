@@ -6,7 +6,7 @@ namespace Application.MVC.GeneralPublic.Controllers
     public class ContactController : Controller
     {
         HttpClient client = new HttpClient();
-
+        Guid UserID = Guid.Parse("BBD122D1-8961-4363-820E-3AD1A87064E4");
         public ContactController()
         {
             client = new HttpClient();
@@ -22,21 +22,14 @@ namespace Application.MVC.GeneralPublic.Controllers
         {
             try
             {
-                var users = await client.GetFromJsonAsync<List<User>>("https://localhost:7187/api/User");
-                ViewBag.Users = users ?? new List<User>();
-                CustomerSupportMessage customerSupportMessage = new CustomerSupportMessage()
-                {
-                    MessageID = Guid.NewGuid(),
-                    CreatedAt = DateTime.Now
-                };
-
-
+                var user = await client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{UserID}");
+                ViewBag.DefaultUser = user;
                 if (TempData["SuccessMessage"] != null)
                 {
                     ViewBag.SuccessMessage = TempData["SuccessMessage"];
                 }
 
-                return View(customerSupportMessage);
+                return View();
             }
             catch (Exception ex)
             {

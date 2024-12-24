@@ -25,7 +25,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             // Sau đó cho vào ViewBag
             ViewBag.Top8Products = Details?
-                .OrderByDescending(Req => Req.Product?.CreatedAt).Take(8).ToList() ?? new List<ProductDetail>();
+                .OrderByDescending(Req => Req.Product?.CreatedAt).Take(20).ToList() ?? new List<ProductDetail>();
         }
     }
 }
