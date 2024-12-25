@@ -22,16 +22,18 @@ namespace Application.MVC.GeneralPublic.Controllers
         }
 
 
-        public async Task<ActionResult> Index(int page = 1, string priceRange = "all")
+        public async Task<ActionResult> Index(int page = 1, string priceRange = "all", string sortOrder = "default")
         {
+            // Lấy danh sách sản phẩm từ API
             var products = await _client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             ViewBag.Orders = products ?? new List<Product>();
 
+            // Lấy danh sách ProductDetails từ API
             var details = await _client.GetFromJsonAsync<List<ProductDetail>>("https://localhost:7187/api/ProductDetails");
             ViewBag.Details = details ?? new List<ProductDetail>();
 
+            // Thiết lập khoảng giá
             decimal minPrice = 0, maxPrice = decimal.MaxValue;
-
             if (priceRange == "0-1")
             {
                 minPrice = 99000;
@@ -53,22 +55,43 @@ namespace Application.MVC.GeneralPublic.Controllers
                 maxPrice = 5000000;
             }
 
+            // Lọc sản phẩm theo khoảng giá
             var filteredProducts = details
                 .Where(p => products.Any(prod => prod.ProductID == p.ProductID && prod.Price >= minPrice && prod.Price <= maxPrice))
                 .ToList();
 
+            // Sắp xếp sản phẩm
+            switch (sortOrder)
+            {
+                case "price_asc":
+                    filteredProducts = filteredProducts
+                        .OrderBy(p => products.First(prod => prod.ProductID == p.ProductID).Price)
+                        .ToList();
+                    break;
+                case "price_desc":
+                    filteredProducts = filteredProducts
+                        .OrderByDescending(p => products.First(prod => prod.ProductID == p.ProductID).Price)
+                        .ToList();
+                    break;
+            }
+
+            // Phân trang
             const int pageSize = 9;
             var totalProducts = filteredProducts.Count;
             var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
 
             var productsForCurrentPage = filteredProducts.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
+            // Truyền dữ liệu vào View
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
             ViewBag.SelectedPrice = priceRange;
+            ViewBag.SortOrder = sortOrder;
 
             return View(productsForCurrentPage);
         }
+
+
 
 
 
