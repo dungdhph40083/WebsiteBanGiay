@@ -14,7 +14,7 @@ namespace Application.MVC.Controllers
         {
             client = new HttpClient();
         }
-        public async Task<ActionResult> Index(int page = 1, int pageSize = 5)
+        public async Task<ActionResult> Index(int page = 1, int pageSize = 15)
         {
             string requestURL = "https://localhost:7187/api/Product";
             var response = await client.GetFromJsonAsync<List<Product>>(requestURL);

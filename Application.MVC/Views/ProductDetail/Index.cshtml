@@ -32,10 +32,10 @@
         font-size: 16px;
     }
 
-        .actions-link:hover {
-            text-decoration: underline;
-            color: #0056b3;
-        }
+    .actions-link:hover {
+        text-decoration: underline;
+        color: #0056b3;
+    }
 
     .btn-custom {
         border-radius: 20px;
@@ -73,6 +73,7 @@
     .btn-delete:hover {
         background-color: #c82333;
     }
+
     /* Tùy chỉnh nút dropdown */
     .custom-dropdown-btn {
         background-color: #007bff; /* Màu xanh đậm */
@@ -80,10 +81,10 @@
         border-radius: 5px;
     }
 
-        .custom-dropdown-btn:hover {
-            background-color: #0056b3; /* Xanh đậm hơn khi hover */
-            color: white;
-        }
+    .custom-dropdown-btn:hover {
+        background-color: #0056b3; /* Xanh đậm hơn khi hover */
+        color: white;
+    }
 
     /* Tùy chỉnh dropdown items */
     .dropdown-item.text-warning:hover {
@@ -108,7 +109,6 @@
     <a class="btn btn-primary btn-custom" asp-action="Create">
         <i class="fas fa-plus-circle"></i> Tạo mới
     </a>
-
 </p>
 
 @if (Model.Count() > 0)
@@ -177,21 +177,11 @@
                                     <i class="fas fa-info-circle"></i> Chi tiết
                                 </a>
                                 <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
-                                <!-- Mở bán button -->
-                                @if (Entry.value.Status == 0)
-                                {
-                                    <a class="dropdown-item text-success" asp-route-ID="@Entry.value.ProductDetailID">
-                                        <i class="fas fa-check-circle"></i> Mở bán
-                                    </a>
-                                }
-
-                                <!-- Dừng bán button -->
-                                @if (Entry.value.Status == 1)
-                                {
-                                    <a class="dropdown-item text-danger" asp-route-ID="@Entry.value.ProductDetailID">
-                                        <i class="fas fa-times-circle"></i> Dừng bán
-                                    </a>
-                                }
+                                <!-- Đổi trạng thái -->
+                                <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                                <a class="dropdown-item text-primary" href="#" onclick="toggleStatus('@Entry.value.ProductDetailID')">
+                                    <i class="fas fa-toggle-on"></i> Đổi trạng thái
+                                </a>
 
                                 <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
                                 <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@Entry.value.ProductDetailID" data-controller="ProductDetail" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
@@ -200,8 +190,6 @@
                             </div>
                         </div>
                     </td>
-
-
                 </tr>
             }
         </tbody>
@@ -286,3 +274,23 @@ else
         </div>
     </div>
 </div>
+<script>
+    async function toggleStatus(productDetailId) {
+        const url = `/ProductDetail/ToggleStatus/${productDetailId}`; // URL gọi API
+        try {
+            const response = await fetch(url, {
+                method: 'PUT'
+            });
+
+            if (response.ok) {
+                alert("Đổi trạng thái thành công!");
+                location.reload(); // Tải lại trang để cập nhật trạng thái
+            } else {
+                alert("Không thể đổi trạng thái. Vui lòng thử lại.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Đã xảy ra lỗi khi đổi trạng thái.");
+        }
+    }
+</script>

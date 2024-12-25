@@ -258,5 +258,22 @@ namespace Application.MVC.Controllers
             var response = await Client.DeleteAsync(requestURL);
             return RedirectToAction(nameof(Index));
         }
+        [HttpPut]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            string requestURL = $@"https://localhost:7187/api/ProductDetails/{id}/toggle-status";
+            var response = await Client.PutAsync(requestURL, null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok(); // Trả về 200 nếu thành công
+            }
+            else
+            {
+                return StatusCode((byte)response.StatusCode, "Đổi trạng thái thất bại."); // Trả về lỗi nếu không thành công
+            }
+        }
+
+
     }
 }

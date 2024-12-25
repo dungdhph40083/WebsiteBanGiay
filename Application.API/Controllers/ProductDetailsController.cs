@@ -90,5 +90,28 @@ namespace Application.API.Controllers
             await ProductDetailRepo.DeleteExisting(ID);
             return NoContent();
         }
+        // Phương thức để chuyển trạng thái sản phẩm giữa "mở bán" và "dừng bán"
+        [HttpPut("{ID}/toggle-status")]
+        public async Task<ActionResult> ToggleStatus(Guid ID)
+        {
+            var productDetail = await ProductDetailRepo.GetProductDetailByID(ID);
+            if (productDetail == null)
+            {
+                return NotFound("Product detail not found");
+            }
+
+            // Đảo trạng thái của productDetail
+            byte newStatus = productDetail.Status == 1 ? (byte)0 : (byte)1;
+
+            // Cập nhật trạng thái mà không thay đổi các thuộc tính khác
+            await ProductDetailRepo.UpdateStatusOnly(ID, newStatus);
+
+            // Trả về sản phẩm đã được cập nhật
+            return Ok(await ProductDetailRepo.GetProductDetailByID(ID));
+        }
+
+
+
+
     }
 }

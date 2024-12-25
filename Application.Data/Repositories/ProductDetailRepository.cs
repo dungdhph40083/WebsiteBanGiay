@@ -94,5 +94,29 @@ namespace Application.Data.Repositories
             }
             else return default;
         }
+        public async Task<ProductDetail?> UpdateStatusOnly(Guid TargetID, byte Status)
+        {
+            var Target = await Context.ProductDetails.FindAsync(TargetID);
+            if (Target != null)
+            {
+                // Chỉ cập nhật trường Status mà không thay đổi các trường khác
+                Target.Status = Status;
+                Target.UpdatedAt = DateTime.UtcNow; // Cập nhật thời gian khi thay đổi trạng thái
+
+                // Đánh dấu mục này là đã được sửa đổi
+                Context.Entry(Target).State = EntityState.Modified;
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await Context.SaveChangesAsync();
+
+                return Target;
+            }
+            else
+            {
+                return null; // Trả về null nếu không tìm thấy đối tượng
+            }
+        }
+
+
     }
 }

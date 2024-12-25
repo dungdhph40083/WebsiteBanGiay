@@ -7,32 +7,45 @@
 <h1>Tạo sản phẩm mới</h1>
 <hr />
 
+<!-- Validation Summary -->
 <form asp-action="Create" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="row">
         <div class="col-md-4">
             <label asp-for="Name" class="control-label">Tên sản phẩm</label>
-            <input asp-for="Name" class="form-control" required />
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
         </div>
+
         <div class="col-md-4">
             <label asp-for="Price" class="control-label">Giá</label>
-            <input asp-for="Price" class="form-control" required />
+            <input asp-for="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
         </div>
+
         <div class="col-md-4">
-            <label class="form-label">Ảnh bìa</label>
-            <input type="file" name="Image" class="form-control-file" accept="image/png, image/jpeg" aria-label="Upload picture" />
+            <label class="form-label">Ảnh Sản phẩm</label>
+            <input type="file" name="Image" class="form-control-file" accept="image/png, image/jpeg" required />
         </div>
     </div>
+
     <div class="row">
         <div class="col-md-12 pb-3">
             <label asp-for="Description" class="control-label">Mô tả</label>
-            <textarea asp-for="Description" class="form-control" style="min-height: 200px" required></textarea>
+            <textarea asp-for="Description" class="form-control" style="min-height: 200px"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
         </div>
     </div>
+
     <button type="submit" class="btn btn-primary">Tạo mới</button>
 </form>
 
 <div>
     <a asp-action="Index">Về trang trước</a>
 </div>
+
+<!-- Client-side validation -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
