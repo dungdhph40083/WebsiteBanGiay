@@ -178,7 +178,6 @@
                                 </a>
                                 <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
                                 <!-- Đổi trạng thái -->
-                                <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
                                 <a class="dropdown-item text-primary" href="#" onclick="toggleStatus('@Entry.value.ProductDetailID')">
                                     <i class="fas fa-toggle-on"></i> Đổi trạng thái
                                 </a>
@@ -253,27 +252,75 @@ else
     <p class="text-center">Bắt đầu tạo chi tiết sản phẩm bằng cách nhấn vào "<b>Tạo mới</b>"!</p>
 }
 
-<!-- Modal -->
-<div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="DeleteLabel">KHOAN!!! <span style="font-size:x-small">(Khoan?)</span></h1>
-                <button type="button" class="close" data-dismiss="modal" id="close-btn" aria-label="Close">
-                    <i class="fa-cross"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn để xóa chi tiết này?<br />
-                <span style="font-size:small" class="font-monospace-cascadia">ID chi tiết: <span id="ItemID" class="font-monospace-cascadia"></span></span>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-btn">Hủy</button>
-                <button type="button" class="btn btn-danger" id="confirm_deletion">Xóa</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Thêm thư viện SweetAlert -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<!-- Thêm thư viện SweetAlert -->
+
+<script>
+    document.querySelectorAll('.delete_trigger').forEach(button => {
+        button.addEventListener('click', function () {
+            const productDetailId = this.getAttribute('data-id');
+            const controller = this.getAttribute('data-controller');
+            const action = this.getAttribute('data-action');
+            const deleteUrl = `/${controller}/${action}/${productDetailId}`;
+
+            // Hiển thị cảnh báo xác nhận xóa với SweetAlert
+            swal({
+                title: "Bạn có chắc chắn?",
+                text: "Sau khi xóa, bạn sẽ không thể khôi phục mục này!",
+                icon: "warning",
+                buttons: ["Hủy", "Xóa"],
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    // Gửi yêu cầu xóa
+                    fetch(deleteUrl, {
+                        method: 'DELETE'
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                // Thông báo thành công
+                                swal({
+                                    title: "Đã xóa!",
+                                    text: "Chi tiết sản phẩm đã được xóa thành công.",
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false,
+                                }).then(() => {
+                                    location.reload(); // Tải lại trang sau khi xóa
+                                });
+                            } else if (response.status === 409) { // Lỗi ràng buộc dữ liệu
+                                swal({
+                                    title: "Không thể xóa!",
+                                    text: "Sản phẩm này có liên quan đến các dữ liệu khác trong hệ thống.",
+                                    icon: "error",
+                                });
+                            } else {
+                                // Xử lý lỗi khác (như 400, 500)
+                                swal({
+                                    title: "Lỗi!",
+                                    text: "Không thể xóa. Vui lòng thử lại.",
+                                    icon: "error",
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+
+                            // Thông báo lỗi hệ thống
+                            swal({
+                                title: "Lỗi!",
+                                text: "Đã xảy ra lỗi trong quá trình xóa.",
+                                icon: "error",
+                            });
+                        });
+                }
+            });
+        });
+    });
+
+</script>
+
 <script>
     async function toggleStatus(productDetailId) {
         const url = `/ProductDetail/ToggleStatus/${productDetailId}`; // URL gọi API
@@ -283,14 +330,35 @@ else
             });
 
             if (response.ok) {
-                alert("Đổi trạng thái thành công!");
-                location.reload(); // Tải lại trang để cập nhật trạng thái
+                // Thông báo thành công với SweetAlert
+                swal({
+                    title: "Thành công!",
+                    text: "Đổi trạng thái thành công!",
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false,
+                }).then(() => {
+                    // Tải lại trang sau khi thông báo hoàn tất
+                    location.reload();
+                });
             } else {
-                alert("Không thể đổi trạng thái. Vui lòng thử lại.");
+                // Thông báo lỗi với SweetAlert
+                swal({
+                    title: "Lỗi!",
+                    text: "Không thể đổi trạng thái. Vui lòng thử lại.",
+                    icon: "error",
+                });
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("Đã xảy ra lỗi khi đổi trạng thái.");
+
+            // Thông báo lỗi khi xảy ra lỗi trong quá trình thực hiện
+            swal({
+                title: "Lỗi!",
+                text: "Đã xảy ra lỗi khi đổi trạng thái.",
+                icon: "error",
+            });
         }
     }
 </script>
+
