@@ -108,6 +108,7 @@
     <a class="btn btn-primary btn-custom" asp-action="Create">
         <i class="fas fa-plus-circle"></i> Tạo mới
     </a>
+
 </p>
 
 @if (Model.Count() > 0)
@@ -149,7 +150,7 @@
                     <td>@Entry.value.Color?.ColorName</td>
                     <td>@Entry.value.Category?.CategoryName</td>
                     <td>@Entry.value.Material</td>
-                    <td>@Entry.value.Quantity.GetValueOrDefault().ToString("#,##0")</td>
+                    <td>@Entry.value.Quantity.GetValueOrDefault().ToString("#,0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
                     <td>@Entry.value.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy | HH:mm")</td>
                     <td>
                         @if (Entry.value.Status == 1)

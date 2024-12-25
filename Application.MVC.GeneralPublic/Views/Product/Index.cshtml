@@ -83,7 +83,7 @@
             <div class="row pb-3">
                 @if (products != null && products.Count > 0)
                 {
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Where(x => x.Status == 1))
                     {
                         var product = products?.FirstOrDefault(p => p.ProductID == item.ProductID);
                         var productName = product?.Name ?? "Không có tên";
