@@ -30,49 +30,60 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                    @foreach (var Order in Model)
-                                    {
-                                        <tr>
-                                            <td>@(new String(Order.OrderID.ToString().Take(8).ToArray()))...</td>
-                                            <td>@Order.OrderDate.GetValueOrDefault().ToString("d/M/yyyy")</td>
-                                            <td>
-                                                @switch (Order.Status)
-                                                {
-                                                    case (byte)OrderStatus.Canceled:
-                                                    <p>Đã hủy</p>
-                                                        break;
-                                                    case (byte)OrderStatus.Refunded:
-                                                    <p>Đã hoàn trả</p>
-                                                        break;
-                                                    case (byte)OrderStatus.CantRefund:
-                                                    <p>Không hoàn trả nữa</p>
-                                                        break;
-                                                    case (byte)OrderStatus.Refunding:
-                                                    case (byte)OrderStatus.RefundingAgain:
+                                @foreach (var Order in Model)
+                                {
+                                    <tr>
+                                        <td>@Order.OrderNumber</td>
+                                        <td>@Order.OrderDate.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss")</td>
+                                        <td>
+                                            @switch ((OrderStatus)Order.Status)
+                                            {
+                                                case OrderStatus.Canceled:
+                                                    <p>Bị hủy</p>
+                                                    break;
+                                                case OrderStatus.Refunding:
                                                     <p>Yêu cầu hoàn trả</p>
-                                                        break;
-                                                    case (byte)OrderStatus.Created:
-                                                    <p>Chờ xác nhận</p>
-                                                        break;
-                                                    case (byte)OrderStatus.Processed:
-                                                    <p>Đã xác nhận đơn</p>
-                                                        break;
-                                                    case (byte)OrderStatus.Delivered:
-                                                    <p>Đang vận chuyển</p>
-                                                        break;
-                                                    case (byte)OrderStatus.Arrived:
+                                                    break;
+                                                case OrderStatus.RefundingAgain:
+                                                    <p>Yêu cầu hoàn trả (lần nữa)</p>
+                                                    break;
+                                                case OrderStatus.RefundProcessed:
+                                                    <p>Chấp nhận hoàn trả</p>
+                                                    break;
+                                                case OrderStatus.RefundDelivered:
+                                                    <p>Đang đến hoàn trả</p>
+                                                    break;
+                                                case OrderStatus.Refunded:
                                                     <p>Đã hoàn trả</p>
-                                                        break;
-                                                    case (byte)OrderStatus.Received:
-                                                    case (byte)OrderStatus.ReceivedAgain:
-                                                    <p>Khách đã nhận hàng</p>
-                                                        break;
-                                                }
-                                            </td>
-                                            <td>@Order.GrandTotal.GetValueOrDefault().ToString("#,##0")</td>
-                                            <td><a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Order.OrderID">Chi tiết</a></td>
-                                        </tr>
-                                    }
+                                                    break;
+                                                case OrderStatus.Created:
+                                                    <p>Chờ xác nhận</p>
+                                                    break;
+                                                case OrderStatus.Processed:
+                                                    <p>Đã xác nhận đơn</p>
+                                                    break;
+                                                case OrderStatus.Delivered:
+                                                    <p>Đang vận chuyển</p>
+                                                    break;
+                                                case OrderStatus.Arrived:
+                                                    <p>Đã đến nơi</p>
+                                                    break;
+                                                case OrderStatus.Received:
+                                                case OrderStatus.ReceivedAgain:
+                                                    <p>Đã nhận hàng</p>
+                                                    break;
+                                                case OrderStatus.ReceivedCompleted:
+                                                    <p>Đã nhận hàng thành công</p>
+                                                    break;
+                                                default:
+                                                    <p>N/A</p>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>@Order.GrandTotal.GetValueOrDefault().ToString("#,##0")</td>
+                                        <td><a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Order.OrderID">Chi tiết</a></td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     }

@@ -31,13 +31,17 @@ namespace Application.Data.Repositories
                     .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
                 .Include(Pikachu => Pikachu.Voucher)
                     .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
+
                 .Include(Pikachu => Pikachu.Sale)
                     .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
                 .Include(Pikachu => Pikachu.Sale)
                     .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
+
                 .Include(Pikachu => Pikachu.Order)
+
                 .Include(Pikachu => Pikachu.ProductDetail)
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
+                        .ThenInclude(Cinderace => Cinderace != null ? Cinderace.Image : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
@@ -46,6 +50,7 @@ namespace Application.Data.Repositories
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : null)
+
                 .Include(Pikachu => Pikachu.ShippingMethod)
                     .ToListAsync();
         }
@@ -53,17 +58,21 @@ namespace Application.Data.Repositories
         public async Task<OrderDetail?> GetById(Guid id)
         {
             return await _context.OrderDetails
-                                .Include(Pikachu => Pikachu.Voucher)
+                .Include(Pikachu => Pikachu.Voucher)
                     .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
                 .Include(Pikachu => Pikachu.Voucher)
                     .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
+
                 .Include(Pikachu => Pikachu.Sale)
                     .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
                 .Include(Pikachu => Pikachu.Sale)
                     .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
+
                 .Include(Pikachu => Pikachu.Order)
+
                 .Include(Pikachu => Pikachu.ProductDetail)
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
+                        .ThenInclude(Cinderace => Cinderace != null ? Cinderace.Image : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
@@ -72,6 +81,7 @@ namespace Application.Data.Repositories
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : null)
+
                 .Include(Pikachu => Pikachu.ShippingMethod)
                     .SingleOrDefaultAsync(Crayfish => Crayfish.OrderDetailID == id);
         }
@@ -93,13 +103,17 @@ namespace Application.Data.Repositories
                         .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
                     .Include(Pikachu => Pikachu.Voucher)
                         .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
+
                     .Include(Pikachu => Pikachu.Sale)
                         .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
                     .Include(Pikachu => Pikachu.Sale)
                         .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
+
                     .Include(Pikachu => Pikachu.Order)
+
                     .Include(Pikachu => Pikachu.ProductDetail)
                         .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
+                            .ThenInclude(Cinderace => Cinderace != null ? Cinderace.Image : null)
                     .Include(Pikachu => Pikachu.ProductDetail)
                         .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
                     .Include(Pikachu => Pikachu.ProductDetail)
@@ -108,6 +122,7 @@ namespace Application.Data.Repositories
                         .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
                     .Include(Pikachu => Pikachu.ProductDetail)
                         .ThenInclude(Buizel => Buizel != null ? Buizel.Sale : null)
+
                     .Include(Pikachu => Pikachu.ShippingMethod)
                         .Where(Prdc => Prdc.OrderID == OrderID)
                             .ToListAsync();

@@ -1,4 +1,5 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,10 +21,16 @@ namespace Application.MVC.Controllers
 
         public async Task<ActionResult> Details(Guid ID)
         {
-            string URL = $@"https://localhost:7187/api/Orders/{ID}";
+            string URL_Order = $@"https://localhost:7187/api/Orders/{ID}";
+            string URL_OList = $@"https://localhost:7187/api/OrderDetails/Order/{ID}";
 
-            var Response = await Client.GetFromJsonAsync<Order>(URL);
-            return View(Response);
+            var Infos = await Client.GetFromJsonAsync<Order>(URL_Order);
+            var Items = await Client.GetFromJsonAsync<List<OrderDetail>>(URL_OList);
+
+            ViewBag.AlwaysTired = Infos ?? new Order();
+            ViewBag.Grrrrrrrrrr = Items ?? new List<OrderDetail>();
+
+            return View();
         }
 
         public async Task FetchInfoPlsPlsPlsPls()
@@ -81,22 +88,22 @@ namespace Application.MVC.Controllers
             }
         }
 
-        public async Task<ActionResult> UpdateOrderHasPaid(Guid ID, bool Toggle)
-        {
-            try
-            {
-                string URL = $@"https://localhost:7187/api/Orders/UpdateStatusPaid/{ID}?Toggle={Toggle}";
-                var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception Msg)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(Msg.Message);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                return View();
-            }
-        }
+        //public async Task<ActionResult> UpdateOrderHasPaid(Guid ID, bool Toggle)
+        //{
+        //    try
+        //    {
+        //        string URL = $@"https://localhost:7187/api/Orders/UpdateStatusPaid/{ID}?Toggle={Toggle}";
+        //        var Response = await Client.PatchAsync(URL, null);
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch (Exception Msg)
+        //    {
+        //        Console.ForegroundColor = ConsoleColor.Red;
+        //        Console.WriteLine(Msg.Message);
+        //        Console.ForegroundColor = ConsoleColor.Gray;
+        //        return View();
+        //    }
+        //}
 
         //// GET: OrdersController/Edit/5
         //[HttpGet]

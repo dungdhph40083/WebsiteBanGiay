@@ -42,6 +42,21 @@ namespace Application.Data.ModelContexts
 			ModelBuilder.Entity<ProductDetail>()
 				.HasIndex(Idx => Idx.ProductID)
 				.IsUnique();
+            ModelBuilder.Entity<Order>()
+				.HasIndex(Idx => Idx.OrderNumber)
+				.IsUnique();
+			ModelBuilder.Entity<Order>()
+				.Property(Idx => Idx.Status)
+				.HasDefaultValue((byte)OrderStatus.Created);
+			ModelBuilder.Entity<Order>()
+				.Property(Idx => Idx.HasPaid)
+				.HasDefaultValue(false);
+			ModelBuilder.Entity<Order>()
+				.Property(Idx => Idx.HasExternalInfo)
+				.HasDefaultValue(false);
+			ModelBuilder.Entity<Order>()
+				.Property(Idx => Idx.HasChangedInfo)
+				.HasDefaultValue(false);
         }
 
         public DbSet<Category> Categories { get; set; }

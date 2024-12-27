@@ -110,13 +110,13 @@
                     </div>
                     <div class="d-flex justify-content-between">
                         <h6 class="font-weight-medium">Phí vận chuyển</h6>
-                        <h6 class="font-weight-medium">@((cartItems.Sum(x => x.Price) * 0.01).GetValueOrDefault().ToString("#,##0"))</h6>
+                        <h6 class="font-weight-medium">@(cartItems.Count() > 1 ? ((cartItems.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí")</h6>
                     </div>
                 </div>
                 <div class="pt-2">
                     <div class="d-flex justify-content-between mt-2">
                         <h5>Thành tiền</h5>
-                        <h5 class="font-weight-medium">@((cartItems.Sum(x => x.Price) * 1.01).GetValueOrDefault().ToString("#,##0"))</h5>
+                        <h5 class="font-weight-medium">@((cartItems.Sum(x => x.Price) + (cartItems.Count() - 1) * 1000).GetValueOrDefault().ToString("#,##0"))</h5>
                     </div>
                 </div>
             </div>

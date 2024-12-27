@@ -2,6 +2,8 @@
 using Application.Data.Enums;
 using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using NuGet.Protocol;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -44,9 +46,16 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             string URL_Order = $@"https://localhost:7187/api/Orders/{ID}";
 
-            var Response = await Client.GetFromJsonAsync<OrderDto>(URL_Order);
+            var Response = await Client.GetFromJsonAsync<Order>(URL_Order);
 
-            return View(Response);
+            if (Response == null || Response.HasChangedInfo)
+            {
+                ViewData["FAILURE"] = "Bạn không thể đổi thông tin đơn nữa do đã đổi thông tin trước đó.";
+                return RedirectToAction(nameof(Details), new { ID });
+            }
+            var TrueResponse = JsonConvert.DeserializeObject<OrderDto>(Response.ToJson());
+
+            return View(TrueResponse);
         }
 
         [HttpPost]
@@ -85,7 +94,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Canceled}";
                 var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
             {
@@ -102,7 +111,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Received}";
                 var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
             {
@@ -119,7 +128,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.ReceivedAgain}";
                 var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
             {
@@ -136,7 +145,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Refunding}";
                 var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
             {
@@ -153,7 +162,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.RefundingAgain}";
                 var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
             {

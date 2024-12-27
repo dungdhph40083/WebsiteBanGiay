@@ -7,14 +7,16 @@ namespace Application.Data.Models
     {
 		[Key]
 		public Guid OrderID { get; set; }
+        public string? OrderNumber { get; set; }
 		[ForeignKey(nameof(User))]
 		public Guid? UserID { get; set; }
         [ForeignKey(nameof(PaymentMethod))]
         public Guid? PaymentMethodID { get; set; }
         public DateTime? OrderDate { get; set; }
-		public byte? Status { get; set; }
+		public byte Status { get; set; }
         public bool HasPaid { get; set; }
         public bool HasExternalInfo { get; set; }
+        public bool HasChangedInfo { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         [EmailAddress]
@@ -23,6 +25,10 @@ namespace Application.Data.Models
         public string? PhoneNumber { get; set; }
         public string? ShippingAddress { get; set; }
 		public long? GrandTotal { get; set; }
+        public DateTime? AcceptStart { get; set; }
+        public DateTime? AcceptEnd { get; set; }
+        public DateTime? RefundStart { get; set; }
+        public DateTime? RefundEnd { get; set; }
 		public virtual User? User { get; set; }
 		public virtual PaymentMethod? PaymentMethod { get; set; }
 	}

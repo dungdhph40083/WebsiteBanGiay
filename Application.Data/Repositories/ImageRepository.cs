@@ -12,7 +12,6 @@ namespace Application.Data.Repositories
     {
         private readonly GiayDBContext _context;
         private readonly IMapper Mapper;
-        private static Random RNG = new Random();
         const string RandomizerChars = "0123456789abcdef";
 
         public ImageRepository(GiayDBContext context, IMapper Mapper)
@@ -62,7 +61,7 @@ namespace Application.Data.Repositories
         public static async Task<string> UploadImageAndMetadata(IFormFile ImageFile, DateTime TimeSync)
         {
             // Để đồng bộ thời gian thêm và cập nhật vì nãy thêm vào dùng 2 cái DateTime.UtcNow nó bị delay một vài milligiây @@
-            string UniqueID = new(Enumerable.Repeat(RandomizerChars, 5).Select(Idx => Idx[RNG.Next(Idx.Length)]).ToArray());
+            string UniqueID = new(Enumerable.Repeat(RandomizerChars, 5).Select(Idx => Idx[Random.Shared.Next(Idx.Length)]).ToArray());
             string FileExtension = Path.GetExtension(ImageFile.FileName);
             string FileName = Path.GetFileNameWithoutExtension(ImageFile.FileName) + $"_{DateTimeOffset.Parse(TimeSync.ToString()):dd-MM-yyyy_HH-mm-ss}_{UniqueID}" + FileExtension;
 
