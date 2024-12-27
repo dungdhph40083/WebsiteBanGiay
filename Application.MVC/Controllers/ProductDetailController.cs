@@ -11,7 +11,7 @@ namespace Application.MVC.Controllers
     {
         HttpClient Client = new HttpClient();
 
-        public async Task<ActionResult> Index(int page = 1, int pageSize = 5)
+        public async Task<ActionResult> Index(int page = 1, int pageSize = 15)
         {
             // Fetch product details from API
             string URL = $@"https://localhost:7187/api/ProductDetails";
