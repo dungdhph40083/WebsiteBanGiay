@@ -299,7 +299,7 @@
     <div class="row px-xl-5">
         @if (Top8Products != null || Top8Products!.Count() > 0)
         {
-            @foreach (var Item in Top8Products!)
+            @foreach (var Item in Top8Products!.Where(x => x.Status == 1))
             {
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                     <div class="product-item bg-light mb-4">

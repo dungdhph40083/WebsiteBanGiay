@@ -1,4 +1,5 @@
 ﻿using Application.Data.Models;
+using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -43,6 +44,7 @@ namespace Application.MVC.GeneralPublic.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CustomerSupportMessage customerSupportMessage)
         {
+            customerSupportMessage.CreatedAt = DateTime.Now;
             string requestURL = "https://localhost:7187/api/CustomerSupportMessage";
             var response = await client.PostAsJsonAsync(requestURL, customerSupportMessage);
 

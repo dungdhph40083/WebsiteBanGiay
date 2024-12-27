@@ -9,7 +9,7 @@
 
 <form asp-action="Create" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    
+
     <div class="row">
         <div class="col-md-4">
             <label asp-for="ProductID" class="form-label">Sản phẩm</label>
@@ -51,21 +51,21 @@
     <div class="row">
         <div class="col-md-4">
             <label asp-for="Material" class="form-label">Chất liệu</label>
-            <input asp-for="Material" type="text" class="form-control" aria-label="Specify product material"/>
+            <input asp-for="Material" type="text" class="form-control" aria-label="Specify product material" placeholder="Nhập chất liệu" />
         </div>
         <div class="col-md-8">
             <label asp-for="Brand" class="form-label">Hãng hiệu</label>
-            <input asp-for="Brand" type="text" class="form-control" aria-label="Specify brand" />
+            <input asp-for="Brand" type="text" class="form-control" aria-label="Specify brand" placeholder="Nhập hãng hiệu"/>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
             <label asp-for="PlaceOfOrigin" class="form-label">Xuất xứ</label>
-            <input asp-for="PlaceOfOrigin" type="text" class="form-control" aria-label="Specify place of origin" />
+            <input asp-for="PlaceOfOrigin" type="text" class="form-control" aria-label="Specify" placeholder="Nhập xuất xứ" />
         </div>
         <div class="col-md-4">
             <label asp-for="Quantity" class="form-label">Số lượng</label>
-            <input asp-for="Quantity" type="number" step="1" min="1" max="10000000" class="form-control" aria-label="Specify amount of products" />
+            <input asp-for="Quantity" type="number" step="1" min="1" max="10000000" class="form-control" aria-label="Specify amount of products" placeholder="Nhập số lượng"/>
         </div>
         <div class="col-md-2">
             <label asp-for="Status" class="form-label">Trạng thái</label>
@@ -75,7 +75,7 @@
             </select>
         </div>
     </div>
-    
+
     <button class="btn btn-primary mt-3" type="submit">Tạo mới</button>
 </form>
 

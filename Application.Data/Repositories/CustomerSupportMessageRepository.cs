@@ -31,11 +31,10 @@ namespace Application.Data.Repositories
 
         public async Task<CustomerSupportMessage> SendMessage(CustomerSupportMessageDTO NewMessage)
         {
-            var DateTimeUtcNow = DateTime.UtcNow;
             CustomerSupportMessage CustomerSupportMessage = new()
             {
                 MessageID = Guid.NewGuid(),
-                CreatedAt = DateTimeUtcNow,
+                CreatedAt = DateTime.UtcNow,
             };
             CustomerSupportMessage = Mapper.Map(NewMessage, CustomerSupportMessage);
             await Context.CustomerSupportMessages.AddAsync(CustomerSupportMessage);
