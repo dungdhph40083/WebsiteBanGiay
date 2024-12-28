@@ -11,41 +11,31 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <label asp-for="ProductID" class="form-label">Sản phẩm</label>
             <select asp-for="ProductID" class="form-control" aria-label="Select category to assign to" asp-items="@ViewBag.Prods">
                 <option selected value=null>(Chưa chọn)</option>
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <label asp-for="CategoryID" class="form-label">Danh mục</label>
             <select asp-for="CategoryID" class="form-control" aria-label="Select category to assign to" asp-items="@ViewBag.Catgs">
                 <option selected value=null>(Chưa chọn)</option>
             </select>
         </div>
-        <div class="col-md-4">
+    </div>
+    <div class="row">
+        <div class="col-md-6">
             <label asp-for="SizeID" class="form-label">Kích cỡ</label>
             <select asp-for="SizeID" class="form-control" aria-label="Select size to assign to" asp-items="@ViewBag.Sizes">
                 <option selected value=null>(Chưa chọn)</option>
             </select>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <label asp-for="ColorID" class="form-label">Màu</label>
             <select asp-for="ColorID" class="form-control" aria-label="Select color to assign to" asp-items="@ViewBag.Colrs">
                 <option selected value=null>(Chưa chọn)</option>
             </select>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="SaleID" class="form-label">Sự kiện</label>
-            <select asp-for="SaleID" class="form-control" aria-label="Select event to assign to" asp-items="@ViewBag.Sales">
-                <option selected value=null>(Chưa chọn)</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Ảnh bìa</label>
-            <input type="file" name="Image" class="form-control-file" accept="image/png, image/jpeg" aria-label="Upload picture" />
         </div>
     </div>
     <div class="row">

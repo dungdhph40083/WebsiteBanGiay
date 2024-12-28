@@ -77,7 +77,7 @@ namespace Application.MVC.Controllers
 
             // Lọc các sản phẩm chưa được sử dụng trong ProductDetails
             var AvailableProducts = ProductsList?
-                .Where(product => !ProductDetailsList.Any(detail => detail.ProductID == product.ProductID))
+                .Where(product => !ProductDetailsList!.Any(detail => detail.ProductID == product.ProductID))
                 .ToList();
 
             var ColorsList = await Client.GetFromJsonAsync<List<Color>>($@"https://localhost:7187/api/Color");
@@ -140,7 +140,6 @@ namespace Application.MVC.Controllers
                 { new StringContent(Detail.SizeID.ToString() ?? ""),     nameof(Detail.SizeID) },
                 { new StringContent(Detail.ColorID.ToString() ?? ""),    nameof(Detail.ColorID) },
                 { new StringContent(Detail.CategoryID.ToString() ?? ""), nameof(Detail.CategoryID) },
-                { new StringContent(Detail.SaleID.ToString() ?? ""),     nameof(Detail.SaleID) },
                 { new StringContent(Detail.Material ?? ""),              nameof(Detail.Material) },
                 { new StringContent(Detail.Quantity.ToString() ?? ""),   nameof(Detail.Quantity) },
                 { new StringContent(Detail.Brand ?? ""),                 nameof(Detail.Brand) },
@@ -223,7 +222,6 @@ namespace Application.MVC.Controllers
                 { new StringContent(Detail.SizeID.ToString() ?? ""),     nameof(Detail.SizeID) },
                 { new StringContent(Detail.ColorID.ToString() ?? ""),    nameof(Detail.ColorID) },
                 { new StringContent(Detail.CategoryID.ToString() ?? ""), nameof(Detail.CategoryID) },
-                { new StringContent(Detail.SaleID.ToString() ?? ""),     nameof(Detail.SaleID) },
                 { new StringContent(Detail.Material ?? ""),              nameof(Detail.Material) },
                 { new StringContent(Detail.Quantity.ToString() ?? ""),   nameof(Detail.Quantity) },
                 { new StringContent(Detail.Brand ?? ""),                 nameof(Detail.Brand) },

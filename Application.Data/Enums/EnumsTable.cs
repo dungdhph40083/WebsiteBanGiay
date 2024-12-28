@@ -36,6 +36,9 @@
      *  TODO:
      *  
      *  1: xác nhận khách hàng đặt hàng thành công = thêm nút in hóa đơn
+     *  -- nút hóa đơn sẽ gửi sang view truyền dữ liệu xong rồi cho phép "IN" sau khi đã rà soát lại thông tin kỹ càng
+     *  -- ctrl + P
+     *  
      *  2: thêm nút giao hàng thất bại
      *  -- khi đang đc giao đến khách: có nút giao hàng thất bại (nếu giao hàng ko thành = bấm nút)
      *  -- bấm nút = chưa giao được
@@ -46,6 +49,11 @@
      *  -- lần 1 & 2 hiện nút thành công & thử lại, lần 3 là hiện 2 nút thành công & THẤT BẠI
      *  
      *  -- sau khi THẤT BẠI: đơn hàng đang được chuyển về shop
+     *  3: bộ lọc cho các trạng thái: chờ xác nhận, đang giao hàng, giao hàng thành công/thất bại/chưa giao được = dùng nút
+     *  4: tìm kiếm mã đơn hàng = txtbox
+     *  5: bỏ nút "để chờ"
+     *  6: trang "theo dõi đơn hàng" chuyển thành "đơn hoàn trả"
+     *  7: đơn hàng đến nơi = trừ số lượng, nếu sau đó hoàn lại = cộng số lượng
      *  
      */
 

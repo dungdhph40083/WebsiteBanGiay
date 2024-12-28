@@ -65,6 +65,7 @@ namespace Application.Data.Repositories
             var LeList = await _context.Orders
                 .Include(ASD => ASD.User)
                 .Include(ASF => ASF.PaymentMethod)
+                .OrderByDescending(DTN => DTN.OrderDate)
                 .ToListAsync();
             foreach (var Order in LeList)
             {
@@ -78,6 +79,7 @@ namespace Application.Data.Repositories
             var order = await _context.Orders
                 .Include(ASD => ASD.User)
                 .Include(ASF => ASF.PaymentMethod)
+                .OrderByDescending(DTN => DTN.OrderDate)
                 .SingleOrDefaultAsync(x => x.OrderID == orderId);
             if (order == null) return default!;
             else await ConstantUpdates(order);
@@ -90,6 +92,7 @@ namespace Application.Data.Repositories
             var Orders = await _context.Orders
                 .Include(ASD => ASD.User)
                 .Include (ASF => ASF.PaymentMethod)
+                .OrderByDescending(DTN => DTN.OrderDate)
                 .Where(x => x.UserID == UserID)
             .ToListAsync();
 

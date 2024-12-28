@@ -48,7 +48,6 @@ namespace Application.Data.Repositories
                         .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                     .Include(Siz => Siz.Size)
                     .Include(Col => Col.Color)
-                    .Include(Img => Img.Image)
                     .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.ProductDetailID == TargetID);
         }
 
@@ -59,7 +58,6 @@ namespace Application.Data.Repositories
                         .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                     .Include(Siz => Siz.Size)
                     .Include(Col => Col.Color)
-                    .Include(Img => Img.Image)
                     .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.ProductID == TargetID);
         }
 
@@ -71,7 +69,6 @@ namespace Application.Data.Repositories
                     .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                 .Include(Siz => Siz.Size)
                 .Include(Col => Col.Color)
-                .Include(Img => Img.Image)
                 .Include(Ctg => Ctg.Category).ToListAsync();
         }
 
@@ -83,9 +80,6 @@ namespace Application.Data.Repositories
                 Context.Entry(Target).State = EntityState.Modified;
 
                 Target.UpdatedAt = DateTime.UtcNow;
-
-                // DO NOT REMOVE THIS LINE
-                if (UpdatedDetail.ImageID == null) UpdatedDetail.ImageID = Target.ImageID;
 
                 Target = Mapper.Map(UpdatedDetail, Target);
                 Context.Update(Target);

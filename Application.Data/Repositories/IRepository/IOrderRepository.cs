@@ -14,6 +14,7 @@ namespace Application.Data.Repositories.IRepository
         Task<List<Order>> GetAllOrdersAsync();
         Task<Order?> GetOrderByIdAsync(Guid orderId);
         Task<List<Order>> GetOrdersByUserID(Guid UserID);
+        // Task<List<Order>> GetOrdersByStatusCode(byte StatusCode);
         Task<Order?> UpdateOrderAsyncBypass(Guid ID, OrderDto orderDto);
         Task<Order?> UpdateOrderAsync(Guid ID, OrderDto orderDto);
         Task<bool> DeleteOrderAsync(Guid orderId);

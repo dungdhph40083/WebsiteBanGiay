@@ -12,24 +12,16 @@ namespace Application.MVC.GeneralPublic.Controllers
     public class ProductController : Controller
     {
         //private readonly GiayDBContext _context; dont 
-        HttpClient client;
-
-        private readonly HttpClient _client;
-
-        public ProductController()
-        {
-            _client = new HttpClient();
-        }
-
+        HttpClient client = new HttpClient();
 
         public async Task<ActionResult> Index(int page = 1, string priceRange = "all", string sortOrder = "default")
         {
             // Lấy danh sách sản phẩm từ API
-            var products = await _client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             ViewBag.Orders = products ?? new List<Product>();
 
             // Lấy danh sách ProductDetails từ API
-            var details = await _client.GetFromJsonAsync<List<ProductDetail>>("https://localhost:7187/api/ProductDetails");
+            var details = await client.GetFromJsonAsync<List<ProductDetail>>("https://localhost:7187/api/ProductDetails");
             ViewBag.Details = details ?? new List<ProductDetail>();
 
             // Thiết lập khoảng giá
@@ -56,31 +48,31 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
 
             // Lọc sản phẩm theo khoảng giá
-            var filteredProducts = details
-                .Where(p => products.Any(prod => prod.ProductID == p.ProductID && prod.Price >= minPrice && prod.Price <= maxPrice))
+            var filteredProducts = details?
+                .Where(p => products!.Any(prod => prod.ProductID == p.ProductID && prod.Price >= minPrice && prod.Price <= maxPrice))
                 .ToList();
 
             // Sắp xếp sản phẩm
             switch (sortOrder)
             {
                 case "price_asc":
-                    filteredProducts = filteredProducts
-                        .OrderBy(p => products.First(prod => prod.ProductID == p.ProductID).Price)
+                    filteredProducts = filteredProducts?
+                        .OrderBy(p => products?.First(prod => prod.ProductID == p.ProductID).Price)
                         .ToList();
                     break;
                 case "price_desc":
-                    filteredProducts = filteredProducts
-                        .OrderByDescending(p => products.First(prod => prod.ProductID == p.ProductID).Price)
+                    filteredProducts = filteredProducts?
+                        .OrderByDescending(p => products?.First(prod => prod.ProductID == p.ProductID).Price)
                         .ToList();
                     break;
             }
 
             // Phân trang
             const int pageSize = 9;
-            var totalProducts = filteredProducts.Count;
-            var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+            var totalProducts = filteredProducts?.Count;
+            var totalPages = (int)Math.Ceiling((double)totalProducts.GetValueOrDefault() / pageSize);
 
-            var productsForCurrentPage = filteredProducts.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var productsForCurrentPage = filteredProducts?.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             // Truyền dữ liệu vào View
             ViewBag.CurrentPage = page;
@@ -98,17 +90,17 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Details(Guid ID)
         {
-            var productss = await _client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+            var productss = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             ViewBag.Products = productss ?? new List<Product>();
 
-            var sizes = await _client.GetFromJsonAsync<List<Size>>("https://localhost:7187/api/Size");
+            var sizes = await client.GetFromJsonAsync<List<Size>>("https://localhost:7187/api/Size");
             ViewBag.Sizes = sizes ?? new List<Size>();
 
-            var colors = await _client.GetFromJsonAsync<List<Color>>("https://localhost:7187/api/Color");
+            var colors = await client.GetFromJsonAsync<List<Color>>("https://localhost:7187/api/Color");
             ViewBag.Colors = colors ?? new List<Color>();
 
             string productDetailUrl = $"https://localhost:7187/api/ProductDetails/{ID}";
-            var productDetail = await _client.GetFromJsonAsync<ProductDetail>(productDetailUrl);
+            var productDetail = await client.GetFromJsonAsync<ProductDetail>(productDetailUrl);
 
 
             if (productDetail == null)

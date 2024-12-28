@@ -67,7 +67,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="PriceTotalItems align-middle" id="PriceTotal_@(Model[Idx]?.ProductDetailID.ToString() ?? "null")">
-                                                    @if (Model[Idx]?.ProductDetail?.Sale?.StartingAt.GetValueOrDefault() >= DateTime.UtcNow && Model[Idx]?.ProductDetail?.Sale?.EndingAt.GetValueOrDefault() <= DateTime.UtcNow)
+                                                    @* @if (Model[Idx]?.ProductDetail?.Sale?.StartingAt.GetValueOrDefault() >= DateTime.UtcNow && Model[Idx]?.ProductDetail?.Sale?.EndingAt.GetValueOrDefault() <= DateTime.UtcNow)
                                                     {
                                                         <input hidden id="SaleDiscount_@(Model[Idx]?.ProductDetail?.Sale?.SaleID)"/>
                                                     }
@@ -80,7 +80,7 @@
                                                     else
                                                     {
                                                         @Model[Idx]?.Price.GetValueOrDefault().ToString("#,##0")
-                                                    }
+                                                    } *@
                                                 </td>
                                                 <td class="align-middle">
                                                     <input class="form-control" type="text" name="VoucherCode" onkeyup="Notify()" placeholder="Mã Voucher" value="@(Model[Idx].VoucherID != null ? Model[Idx].Voucher?.VoucherCode : null)" style="text-transform: UPPERCASE">

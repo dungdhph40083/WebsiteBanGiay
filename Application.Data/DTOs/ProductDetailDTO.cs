@@ -1,13 +1,17 @@
-﻿namespace Application.Data.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Application.Data.DTOs
 {
     public class ProductDetailDTO
     {
+        [Required]
         public Guid? ProductID { get; set; }
+        [Required]
         public Guid? SizeID { get; set; }
+        [Required]
         public Guid? ColorID { get; set; }
-        public Guid? ImageID { get; set; }
+        [Required]
         public Guid? CategoryID { get; set; }
-        public Guid? SaleID { get; set; }
         public string? Material { get; set; }
         public int? Quantity { get; set; }
         public string? Brand { get; set; }

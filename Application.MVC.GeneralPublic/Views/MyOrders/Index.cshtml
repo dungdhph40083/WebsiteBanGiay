@@ -34,7 +34,7 @@
                                 {
                                     <tr>
                                         <td>@Order.OrderNumber</td>
-                                        <td>@Order.OrderDate.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss")</td>
+                                        <td>@Order.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
                                         <td>
                                             @switch ((OrderStatus)Order.Status)
                                             {
