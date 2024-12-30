@@ -30,7 +30,6 @@ namespace Application.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "User,Admin")]
-        public async Task<IActionResult> GetAllOrders()
         public async Task<IActionResult> GetAllOrders(string? Filter)
         {
             var orders = new List<Order>();
@@ -76,8 +75,6 @@ namespace Application.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<Order>> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
-        [HttpPut("{id}")]
         [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
         {
@@ -88,7 +85,7 @@ namespace Application.API.Controllers
             if (updatedOrder.Status != (byte)OrderStatus.Created && updatedOrder.Status != (byte)OrderStatus.Processed)
                 return BadRequest("Không thể thay đổi thông tin: đơn hàng đã hoặc đang trong quá trình xử lý.");
 
-            return updatedOrder;
+            return Ok(updatedOrder);
         }
 
         [HttpPatch("UpdateStatus/{id}")]
