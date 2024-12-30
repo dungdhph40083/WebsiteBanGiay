@@ -59,7 +59,7 @@ namespace Application.MVC.Controllers
             {
                 return Unauthorized("Bạn không có quyền vào trang này");
             }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
             {
                 await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds();
@@ -145,7 +145,7 @@ namespace Application.MVC.Controllers
             {
                 return Unauthorized("Bạn không có quyền vào trang này");
             }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             MultipartFormDataContent Contents = new()
             {
                 { new StringContent(Detail.ProductID.ToString() ?? ""),  nameof(Detail.ProductID) },
@@ -225,7 +225,7 @@ namespace Application.MVC.Controllers
             {
                 return Unauthorized("Bạn không có quyền vào trang này");
             }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var productDetail = await Client.GetFromJsonAsync<ProductDetailDTO>($@"https://localhost:7187/api/ProductDetails/{id}");
             return View(productDetail);
@@ -240,7 +240,7 @@ namespace Application.MVC.Controllers
             {
                 return Unauthorized("Bạn không có quyền vào trang này");
             }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             MultipartFormDataContent Contents = new()
             {
@@ -283,7 +283,7 @@ namespace Application.MVC.Controllers
             {
                 return Unauthorized("Bạn không có quyền vào trang này");
             }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             string requestURL = $@"https://localhost:7187/api/ProductDetails/{id}";
             var response = await Client.DeleteAsync(requestURL);
