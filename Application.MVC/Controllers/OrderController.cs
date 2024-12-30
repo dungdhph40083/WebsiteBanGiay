@@ -11,11 +11,16 @@ namespace Application.MVC.Controllers
     {
         HttpClient Client = new HttpClient();
         
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string? Filter)
         {
-            string URL = "https://localhost:7187/api/Orders";
+            string URL;
+            if (Filter == null) URL = "https://localhost:7187/api/Orders";
+            else URL = $@"https://localhost:7187/api/Orders?Filter={Filter}";
 
             var Response = await Client.GetFromJsonAsync<List<Order>>(URL);
+
+            ViewData["FilterValue"] = Filter;
+
             return View(Response);
         }
 

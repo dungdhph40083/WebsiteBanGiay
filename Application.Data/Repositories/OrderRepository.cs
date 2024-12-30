@@ -189,13 +189,30 @@ namespace Application.Data.Repositories
                         else return default;
                     }
                 /***/
+                case OrderStatus.DeliveryFailure:
+                    {
+                        // Giao hàng thất bại: trừ 1 lần thử và cho phép tạo lại
+                        // Nếu còn 0 lần thử mà vẫn thất bại = hỏng hẳn
+                        if (Order.AttemptsLeft > 0) { Order.AttemptsLeft -= 1; Order.Status = StatusCode; }
+                        else Order.Status = (byte)OrderStatus.DeliveryIsDead;
+
+                        Order.AcceptStart = null;
+                        Order.AcceptEnd = null;
+                        Order.RefundStart = null;
+                        Order.RefundEnd = null;
+
+                        _context.Update(Order);
+                        await _context.SaveChangesAsync();
+                        return Order;
+                    }
+                /***/
                 case OrderStatus.Received:
                     {
                         if (Order.RefundStart == null) Order.RefundStart = DateTimeUtcNow;
                         if (Order.RefundEnd == null) Order.RefundEnd = DateTimeUtcNow.AddDays(7);
 
                         Order.Status = StatusCode;
-
+                        
                         Order.HasPaid = true;
                         _context.Update(Order);
                         await _context.SaveChangesAsync();
@@ -213,12 +230,26 @@ namespace Application.Data.Repositories
                         return Order;
                     }
                 /***/
+                case OrderStatus.Processed:
+                    {
+                        // NOTE TO SELF: MAKE THE DEDUCT ITEMS FROM THE PRODUCT REPOSITORY, THEN NET IT INTO THE API
+
+                        if (Order.Status == (byte)OrderStatus.DeliveryIsDead) return default;
+
+                        Order.Status = StatusCode;
+
+                        _context.Update(Order);
+
+                        await _context.SaveChangesAsync();
+                        return Order;
+                    }
+                /***/
                 // Nếu như thanh toán trước bằng VNPay hoặc MoMo các thứ thì cho thêm logic vào phần "Created".
                 case OrderStatus.RefundProcessed:
                 case OrderStatus.RefundDelivered:
                 case OrderStatus.Refunded:
+                case OrderStatus.DeliveryIsDead:
                 case OrderStatus.Created:
-                case OrderStatus.Processed:
                 case OrderStatus.Delivered:
                 case OrderStatus.ReceivedAgain:
                 case OrderStatus.ReceivedCompleted:
@@ -246,6 +277,68 @@ namespace Application.Data.Repositories
             await _context.SaveChangesAsync();
 
             return Order;
+        }
+
+        public async Task<List<Order>> GetOrdersByFilter(string SearchFilter)
+        {
+            var LeList = new List<Order>();
+            switch (SearchFilter)
+            {
+                case OrderFilters.ORDERS_PENDING:
+                    {
+                        LeList = await _context.Orders
+                            .Include(ASD => ASD.User)
+                            .Include(ASF => ASF.PaymentMethod)
+                            .OrderByDescending(DTN => DTN.OrderDate)
+                            .OrderByDescending(DTS => DTS.Status)
+                            .Where(FLT => FLT.Status == (byte)OrderStatus.Created)
+                            .ToListAsync();
+                        break;
+                    }
+                case OrderFilters.ORDERS_ONGOING:
+                    {
+                        LeList = await _context.Orders
+                            .Include(ASD => ASD.User)
+                            .Include(ASF => ASF.PaymentMethod)
+                            .OrderByDescending(DTN => DTN.OrderDate)
+                            .OrderByDescending(DTS => DTS.Status)
+                            .Where(FLT => FLT.Status == (byte)OrderStatus.Processed || FLT.Status == (byte)OrderStatus.Delivered || FLT.Status == (byte)OrderStatus.Arrived)
+                            .ToListAsync();
+                        break;
+                    }
+                case OrderFilters.ORDERS_SUCCEEDED:
+                    {
+                        LeList = await _context.Orders
+                            .Include(ASD => ASD.User)
+                            .Include(ASF => ASF.PaymentMethod)
+                            .OrderByDescending(DTN => DTN.OrderDate)
+                            .OrderByDescending(DTS => DTS.Status)
+                            .Where(FLT => FLT.Status == (byte)OrderStatus.Received || FLT.Status == (byte)OrderStatus.ReceivedAgain || FLT.Status == (byte)OrderStatus.ReceivedCompleted)
+                            .ToListAsync();
+                        break;
+                    }
+                case OrderFilters.ORDERS_FAILED:
+                    {
+                        LeList = await _context.Orders
+                            .Include(ASD => ASD.User)
+                            .Include(ASF => ASF.PaymentMethod)
+                            .OrderByDescending(DTN => DTN.OrderDate)
+                            .OrderByDescending(DTS => DTS.Status)
+                            .Where(FLT => FLT.Status == (byte)OrderStatus.DeliveryIsDead || FLT.Status == (byte)OrderStatus.DeliveryFailure)
+                            .ToListAsync();
+                        break;
+                    }
+                default:
+                    break;
+            }
+            if (LeList.Count > 0)
+            {
+                foreach (var Order in LeList)
+                {
+                    await ConstantUpdates(Order);
+                }
+            }
+            return LeList;
         }
 
         private static string OrderNumberGenerator()

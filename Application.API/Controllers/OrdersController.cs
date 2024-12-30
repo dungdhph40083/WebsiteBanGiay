@@ -16,20 +16,29 @@ namespace Application.API.Controllers
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetails OrderDetailsRepository;
         private readonly IOrderTracking OrderTrackingRepo;
+        private readonly IProductDetail ProductDetailRepo;
 
-        public OrdersController(IOrderRepository orderRepository, IOrderTracking OrderTrackingRepo, IOrderDetails OrderDetailsRepository)
+        public OrdersController(IOrderRepository orderRepository, IOrderTracking OrderTrackingRepo, IOrderDetails OrderDetailsRepository, IProductDetail ProductDetailRepo)
         {
             _orderRepository = orderRepository;
             this.OrderTrackingRepo = OrderTrackingRepo;
             this.OrderDetailsRepository = OrderDetailsRepository;
+            this.ProductDetailRepo = ProductDetailRepo;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllOrders()
+        public async Task<IActionResult> GetAllOrders(string? Filter)
         {
-            var orders = await _orderRepository.GetAllOrdersAsync();
+            var orders = new List<Order>();
+
+            if (Filter == null) orders = await _orderRepository.GetAllOrdersAsync();
+            else orders = await _orderRepository.GetOrdersByFilter(Filter);
+
+            if (orders == null) return NoContent();
+
             return Ok(orders);
         }
+
         [HttpGet("User/{ID}")]
         public async Task<IActionResult> GetOrdersByUserID(Guid ID)
         {
@@ -93,6 +102,35 @@ namespace Application.API.Controllers
             }
             else
             {
+                var ProductList = await OrderDetailsRepository.GetOrderDetailsFromOrderID(id);
+                if (ProductList == null) return NotFound("Không thể tìm thấy thông tin hóa đơn... (?????)");
+                switch ((OrderStatus)StatusCode)
+                {
+                    case OrderStatus.Refunded:
+                        {
+                            foreach (var THING in ProductList)
+                            {
+                                // Hoàn sản phẩm
+                                await ProductDetailRepo.DoAddProductCount
+                                    (THING.ProductDetailID.GetValueOrDefault(), THING.Quantity.GetValueOrDefault());
+                            }
+                            break;
+                        }
+                    case OrderStatus.Received:
+                        {
+                            foreach (var THING in ProductList)
+                            {
+                                // Trừ sản phẩm
+                                await ProductDetailRepo.DoAddProductCount
+                                    (THING.ProductDetailID.GetValueOrDefault(), -THING.Quantity.GetValueOrDefault());
+                            }
+                            break;
+                        }
+                    default:
+                        break;
+                }
+
+
                 OrderTrackingDTO NewRecord = new()
                 {
                     OrderID = updatedOrder.OrderID,

@@ -62,13 +62,10 @@ namespace Application.Data.Repositories
 
             if (Target != null)
             {
-                Context.Entry(Target).State = EntityState.Modified;
+                Context.Products.Attach(Target);
                 Target.UpdatedAt = DateTime.UtcNow;
 
-                // nếu ko có ảnh trong form thì nó sẽ ko xóa ảnh
-                // http patch cũng ko được đâu
-                // god dam mit bro....
-                if (ProductDTO.ImageID == null) ProductDTO.ImageID = Target.ImageID;
+                // nevermind lẽ ra phải attach
 
                 Target = Mapper.Map(ProductDTO, Target);
                 Context.Update(Target);

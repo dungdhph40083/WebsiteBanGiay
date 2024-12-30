@@ -21,15 +21,6 @@
         Received = 200,         // Đã nhận hàng
         ReceivedAgain = 201,    // Đã nhận hàng lại lần 2+
         ReceivedCompleted = 202 // Đã nhận hàng (ko đổi trả được nữa) - thay thế CantRefund
-
-        /* 
-         * mã trạng thái:
-         * 
-         * 0xx: hủy hóa đơn & đổi trả
-         * 1xx: giao hàng
-         * 2xx: nhận hàng
-         * 
-         */
     }
 
     /*
@@ -49,13 +40,28 @@
      *  -- lần 1 & 2 hiện nút thành công & thử lại, lần 3 là hiện 2 nút thành công & THẤT BẠI
      *  
      *  -- sau khi THẤT BẠI: đơn hàng đang được chuyển về shop
-     *  3: bộ lọc cho các trạng thái: chờ xác nhận, đang giao hàng, giao hàng thành công/thất bại/chưa giao được = dùng nút
-     *  4: tìm kiếm mã đơn hàng = txtbox
-     *  5: bỏ nút "để chờ"
-     *  6: trang "theo dõi đơn hàng" chuyển thành "đơn hoàn trả"
-     *  7: đơn hàng đến nơi = trừ số lượng, nếu sau đó hoàn lại = cộng số lượng
+     *  3: bộ lọc cho các trạng thái: chờ xác nhận, đang giao hàng, giao hàng thành công/thất bại/chưa giao được = dùng nút -- DONE
+     *  4: tìm kiếm mã đơn hàng = txtbox -- DONE
+     *  5: bỏ nút "để chờ" -- DONE
+     *  6: trang "theo dõi đơn hàng" chuyển thành "đơn hoàn trả" -- DONE
+     *  7: đơn hàng đến nơi = trừ số lượng, nếu sau đó hoàn lại = cộng số lượng -- DONE
      *  
      */
+
+    public class OrderFilters
+    {
+        // Chờ xác nhận
+        public const string ORDERS_PENDING = "ORDERS_PENDING";
+
+        // Đang giao hàng
+        public const string ORDERS_ONGOING = "ORDERS_ONGOING";
+
+        // Giao hàng thành công
+        public const string ORDERS_SUCCEEDED = "ORDERS_SUCCEEDED";
+
+        // Giao hàng thất bại
+        public const string ORDERS_FAILED = "ORDERS_FAILED";
+    }
 
     public enum VisibilityStatus
     {

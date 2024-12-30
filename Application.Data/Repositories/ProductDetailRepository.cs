@@ -77,8 +77,7 @@ namespace Application.Data.Repositories
             var Target = await Context.ProductDetails.FindAsync(TargetID);
             if (Target != null)
             {
-                Context.Entry(Target).State = EntityState.Modified;
-
+                Context.ProductDetails.Attach(Target);
                 Target.UpdatedAt = DateTime.UtcNow;
 
                 Target = Mapper.Map(UpdatedDetail, Target);
@@ -93,24 +92,36 @@ namespace Application.Data.Repositories
             var Target = await Context.ProductDetails.FindAsync(TargetID);
             if (Target != null)
             {
+                // Đánh dấu mục này là đã được sửa đổi
+                Context.ProductDetails.Attach(Target);
+
                 // Chỉ cập nhật trường Status mà không thay đổi các trường khác
                 Target.Status = Status;
                 Target.UpdatedAt = DateTime.UtcNow; // Cập nhật thời gian khi thay đổi trạng thái
-
-                // Đánh dấu mục này là đã được sửa đổi
-                Context.Entry(Target).State = EntityState.Modified;
 
                 // Lưu thay đổi vào cơ sở dữ liệu
                 await Context.SaveChangesAsync();
 
                 return Target;
             }
-            else
-            {
-                return null; // Trả về null nếu không tìm thấy đối tượng
-            }
+            else return default; // Trả về null nếu không tìm thấy đối tượng
         }
 
+        public async Task<ProductDetail?> DoAddProductCount(Guid ID, int Count)
+        {
+            var Target = await GetProductDetailByID(ID);
+            if (Target != null)
+            {
+                Context.ProductDetails.Attach(Target);
+                Target.UpdatedAt = DateTime.UtcNow;
 
+                Target.Quantity += Count;
+
+                Context.Update(Target);
+                await Context.SaveChangesAsync();
+                return Target;
+            }
+            else return default;
+        }
     }
 }

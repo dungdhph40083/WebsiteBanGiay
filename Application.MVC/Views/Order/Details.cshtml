@@ -13,45 +13,53 @@
 
 <div class="row">
     <dl class="col-md-12">
-        <dt class="col-md-3">Mã số đơn</dt>
-        <dd class="col-md-9">
-            <p>@Infos?.OrderNumber</p>
-            <i class="font-monospace-cascadia" style="font-size: small">@Infos?.OrderID</i>
+        <dt class="col-md-4">Mã số đơn</dt>
+        <dd class="col-md-8">
+            <p>@Infos?.OrderNumber
+            <br />
+                <i class="font-monospace-cascadia" style="font-size: small">@Infos?.OrderID</i>
+            </p>
         </dd>
-        <dt class="col-md-3">Tên khách hàng</dt>
-        <dd class="col-md-9">
-            <p>@Infos?.LastName @Infos?.FirstName</p>
-            <i class="font-monospace-cascadia" style="font-size:small">(@Infos?.UserID)</i>
+        <dt class="col-md-4">Tên khách hàng</dt>
+        <dd class="col-md-8">
+            <p>@Infos?.LastName @Infos?.FirstName
+                <br /><i class="font-monospace-cascadia" style="font-size:small">(@Infos?.UserID)</i>
+            </p>
         </dd>
-        <dt class="col-md-3">Phương thức thanh toán</dt>
-        <dd class="col-md-9">
-            <p>@Infos?.PaymentMethod?.MethodName</p>
-            <i class="font-monospace-cascadia" style="font-size:small">(@Infos?.PaymentMethodID)</i>
+        <dt class="col-md-4">Phương thức thanh toán</dt>
+        <dd class="col-md-8">
+            <p>@Infos?.PaymentMethod?.MethodName
+            <br />
+                <i class="font-monospace-cascadia" style="font-size:small">(@Infos?.PaymentMethodID)</i>
+            </p>
         </dd>
-        <dt class="col-md-3">Ngày đặt đơn</dt>
-        <dd class="col-md-9">
+        <dt class="col-md-4">Ngày đặt đơn</dt>
+        <dd class="col-md-8">
             <p>@Infos?.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</p>
         </dd>
-        <dt class="col-md-3">Tổng tiền</dt>
-        <dd class="col-md-9">
+        <dt class="col-md-4">Tổng tiền</dt>
+        <dd class="col-md-8">
             <p>@Infos?.GrandTotal.GetValueOrDefault().ToString("#,##0")</p>
         </dd>
-        <dt class="col-md-3">Địa chỉ</dt>
-        <dd class="col-md-9">
+        <dt class="col-md-4">Địa chỉ</dt>
+        <dd class="col-md-8">
+            <p>
             @{if (Infos?.Email == null)
                 {
-                    <p><i>Không có địa chỉ Email</i></p>
+                    <i>Không có địa chỉ Email</i>
                 }
                 else
                 {
-                    <p>@Infos?.Email</p>
+                    @Infos?.Email
                 }
             }
-            <p>@Infos?.PhoneNumber</p>
-            <p>@Infos?.ShippingAddress</p>
+            <br />
+            @Infos?.PhoneNumber
+            <br />
+            @Infos?.ShippingAddress</p>
         </dd>
-        <dt class="col-md-3">Trạng thái</dt>
-        <dd class="col-md-9">
+        <dt class="col-md-4">Trạng thái</dt>
+        <dd class="col-md-8">
             @if (Infos != null)
             {
                 <p>
@@ -103,13 +111,13 @@
             }
         </dd>
 
-        <dt class="col-md-3">Thời gian nhận</dt>
-        <dd class="col-md-9">@(Infos?.AcceptEnd == null ? "N/A" : Infos?.AcceptEnd)</dd>
+        <dt class="col-md-4">Thời gian nhận</dt>
+        <dd class="col-md-8">@(Infos?.AcceptEnd == null ? "N/A" : Infos?.AcceptEnd)</dd>
 
         @if (Infos?.Status == (byte)OrderStatus.Arrived)
         {
-            <dt class="col-md-3">Thời gian còn lại</dt>
-            <dd class="col-md-9">
+            <dt class="col-md-4">Thời gian còn lại</dt>
+            <dd class="col-md-8">
                 @{
                     var Span = (Infos?.AcceptEnd.GetValueOrDefault() ?? DateTime.MinValue) - DateTime.UtcNow;
                     Console.WriteLine(Span.TotalSeconds);
@@ -140,12 +148,12 @@
             </dd>
         }
 
-        <dt class="col-md-3">Còn hoàn trả được</dt>
-        <dd class="col-md-9">@(Infos?.RefundEnd == null ? "N/A" : (DateTime.UtcNow > Infos?.RefundEnd ? "Không" : "Có"))</dd>
+        <dt class="col-md-4">Còn hoàn trả được</dt>
+        <dd class="col-md-8">@(Infos?.RefundEnd == null ? "N/A" : (DateTime.UtcNow > Infos?.RefundEnd ? "Không" : "Có"))</dd>
         @if (Infos?.Status == (byte)OrderStatus.Received || Infos?.Status == (byte)OrderStatus.ReceivedAgain)
         {
-            <dt class="col-md-3">Thời gian còn lại</dt>
-            <dd class="col-md-9">
+            <dt class="col-md-4">Thời gian còn lại</dt>
+            <dd class="col-md-8">
                 @{
                     var Span = (Infos?.RefundEnd.GetValueOrDefault() ?? DateTime.MinValue) - DateTime.UtcNow;
                     Console.WriteLine(Span.TotalSeconds);
@@ -220,6 +228,10 @@
         </table>
     </div>
     <dl class="col-md-4" style="font-size: x-large; text-align: right;">
+        <dt>Tổng giá hàng</dt>
+        <dd>
+            @(Infos?.GrandTotal.GetValueOrDefault().ToString("#,##0"))
+        </dd>
         <dt>Phí ship</dt>
         <dd>
             @((Items.Count() > 1 ? ((Items.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí"))
@@ -228,5 +240,7 @@
         <dd>
             @((Infos?.GrandTotal + (Items.Count() - 1) * 1000).GetValueOrDefault().ToString("#,##0"))
         </dd>
+        <dt></dt>
+        <dd><a asp-action="" class="btn btn-primary">In hóa đơn</a></dd>
     </dl>
 </div>
