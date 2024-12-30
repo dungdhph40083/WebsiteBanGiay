@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
@@ -14,10 +15,21 @@ namespace Application.MVC.Controllers
     {
         HttpClient Client = new HttpClient();
         // GET: UserController
-
+        private readonly HttpClient _httpClient;
+        public UserController()
+        {
+            _httpClient = new HttpClient();
+        }
         [HttpGet]
         public async Task<ActionResult> Index()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string URL = $@"https://localhost:7187/api/User";
             var Response = await Client.GetFromJsonAsync<List<User>>(URL);
             return View(Response);
@@ -27,6 +39,13 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Details(Guid ID)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string URL = $@"https://localhost:7187/api/User/{ID}";
             var Response = await Client.GetFromJsonAsync<User>(URL);
             if (Response != null && Response.Image != null && Response.Image.ImageFileName != null)
@@ -40,6 +59,13 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Create()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             await FetchInfoPlsPlsPlsPls();
             return View();
         }
@@ -65,6 +91,13 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(UserDTO Input, IFormFile? ProfilePic)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string URL = $@"https://localhost:7187/api/User";
@@ -104,6 +137,13 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(Guid ID)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             await FetchInfoPlsPlsPlsPls();
             string URL = $@"https://localhost:7187/api/User/{ID}";
             var Response = await Client.GetFromJsonAsync<UserDTO>(URL);
@@ -116,6 +156,13 @@ namespace Application.MVC.Controllers
         // POST: UserController/Edit/5
         public async Task<ActionResult> Edit(Guid ID, UserDTO NewInput, IFormFile? NewProfilePic)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string URL = $@"https://localhost:7187/api/User/{ID}";
@@ -181,6 +228,13 @@ namespace Application.MVC.Controllers
         // POST: UserController/Delete/5
         public async Task<ActionResult> Delete(Guid ID)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string URL = $@"https://localhost:7187/api/User/{ID}";

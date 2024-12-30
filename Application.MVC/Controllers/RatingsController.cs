@@ -1,18 +1,27 @@
 ﻿using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class RatingsController : Controller
     {
         HttpClient client = new HttpClient();
+        private readonly HttpClient _httpClient;
         public RatingsController()
         {
-            client = new HttpClient();
+            _httpClient = new HttpClient();
         }
         public ActionResult Index()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = "https://localhost:7187/api/Ratings";
             var response = client.GetStringAsync(requestURL).Result;
             var Ratings = JsonConvert.DeserializeObject<List<Rating>>(response);
@@ -21,6 +30,13 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = $"https://localhost:7187/api/Ratings/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var Ratings = JsonConvert.DeserializeObject<Rating>(response);
@@ -28,6 +44,13 @@ namespace Application.MVC.Controllers
         }
         public async Task<IActionResult> Create()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
@@ -50,12 +73,26 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Rating Rating)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = "https://localhost:7187/api/Ratings/create";
             var response = await client.PostAsJsonAsync(requestURL, Rating);
             return RedirectToAction("Index");
         }
         public ActionResult Update(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = $"https://localhost:7187/api/Ratings/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             Rating Ratings = JsonConvert.DeserializeObject<Rating>(response);
@@ -66,12 +103,26 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, Rating Rating)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = $@"https://localhost:7187/api/Ratings/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, Rating);
             return RedirectToAction("Index");
         }
         public ActionResult Delete(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = $"https://localhost:7187/api/Ratings/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");

@@ -4,18 +4,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class ProductController : Controller
     {
         HttpClient client;
+        private readonly HttpClient _client;
         public ProductController()
         {
-            client = new HttpClient();
+            _client = new HttpClient();
         }
         public async Task<ActionResult> Index(int page = 1, int pageSize = 15)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = "https://localhost:7187/api/Product";
             var response = await client.GetFromJsonAsync<List<Product>>(requestURL);
 
@@ -47,6 +55,12 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $"https://localhost:7187/api/Product/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<Product>(response);
@@ -61,6 +75,12 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductDTO product, IFormFile? Image)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $"https://localhost:7187/api/Product";
 
             MultipartFormDataContent Contents = new()
@@ -92,6 +112,12 @@ namespace Application.MVC.Controllers
 
         public async Task<ActionResult> Edit(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string productRequestURL = $"https://localhost:7187/api/Product/{id}";
             var productResponse = await client.GetStringAsync(productRequestURL);
 
@@ -111,6 +137,12 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Guid ID, ProductDTO product, IFormFile? Image)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             if (product == null)
             {
                 return BadRequest("Invalid product data.");
@@ -148,6 +180,12 @@ namespace Application.MVC.Controllers
 
         public async Task<ActionResult> Delete(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
             {
                 string requestURL = $"https://localhost:7187/api/Product/{id}";

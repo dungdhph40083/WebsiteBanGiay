@@ -3,6 +3,7 @@ using Application.Data.Enums;
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -11,6 +12,7 @@ namespace Application.API.Controllers
 {
     [Route("api/[CoNtRoLlEr]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
@@ -27,6 +29,8 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> GetAllOrders()
         public async Task<IActionResult> GetAllOrders(string? Filter)
         {
             var orders = new List<Order>();
@@ -47,6 +51,7 @@ namespace Application.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> GetOrderById(Guid id)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
@@ -55,6 +60,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderDto orderDto)
         {
             var createdOrder = await _orderRepository.CreateOrderAsync(orderDto);
@@ -71,6 +77,9 @@ namespace Application.API.Controllers
 
         [HttpPatch("{id}")]
         public async Task<ActionResult<Order>> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
+        [HttpPut("{id}")]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
         {
             var updatedOrder = await _orderRepository.UpdateOrderAsync(id, orderDto);
             if (updatedOrder == null)
@@ -143,6 +152,7 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> DeleteOrder(Guid id)
         {
             await OrderDetailsRepository.DeleteOrderDetailsFromOrderID(id);

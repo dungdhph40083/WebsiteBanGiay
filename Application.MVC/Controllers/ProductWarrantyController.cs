@@ -5,18 +5,28 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace Application.MVC.Controllers
 {
     public class ProductWarrantyController : Controller
     {
         HttpClient client = new HttpClient();
+        private readonly HttpClient _httpClient;
         public ProductWarrantyController()
         {
-            client = new HttpClient();
+            _httpClient = new HttpClient();
         }
         public ActionResult Index()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = "https://localhost:7187/api/ProductWarranty";
             var response = client.GetStringAsync(requestURL).Result;
             var ProductWarrantys = JsonConvert.DeserializeObject<List<ProductWarranty>>(response);
@@ -25,6 +35,13 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = $"https://localhost:7187/api/ProductWarranty/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var ProductWarrantys = JsonConvert.DeserializeObject<ProductWarranty>(response);
@@ -32,6 +49,13 @@ namespace Application.MVC.Controllers
         }
         public async Task<IActionResult> Create()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 // Lấy danh sách sản phẩm từ API
@@ -59,6 +83,13 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductWarranty productWarranty)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 // Gán lại giá trị CreatedAt và UpdatedAt để đảm bảo ngày giờ chính xác
@@ -94,6 +125,13 @@ namespace Application.MVC.Controllers
 
         public async Task<IActionResult> Update(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string requestURL = $"https://localhost:7187/api/ProductWarranty/{id}";
@@ -122,6 +160,13 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, ProductWarranty ProductWarranty)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 // Giữ nguyên CreatedAt, chỉ cập nhật UpdatedAt
@@ -163,6 +208,13 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Delete(Guid id)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string requestURL = $"https://localhost:7187/api/ProductWarranty/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");

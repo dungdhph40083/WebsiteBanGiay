@@ -1,7 +1,14 @@
 ﻿using Application.Data.ModelContexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient("DefaultClient", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7187/swagger/index.html");
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+});
 
 // Cấu hình DbContext
 builder.Services.AddDbContext<GiayDBContext>(options =>
@@ -16,6 +23,8 @@ builder.Services.AddMvc().AddMvcOptions(o => o.AllowEmptyInputInBodyModelBinding
 builder.Services.AddSession(Options =>
 {
     Options.IdleTimeout = TimeSpan.FromMinutes(14);
+    Options.Cookie.HttpOnly = true;
+    Options.Cookie.IsEssential = true;
 });
 
 // Đăng ký HttpClient

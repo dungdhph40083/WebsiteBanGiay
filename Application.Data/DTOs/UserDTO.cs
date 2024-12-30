@@ -31,6 +31,16 @@ namespace Application.Data.DTOs
         [Required(ErrorMessage = "Không khớp.")]
         public byte? Status { get; set; }
 
+
+
+
+
+
+
+
+
+
+
         /*
          * I don't know why I'm constantly getting déjà vu from just looking at this code
          * Or when doing something else...

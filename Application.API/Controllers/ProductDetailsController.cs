@@ -10,11 +10,13 @@ using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
 using Application.Data.DTOs;
 using Application.Data.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductDetailsController : ControllerBase
     {
         private readonly IProductDetail ProductDetailRepo;
@@ -26,18 +28,22 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<ProductDetail>>> Get()
         {
             return await ProductDetailRepo.GetProductDetails();
         }
 
         [HttpGet("{ID}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ProductDetail?>> Get(Guid ID)
         {
             return await ProductDetailRepo.GetProductDetailByID(ID);
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ProductDetail>> Post([FromForm] ProductDetailDTO NewProductDetail, IFormFile? Image)
         public async Task<ActionResult<ProductDetail>> Post([FromForm] ProductDetailDTO NewProductDetail)
         {
             var Response = await ProductDetailRepo.CreateNew(NewProductDetail);
@@ -47,10 +53,31 @@ namespace Application.API.Controllers
         [HttpPut("{ID}")]
         public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromForm] ProductDetailDTO UpdatedProductDetail)
         {
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromForm] ProductDetailDTO UpdatedProductDetail, IFormFile? Image)
+        {
+            if (Image != null)
+            {
+                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(Image, 4_194_304))
+                {
+                    case ErrorResult.IMAGE_TOO_BIG_ERROR:
+                        return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!");
+                    case ErrorResult.IMAGE_IS_BROKEN_ERROR:
+                    default:
+                        return BadRequest("Tệp ảnh không hợp lệ!");
+                    case SuccessResult.IMAGE_OK:
+                        {
+                            var CreatedImage = await ImageRepository.CreateImageAsync(Image);
+                            UpdatedProductDetail.ImageID = CreatedImage.ImageID;
+                        }
+                        break;
+                }
+            }
             return await ProductDetailRepo.UpdateExisting(ID, UpdatedProductDetail);
         }
 
         [HttpDelete("{ID}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await ProductDetailRepo.DeleteExisting(ID);

@@ -1,0 +1,87 @@
+﻿@model Application.Data.DTOs.UserDTO
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Edit My Profile</h1>
+
+    <form asp-action="Edit" method="post" class="card shadow-sm p-4" enctype="multipart/form-data">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="Username" class="font-weight-bold">Username:</label>
+            </div>
+            <div class="col-md-8">
+                <input asp-for="Username" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="FirstName" class="font-weight-bold">First Name:</label>
+            </div>
+            <div class="col-md-8">
+                <input asp-for="FirstName" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="LastName" class="font-weight-bold">Last Name:</label>
+            </div>
+            <div class="col-md-8">
+                <input asp-for="LastName" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="Email" class="font-weight-bold">Email:</label>
+            </div>
+            <div class="col-md-8">
+                <input asp-for="Email" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="PhoneNumber" class="font-weight-bold">Phone Number:</label>
+            </div>
+            <div class="col-md-8">
+                <input asp-for="PhoneNumber" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="Address" class="font-weight-bold">Address:</label>
+            </div>
+            <div class="col-md-8">
+                <textarea asp-for="Address" class="form-control" required></textarea>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="Status" class="font-weight-bold" required>Status:</label>
+            </div>
+            <div class="col-md-8">
+                <select asp-for="Status" class="form-control">
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Ảnh bìa</label>
+                <input type="file" name="ProfilePicture" class="form-control-file" accept="image/png, image/jpeg" aria-label="Upload picture" />
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <a href="/Profile" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

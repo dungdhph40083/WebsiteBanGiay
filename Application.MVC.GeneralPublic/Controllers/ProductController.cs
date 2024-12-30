@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -16,6 +17,18 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Index(int page = 1, string priceRange = "all", string sortOrder = "default")
         {
+            _client = new HttpClient();
+        }
+       
+        public async Task<ActionResult> Index(int page = 1, string priceRange = "all")
+        {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var products = await _client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             // Lấy danh sách sản phẩm từ API
             var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             ViewBag.Orders = products ?? new List<Product>();
@@ -90,7 +103,13 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Details(Guid ID)
         {
-            var productss = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
+            }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var productss = await _client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             ViewBag.Products = productss ?? new List<Product>();
 
             var sizes = await client.GetFromJsonAsync<List<Size>>("https://localhost:7187/api/Size");

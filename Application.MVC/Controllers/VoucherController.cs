@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
@@ -13,10 +14,21 @@ namespace Application.MVC.Controllers
     {
         HttpClient Client = new HttpClient();
         // GET: VoucherController
-
+        private readonly HttpClient _httpClient;
+        public VoucherController()
+        {
+            _httpClient = new HttpClient();
+        }
         [HttpGet]
         public async Task<ActionResult> Index()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string URL = $@"https://localhost:7187/api/Voucher";
             var Response = await Client.GetFromJsonAsync<List<Voucher>>(URL);
             return View(Response);
@@ -26,6 +38,13 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Details(Guid ID)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             string URL = $@"https://localhost:7187/api/Voucher/{ID}";
             var Response = await Client.GetFromJsonAsync<Voucher>(URL);
             return View(Response);
@@ -35,6 +54,13 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Create()
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             await FetchInfoPlsPlsPlsPls();
             return View();
         }
@@ -66,6 +92,13 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(VoucherDTO Input)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string URL = $@"https://localhost:7187/api/Voucher";
@@ -86,6 +119,13 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(Guid ID)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             await FetchInfoPlsPlsPlsPls();
             string URL = $@"https://localhost:7187/api/Voucher/{ID}";
             var Response = await Client.GetFromJsonAsync<VoucherDTO>(URL);
@@ -98,6 +138,13 @@ namespace Application.MVC.Controllers
         // POST: VoucherController/Edit/5
         public async Task<ActionResult> Edit(Guid ID, VoucherDTO NewInput)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string URL = $@"https://localhost:7187/api/Voucher/{ID}";
@@ -117,6 +164,13 @@ namespace Application.MVC.Controllers
         // POST: VoucherController/Delete/5
         public async Task<ActionResult> Delete(Guid ID)
         {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("Bạn không có quyền vào trang này");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
                 string URL = $@"https://localhost:7187/api/Voucher/{ID}";

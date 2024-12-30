@@ -25,4 +25,5 @@ namespace Application.Data.Models
         public virtual Image? Image { get; set; }
         public virtual Role? Role { get; set; }
 	}
+
 }

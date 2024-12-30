@@ -4,6 +4,7 @@ using Application.Data.Enums;
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProduct _productRepository;
@@ -27,18 +29,21 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<IEnumerable<Product?>>> GetProducts()
         {
             return await _productRepository.GetAll();
         }
         
         [HttpGet("{id}")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<Product?>> GetProduct(Guid id)
         {
             return await _productRepository.GetById(id);
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO product, IFormFile? Image)
         {
             if (Image != null)
@@ -64,6 +69,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Product?>> PutProduct(Guid id, [FromForm] ProductDTO product, IFormFile? Image)
         {
             // Update product information in the database
@@ -90,6 +96,7 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult>? DeleteProduct(Guid id)
         {
             var CheckForRelations = await ProductDetailRepo.GetProductDetailByProductID(id);
