@@ -38,6 +38,20 @@ namespace Application.MVC.Controllers
             return View();
         }
 
+        public async Task<ActionResult> Invoice(Guid ID)
+        {
+            string URL_Order = $@"https://localhost:7187/api/Orders/{ID}";
+            string URL_OList = $@"https://localhost:7187/api/OrderDetails/Order/{ID}";
+
+            var Infos = await Client.GetFromJsonAsync<Order>(URL_Order);
+            var Items = await Client.GetFromJsonAsync<List<OrderDetail>>(URL_OList);
+
+            ViewBag.AlwaysTired = Infos ?? new Order();
+            ViewBag.Grrrrrrrrrr = Items ?? new List<OrderDetail>();
+
+            return View();
+        }
+
         public async Task FetchInfoPlsPlsPlsPls()
         {
             string URL_Users = "https://localhost:7187/api/Users";

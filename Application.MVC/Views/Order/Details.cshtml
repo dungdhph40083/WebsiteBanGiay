@@ -241,6 +241,6 @@
             @((Infos?.GrandTotal + (Items.Count() - 1) * 1000).GetValueOrDefault().ToString("#,##0"))
         </dd>
         <dt></dt>
-        <dd><a asp-action="" class="btn btn-primary">In hóa đơn</a></dd>
+        <dd><a asp-action="Invoice" asp-route-ID="@Infos?.OrderID" class="btn btn-primary">In hóa đơn</a></dd>
     </dl>
 </div>

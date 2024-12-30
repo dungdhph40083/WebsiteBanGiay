@@ -26,7 +26,7 @@
     /*
      *  TODO:
      *  
-     *  1: xác nhận khách hàng đặt hàng thành công = thêm nút in hóa đơn
+     *  1: xác nhận khách hàng đặt hàng thành công = thêm nút in hóa đơn -- DONEEEEEEEEE
      *  -- nút hóa đơn sẽ gửi sang view truyền dữ liệu xong rồi cho phép "IN" sau khi đã rà soát lại thông tin kỹ càng
      *  -- ctrl + P
      *  

@@ -1,0 +1,156 @@
+﻿@using System.Text.RegularExpressions
+@using Application.Data.Enums
+@model Application.Data.Models.Order
+
+@{
+    ViewData["Title"] = "Thông tin đơn hàng";
+
+    var Infos = ViewBag.AlwaysTired as Application.Data.Models.Order ?? new Application.Data.Models.Order();
+    var Items = ViewBag.Grrrrrrrrrr as List<Application.Data.Models.OrderDetail> ?? new List<Application.Data.Models.OrderDetail>();
+}
+
+<button class="btn btn-primary" onclick="GoPrint()">In hóa đơn</button>
+<hr />
+<div id="PrintView" class="container-fluid">
+    <div class=" pt-5 pb-3 pl-4 pr-4">
+    <div class="row">
+        <div class="col-sm-4 text-center">
+            <div class="font-to-barcode">
+                @Infos.OrderNumber
+            </div>
+            <div class="font-monospace-cascadia">
+                @Infos.OrderNumber
+            </div>
+        </div>
+        <div class="col-sm-4 text-center">
+            <b style="font-size: large">HÓA ĐƠN BÁN HÀNG</b>
+        </div>
+        <div class="col-sm-4 text-right">
+            <b style="color: red">Cửa hàng Giày Adidas</b>
+            <p>Địa chỉ: Số 11 Trịnh Văn Bô, ....., Hà Nội</p>
+        </div>
+    </div>
+    <hr />
+        <h1 class="text-center"><b>THÔNG TIN HÓA ĐƠN</b></h1>
+    <div class="row">
+        <div class="col-sm-6 text-left"><b>Khách hàng</b>: </div>
+        <div class="col-sm-6 text-right">@Infos.LastName @Infos.FirstName</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 text-left"><b>Địa chỉ</b>: </div>
+        <div class="col-sm-6 text-right">@Infos.ShippingAddress</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 text-left"><b>Ngày mua</b>: </div>
+        <div class="col-sm-6 text-right">@Infos.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</div>
+    </div>
+    <br />
+        <h4><b>DANH SÁCH SẢN PHẨM KHÁCH HÀNG MUA</b></h4>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Tổng giá</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int Idx = 0; Idx < Items.Count(); Idx++)
+            {
+                <tr>
+                    <td>@(Idx + 1)</td>
+                    <td>@Items[Idx].ProductDetail?.Product?.Name <text>[(Kích cỡ)]</text></td>
+                    <td>@Items[Idx].Quantity.GetValueOrDefault().ToString("#,##0")</td>
+                    <td>@Items[Idx].Price.GetValueOrDefault().ToString("#,##0")</td>
+                    <td>@((Items[Idx].Price.GetValueOrDefault() * Items[Idx].Quantity.GetValueOrDefault()).ToString("#,##0"))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div class="row">
+        <div class="col-sm-6 text-left"><b>Giảm giá</b>: </div>
+        <div class="col-sm-6 text-right">@(0)</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 text-left"><b>Phí vận chuyển</b>: </div>
+        <div class="col-sm-6 text-right">@((Items.Count() > 1 ? ((Items.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí"))</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 text-left"><b>Tổng tiền phải thanh toán</b>: </div>
+        <div class="col-sm-6 text-right">@((Infos?.GrandTotal + (Items.Count() - 1) * 1000).GetValueOrDefault().ToString("#,##0"))</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 text-left"><b>Trạng thái đơn</b>: </div>
+        <div class="col-sm-6 text-right">
+            @switch ((OrderStatus)Infos!.Status)
+            {
+                case OrderStatus.Canceled:
+                    <text>Bị hủy</text>
+                    break;
+                case OrderStatus.Refunding:
+                    <text>Yêu cầu hoàn trả</text>
+                    break;
+                case OrderStatus.RefundingAgain:
+                    <text>Yêu cầu hoàn trả (lần nữa)</text>
+                    break;
+                case OrderStatus.RefundProcessed:
+                    <text>Chấp nhận hoàn trả</text>
+                    break;
+                case OrderStatus.RefundDelivered:
+                    <text>Đang đến hoàn trả</text>
+                    break;
+                case OrderStatus.Refunded:
+                    <text>Đã hoàn trả</text>
+                    break;
+                case OrderStatus.Created:
+                    <text>Chờ xác nhận</text>
+                    break;
+                case OrderStatus.Processed:
+                    <text>Đã xác nhận đơn</text>
+                    break;
+                case OrderStatus.Delivered:
+                    <text>Đang vận chuyển</text>
+                    break;
+                case OrderStatus.Arrived:
+                    <text>Đã đến nơi</text>
+                    break;
+                case OrderStatus.Received:
+                case OrderStatus.ReceivedAgain:
+                    <text>Đã nhận hàng</text>
+                    break;
+                case OrderStatus.ReceivedCompleted:
+                    <text>Đã nhận hàng thành công</text>
+                    break;
+                default:
+                    <text>N/A</text>
+                    break;
+            }
+        </div>
+    </div>
+    <br /><br />
+    <div class="text-center">
+        <i>Cảm ơn bạn vì đã mua hàng tại Cửa hàng Giày Adidas của chúng mình! <text><3</text></i>
+    </div>
+        <div class="text-center font-monospace-cascadia">
+            <i style="font-size:x-small">ID: @Infos.OrderID</i>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function GoPrint() {
+        var PrintContent = document.getElementById("PrintView");
+        var WinPrint = window.open('', '', 'left=0,top=0,width=800,height=600,toolbar=0,scrollbars=0,status=0');
+        WinPrint.document.write('<link rel="stylesheet" href="../../vendor/bootstrap/css/bootstrap.min.css">');
+        WinPrint.document.write('<link rel="stylesheet" href="../../css/style.css">');
+        WinPrint.document.write(PrintContent.innerHTML);
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        WinPrint.close();
+    }
+</script>
