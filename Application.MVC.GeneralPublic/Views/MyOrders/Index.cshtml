@@ -44,14 +44,11 @@
                                                 case OrderStatus.Refunding:
                                                     <p>Yêu cầu hoàn trả</p>
                                                     break;
-                                                case OrderStatus.RefundingAgain:
-                                                    <p>Yêu cầu hoàn trả (lần nữa)</p>
-                                                    break;
                                                 case OrderStatus.RefundProcessed:
                                                     <p>Chấp nhận hoàn trả</p>
                                                     break;
                                                 case OrderStatus.RefundDelivered:
-                                                    <p>Đang đến hoàn trả</p>
+                                                    <p>Đơn vị đang đến nhận hàng hoàn trả</p>
                                                     break;
                                                 case OrderStatus.Refunded:
                                                     <p>Đã hoàn trả</p>
@@ -74,6 +71,9 @@
                                                     break;
                                                 case OrderStatus.ReceivedCompleted:
                                                     <p>Đã nhận hàng thành công</p>
+                                                    break;
+                                                case OrderStatus.ReceivedRefundFail:
+                                                    <p>Đã nhận hàng, hoàn trả không thành công</p>
                                                     break;
                                                 default:
                                                     <p>N/A</p>

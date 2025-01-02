@@ -14,12 +14,15 @@ namespace Application.MVC.Controllers
         public async Task<ActionResult> Index(string? Filter)
         {
             string URL;
+            string URL_Badge = "https://localhost:7187/api/Orders/Count";
             if (Filter == null) URL = "https://localhost:7187/api/Orders";
             else URL = $@"https://localhost:7187/api/Orders?Filter={Filter}";
 
             var Response = await Client.GetFromJsonAsync<List<Order>>(URL);
+            var BadgeData = await Client.GetFromJsonAsync<CategorizedOrdersCountModel>(URL_Badge);
 
             ViewData["FilterValue"] = Filter;
+            ViewBag.BadgeData = BadgeData ?? new();
 
             return View(Response);
         }

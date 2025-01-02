@@ -27,7 +27,6 @@
                                             <th>Giá tiền</th>
                                             <th>Số lượng</th>
                                             <th>Tổng cộng</th>
-                                            <th>Mã Voucher</th>
                                             <th>Gỡ sản phẩm</th>
                                         </tr>
                                     </thead>
@@ -81,12 +80,7 @@
                                                     {
                                                         @Model[Idx]?.Price.GetValueOrDefault().ToString("#,##0")
                                                     } *@
-                                                </td>
-                                                <td class="align-middle">
-                                                    <input class="form-control" type="text" name="VoucherCode" onkeyup="Notify()" placeholder="Mã Voucher" value="@(Model[Idx].VoucherID != null ? Model[Idx].Voucher?.VoucherCode : null)" style="text-transform: UPPERCASE">
-                                                    <div class="input-group-prepend pl-2">
-                                                        <button class="btn btn-primary" type="submit">Dùng</button>
-                                                    </div>
+                                                    @Model[Idx]?.Price.GetValueOrDefault().ToString("#,##0")
                                                 </td>
                                                 <td class="align-middle"><button class="btn btn-danger delete_trigger" type="button" onclick="GetCartItemDataToDie('@(Model[Idx]?.ProductDetailID.ToString())')" data-toggle="modal" data-target="#ModalDelete"><i class="fa fa-trash"></i> Bỏ</button></td>
                                             </tr>
@@ -108,6 +102,11 @@
                                 <div class="cart-summary">
                                     <div class="cart-content">
                                         <h2>Tổng kết</h2>
+                                        @* <div class="input-group-prepend">
+                                            <input class="form-control mr-3" type="text" name="VoucherCode" onkeyup="Notify()" placeholder="Mã Voucher" style="text-transform: UPPERCASE">
+                                            <button class="btn btn-primary" type="submit">Dùng</button>
+                                        </div>
+                                        <hr /> *@
                                         <div class="row">
                                             <b class="col-md-5">Chi phí hàng hóa</b>
                                             <p class="col-md-7 text-right" id="PriceTotalSidebar">@((Model.Sum(x => x.Price)).GetValueOrDefault().ToString("#,##0"))</p>
@@ -117,7 +116,7 @@
                                         <hr />
                                         <div class="row">
                                             <h4 class="col-md-5">Tổng giá</h4>
-                                            <p class="col-md-7 text-right" id="GrandTotalSidebar">@((Model.Sum(x => x.Price) + (Model.Count() - 1) * 1000).GetValueOrDefault().ToString("#,##0"))</p>
+                                            <p class="col-md-7 text-right" id="GrandTotalSidebar">@(((Model.Sum(x => x.Price) + (Model.Count() > 0 ? ((Model.Count() - 1) * 1000) : 0)).GetValueOrDefault().ToString("#,##0")))</p>
                                         </div>
                                     </div>
                                     <p id="WARNING_WARNING_ALARM"></p>

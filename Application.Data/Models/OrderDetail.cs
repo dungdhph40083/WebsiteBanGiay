@@ -11,10 +11,6 @@ namespace Application.Data.Models
         public Guid? OrderID { get; set; }
         [ForeignKey(nameof(ProductDetail))]
         public Guid? ProductDetailID { get; set; }
-        [ForeignKey(nameof(ShippingMethod))]
-        public Guid? ShippingMethodID { get; set; }
-        [ForeignKey(nameof(Voucher))]
-        public Guid? VoucherID { get; set; }
         [ForeignKey(nameof(Sale))]
         public Guid? SaleID { get; set; }
         public int? Quantity { get; set; }
@@ -24,9 +20,7 @@ namespace Application.Data.Models
         public long? SumTotalPrice { get; set; }
         public DateTime? CreatedAt { get; set; }
         public virtual ProductDetail? ProductDetail { get; set; }
-        public virtual ShippingMethod? ShippingMethod { get; set; }
         public virtual Order? Order { get; set; }
         public virtual Sale? Sale { get; set; }
-        public virtual Voucher? Voucher { get; set; }
     }
 }

@@ -28,8 +28,7 @@
                 <tr>
                     <td><i class="font-monospace-cascadia">@Entry.VoucherCode</i></td>
                     <td>@(Entry.Category?.CategoryName ?? "Không có")</td>
-                    <td>@(Entry.Product?.Name ?? "Không có")</td>
-                    <td>@(Entry.DiscountPrice <= 0 ? "Không!đ" : $"-{Entry.DiscountPrice:#,##0}")</td>
+                    <td>@(Entry.DiscountPercent <= 0 ? "Không!%" : $"{Entry.DiscountPercent}%")</td>
                     <td>@(Entry.UsesLeft.GetValueOrDefault().ToString("#,##0"))</td>
                     <td>@(Entry.StartingAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss"))</td>
                     <td>

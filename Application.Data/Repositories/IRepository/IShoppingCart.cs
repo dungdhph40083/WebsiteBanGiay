@@ -12,8 +12,7 @@ namespace Application.Data.Repositories.IRepository
         Task<ShoppingCart> CreateNew(ShoppingCartDTO NewShoppingCart);
         Task<ShoppingCart?> Update(Guid TargetID, ShoppingCartDTO UpdatedShoppingCart);
         Task<ShoppingCart?> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity, bool? AdditionMode);
-        Task<ShoppingCart?> ApplyVoucher(Guid UserID, Guid ProductDetailID, string? VoucherCode);
-        Task<ShoppingCart?> UnapplyVoucher(Guid UserID, Guid ProductDetailID);
+        Task<string> ApplyVoucher(Guid UserID, string? VoucherCode);
         Task Delete(Guid TargetID);
         Task DeleteAllFromUserID(Guid TargetID);
     }

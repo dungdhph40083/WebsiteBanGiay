@@ -2,50 +2,37 @@
 {
     public enum OrderStatus
     {
-        Canceled = 0,           // Hủy đơn
-
-        Refunding = 1,          // Đã yêu cầu hoàn lại đơn
-        RefundingAgain = 2,     // Đã yêu cầu hoàn lại đơn lần 2+
-        RefundProcessed = 3,    // Đã chấp nhận hoàn đơn
-        RefundDelivered = 4,    // Đã giao hoàn đơn cho ĐV VC
-        Refunded = 5,           // Đã nhận & hoàn lại đơn
-
-        DeliveryFailure = 6,    // Giao hàng thất bại (hủy tạm thời)
-        DeliveryIsDead = 66,    // Giao hàng thất bại (CHẾT HẲN)
-
-        Created = 100,          // Đã tạo đơn
-        Processed = 101,        // Đã xác nhận đơn
-        Delivered = 102,        // Đã giao đơn cho ĐV vận chuyển
-        Arrived = 103,          // Đơn hàng đã đến
-
-        Received = 200,         // Đã nhận hàng
-        ReceivedAgain = 201,    // Đã nhận hàng lại lần 2+
-        ReceivedCompleted = 202 // Đã nhận hàng (ko đổi trả được nữa) - thay thế CantRefund
+        Canceled = 0,              // Hủy đơn
+                                   
+        Refunding = 1,             // Đã yêu cầu hoàn lại đơn
+        RefundProcessed = 2,       // Đã chấp nhận hoàn đơn
+        RefundDelivered = 3,       // Đã giao hoàn đơn cho ĐV VC
+        RefundReceived = 4,        // Đã lấy hàng thành công & đang chuyển về
+        Refunded = 5,              // Đã nhận & hoàn lại đơn
+                                   
+        DeliveryFailure = 6,       // Giao hàng thất bại (hủy tạm thời)
+        DeliveryIsDead = 66,       // Giao hàng thất bại (CHẾT HẲN)
+                                   
+        Created = 100,             // Đã tạo đơn
+        Processed = 101,           // Đã xác nhận đơn
+        Delivered = 102,           // Đã giao đơn cho ĐV vận chuyển
+        Arrived = 103,             // Đơn hàng đã đến
+                                   
+        Received = 200,            // Đã nhận hàng
+        ReceivedAgain = 201,       // Đã nhận hàng lại lần 2+
+        ReceivedCompleted = 202,   // Đã nhận hàng (ko đổi trả được nữa) - thay thế CantRefund
+        ReceivedRefundFail = 203   // Đã nhận hàng nhưng hoàn trả thất bại
     }
 
     /*
      *  TODO:
-     *  
-     *  1: xác nhận khách hàng đặt hàng thành công = thêm nút in hóa đơn -- DONEEEEEEEEE
-     *  -- nút hóa đơn sẽ gửi sang view truyền dữ liệu xong rồi cho phép "IN" sau khi đã rà soát lại thông tin kỹ càng
-     *  -- ctrl + P
-     *  
-     *  2: thêm nút giao hàng thất bại
-     *  -- khi đang đc giao đến khách: có nút giao hàng thất bại (nếu giao hàng ko thành = bấm nút)
-     *  -- bấm nút = chưa giao được
-     *  
-     *  -- chưa giao được hàng là quay lại về nút: đang giao tới khách (quay về)
-     *  -- có thể lặp đi lặp lại cho đến khi đến 3 lần = hủy
-     *  
-     *  -- lần 1 & 2 hiện nút thành công & thử lại, lần 3 là hiện 2 nút thành công & THẤT BẠI
-     *  
-     *  -- sau khi THẤT BẠI: đơn hàng đang được chuyển về shop
-     *  3: bộ lọc cho các trạng thái: chờ xác nhận, đang giao hàng, giao hàng thành công/thất bại/chưa giao được = dùng nút -- DONE
-     *  4: tìm kiếm mã đơn hàng = txtbox -- DONE
-     *  5: bỏ nút "để chờ" -- DONE
-     *  6: trang "theo dõi đơn hàng" chuyển thành "đơn hoàn trả" -- DONE
-     *  7: đơn hàng đến nơi = trừ số lượng, nếu sau đó hoàn lại = cộng số lượng -- DONE
-     *  
+     *  1: voucher là dùng tất cho 1 đơn -- DONE
+     *  2: sửa icon tăng giảm số lượng sp khi thêm vào giỏ
+     *  3: đẩy các đơn bị hoàn trả sang trang hoàn trả -- DONE
+     *  4: quy trình trả: xnhận đơn hoàn => đã liên hệ đvvc đến lấy hàng => đã lấy hàng thành công => đang chuyển hàng về => hoàn hàng thành công -- DONE
+     *  5: hiện số trên bộ lọc trạng thái (HINT: <span class="badge badge-light"> xxx </span>) -- DONE
+     *  6: voucher áp dụng vào sẽ trừ % tổng giá trị đơn (có yêu cầu giá đơn tối thiểu để dùng voucher) -- DONE
+     *  7: ghép nhánh JWT (LÂU)
      */
 
     public class OrderFilters

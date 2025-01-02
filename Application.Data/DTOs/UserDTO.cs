@@ -9,6 +9,10 @@ namespace Application.Data.DTOs
     {
         public Guid? RoleID { get; set; }
         public Guid? ImageID { get; set; }
+
+        // hide this when adding new entries!!!!!!!!!!!!!!!!!!!!!!!!
+        public Guid? VoucherID { get; set; } 
+
         [MinLength(3, ErrorMessage = "Tên người dùng quá ngắn!")]
         [MaxLength(30, ErrorMessage = "Tên người dùng quá dài!")]
         [Required(ErrorMessage = "Bắt buộc.")]

@@ -12,6 +12,8 @@ namespace Application.Data.Models
 		public Guid? UserID { get; set; }
         [ForeignKey(nameof(PaymentMethod))]
         public Guid? PaymentMethodID { get; set; }
+        [ForeignKey(nameof(Voucher))]
+        public Guid? VoucherID { get; set; }
         public DateTime? OrderDate { get; set; }
         public byte AttemptsLeft { get; set; }
 		public byte Status { get; set; }
@@ -25,13 +27,15 @@ namespace Application.Data.Models
         [Length(0, 30)]
         public string? PhoneNumber { get; set; }
         public string? ShippingAddress { get; set; }
+		public long? RawTotal { get; set; }
+		public long? DiscountValue { get; set; }
 		public long? GrandTotal { get; set; }
         public DateTime? AcceptStart { get; set; }
         public DateTime? AcceptEnd { get; set; }
         public DateTime? RefundStart { get; set; }
         public DateTime? RefundEnd { get; set; }
-        public string? RefundReason { get; set; }
         public virtual User? User { get; set; }
+        public virtual Voucher? Voucher { get; set; }
 		public virtual PaymentMethod? PaymentMethod { get; set; }
 	}
 }

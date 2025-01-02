@@ -6,6 +6,7 @@ using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace Application.API.Controllers
 {
@@ -37,6 +38,20 @@ namespace Application.API.Controllers
             if (orders == null) return NoContent();
 
             return Ok(orders);
+        }
+
+        [HttpGet("Count")]
+        public async Task<IActionResult> GetOrderCounts()
+        {
+            CategorizedOrdersCountModel Model = new()
+            {
+                PendingOrders = (await _orderRepository.GetOrdersByFilter(OrderFilters.ORDERS_PENDING)).Count,
+                OngoingOrders = (await _orderRepository.GetOrdersByFilter(OrderFilters.ORDERS_ONGOING)).Count,
+                SucceededOrders = (await _orderRepository.GetOrdersByFilter(OrderFilters.ORDERS_SUCCEEDED)).Count,
+                FailedOrders = (await _orderRepository.GetOrdersByFilter(OrderFilters.ORDERS_FAILED)).Count
+            };
+
+            return Ok(Model);
         }
 
         [HttpGet("User/{ID}")]
@@ -94,7 +109,6 @@ namespace Application.API.Controllers
                     case OrderStatus.Canceled:
                         return BadRequest("Không thể hủy đơn khi đã hủy đơn, đã đổi trả, đơn đang giao hoặc đã hoàn thành đơn!");
                     case OrderStatus.Refunding:
-                    case OrderStatus.RefundingAgain:
                         return BadRequest("Không thể hoàn trả đơn vì đã quá hạn, hoặc đơn này đã không được cho phép hoàn trả nữa!");
                     default:
                         return NotFound();

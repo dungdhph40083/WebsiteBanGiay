@@ -65,25 +65,15 @@ namespace Application.API.Controllers
             else return NoContent();
         }
 
-        [HttpPatch("ApplyVoucher/{UserID}/{ProductDetailID}")]
-        public async Task<ActionResult<ShoppingCart?>> ApplyVoucher(Guid UserID, Guid ProductDetailID, string VoucherCode)
+        [HttpPatch("ApplyVoucher/{UserID}")]
+        public async Task<ActionResult<string>> ApplyVoucher(Guid UserID, string VoucherCode)
         {
-            var Validator = await VoucherRepo.VoucherValidator(VoucherCode);
-            if (Validator == ValidateErrorResult.VOUCHER_VALID)
+            var Response = await ShoppingCartRepo.ApplyVoucher(UserID, VoucherCode);
+            if (Response == SuccessResult.VOUCHER_APPLIANCE_SUCCESS || Response == SuccessResult.VOUCHER_DISCARDED_SUCCESS)
             {
-                var Response = await ShoppingCartRepo.ApplyVoucher(UserID, ProductDetailID, VoucherCode);
-                if (Response != null) return Response;
-                else return NoContent();
+                return Ok(Response);
             }
-            return ValidationProblem(Validator);
-        }
-
-        [HttpPatch("UnapplyVoucher/{UserID}/{ProductDetailID}")]
-        public async Task<ActionResult<ShoppingCart?>> UnapplyVoucher(Guid UserID, Guid ProductDetailID)
-        {
-            var Response = await ShoppingCartRepo.UnapplyVoucher(UserID, ProductDetailID);
-            if (Response != null) return Response;
-            else return NoContent();
+            else return ValidationProblem(Response);
         }
     }
 }

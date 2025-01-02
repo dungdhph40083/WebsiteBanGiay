@@ -50,7 +50,6 @@ namespace Application.Data.Repositories
         {
             var Target = await Context.Vouchers
                 .Include(UU => UU.Category)
-                .Include(UU => UU.Product)
                 .SingleOrDefaultAsync(x => x.VoucherID == TargetID);
             return Target;
         }
@@ -59,7 +58,6 @@ namespace Application.Data.Repositories
         {
             return Context.Vouchers
                 .Include(UU => UU.Category)
-                .Include(UU => UU.Product)
                 .ToListAsync();
         }
 
@@ -110,7 +108,6 @@ namespace Application.Data.Repositories
         {
             var Target = await Context.Vouchers
                 .Include(UU => UU.Category)
-                .Include(UU => UU.Product)
                 .SingleOrDefaultAsync(x => x.VoucherCode == VoucherCode);
             return Target;
         }

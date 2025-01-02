@@ -38,6 +38,7 @@ namespace Application.Data.Repositories
                 OrderNumber = OrderNumber, // no shit sherlock
                 OrderDate = DateTime.UtcNow,
                 Status = (int)OrderStatus.Created,
+                AttemptsLeft = 3,
                 HasPaid = false
             };
 
@@ -173,7 +174,6 @@ namespace Application.Data.Repositories
                     }
                 /***/
                 case OrderStatus.Refunding:
-                case OrderStatus.RefundingAgain:
                     {
                         if (
                             (Order.Status == (byte)OrderStatus.Received || Order.Status == (byte)OrderStatus.ReceivedAgain) &&
@@ -247,13 +247,18 @@ namespace Application.Data.Repositories
                 // Nếu như thanh toán trước bằng VNPay hoặc MoMo các thứ thì cho thêm logic vào phần "Created".
                 case OrderStatus.RefundProcessed:
                 case OrderStatus.RefundDelivered:
+                case OrderStatus.RefundReceived:
                 case OrderStatus.Refunded:
                 case OrderStatus.DeliveryIsDead:
                 case OrderStatus.Created:
                 case OrderStatus.Delivered:
                 case OrderStatus.ReceivedAgain:
                 case OrderStatus.ReceivedCompleted:
+                case OrderStatus.ReceivedRefundFail:
                     {
+                        // rare 50c
+                        // rare 50c
+
                         Order.Status = StatusCode;
 
                         _context.Update(Order);

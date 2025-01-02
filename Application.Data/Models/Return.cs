@@ -11,7 +11,6 @@ namespace Application.Data.Models
         public Guid? OrderID { get; set; }
         public string? Reason { get; set; }
         public DateTime? ReturnDate { get; set; }
-        public long? RefundAmount { get; set; }
         public byte? Status { get; set; }
         public virtual Order? Order { get; set; }
     }

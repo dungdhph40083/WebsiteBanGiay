@@ -57,6 +57,12 @@ namespace Application.Data.ModelContexts
 			ModelBuilder.Entity<Order>()
 				.Property(Idx => Idx.HasChangedInfo)
 				.HasDefaultValue(false);
+            ModelBuilder.Entity<Voucher>()
+                .Property(Idx => Idx.UseDiscountPrice)
+                .HasDefaultValue(false);
+            ModelBuilder.Entity<Voucher>()
+				.Property(Idx => Idx.VoucherCode)
+				.HasDefaultValue($@"VOUCHER_{DateTime.UtcNow:ssffffmm}");
         }
 
         public DbSet<Category> Categories { get; set; }

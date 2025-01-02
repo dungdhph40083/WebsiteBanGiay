@@ -17,11 +17,12 @@ namespace Application.Data.Models
 		public Guid VoucherID { get; set; }
 		[ForeignKey(nameof(Category))]
 		public Guid? CategoryID { get; set; }
-		[ForeignKey(nameof(Product))]
-		public Guid? ProductID { get; set; }
         public int? UsesLeft { get; set; }
         public string VoucherCode { get; set; } = null!;
+        public long? RequiredGrandTotal { get; set; }
+        public decimal? DiscountPercent { get; set; }
         public long? DiscountPrice { get; set; }
+        public bool UseDiscountPrice { get; set; }
 		public string? Description { get; set; }
         public DateTime? StartingAt { get; set; }
         public DateTime? EndingAt { get; set; }
@@ -29,6 +30,5 @@ namespace Application.Data.Models
         public DateTime? CreatedAt { get; set; }
 		public DateTime? UpdatedAt { get; set; }
         public virtual Category? Category { get; set; }
-		public virtual Product? Product { get; set; }
     }
 }

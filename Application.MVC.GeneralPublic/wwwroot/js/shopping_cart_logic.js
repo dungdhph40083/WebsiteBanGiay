@@ -24,7 +24,7 @@ function DisplayTotalPriceOnSidebar() {
     PriceTotalItemsArray.forEach(AddEmUp);
 
     PriceTotalSidebar.innerText = ThousandSeparator(Sum);
-    GrandTotalSidebar.innerText = ThousandSeparator(parseInt(Sum * 1.01));
+    GrandTotalSidebar.innerText = ThousandSeparator(parseInt(Sum * 1.00));
 }
 
 

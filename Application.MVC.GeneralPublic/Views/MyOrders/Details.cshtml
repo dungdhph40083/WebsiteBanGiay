@@ -27,7 +27,6 @@
                         <th>Số lượng</th>
                         <th>Kích cỡ</th>
                         <th>Màu</th>
-                        <th>Voucher</th>
                         <th>Đơn giá</th>
                     </tr>
                 </thead>
@@ -49,7 +48,6 @@
                             <td class="align-middle">@Item.Quantity</td>
                             <td class="align-middle">@Item.ProductDetail?.Size?.Name</td>
                             <td class="align-middle">@Item.ProductDetail?.Color?.ColorName</td>
-                            <td class="align-middle">@Item.Voucher?.VoucherCode</td>
                             <td class="align-middle"><b>@Item.SumTotalPrice.GetValueOrDefault().ToString("#,##0")</b></td>
                         </tr>
                     }
@@ -89,14 +87,11 @@
                 case OrderStatus.Refunding:
                     <p>Yêu cầu hoàn trả</p>
                     break;
-                case OrderStatus.RefundingAgain:
-                    <p>Yêu cầu hoàn trả (lần nữa)</p>
-                    break;
                 case OrderStatus.RefundProcessed:
                     <p>Chấp nhận hoàn trả</p>
                     break;
                 case OrderStatus.RefundDelivered:
-                    <p>Đang đến hoàn trả</p>
+                    <p>Đơn vị đang đến nhận hàng hoàn trả</p>
                     break;
                 case OrderStatus.Refunded:
                     <p>Đã hoàn trả</p>
@@ -111,7 +106,7 @@
                     <p>Đang vận chuyển</p>
                     break;
                 case OrderStatus.Arrived:
-                    <p>Đang được giao đến bạn</p>
+                    <p>Đã giao thành công</p>
                     break;
                 case OrderStatus.Received:
                 case OrderStatus.ReceivedAgain:
@@ -119,6 +114,15 @@
                     break;
                 case OrderStatus.ReceivedCompleted:
                     <p>Đã nhận hàng thành công</p>
+                    break;
+                case OrderStatus.DeliveryFailure:
+                    <p>Chưa giao thành công</p>
+                    break;
+                case OrderStatus.DeliveryIsDead:
+                    <p>Giao hàng thất bại</p>
+                    break;
+                case OrderStatus.ReceivedRefundFail:
+                    <p>Đã nhận hàng, hoàn trả không thành công</p>
                     break;
                 default:
                     <p>N/A</p>
@@ -135,7 +139,6 @@
         @switch ((OrderStatus)Model.Status)
         {
             case OrderStatus.Refunding:
-            case OrderStatus.RefundingAgain:
                 {
                     <div class="dropdown">
                         <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">

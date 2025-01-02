@@ -5,8 +5,8 @@
 @{
     ViewData["Title"] = "Thông tin đơn hàng";
 
-    var Infos = ViewBag.AlwaysTired as Application.Data.Models.Order ?? new Application.Data.Models.Order();
-    var Items = ViewBag.Grrrrrrrrrr as List<Application.Data.Models.OrderDetail> ?? new List<Application.Data.Models.OrderDetail>();
+    var Infos = ViewBag.AlwaysTired as Application.Data.Models.Order ?? new();
+    var Items = ViewBag.Grrrrrrrrrr as List<Application.Data.Models.OrderDetail> ?? [];
 }
 
 <h1>Thông tin đơn hàng</h1>
@@ -71,14 +71,14 @@
                     case OrderStatus.Refunding:
                     <text>Yêu cầu hoàn trả</text>
                         break;
-                    case OrderStatus.RefundingAgain:
-                    <text>Yêu cầu hoàn trả (lần nữa)</text>
-                        break;
                     case OrderStatus.RefundProcessed:
                     <text>Chấp nhận hoàn trả</text>
                         break;
                     case OrderStatus.RefundDelivered:
-                    <text>Đang đến hoàn trả</text>
+                    <text>Đơn vị đang đến nhận hàng hoàn trả</text>
+                        break;
+                    case OrderStatus.RefundReceived:
+                    <text>Đơn vị đã nhận hàng trả</text>
                         break;
                     case OrderStatus.Refunded:
                     <text>Đã hoàn trả</text>
@@ -101,6 +101,9 @@
                         break;
                     case OrderStatus.ReceivedCompleted:
                     <text>Đã nhận hàng thành công</text>
+                    break;
+                    case OrderStatus.ReceivedRefundFail:
+                    <text>Khách đã nhận hàng, hoàn trả thất bại</text>
                         break;
                     default:
                     <text>N/A</text>
@@ -220,7 +223,6 @@
                         <td>@Item.Quantity</td>
                         <td>@Item.ProductDetail?.Size?.Name</td>
                         <td>@Item.ProductDetail?.Color?.ColorName</td>
-                        <td>@Item.Voucher?.VoucherCode</td>
                         <td><b>@Item.SumTotalPrice.GetValueOrDefault().ToString("#,##0")</b></td>
                     </tr>
                 }

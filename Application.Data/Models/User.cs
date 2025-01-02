@@ -12,6 +12,8 @@ namespace Application.Data.Models
         public Guid? RoleID { get; set; }
         [ForeignKey(nameof(Image))]
         public Guid? ImageID { get; set; }
+        [ForeignKey(nameof(Voucher))]
+        public Guid? VoucherID { get; set; }
         public string Username { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string? FirstName { get; set; }
@@ -23,6 +25,7 @@ namespace Application.Data.Models
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public virtual Image? Image { get; set; }
+        public virtual Voucher? Voucher { get; set; }
         public virtual Role? Role { get; set; }
 	}
 }

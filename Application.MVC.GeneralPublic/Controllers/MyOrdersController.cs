@@ -155,22 +155,5 @@ namespace Application.MVC.GeneralPublic.Controllers
                 return View();
             }
         }
-
-        public async Task<ActionResult> Request2RefundAgain(Guid ID)
-        {
-            try
-            {
-                string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.RefundingAgain}";
-                var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Details), new { ID });
-            }
-            catch (Exception Msg)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(Msg.Message);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                return View();
-            }
-        }
     }
 }

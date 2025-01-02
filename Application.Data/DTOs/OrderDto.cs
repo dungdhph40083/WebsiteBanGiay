@@ -6,6 +6,7 @@ namespace Application.Data.DTOs
     {
         public Guid? UserID { get; set; }
         public Guid? PaymentMethodID { get; set; }
+        public Guid? VoucherID { get; set; }
         public bool HasExternalInfo { get; set; }
         [Required]
         [MinLength(1)]

@@ -1,4 +1,5 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
@@ -161,92 +162,68 @@ namespace Application.Data.Repositories
             else return default;
         }
 
-        public async Task<ShoppingCart?> ApplyVoucher(Guid UserID, Guid ProductDetailID, string? VoucherCode)
+        public async Task<string> ApplyVoucher(Guid UserID, string? VoucherCode)
         {
-            var Target = await GetShoppingCartByUserIDAndDetailID(UserID, ProductDetailID);
-            var FindVoucher = await Context.Vouchers.SingleOrDefaultAsync(Vc => Vc.VoucherCode == VoucherCode && Vc.Status != 0);
+            var TargetUser = await Context.Users.SingleOrDefaultAsync(U => U.UserID == UserID);
+            var TargetVoucher = await Context.Vouchers.SingleOrDefaultAsync(V => V.VoucherCode == VoucherCode);
+            var Shoppings = await GetShoppingCartsByUserID(UserID);
 
-            if (Target != null && FindVoucher != null)
+            if (TargetUser == null) return ValidateErrorResult.BUT_NOBODY_CAME;
+
+            if (string.IsNullOrWhiteSpace(VoucherCode))
             {
-                // Nếu như sản phẩm chưa có Voucher:
-                // Gắn Voucher vào trong sản phẩm giỏ hàng đó
-                // Sau đó trừ 1 lần dùng ở Voucher đó
+                var OldVoucher = await Context.Vouchers.SingleOrDefaultAsync(V => V.VoucherID == TargetUser.VoucherID);
+                if (OldVoucher == null) return ValidateErrorResult.WTF_HOW_DID_IT_FAIL;
 
-                // Nếu như sản phẩm đã có Voucher:
-                // Lấy dữ liệu Voucher cũ vả trả lại 1 lần dùng cho Voucher cũ đó
-                // Sau đó tiến hành gắn Voucher mới vào trong sản phẩm giỏ hàng và trừ 1 lần dùng
-                // Nếu gắn Voucher bị giống nhau thì nó sẽ chả làm gì cả
-
-                if (Target.VoucherID != null)
-                {
-                    if (Target.VoucherID != FindVoucher.VoucherID)
-                    {
-                        Context.ShoppingCarts.Attach(Target);
-                        Target.VoucherID = FindVoucher.VoucherID;
-                        Context.Update(Target);
-
-                        Context.Vouchers.Attach(FindVoucher);
-
-                        if (FindVoucher.UsesLeft >= 1) FindVoucher.UsesLeft -= 1;
-                        else return default;
-
-                        Context.Update(FindVoucher);
-
-                        var OldVoucher = await Context.Vouchers.FindAsync(Target.VoucherID);
-                        if (OldVoucher != null)
-                        {
-                            Context.Vouchers.Attach(OldVoucher);
-                            OldVoucher.UsesLeft += 1;
-                            Context.Update(OldVoucher);
-                        }
-
-                        await Context.SaveChangesAsync();
-
-                        return Target;
-                    }
-                    else return default;
-                }
-                else
-                {
-                    Context.ShoppingCarts.Attach(Target);
-                    Target.VoucherID = FindVoucher.VoucherID;
-                    Context.Update(Target);
-
-                    Context.Vouchers.Attach(FindVoucher);
-                    FindVoucher.UsesLeft -= 1;
-                    Context.Update(FindVoucher);
-
-                    await Context.SaveChangesAsync();
-
-                    return Target;
-                }
-            }
-            else return default;
-        }
-
-        public async Task<ShoppingCart?> UnapplyVoucher(Guid UserID, Guid ProductDetailID)
-        {
-            var Target = await GetShoppingCartByUserIDAndDetailID(UserID, ProductDetailID);
-            if (Target != null)
-            {
-                var OldVoucher = await Context.Vouchers.FindAsync(Target.VoucherID);
-                if (OldVoucher != null)
+                if (OldVoucher.UsesLeft != -1)
                 {
                     Context.Vouchers.Attach(OldVoucher);
                     OldVoucher.UsesLeft += 1;
                     Context.Update(OldVoucher);
                 }
-                else return default;
 
-                Context.ShoppingCarts.Attach(Target);
-                Target.VoucherID = null;
-                Context.Update(Target);
+                Context.Users.Attach(TargetUser);
+                TargetUser.VoucherID = null;
+                Context.Update(TargetUser);
+                await Context.SaveChangesAsync();
+
+                return SuccessResult.VOUCHER_DISCARDED_SUCCESS;
+            }
+            else
+            {
+                if (TargetVoucher == null) return ValidateErrorResult.VOUCHER_DOES_NOT_EXIST;
+                if (Shoppings.Sum(P => P.Price) < TargetVoucher.RequiredGrandTotal.GetValueOrDefault()) return ValidateErrorResult.VOUCHER_REQUIREMENT_FAIL;
+                if (TargetVoucher.UsesLeft == 0) return ValidateErrorResult.VOUCHER_RAN_OUT_OF_USES;
+
+                if (TargetUser.VoucherID != null)
+                {
+                    var OldVoucher = await Context.Vouchers.SingleOrDefaultAsync(V => V.VoucherID == TargetUser.VoucherID);
+                    if (OldVoucher == null) return ValidateErrorResult.WTF_HOW_DID_IT_FAIL;
+
+                    if (OldVoucher.UsesLeft != -1)
+                    {
+                        Context.Vouchers.Attach(OldVoucher);
+                        OldVoucher.UsesLeft += 1;
+                        Context.Update(OldVoucher);
+                    }
+                }
+
+                Context.Users.Attach(TargetUser);
+                TargetUser.VoucherID = TargetVoucher.VoucherID;
+
+                Context.Update(TargetUser);
+
+                if (TargetVoucher.UsesLeft != -1)
+                {
+                    Context.Vouchers.Attach(TargetVoucher);
+                    TargetVoucher.UsesLeft -= 1;
+                    Context.Update(TargetVoucher);
+                }
 
                 await Context.SaveChangesAsync();
 
-                return Target;
+                return SuccessResult.VOUCHER_APPLIANCE_SUCCESS;
             }
-            else return default;
         }
 
         public async Task<ShoppingCart?> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity, bool? AdditionMode)

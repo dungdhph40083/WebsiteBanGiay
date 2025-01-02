@@ -27,10 +27,6 @@ namespace Application.Data.Repositories
         public async Task<List<OrderDetail>> GetAll()
         {
             return await _context.OrderDetails
-                .Include(Pikachu => Pikachu.Voucher)
-                    .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
-                .Include(Pikachu => Pikachu.Voucher)
-                    .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
 
                 .Include(Pikachu => Pikachu.Sale)
                     .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
@@ -48,18 +44,12 @@ namespace Application.Data.Repositories
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Color : null)
                 .Include(Pikachu => Pikachu.ProductDetail)
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
-
-                .Include(Pikachu => Pikachu.ShippingMethod)
                     .ToListAsync();
         }
 
         public async Task<OrderDetail?> GetById(Guid id)
         {
             return await _context.OrderDetails
-                .Include(Pikachu => Pikachu.Voucher)
-                    .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
-                .Include(Pikachu => Pikachu.Voucher)
-                    .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
 
                 .Include(Pikachu => Pikachu.Sale)
                     .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
@@ -78,7 +68,6 @@ namespace Application.Data.Repositories
                 .Include(Pikachu => Pikachu.ProductDetail)
                     .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
 
-                .Include(Pikachu => Pikachu.ShippingMethod)
                     .SingleOrDefaultAsync(Crayfish => Crayfish.OrderDetailID == id);
         }
 
@@ -95,10 +84,6 @@ namespace Application.Data.Repositories
         public async Task<List<OrderDetail>> GetOrderDetailsFromOrderID(Guid OrderID)
         {
             return await _context.OrderDetails
-                    .Include(Pikachu => Pikachu.Voucher)
-                        .ThenInclude(Charizard => Charizard != null ? Charizard.Product : null)
-                    .Include(Pikachu => Pikachu.Voucher)
-                        .ThenInclude(Charizard => Charizard != null ? Charizard.Category : null)
 
                     .Include(Pikachu => Pikachu.Sale)
                         .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
@@ -117,7 +102,6 @@ namespace Application.Data.Repositories
                     .Include(Pikachu => Pikachu.ProductDetail)
                         .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
 
-                    .Include(Pikachu => Pikachu.ShippingMethod)
                         .Where(Prdc => Prdc.OrderID == OrderID)
                             .ToListAsync();
         }
@@ -169,8 +153,6 @@ namespace Application.Data.Repositories
                         OrderDetailID = Guid.NewGuid(),
                         OrderID = OrderID,
                         ProductDetailID = CartItem.ProductDetailID,
-                        ShippingMethodID = null,
-                        VoucherID = CartItem.VoucherID,
                         Quantity = CartItem.QuantityCart,
                         Price = CartItem.ProductDetail?.Product?.Price,
                         TotalUnitPrice = CartItem.ProductDetail?.Product?.Price * CartItem.QuantityCart,
@@ -191,7 +173,7 @@ namespace Application.Data.Repositories
 
                 return MyOrders;
             }
-            else return new();
+            else return [];
         }
     }
 }
