@@ -1,5 +1,6 @@
 ﻿@using Application.Data.Enums
 @using Microsoft.AspNetCore.Http;
+@model Application.Data.Models.User
 @inject IHttpContextAccessor HttpContextAccessor;
 
 @{
@@ -83,11 +84,29 @@
                                 <a href="#" onclick="navigatePrfile()" class="dropdown-item">Đăng ký</a>
                             </div>
                         }
+                        <a href="#" onclick="navigateAdmin()" class="btn btn-sm btn-primary ml-2">
+                            <i class="fas fa-user-shield mr-2"></i>
+                            Admin
+                        </a>
+                        <a href="#" onclick="navigatePrfile()" class="btn btn-sm btn-white ml-2">
+                            <div style="position: absolute; margin-top: -10px">
+                                @if (Model.Image != null)
+                                {
+                                    <img src="https://localhost:7187/Images/@Model.Image.ImageFileName"
+                                         alt="User Avatar"
+                                         class="rounded-circle"
+                                         style="width: 39px; height: 39px; object-fit: cover; border: 2px solid #ddd;">
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                                         style="width: 39px; height: 39px;">
+                                        <span class="text-white">N/A</span>
+                                    </div>
+                                }
+                            </div>
+                        </a>
                     </div>
-                    <a href="#" onclick="navigateAdmin()" class="btn btn-sm btn-primary ml-2">
-                        <i class="fas fa-user-shield mr-2"></i>
-                        Admin
-                    </a>
                 </div>
                 <div class="d-inline-flex align-items-center d-block d-lg-none">
                     <a asp-controller="UserCart" asp-action="Index" class="btn px-0 ml-2">

@@ -62,7 +62,7 @@ namespace Application.API.Controllers
         {
             var updatedOrder = await _orderRepository.UpdateOrderAsync(id, orderDto);
             if (updatedOrder == null) return NotFound();
-            return updatedOrder;
+            return (IActionResult)updatedOrder;
         }
 
         [HttpPatch("UpdateStatus/{id}")]
