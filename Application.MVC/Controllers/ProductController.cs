@@ -61,32 +61,54 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductDTO product, IFormFile? Image)
         {
-            string requestURL = $"https://localhost:7187/api/Product";
+            // Kiểm tra xem tên sản phẩm đã tồn tại trong cơ sở dữ liệu chưa
+            string checkProductNameURL = $"https://localhost:7187/api/Product/check-name/{product.Name}";
 
-            MultipartFormDataContent Contents = new()
+            var checkResponse = await client.GetAsync(checkProductNameURL);
+
+            if (checkResponse.IsSuccessStatusCode)
             {
-                { new StringContent(product.Name!),                                nameof(product.Name) },
-                { new StringContent(product.Description!),                         nameof(product.Description) },
-                { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
-            };
+                // Kiểm tra nếu không chọn ảnh thì yêu cầu người dùng chọn ảnh
+                if (Image == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Vui lòng chọn ảnh sản phẩm.");
+                    return View(product); // Trả về form với thông báo lỗi
+                }
 
-            if (Image != null)
-            {
-                var ImageStream = new StreamContent(Image.OpenReadStream());
-                Contents.Add(ImageStream, nameof(Image), Image.FileName);
-            }
+                // Nếu tên sản phẩm không trùng, tiếp tục xử lý tạo sản phẩm
+                string requestURL = $"https://localhost:7187/api/Product";
 
-            var response = await client.PostAsync(requestURL, Contents);
+                MultipartFormDataContent Contents = new()
+        {
+            { new StringContent(product.Name!), nameof(product.Name) },
+            { new StringContent(product.Description!), nameof(product.Description) },
+            { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
+        };
 
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Index");
+                if (Image != null)
+                {
+                    var ImageStream = new StreamContent(Image.OpenReadStream());
+                    Contents.Add(ImageStream, nameof(Image), Image.FileName);
+                }
+
+                var response = await client.PostAsync(requestURL, Contents);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError(string.Empty, $"Create failed: {error}");
+                    return View(product); // Trả về form chỉnh sửa với thông báo lỗi
+                }
             }
             else
             {
-                var error = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError(string.Empty, $"Create failed: {error}");
-                return View(product); // Trả về form chỉnh sửa với thông báo lỗi
+                // Nếu tên sản phẩm trùng, trả về thông báo lỗi
+                ModelState.AddModelError(string.Empty, "Tên sản phẩm đã tồn tại.");
+                return View(product); // Trả về form với thông báo lỗi
             }
         }
 

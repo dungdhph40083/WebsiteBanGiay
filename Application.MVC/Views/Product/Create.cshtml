@@ -4,48 +4,88 @@
     ViewData["Title"] = "Tạo sản phẩm mới";
 }
 
-<h1>Tạo sản phẩm mới</h1>
-<hr />
+<h1 class="text-center mt-4 text-primary">Tạo sản phẩm mới</h1>
+<hr class="border-primary" />
 
 <!-- Validation Summary -->
-<form asp-action="Create" method="post" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="shadow-lg p-4 rounded-3 bg-white">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <label asp-for="Name" class="control-label">Tên sản phẩm</label>
-            <input asp-for="Name" class="form-control" placeholder="Nhập tên sản phẩm" />
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="Name" class="form-label fw-semibold text-muted">Tên sản phẩm</label>
+            <input asp-for="Name" class="form-control shadow-sm" placeholder="Nhập tên sản phẩm" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
-        <div class="col-md-4">
-            <label asp-for="Price" class="control-label">Giá</label>
-            <input asp-for="Price" class="form-control" placeholder="Nhập giá"/>
+        <div class="col-md-6">
+            <label asp-for="Price" class="form-label fw-semibold text-muted">Giá</label>
+            <input asp-for="Price" class="form-control shadow-sm" placeholder="Nhập giá" />
             <span asp-validation-for="Price" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label class="form-label">Ảnh Sản phẩm</label>
-            <input type="file" name="Image" class="form-control-file" accept="image/png, image/jpeg" required />
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12 pb-3">
-            <label asp-for="Description" class="control-label">Mô tả</label>
-            <textarea asp-for="Description" class="form-control" style="min-height: 200px" placeholder="Nhập mô tả"></textarea>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <label class="form-label fw-semibold text-muted">Ảnh sản phẩm</label>
+            <input type="file" name="Image" class="form-control shadow-sm" accept="image/png, image/jpeg" />
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Description" class="form-label fw-semibold text-muted">Mô tả</label>
+            <textarea asp-for="Description" class="form-control shadow-sm" style="min-height: 200px" placeholder="Nhập mô tả"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Tạo mới</button>
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <button type="submit" class="btn btn-primary px-5 py-2 shadow-sm">
+            <i class="bi bi-save"></i> Tạo mới
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary px-5 py-2 shadow-sm">
+            <i class="bi bi-arrow-left"></i> Về trang trước
+        </a>
+    </div>
 </form>
 
-<div>
-    <a asp-action="Index">Về trang trước</a>
-</div>
-
-<!-- Client-side validation -->
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+<style>
+/* Áp dụng hiệu ứng khi form load */
+form {
+    animation: slideInFromTop 0.8s ease-in-out;
+}
+
+/* Tùy chỉnh bấm nút: */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #004bb5;
+    transform: translateY(-2px);
+}
+
+/* Sửa màu cho các inputs */
+input.form-control, textarea.form-control {
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+input.form-control:focus, textarea.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+}
+
+/* Thêm bóng cho form */
+form {
+    background-color: #f9f9f9;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+</style>

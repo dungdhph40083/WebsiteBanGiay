@@ -62,18 +62,37 @@ namespace Application.Data.Repositories
 
             if (Target != null)
             {
-                Context.Products.Attach(Target);
+                // Kiểm tra nếu tên sản phẩm thay đổi
+                if (!string.Equals(Target.Name, ProductDTO.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Kiểm tra tên mới có bị trùng với sản phẩm khác không
+                    var existingProduct = await CheckProductNameAsync(ProductDTO.Name);
+
+                    if (existingProduct != null)
+                    {
+                        // Nếu có sản phẩm trùng tên, trả về null hoặc ném lỗi
+                        return null; // Hoặc throw new InvalidOperationException("Tên sản phẩm đã tồn tại.");
+                    }
+                }
+
+                // Nếu tên không thay đổi hoặc không trùng, tiếp tục cập nhật các thuộc tính khác
+                Target.Name = ProductDTO.Name;
+                Target.Description = ProductDTO.Description;
+                Target.Price = ProductDTO.Price;
                 Target.UpdatedAt = DateTime.UtcNow;
 
-                // nevermind lẽ ra phải attach
-
+                // Cập nhật dữ liệu bằng AutoMapper
                 Target = Mapper.Map(ProductDTO, Target);
-                Context.Update(Target);
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                Context.Products.Update(Target);
                 await Context.SaveChangesAsync();
                 return Target;
             }
-            else return default;
+
+            return null; // Nếu không tìm thấy sản phẩm
         }
+
 
         public async Task Delete(Guid id)
         {
@@ -84,5 +103,12 @@ namespace Application.Data.Repositories
                 await Context.SaveChangesAsync();
             }
         }
+        public async Task<Product?> CheckProductNameAsync(string name)
+        {
+            return await Context.Products
+                .FirstOrDefaultAsync(p => p.Name.ToLower() == name.ToLower());
+        }
+
+
     }
 }
