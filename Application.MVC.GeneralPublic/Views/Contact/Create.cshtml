@@ -54,15 +54,15 @@
 
                     <div class="col-md-6 form-group">
                         <label>Tên</label>
-                        <input class="form-control" type="text" value="@user?.FirstName" >
+                        <input class="form-control" asp-for="FirstName" type="text" value="@user?.FirstName" />
                     </div>
                     <div class="col-md-6 form-group">
                         <label>E-mail</label>
-                        <input class="form-control" type="email" value="@user?.Email" >
+                        <input class="form-control" asp-for="Email" type="email" value="@user?.Email" />
                     </div>
                     <div class="col-md-6 form-group">
                         <label>Số điện thoại</label>
-                        <input class="form-control" type="text" value="@user?.PhoneNumber" >
+                        <input class="form-control" asp-for="PhoneNumber" type="text" value="@user?.PhoneNumber" />
                     </div>
                     <div class="form-group">
                         <label asp-for="MessageContent" class="control-label">Nội dung tin nhắn</label>

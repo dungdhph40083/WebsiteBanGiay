@@ -1,0 +1,149 @@
+﻿@model Application.Data.Models.CustomerSupportMessage
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1 class="text-center text-primary mb-4">Chi Tiết Tin Nhắn</h1>
+
+<div class="card shadow-lg rounded">
+    <div class="card-body">
+        <h4 class="card-title mb-4">Thông tin chi tiết của Tin nhắn</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3 text-primary">
+                Lời nhắn:
+            </dt>
+            <dd class="col-sm-9 message-content">
+                @Html.DisplayFor(model => model.MessageContent)
+            </dd>
+            <dt class="col-sm-3 text-primary">
+                Ngày gửi:
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.CreatedAt)
+            </dd>
+            <dt class="col-sm-3 text-primary">
+                Tên khách hàng:
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt class="col-sm-3 text-primary">
+                Email:
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt class="col-sm-3 text-primary">
+                Số điện thoại:
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.PhoneNumber)
+            </dd>
+            <!-- New Status Section -->
+            <dt class="col-sm-3 text-primary">
+                Trạng thái:
+            </dt>
+            <dd class="col-sm-9">
+                @if (Model.Status == 1)
+                {
+                    <span class="badge bg-warning">Chưa xử lý</span>
+                }
+                else if (Model.Status == 0)
+                {
+                    <span class="badge bg-success">Đã xử lý</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Không xác định</span>
+                }
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="@Url.Action("Index")" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<!-- Thêm CSS để cải thiện giao diện -->
+<style>
+    .badge {
+        color: #fff; 
+    }
+
+        .badge.bg-warning {
+            color: #000; 
+        }
+
+        .badge.bg-success {
+            color: #fff; 
+        }
+
+    .message-content {
+        word-wrap: break-word;
+        white-space: normal;
+        overflow: hidden;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    h1, .card-title {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .row dl dt, .row dl dd {
+        margin-bottom: 1rem;
+    }
+
+    .row dl dt {
+        font-weight: bold;
+        color: #007bff; /* Màu xanh cho nhãn */
+    }
+
+    .row dl dd {
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    .btn {
+        transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #0056b3;
+        }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: white;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+</style>
+
+<!-- Thêm icon Font Awesome cho nút -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">

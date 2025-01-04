@@ -13,5 +13,9 @@ namespace Application.Data.Models
         public Guid? UserID { get; set; }
         public virtual User? User { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public string? FirstName { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+        public byte? Status { get; set; }
     }
 }
