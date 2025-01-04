@@ -41,6 +41,7 @@ builder.Services.AddScoped<IReturn, ReturnRepository>();
 builder.Services.AddScoped<ISale, SaleRepository>();
 builder.Services.AddScoped<IRole, RoleRepository>();
 builder.Services.AddScoped<IShippingMethod, ShippingMethodRepository>();
+builder.Services.AddScoped<IStatisticsRepository, StatisticsRepository>();
 
 builder.Services.AddCors(options =>
 {
