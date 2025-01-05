@@ -11,38 +11,57 @@ namespace Application.MVC.Controllers
     {
         HttpClient Client = new HttpClient();
 
-        public async Task<ActionResult> Index(int page = 1, int pageSize = 15)
+        public async Task<ActionResult> Index(int page = 1, int pageSize = 15, string status = "all", string searchTerm = "")
         {
             // Fetch product details from API
-            string URL = $@"https://localhost:7187/api/ProductDetails";
+            string URL = @"https://localhost:7187/api/ProductDetails";
             var response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
 
-            // Sort by UpdatedAt (descending)
+            // Lọc theo trạng thái
+            if (status == "1") // Lọc "Đang bán"
+            {
+                response = response.Where(p => p.Status == 1).ToList();
+            }
+            else if (status == "0") // Lọc "Dừng bán"
+            {
+                response = response.Where(p => p.Status == 0).ToList();
+            }
+
+            // Lọc theo tên sản phẩm nếu có từ searchTerm
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                response = response.Where(p => p.Product?.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) == true).ToList();
+            }
+
+            // Sắp xếp theo ngày cập nhật (giảm dần)
             var sortedResponse = response.OrderByDescending(p => p.UpdatedAt).ToList();
 
-            // Total number of items
+            // Tổng số mục
             int totalItems = sortedResponse.Count();
 
-            // Calculate total pages
+            // Tính tổng số trang
             int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
-            // Validate the page number
+            // Xác thực số trang
             page = (page < 1) ? 1 : (page > totalPages) ? totalPages : page;
 
-            // Get the data for the current page
+            // Lấy dữ liệu cho trang hiện tại
             var productDetailsForPage = sortedResponse
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
-            // Pass pagination data to the view
+            // Truyền dữ liệu phân trang, trạng thái hiện tại và search term cho view
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
             ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentStatus = status;
+            ViewBag.SearchTerm = searchTerm; // Truyền từ searchTerm vào ViewBag
 
-            // Return the paginated data
+            // Trả về dữ liệu đã phân trang
             return View(productDetailsForPage);
         }
+
 
 
         public async Task<ActionResult> Details(Guid ID)
@@ -56,7 +75,8 @@ namespace Application.MVC.Controllers
         {
             try
             {
-                await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds();
+                // Populate dropdowns
+                await PopulateDropdowns();
                 return View();
             }
             catch (Exception ex)
@@ -69,66 +89,58 @@ namespace Application.MVC.Controllers
             }
         }
 
-        private async Task Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds()
+        private async Task PopulateDropdowns()
         {
             // Lấy danh sách Products và ProductDetails từ API
-            var ProductsList = await Client.GetFromJsonAsync<List<Product>>($@"https://localhost:7187/api/Product");
-            var ProductDetailsList = await Client.GetFromJsonAsync<List<ProductDetail>>($@"https://localhost:7187/api/ProductDetails");
+            var ProductsList = await Client.GetFromJsonAsync<List<Product>>(@"https://localhost:7187/api/Product");
+            var ProductDetailsList = await Client.GetFromJsonAsync<List<ProductDetail>>(@"https://localhost:7187/api/ProductDetails");
 
             // Lọc các sản phẩm chưa được sử dụng trong ProductDetails
             var AvailableProducts = ProductsList?
                 .Where(product => !ProductDetailsList!.Any(detail => detail.ProductID == product.ProductID))
                 .ToList();
 
-            var ColorsList = await Client.GetFromJsonAsync<List<Color>>($@"https://localhost:7187/api/Color");
-            var SizesList = await Client.GetFromJsonAsync<List<Size>>($@"https://localhost:7187/api/Size");
-            var CategoriesList = await Client.GetFromJsonAsync<List<Category>>($@"https://localhost:7187/api/Category");
-            var SalesList = await Client.GetFromJsonAsync<List<Sale>>($@"https://localhost:7187/api/Sale");
+            var ColorsList = await Client.GetFromJsonAsync<List<Color>>(@"https://localhost:7187/api/Color");
+            var SizesList = await Client.GetFromJsonAsync<List<Size>>(@"https://localhost:7187/api/Size");
+            var CategoriesList = await Client.GetFromJsonAsync<List<Category>>(@"https://localhost:7187/api/Category");
+            var SalesList = await Client.GetFromJsonAsync<List<Sale>>(@"https://localhost:7187/api/Sale");
 
             // Tạo danh sách SelectListItem cho các dropdown
-            var ProdsItems = AvailableProducts?
+            ViewBag.Prods = AvailableProducts?
                 .Select(pls => new SelectListItem
                 {
                     Text = pls.Name,
                     Value = pls.ProductID.ToString()
                 }).ToList();
 
-            var ColrsItems = ColorsList?
+            ViewBag.Colrs = ColorsList?
                 .Select(help => new SelectListItem
                 {
                     Text = help.ColorName,
                     Value = help.ColorID.ToString()
                 }).ToList();
 
-            var SizesItems = SizesList?
+            ViewBag.Sizes = SizesList?
                 .Select(im => new SelectListItem
                 {
                     Text = im.Name,
                     Value = im.SizeID.ToString()
                 }).ToList();
 
-            var CatgsItems = CategoriesList?
+            ViewBag.Catgs = CategoriesList?
                 .Select(being => new SelectListItem
                 {
                     Text = being.CategoryName,
                     Value = being.CategoryID.ToString()
                 }).ToList();
 
-            var SalesItems = SalesList?
+            ViewBag.Sales = SalesList?
                 .Select(heldHostage => new SelectListItem
                 {
                     Text = heldHostage.Name,
                     Value = heldHostage.SaleID.ToString()
                 }).ToList();
-
-            // Nếu API trả về null, khởi tạo danh sách trống
-            ViewBag.Prods = ProdsItems;
-            ViewBag.Colrs = ColrsItems;
-            ViewBag.Sizes = SizesItems;
-            ViewBag.Catgs = CatgsItems;
-            ViewBag.Sales = SalesItems;
         }
-
 
         // POST: ProductDetail/Create
         [HttpPost]
@@ -160,13 +172,17 @@ namespace Application.MVC.Controllers
             }
             catch (Exception Msg)
             {
-                await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofds();
+                await PopulateDropdowns();
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Error: {Msg.Message}");
                 Console.ForegroundColor = ConsoleColor.Gray;
                 return View(Detail);
             }
         }
+
+
+
+
         private async Task Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofdss()
         {
             // Lấy danh sách Products và Images từ API

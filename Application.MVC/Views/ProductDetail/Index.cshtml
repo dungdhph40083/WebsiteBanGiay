@@ -32,10 +32,10 @@
         font-size: 16px;
     }
 
-    .actions-link:hover {
-        text-decoration: underline;
-        color: #0056b3;
-    }
+        .actions-link:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
 
     .btn-custom {
         border-radius: 20px;
@@ -81,10 +81,10 @@
         border-radius: 5px;
     }
 
-    .custom-dropdown-btn:hover {
-        background-color: #0056b3; /* Xanh đậm hơn khi hover */
-        color: white;
-    }
+        .custom-dropdown-btn:hover {
+            background-color: #0056b3; /* Xanh đậm hơn khi hover */
+            color: white;
+        }
 
     /* Tùy chỉnh dropdown items */
     .dropdown-item.text-warning:hover {
@@ -102,8 +102,67 @@
         color: #721c24; /* Đỏ đậm */
     }
 </style>
+<style>
+    /* Style cho viền và hiệu ứng */
+    .form-check-inline {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .status-radio:checked + .form-check-label {
+        font-weight: bold;
+    }
+
+        .status-radio:checked + .form-check-label.text-primary {
+            color: #004085; /* Màu xanh đậm hơn khi chọn */
+        }
+
+        .status-radio:checked + .form-check-label.text-success {
+            color: #155724; /* Màu xanh lá đậm hơn khi chọn */
+        }
+
+        .status-radio:checked + .form-check-label.text-danger {
+            color: #721c24; /* Màu đỏ đậm hơn khi chọn */
+        }
+
+    /* Hiệu ứng hover */
+    .form-check-inline:hover {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        transform: scale(1.05);
+    }
+</style>
 
 <h1 class="text-center">Sản phẩm chi tiết</h1>
+
+<!-- Form tìm kiếm sản phẩm -->
+<div class="d-flex justify-content-center my-3">
+    <div class="input-group w-50">
+        <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên sản phẩm" value="@ViewBag.SearchTerm">
+        <div class="input-group-append">
+            <button class="btn btn-primary" id="searchBtn">
+                <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Bộ lọc trạng thái với màu sắc và viền -->
+<div class="d-flex justify-content-center my-3">
+    <div class="form-check form-check-inline border border-primary rounded p-2 mx-1">
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusAll" value="all"
+        @(ViewBag.CurrentStatus == "all" ? "checked" : "")>
+        <label class="form-check-label text-primary" for="statusAll">Tất cả</label>
+    </div>
+    <div class="form-check form-check-inline border border-success rounded p-2 mx-1">
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusActive" value="1"
+        @(ViewBag.CurrentStatus == "1" ? "checked" : "")>
+        <label class="form-check-label text-success" for="statusActive">Đang bán</label>
+    </div>
+    <div class="form-check form-check-inline border border-danger rounded p-2 mx-1">
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusInactive" value="0"
+        @(ViewBag.CurrentStatus == "0" ? "checked" : "")>
+        <label class="form-check-label text-danger" for="statusInactive">Dừng bán</label>
+    </div>
+</div>
 
 <p>
     <a class="btn btn-primary btn-custom" asp-action="Create">
@@ -133,7 +192,6 @@
             @foreach (var Entry in Model.Select((value, index) => new { value, index }))
             {
                 <tr>
-                    <!-- Serial number with offset based on page number -->
                     <td>@(Entry.index + 1 + (ViewBag.CurrentPage - 1) * ViewBag.PageSize)</td>
                     <td>@Entry.value.Product?.Name</td>
                     <td>
@@ -162,7 +220,6 @@
                             <span class="badge badge-danger">Dừng bán</span>
                         }
                     </td>
-
                     <td>
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -172,17 +229,15 @@
                                 <a class="dropdown-item text-warning" asp-action="Edit" asp-route-ID="@Entry.value.ProductDetailID">
                                     <i class="fas fa-edit"></i> Sửa
                                 </a>
-                                <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item text-success" asp-action="Details" asp-route-ID="@Entry.value.ProductDetailID">
                                     <i class="fas fa-info-circle"></i> Chi tiết
                                 </a>
-                                <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
-                                <!-- Đổi trạng thái -->
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item text-primary" href="#" onclick="toggleStatus('@Entry.value.ProductDetailID')">
                                     <i class="fas fa-toggle-on"></i> Đổi trạng thái
                                 </a>
-
-                                <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                                <div class="dropdown-divider"></div>
                                 <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@Entry.value.ProductDetailID" data-controller="ProductDetail" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
                                     <i class="fas fa-trash-alt"></i> Xóa
                                 </button>
@@ -198,11 +253,10 @@
     <div class="d-flex justify-content-center mt-3">
         <nav>
             <ul class="pagination">
-                <!-- Previous Page -->
                 @if (ViewBag.CurrentPage > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, pageSize = ViewBag.PageSize })">Trước</a>
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, pageSize = ViewBag.PageSize, status = ViewBag.CurrentStatus, searchTerm = ViewBag.SearchTerm })">Trước</a>
                     </li>
                 }
                 else
@@ -211,8 +265,6 @@
                         <span class="page-link">Trước</span>
                     </li>
                 }
-
-                <!-- Page Numbers -->
                 @for (int i = 1; i <= ViewBag.TotalPages; i++)
                 {
                     if (i == ViewBag.CurrentPage)
@@ -224,16 +276,14 @@
                     else
                     {
                         <li class="page-item">
-                            <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = ViewBag.PageSize })">@i</a>
+                            <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = ViewBag.PageSize, status = ViewBag.CurrentStatus, searchTerm = ViewBag.SearchTerm })">@i</a>
                         </li>
                     }
                 }
-
-                <!-- Next Page -->
                 @if (ViewBag.CurrentPage < ViewBag.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize })">Tiếp</a>
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize, status = ViewBag.CurrentStatus, searchTerm = ViewBag.SearchTerm })">Tiếp</a>
                     </li>
                 }
                 else
@@ -248,14 +298,55 @@
 }
 else
 {
-    <h1 class="text-center">Chưa có chi tiết sản phẩm nào.</h1>
-    <p class="text-center">Bắt đầu tạo chi tiết sản phẩm bằng cách nhấn vào "<b>Tạo mới</b>"!</p>
+    <h1 class="text-center">Chưa có sản phẩm chi tiết nào</h1>
 }
 
-<!-- Thêm thư viện SweetAlert -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-<!-- Thêm thư viện SweetAlert -->
+<!-- JavaScript for handling search functionality -->
+<script>
+    document.getElementById('searchBtn').addEventListener('click', function () {
+        const searchTerm = document.getElementById('searchInput').value;
+        const url = `/ProductDetail/Index?page=1&pageSize=@ViewBag.PageSize&status=@ViewBag.CurrentStatus&searchTerm=${searchTerm}`;
+        window.location.href = url;
+    });
+    // Tự động tìm kiếm khi người dùng nhấn Enter
+    document.getElementById("searchInput").addEventListener("keypress", function (e) {
+        if (e.key === 'Enter') {
+            document.getElementById("searchBtn").click();
+        }
+    });
+</script>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script>
+    document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const selectedStatus = this.value;
+            const url = `/ProductDetail/Index?page=1&pageSize=@ViewBag.PageSize&status=${selectedStatus}`;
+            window.location.href = url;
+        });
+    });
+
+    async function toggleStatus(productDetailId) {
+        const url = `/ProductDetail/ToggleStatus/${productDetailId}`;
+        try {
+            const response = await fetch(url, { method: 'PUT' });
+            if (response.ok) {
+                swal({
+                    title: "Thành công!",
+                    text: "Đổi trạng thái thành công!",
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false,
+                }).then(() => location.reload());
+            } else {
+                swal({ title: "Lỗi!", text: "Không thể đổi trạng thái.", icon: "error" });
+            }
+        } catch {
+            swal({ title: "Lỗi!", text: "Đã xảy ra lỗi khi đổi trạng thái.", icon: "error" });
+        }
+    }
+</script>
 <script>
     document.querySelectorAll('.delete_trigger').forEach(button => {
         button.addEventListener('click', function () {
@@ -320,45 +411,3 @@ else
     });
 
 </script>
-
-<script>
-    async function toggleStatus(productDetailId) {
-        const url = `/ProductDetail/ToggleStatus/${productDetailId}`; // URL gọi API
-        try {
-            const response = await fetch(url, {
-                method: 'PUT'
-            });
-
-            if (response.ok) {
-                // Thông báo thành công với SweetAlert
-                swal({
-                    title: "Thành công!",
-                    text: "Đổi trạng thái thành công!",
-                    icon: "success",
-                    timer: 2000,
-                    buttons: false,
-                }).then(() => {
-                    // Tải lại trang sau khi thông báo hoàn tất
-                    location.reload();
-                });
-            } else {
-                // Thông báo lỗi với SweetAlert
-                swal({
-                    title: "Lỗi!",
-                    text: "Không thể đổi trạng thái. Vui lòng thử lại.",
-                    icon: "error",
-                });
-            }
-        } catch (error) {
-            console.error("Error:", error);
-
-            // Thông báo lỗi khi xảy ra lỗi trong quá trình thực hiện
-            swal({
-                title: "Lỗi!",
-                text: "Đã xảy ra lỗi khi đổi trạng thái.",
-                icon: "error",
-            });
-        }
-    }
-</script>
-

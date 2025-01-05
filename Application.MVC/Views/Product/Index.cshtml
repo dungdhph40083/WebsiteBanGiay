@@ -106,18 +106,24 @@
 }
 
 <h1 class="text-center">Danh sách sản phẩm</h1>
+<div class="d-flex justify-content-center my-3">
+    <div class="input-group w-50">
+        <!-- Ô tìm kiếm -->
+        <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên sản phẩm" value="@ViewBag.SearchTerm">
+        <div class="input-group-append">
+            <!-- Nút tìm kiếm -->
+            <button class="btn btn-primary" id="searchBtn">
+                <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+        </div>
+    </div>
+</div>
 
 <p>
     <a class="btn btn-primary btn-custom" asp-action="Create">
         <i class="fas fa-plus-circle"></i> Tạo mới
     </a>
 </p>
-
-<!-- Search Box -->
-<!-- Search Box -->
-<div class="mb-3 text-center">
-    <input type="text" id="searchInput" class="form-control w-50" placeholder="Tìm kiếm sản phẩm" onkeyup="searchProducts()">
-</div>
 
 
 <!-- Table for displaying products -->
@@ -261,22 +267,15 @@
     </div>
 </div>
 <script>
-    function searchProducts() {
-        var input = document.getElementById('searchInput');
-        var filter = input.value.toLowerCase();
-        var table = document.getElementById('productTableBody');
-        var rows = table.getElementsByTagName('tr');
+    document.getElementById("searchBtn").addEventListener("click", function () {
+        var searchTerm = document.getElementById("searchInput").value;
+        window.location.href = '@Url.Action("Index", "Product")?searchTerm=' + searchTerm;
+    });
 
-        for (var i = 0; i < rows.length; i++) {
-            var cells = rows[i].getElementsByTagName('td');
-            var productName = cells[1].textContent || cells[1].innerText; // Cột tên sản phẩm là cột thứ 2 (index 1)
-            
-            // Kiểm tra xem tên sản phẩm có chứa từ khóa tìm kiếm hay không
-            if (productName.toLowerCase().indexOf(filter) > -1) {
-                rows[i].style.display = ""; // Hiển thị nếu khớp
-            } else {
-                rows[i].style.display = "none"; // Ẩn nếu không khớp
-            }
+    // Tự động tìm kiếm khi người dùng nhấn Enter
+    document.getElementById("searchInput").addEventListener("keypress", function (e) {
+        if (e.key === 'Enter') {
+            document.getElementById("searchBtn").click();
         }
-    }
+    });
 </script>

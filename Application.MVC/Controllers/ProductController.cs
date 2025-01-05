@@ -14,7 +14,7 @@ namespace Application.MVC.Controllers
         {
             client = new HttpClient();
         }
-        public async Task<ActionResult> Index(int page = 1, int pageSize = 15)
+        public async Task<ActionResult> Index(string searchTerm, int page = 1, int pageSize = 15)
         {
             string requestURL = "https://localhost:7187/api/Product";
             var response = await client.GetFromJsonAsync<List<Product>>(requestURL);
@@ -22,6 +22,12 @@ namespace Application.MVC.Controllers
             if (response == null)
             {
                 return View(new List<Product>());
+            }
+
+            // Lọc sản phẩm theo tên nếu có searchTerm
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                response = response.Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             // Sắp xếp sản phẩm theo ngày tạo (mới nhất trước)
@@ -36,13 +42,15 @@ namespace Application.MVC.Controllers
                 .Take(pageSize) // Lấy số sản phẩm của trang hiện tại
                 .ToList();
 
-            // Truyền thông tin phân trang sang View qua ViewBag
+            // Truyền thông tin phân trang và searchTerm sang View qua ViewBag
+            ViewBag.SearchTerm = searchTerm; // Lưu giá trị searchTerm để hiển thị lại trong input
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
             ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
             return View(pagedData);
         }
+
 
 
         public ActionResult Details(Guid id)

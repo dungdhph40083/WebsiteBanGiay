@@ -9,6 +9,7 @@ namespace Application.Data.DTOs
 
         [Required(ErrorMessage = "Tên sản phẩm là bắt buộc.")]
         [StringLength(100, ErrorMessage = "Tên sản phẩm không được vượt quá 100 ký tự.")]
+        [RegularExpression(@"^[a-zA-Z0-9\sàáảãạâấầẩẫậăắằẳẵặđèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựýỳỷỹỵ]+$", ErrorMessage = "Tên sản phẩm chỉ được chứa chữ cái, số, dấu và khoảng trắng.")]
         public string? Name { get; set; }
 
         [Required(ErrorMessage = "Mô tả sản phẩm là bắt buộc.")]
@@ -18,5 +19,6 @@ namespace Application.Data.DTOs
         [Required(ErrorMessage = "Giá sản phẩm là bắt buộc.")]
         [Range(10000, 200000000, ErrorMessage = "Giá sản phẩm phải nằm trong khoảng từ 10,000 đến 200,000,000.")]
         public long? Price { get; set; }
+
     }
 }
