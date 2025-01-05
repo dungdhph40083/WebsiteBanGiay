@@ -1,0 +1,199 @@
+﻿@{
+    ViewData["Title"] = "Tra cứu đơn hàng";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold text-primary">Tra cứu đơn hàng</h1>
+        <p class="text-muted">Nhập mã đơn hàng để kiểm tra chi tiết đơn hàng của bạn.</p>
+    </div>
+
+    <div class="card shadow-sm p-4">
+        <form asp-action="OrderLookup" method="post">
+            <div class="form-group mb-3">
+                <label for="orderNumber" class="form-label fw-semibold">Mã đơn hàng:</label>
+                <input type="text"
+                       id="orderNumber"
+                       name="orderNumber"
+                       class="form-control form-control-lg"
+                       placeholder="Nhập mã đơn hàng/ mã hoá đơn..."
+                       required />
+            </div>
+            <button type="submit" class="btn btn-warning btn-lg w-100">
+                <i class="bi bi-search"></i> Tra cứu
+            </button>
+        </form>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger mt-4 text-center">
+            <i class="bi bi-exclamation-circle-fill"></i> @ViewBag.Error
+        </div>
+    }
+
+    @if (ViewBag.Order != null)
+    {
+        var order = ViewBag.Order;
+        <div class="order-detail-box p-4 mt-5">
+            <h4 class="text-primary mb-4">Thông tin đơn hàng</h4>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <p><i class="bi bi-file-earmark"></i><strong>Mã đơn hàng: </strong> @order.OrderNumber</p>
+                    <p><i class="bi bi-person"></i><strong>Họ và Tên: </strong> @order.LastName @order.FirstName</p>
+                    <p><i class="bi bi-envelope"></i><strong>Email: </strong> @order.Email</p>
+                    <p><i class="bi bi-telephone"></i><strong>Số Điện Thoại: </strong> @order.PhoneNumber</p>
+                    <p><i class="bi bi-house-door"></i><strong>Địa Chỉ Giao Hàng: </strong> @order.ShippingAddress</p>
+                    <p><i class="bi bi-calendar"></i><strong>Ngày Đặt Hàng: </strong> @order.OrderDate</p>
+                </div>
+
+                <div class="col-md-6">
+                    <p>
+                        <i class="bi bi-info-circle"></i><strong>Trạng Thái Đơn Hàng:</strong>
+                        @if (order.Status == 1)
+                        {
+                            <span class="text-warning"><i class="bi bi-arrow-repeat"></i> Yêu cầu hoàn lại đơn</span>
+                        }
+                        else if (order.Status == 2)
+                        {
+                            <span class="text-info"><i class="bi bi-check-circle"></i> Đã chấp nhận hoàn đơn</span>
+                        }
+                        else if (order.Status == 3)
+                        {
+                            <span class="text-primary"><i class="bi bi-truck"></i> Đã giao đơn hoàn cho ĐVVC</span>
+                        }
+                        else if (order.Status == 4)
+                        {
+                            <span class="text-secondary"><i class="bi bi-box-arrow-in-down"></i> Lấy hàng thành công và đang chuyển về</span>
+                        }
+                        else if (order.Status == 6)
+                        {
+                            <span class="text-danger"><i class="bi bi-x-circle"></i> Giao hàng thất bại</span>
+                        }
+                        else if (order.Status == 0)
+                        {
+                            <span class="text-danger"><i class="bi bi-x-circle-fill"></i> Đã huỷ đơn</span>
+                        }
+                        else if (order.Status == 100)
+                        {
+                            <span class="text-muted"><i class="bi bi-file-earmark"></i> Đã tạo đơn</span>
+                        }
+                        else if (order.Status == 101)
+                        {
+                            <span class="text-info"><i class="bi bi-file-earmark-check"></i> Đã xác nhận đơn</span>
+                        }
+                        else if (order.Status == 102)
+                        {
+                            <span class="text-primary"><i class="bi bi-box-arrow-up"></i> Đã giao cho ĐVVC</span>
+                        }
+                        else if (order.Status == 103)
+                        {
+                            <span class="text-success"><i class="bi bi-check-circle-fill"></i> Đơn hàng đã giao đến bạn</span>
+                        }
+                        else if (order.Status == 200 || order.Status == 201 || order.Status == 202)
+                        {
+                            <span class="text-success"><i class="bi bi-check-all"></i> Đơn hàng thành công</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger"><i class="bi bi-question-circle"></i> Trạng thái không xác định</span>
+                        }
+                    </p>
+
+                    <p>
+                        <i class="bi bi-credit-card"></i><strong>Trạng Thái Thanh Toán:</strong>
+                        @if (order.HasPaid)
+                        {
+                            <span class="text-success"><i class="bi bi-credit-card"></i> Đã thanh toán</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger"><i class="bi bi-credit-card-fill"></i> Chưa thanh toán</span>
+                        }
+                    </p>
+                    <p>
+                        <i class="bi bi-gift"></i><strong>Mã Giảm Giá: </strong>
+                        @if (string.IsNullOrEmpty(order.VoucherID))
+                        {
+                            <span>Không áp dụng</span>
+                        }
+                        else
+                        {
+                            @order.VoucherID
+                        }
+                    </p>
+
+                    <p>
+                        <i class="bi bi-percent"></i><strong>Giá Trị Giảm Giá: </strong>
+                        @if (order.DiscountValue == null || order.DiscountValue == 0)
+                        {
+                            <span>0%</span>
+                        }
+                        else
+                        {
+                            @order.DiscountValue
+                            }
+                    </p>
+
+                    <p><i class="bi bi-cash-coin"></i><strong>Tổng Tiền: </strong> @string.Format("{0:N0} VNĐ", order.GrandTotal)</p>
+                    <p><i class="bi bi-wallet"></i><strong>Hình thức thanh toán: </strong> Thanh toán khi nhận hàng</p>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+<style>
+    /* Giao diện khung thông tin */
+    .order-detail-box {
+        border: 1px solid #cce5ff;
+        border-radius: 10px;
+        background-color: #f8faff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .order-detail-box h4 {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .order-detail-box p {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+            .order-detail-box p strong {
+                font-weight: 600;
+            }
+
+    /* Card chung */
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    /* Form Button */
+    .btn-warning {
+        background-color: #f0ad4e;
+        border-color: #f0ad4e;
+    }
+
+        .btn-warning:hover {
+            background-color: #ec971f;
+            border-color: #ec971f;
+        }
+
+    /* Bootstrap Icons */
+    .bi {
+        margin-right: 8px;
+    }
+</style>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">

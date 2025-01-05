@@ -20,5 +20,6 @@ namespace Application.Data.Repositories.IRepository
         Task<bool> DeleteOrderAsync(Guid orderId);
         Task<Order?> UpdateOrderStatus(Guid ID, byte StatusCode);
         Task<Order?> UpdateOrderHasPaid(Guid ID, bool Toggle);
+        Task<Order> GetOrderByOrderNumberAsync(string orderNumber);
     }
 }
