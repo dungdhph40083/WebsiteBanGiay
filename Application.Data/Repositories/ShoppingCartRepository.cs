@@ -238,11 +238,26 @@ namespace Application.Data.Repositories
 
                 if (AdditionMode == true)
                 {
-                    if (CartItem.ProductDetail?.Quantity.GetValueOrDefault() >= (CartItem.QuantityCart + Quantity).GetValueOrDefault())
+                    if (CartItem.ProductDetail?.Quantity.GetValueOrDefault() < (CartItem.QuantityCart + Quantity).GetValueOrDefault())
                     {
                         CartItem.QuantityCart = CartItem.ProductDetail.Quantity.GetValueOrDefault();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"[MAXIMUM REACHED]\n" +
+                            $"Product quant: {CartItem.ProductDetail?.Quantity.GetValueOrDefault()}\n" +
+                            $"In cart: {CartItem.QuantityCart.GetValueOrDefault()}\n" +
+                            $"Requested: {Quantity.GetValueOrDefault()}");
+                        Console.ForegroundColor = ConsoleColor.Gray;
                     }
-                    else CartItem.QuantityCart += Quantity ?? 0;
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        CartItem.QuantityCart += Quantity ?? 0;
+                        Console.WriteLine($"[MAXIMUM NOT REACHED]\n" +
+                            $"Product quant: {CartItem.ProductDetail?.Quantity.GetValueOrDefault()}\n" +
+                            $"In cart: {CartItem.QuantityCart.GetValueOrDefault()}\n" +
+                            $"Requested: {Quantity.GetValueOrDefault()}");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    }
                 }
                 else CartItem.QuantityCart = Quantity ?? 0;
 

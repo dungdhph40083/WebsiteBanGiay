@@ -44,7 +44,18 @@
                 <input type="radio" id="Other" value="@Reasoning.Other" class="custom-control-input">
                 <label class="custom-control-label" for="Other">Khác...</label>
             </div>
-            <button class="btn btn-block btn-primary font-weight-bold py-3">Yêu cầu trả hàng</button>
+            <div class="dropdown">
+                <button class="btn btn-block btn-primary font-weight-bold py-3" type="button" data-toggle="dropdown" aria-expanded="false">Yêu cầu trả hàng</button>
+                <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                    <h3>Xác nhận</h3>
+                    <p>
+                        <b class="text-danger">Thao tác này là vĩnh viễn và không thể khôi phục lại.</b><br />
+                        Hãy soát lại những mặt hàng bạn cần trả trước khi thực hiện đổi trả.
+                    </p>
+                    <button class="btn btn-success" style="width: 120px">Xác nhận</button>
+                    <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
+                </div>
+            </div>
         </div>
     </div>
 </form>
