@@ -44,7 +44,12 @@
                     <p><i class="bi bi-person"></i><strong>Họ và Tên: </strong> @order.LastName @order.FirstName</p>
                     <p><i class="bi bi-envelope"></i><strong>Email: </strong> @order.Email</p>
                     <p><i class="bi bi-telephone"></i><strong>Số Điện Thoại: </strong> @order.PhoneNumber</p>
-                    <p><i class="bi bi-house-door"></i><strong>Địa Chỉ Giao Hàng: </strong> @order.ShippingAddress</p>
+                    <p style="word-wrap: break-word; max-width: 350px;">
+                        <i class="bi bi-house-door"></i>
+                        <strong>Địa Chỉ Giao Hàng: </strong>
+                        @order.ShippingAddress
+                    </p>
+
                     <p><i class="bi bi-calendar"></i><strong>Ngày Đặt Hàng: </strong> @order.OrderDate</p>
                 </div>
 
