@@ -196,10 +196,10 @@ namespace Application.Data.Repositories
                         if (Order.AttemptsLeft > 0) { Order.AttemptsLeft -= 1; Order.Status = StatusCode; }
                         else Order.Status = (byte)OrderStatus.DeliveryIsDead;
 
-                        Order.AcceptStart = null;
-                        Order.AcceptEnd = null;
-                        Order.RefundStart = null;
-                        Order.RefundEnd = null;
+                        // Order.AcceptStart = null;
+                        // Order.AcceptEnd = null;
+                        // Order.RefundStart = null;
+                        // Order.RefundEnd = null;
 
                         _context.Update(Order);
                         await _context.SaveChangesAsync();
@@ -213,7 +213,6 @@ namespace Application.Data.Repositories
 
                         Order.Status = StatusCode;
                         
-                        Order.HasPaid = true;
                         _context.Update(Order);
                         await _context.SaveChangesAsync();
                         return Order;
@@ -224,6 +223,7 @@ namespace Application.Data.Repositories
                         if (Order.AcceptEnd == null) Order.AcceptEnd = DateTimeUtcNow.AddDays(2);
 
                         Order.Status = StatusCode;
+                        Order.HasPaid = true;
 
                         _context.Update(Order);
                         await _context.SaveChangesAsync();
@@ -256,9 +256,6 @@ namespace Application.Data.Repositories
                 case OrderStatus.ReceivedCompleted:
                 case OrderStatus.ReceivedRefundFail:
                     {
-                        // rare 50c
-                        // rare 50c
-
                         Order.Status = StatusCode;
 
                         _context.Update(Order);
@@ -358,22 +355,20 @@ namespace Application.Data.Repositories
         {
             if (Order != null)
             {
-                if (Order.Status == (int)OrderStatus.Arrived && DateTime.UtcNow > Order.AcceptEnd)
+                if (Order.Status == (byte)OrderStatus.Arrived && DateTime.UtcNow > Order.AcceptEnd)
                 {
-                    _context.Orders.Attach(Order);
-                    Order.Status = (int)OrderStatus.Received;
-
-                    _context.Update(Order);
-                    await _context.SaveChangesAsync();
+                    await UpdateOrderStatus(Order.OrderID, (byte)OrderStatus.Arrived);
+                    Console.WriteLine($"UPDATED STATUS: Arrived to Received - Order number {Order.OrderNumber}");
                 }
-                if ((Order.Status == (int)OrderStatus.Received || Order.Status == (int)OrderStatus.ReceivedAgain)
+                else if ((Order.Status == (byte)OrderStatus.Received || Order.Status == (byte)OrderStatus.ReceivedAgain)
                     && DateTime.UtcNow > Order.RefundEnd)
                 {
-                    _context.Orders.Attach(Order);
-                    Order.Status = (int)OrderStatus.ReceivedCompleted;
-
-                    _context.Update(Order);
-                    await _context.SaveChangesAsync();
+                    await UpdateOrderStatus(Order.OrderID, (byte)OrderStatus.ReceivedCompleted);
+                    Console.WriteLine($"UPDATED STATUS: Received to ReceivedCompleted - Order number {Order.OrderNumber}");
+                }
+                else
+                {
+                    Console.WriteLine($"Nothing is updated - Order number {Order.OrderNumber}");
                 }
             }
         }

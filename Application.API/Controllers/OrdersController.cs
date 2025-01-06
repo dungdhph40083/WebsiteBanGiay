@@ -120,17 +120,7 @@ namespace Application.API.Controllers
                 if (ProductList == null) return NotFound("Không thể tìm thấy thông tin hóa đơn... (?????)");
                 switch ((OrderStatus)StatusCode)
                 {
-                    case OrderStatus.Refunded:
-                        {
-                            foreach (var THING in ProductList)
-                            {
-                                // Hoàn sản phẩm
-                                await ProductDetailRepo.DoAddProductCount
-                                    (THING.ProductDetailID.GetValueOrDefault(), THING.Quantity.GetValueOrDefault());
-                            }
-                            break;
-                        }
-                    case OrderStatus.Received:
+                    case OrderStatus.Processed:
                         {
                             foreach (var THING in ProductList)
                             {

@@ -26,13 +26,25 @@
 
     /*
      *  TODO:
-     *  1: voucher là dùng tất cho 1 đơn -- DONE
-     *  2: sửa icon tăng giảm số lượng sp khi thêm vào giỏ
-     *  3: đẩy các đơn bị hoàn trả sang trang hoàn trả -- DONE
-     *  4: quy trình trả: xnhận đơn hoàn => đã liên hệ đvvc đến lấy hàng => đã lấy hàng thành công => đang chuyển hàng về => hoàn hàng thành công -- DONE
-     *  5: hiện số trên bộ lọc trạng thái (HINT: <span class="badge badge-light"> xxx </span>) -- DONE
-     *  6: voucher áp dụng vào sẽ trừ % tổng giá trị đơn (có yêu cầu giá đơn tối thiểu để dùng voucher) -- DONE
-     *  7: ghép nhánh JWT (LÂU)
+     *  1: sửa số sản phẩm (thêm vào bị quá số) -- DONE
+     *  2: sau khi đặt đơn: được phép đổi tăng giảm số lượng mặt hàng & thêm/xóa sản phẩm khác (chỉ trước trạng thái đang giao) [TODO]
+     *  3: khi admin xác nhận đơn trừ số lượng sản phẩm trực tiếp là trừ luôn -- DONE
+     *  4: khi giao hàng thành công: trạng thái thanh toán chuyển về đã thanh toán -- DONE
+     *  5: hoàn đơn về không cộng lại (lưu ở bên bảng hoàn trả - thêm thông tin số lượng hàng đã hoàn trả & giá tiền) -- 50%: THÔNG TIN CHƯA CÓ
+     *  6: hoàn trả phải được chọn lý do & nhập lý do khác [D]
+     *
+     *  Lý do: 
+     *  - Hàng đã qua sử dụng
+     *  - Hàng giả hàng nhái
+     *  - Hàng lỗi
+     *  - Khác (cho nhập)
+     *
+     *  6.5: cho phép gửi ảnh với chọn số lượng muốn hoàn trả (cần thêm bảng ReturnDetail)
+     *
+     *  7: voucher giảm giá theo % giá trị đơn hàng và/hoặc giảm giá theo số tiền (điều kiện: đơn hàng tối thiểu số tiền tổng trong đơn)
+     *  8: phải có size & màu giày (n size/color - n giày) [TODO]
+     *  9: sửa icon tăng giảm số lượng sp khi thêm vào giỏ
+     *  10: ghép nhánh JWT (LÂU)
      */
 
     public class OrderFilters
@@ -48,6 +60,15 @@
 
         // Giao hàng thất bại
         public const string ORDERS_FAILED = "ORDERS_FAILED";
+    }
+
+    public class Reasoning
+    {
+        public const string Generic = "Generic";
+        public const string UsedProduct = "UsedProduct";
+        public const string BrokenProduct = "BrokenProduct";
+        public const string FakeProduct = "FakeProduct";
+        public const string Other = "Other";
     }
 
     public enum VisibilityStatus

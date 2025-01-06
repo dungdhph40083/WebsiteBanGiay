@@ -1,6 +1,7 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
 using Application.Data.Models;
+using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -13,10 +14,15 @@ namespace Application.API.Controllers
     {
         private readonly IShoppingCart ShoppingCartRepo;
         private readonly IVoucher VoucherRepo;
-        public ShoppingCartController(IShoppingCart ShoppingCartRepo, IVoucher VoucherRepo)
+        private readonly IOrderDetails OrderDetailsRepo;
+        private readonly IOrderRepository OrderRepo;
+
+        public ShoppingCartController(IShoppingCart ShoppingCartRepo, IVoucher VoucherRepo, IOrderDetails OrderDetailsRepo, IOrderRepository OrderRepo)
         {
             this.ShoppingCartRepo = ShoppingCartRepo;
             this.VoucherRepo = VoucherRepo;
+            this.OrderDetailsRepo = OrderDetailsRepo;
+            this.OrderRepo = OrderRepo;
         }
 
         [HttpGet]

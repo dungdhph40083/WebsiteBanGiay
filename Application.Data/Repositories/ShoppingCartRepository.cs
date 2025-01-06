@@ -236,8 +236,15 @@ namespace Application.Data.Repositories
             {
                 Context.Entry(CartItem).State = EntityState.Modified;
 
-                if (AdditionMode == true) CartItem.QuantityCart += (Quantity ?? 0);
-                else CartItem.QuantityCart = (Quantity ?? 0);
+                if (AdditionMode == true)
+                {
+                    if (CartItem.ProductDetail?.Quantity.GetValueOrDefault() >= (CartItem.QuantityCart + Quantity).GetValueOrDefault())
+                    {
+                        CartItem.QuantityCart = CartItem.ProductDetail.Quantity.GetValueOrDefault();
+                    }
+                    else CartItem.QuantityCart += Quantity ?? 0;
+                }
+                else CartItem.QuantityCart = Quantity ?? 0;
 
                 CartItem.Price = CartItem.QuantityCart * CartItem?.ProductDetail?.Product?.Price;
 
@@ -268,6 +275,37 @@ namespace Application.Data.Repositories
 
                 return Response;
             }
+        }
+
+        public async Task<List<ShoppingCart>> ExportFromOrder(Guid UserID, Guid OrderID)
+        {
+            var GetOrder = await Context.Orders.FindAsync(OrderID);
+            if (GetOrder == null) return new();
+
+            var MyOrder = await Context.OrderDetails
+                  .Where(UU => UU.OrderID.Equals(OrderID)).ToListAsync();
+
+            if (MyOrder != null)
+            {
+                var MyCart = new List<ShoppingCart>();
+                foreach (var OrderItem in MyOrder)
+                {
+                    ShoppingCart CartItem = new()
+                    {
+                        CartID = Guid.NewGuid(),
+                        UserID = UserID,
+                        Price = OrderItem.Price,
+                        ProductDetailID = OrderItem.ProductDetailID,
+                        QuantityCart = OrderItem.Quantity ?? 1,
+                    };
+                    MyCart.Add(CartItem);
+                }
+                await Context.ShoppingCarts.AddRangeAsync(MyCart);
+                await Context.SaveChangesAsync();
+
+                return await GetShoppingCartsByUserID(UserID);
+            }
+            else return [];
         }
     }
 }
