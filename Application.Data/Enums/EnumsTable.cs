@@ -31,7 +31,7 @@
      *  3: khi admin xác nhận đơn trừ số lượng sản phẩm trực tiếp là trừ luôn -- DONE
      *  4: khi giao hàng thành công: trạng thái thanh toán chuyển về đã thanh toán -- DONE
      *  5: hoàn đơn về không cộng lại (lưu ở bên bảng hoàn trả - thêm thông tin số lượng hàng đã hoàn trả & giá tiền) -- 50%: THÔNG TIN CHƯA CÓ
-     *  6: hoàn trả phải được chọn lý do & nhập lý do khác [D]
+     *  6: hoàn trả phải được chọn lý do & nhập lý do khác -- DONE
      *
      *  Lý do: 
      *  - Hàng đã qua sử dụng

@@ -10,3 +10,4 @@
 /Application.MVC.GeneralPublic/obj
 /Application.Data/Migrations
 /Application.MVC.GeneralPublic/Views/UserCart/!Sample.cshtml
+/Application.API/appsettings.json

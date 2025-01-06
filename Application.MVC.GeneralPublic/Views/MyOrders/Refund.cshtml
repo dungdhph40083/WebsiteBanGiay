@@ -25,24 +25,26 @@
             <p class="text-danger">Vì sao bạn muốn đổi trả (các) mặt hàng này?</p>
             <hr />
             <div class="custom-control custom-radio">
-                <input type="radio" id="Generic" value="@Reasoning.Generic" class="custom-control-input">
+                <input type="radio" name="Reason" id="Generic" value="@Reasoning.Generic" class="custom-control-input">
                 <label class="custom-control-label" for="GenericReasoning">Không thích mặt hàng này</label>
             </div>
             <div class="custom-control custom-radio">
-                <input type="radio" id="UsedProduct" value="@Reasoning.UsedProduct" class="custom-control-input">
+                <input type="radio" name="Reason" id="UsedProduct" value="@Reasoning.UsedProduct" class="custom-control-input">
                 <label class="custom-control-label" for="UsedProduct">Mặt hàng đã qua sử dụng</label>
             </div>
             <div class="custom-control custom-radio">
-                <input type="radio" id="BrokenProduct" value="@Reasoning.BrokenProduct" class="custom-control-input">
+                <input type="radio" name="Reason" id="BrokenProduct" value="@Reasoning.BrokenProduct" class="custom-control-input">
                 <label class="custom-control-label" for="BrokenProduct">Mặt hàng bị hỏng hóc</label>
             </div>
             <div class="custom-control custom-radio">
-                <input type="radio" id="FakeProduct" value="@Reasoning.FakeProduct" class="custom-control-input">
+                <input type="radio" name="Reason" id="FakeProduct" value="@Reasoning.FakeProduct" class="custom-control-input">
                 <label class="custom-control-label" for="FakeProduct">Hàng giả/hàng nhái</label>
             </div>
             <div class="custom-control custom-radio">
-                <input type="radio" id="Other" value="@Reasoning.Other" class="custom-control-input">
+                <input type="radio" name="Reason" id="Other" value="@Reasoning.Other" class="custom-control-input">
                 <label class="custom-control-label" for="Other">Khác...</label>
+                <br />
+                <input type="text" name="Comments" id="OtherComment" class="collapse form-control" placeholder="..."/>
             </div>
             <div class="dropdown">
                 <button class="btn btn-block btn-primary font-weight-bold py-3" type="button" data-toggle="dropdown" aria-expanded="false">Yêu cầu trả hàng</button>
@@ -59,3 +61,14 @@
         </div>
     </div>
 </form>
+
+<script>
+    document.getElementById('Other').addEventListener('change', function () {
+        var collapse = document.getElementById('Comments');
+        if (this.checked) {
+            collapse.classList.add('show');
+        } else {
+            collapse.classList.remove('show');
+        }
+    });
+</script>

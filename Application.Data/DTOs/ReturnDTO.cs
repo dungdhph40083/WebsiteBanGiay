@@ -10,6 +10,5 @@ namespace Application.Data.DTOs
     {
         public Guid? OrderID { get; set; }
         public string? Reason { get; set; }
-        public byte? Status { get; set; }
     }
 }
