@@ -139,7 +139,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
         }
 
-        public async Task<ActionResult> Request2Refund(Guid ID)
+        public async Task<ActionResult> RequestRefund(Guid ID)
         {
             try
             {
