@@ -372,5 +372,9 @@ namespace Application.Data.Repositories
                 }
             }
         }
+        public async Task<Order> GetOrderByOrderNumberAsync(string orderNumber)
+        {
+            return await _context.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+        }
     }
 }

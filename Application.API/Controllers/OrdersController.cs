@@ -154,5 +154,22 @@ namespace Application.API.Controllers
             if (!result) return NotFound();
             return NoContent();
         }
+        [HttpGet("byOrderNumber/{orderNumber}")]
+        public async Task<IActionResult> GetOrderByOrderNumber(string orderNumber)
+        {
+            if (string.IsNullOrEmpty(orderNumber))
+            {
+                return BadRequest("Order number is required.");
+            }
+
+            var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
+
+            if (order == null)
+            {
+                return NotFound($"Order with OrderNumber {orderNumber} not found.");
+            }
+
+            return Ok(order);
+        }
     }
 }
