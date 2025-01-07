@@ -4,6 +4,7 @@ using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Application.Data.Repositories
 {
@@ -122,6 +123,89 @@ namespace Application.Data.Repositories
                 return Target;
             }
             else return default;
+        }
+
+        public async Task<ProductDetailVariationMetadata> CreateNewVariations(Guid DetailID, List<ProductDetailVariationDTO> VariationDetails)
+        {
+            // Cái này để thông báo Admin nếu như gặp trường hợp thêm biến thể bị trùng lặp (VariationsNotAdded > 0 = thông báo)
+            var Metadata = new ProductDetailVariationMetadata()
+            {
+                VariationsAdded = 0,
+                VariationsNotAdded = 0,
+                Variations = []
+            };
+
+            var NewVariations = new List<ProductDetail>(); // Danh sách biến thể SP 
+            var Target = await GetProductDetailByID(DetailID); // Lấy thông tin cũ
+
+            if (Target != null && VariationDetails.Count > 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"\nTarget is not null. PID is {Random.Shared.Next(0, 100000)}\n");
+                Console.ForegroundColor = ConsoleColor.Gray;
+
+                foreach (var Variation in VariationDetails)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\nFound variation! PID is {Random.Shared.Next(0, 100000)}\n");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+
+                    var IfThisHasValueThenPerish = await Context.ProductDetails
+                        .Where(Qry =>
+                               Qry.ProductID == Target.ProductID && // Nếu trùng ProductID
+                               Qry.ColorID == Variation.ColorID &&  // và trùng màu + kích cỡ
+                               Qry.SizeID == Variation.SizeID).SingleOrDefaultAsync(); // Kiểm tra trùng lặp
+
+                    if (IfThisHasValueThenPerish == null) // Ko trùng = cho
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine($"\nNo variation is found, creating new! PID is {Random.Shared.Next(0, 100000)}\n");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+
+                        // Tạo Detail mới (biến thể)
+                        // & lấy dữ liệu cũ trước, sau đó
+                        ProductDetail NewVariation = new()
+                        {
+                            // Tạo GUID mới
+                            ProductDetailID = Guid.NewGuid(),
+                            ProductID = Target.ProductID,
+                            CategoryID = Target.CategoryID,
+                            Material = Target.Material,
+                            Brand = Target.Brand,
+                            PlaceOfOrigin = Target.PlaceOfOrigin,
+                            Status = 1,
+                            UpdatedAt = DateTime.UtcNow
+                        };
+
+                        // Lấy dữ liệu mới vào để làm biến thể mới
+                        NewVariation = Mapper.Map(Variation, NewVariation);
+
+                        NewVariations.Add(NewVariation); // Thêm vào danh sách biến thể
+                        Metadata.VariationsAdded += 1;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"\nVariation already exists, ignoring. PID is {Random.Shared.Next(0, 100000)}\n");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+
+                        Metadata.VariationsNotAdded += 1;
+                    }
+                };
+
+                // Xong rồi cho DS vào thay vì phải lặp đi lặp lại lệnh .Add
+                await Context.ProductDetails.AddRangeAsync(NewVariations);
+                await Context.SaveChangesAsync();
+
+                Metadata.Variations = NewVariations;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\nSOMETHING BROKE??? PID is {Random.Shared.Next(0, 100000)}\n");
+                Console.ForegroundColor = ConsoleColor.Gray;
+            }
+            return Metadata;
         }
     }
 }

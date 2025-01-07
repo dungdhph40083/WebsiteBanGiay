@@ -47,6 +47,9 @@ namespace Application.Data.Mappers
             CreateMap<ProductDetail, ProductDetailDTO>();
             CreateMap<ProductDetailDTO, ProductDetail>();
 
+            CreateMap<ProductDetail, ProductDetailVariationDTO>();
+            CreateMap<ProductDetailVariationDTO, ProductDetail>();
+
             CreateMap<ProductWarranty, ProductWarrantyDTO>();
             CreateMap<ProductWarrantyDTO, ProductWarranty>();
 

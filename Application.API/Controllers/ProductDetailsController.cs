@@ -44,6 +44,13 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(Get), new { Response.ProductDetailID }, Response);
         }
 
+        [HttpPost("VariationsFor/{DetailID}")]
+        public async Task<ActionResult<ProductDetailVariationMetadata>> PostVariations(Guid DetailID, [FromBody] List<ProductDetailVariationDTO> Variations)
+        {
+            var Response = await ProductDetailRepo.CreateNewVariations(DetailID, Variations);
+            return Response;
+        }
+
         [HttpPut("{ID}")]
         public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromForm] ProductDetailDTO UpdatedProductDetail)
         {
@@ -75,9 +82,5 @@ namespace Application.API.Controllers
             // Trả về sản phẩm đã được cập nhật
             return Ok(await ProductDetailRepo.GetProductDetailByID(ID));
         }
-
-
-
-
     }
 }
