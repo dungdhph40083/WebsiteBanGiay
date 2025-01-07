@@ -73,7 +73,6 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = response.ProductID }, response);
         }
 
-
         [HttpPut("{id}")]
         public async Task<ActionResult<Product?>> PutProduct(Guid id, [FromForm] ProductDTO product, IFormFile? Image)
         {
@@ -128,7 +127,6 @@ namespace Application.API.Controllers
         }
 
 
-
         [HttpDelete("{id}")]
         public async Task<ActionResult>? DeleteProduct(Guid id)
         {
@@ -156,7 +154,5 @@ namespace Application.API.Controllers
 
             return Ok(); // Nếu không có sản phẩm trùng tên
         }
-
-
     }
 }

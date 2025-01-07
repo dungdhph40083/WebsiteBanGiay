@@ -16,31 +16,31 @@
                     <hr />
                     <dl class="row">
                         <dt class="col-sm-4">Sản phẩm:</dt>
-                        <dd class="col-sm-8">@Model.Product?.Name </dd>
+                        <dd class="col-sm-4">@Model.Product?.Name </dd>
 
                         <dt class="col-sm-4">Danh mục:</dt>
-                        <dd class="col-sm-8">@Model.Category?.CategoryName </dd>
+                        <dd class="col-sm-4">@Model.Category?.CategoryName </dd>
 
-                        <dt class="col-sm-4">Kích cỡ:</dt>
-                        <dd class="col-sm-8">@Model.Size?.Name </dd>
+                        <dt class="col-sm-4">Các kích cỡ (LÀM THEO BẢNG):</dt>
+                        <dd class="col-sm-4">@Model.Size?.Name </dd>
 
-                        <dt class="col-sm-4">Màu:</dt>
-                        <dd class="col-sm-8">@Model.Color?.ColorName </dd>
+                        <dt class="col-sm-4">Các màu (LÀM THEO BẢNG):</dt>
+                        <dd class="col-sm-4">@Model.Color?.ColorName </dd>
 
                         <dt class="col-sm-4">Chất liệu:</dt>
-                        <dd class="col-sm-8">@Model.Material </dd>
+                        <dd class="col-sm-4">@Model.Material </dd>
 
                         <dt class="col-sm-4">Nhãn hiệu:</dt>
-                        <dd class="col-sm-8">@Model.Brand </dd>
+                        <dd class="col-sm-4">@Model.Brand </dd>
 
                         <dt class="col-sm-4">Xuất xứ:</dt>
-                        <dd class="col-sm-8">@Model.PlaceOfOrigin </dd>
+                        <dd class="col-sm-4">@Model.PlaceOfOrigin </dd>
 
                         <dt class="col-sm-4">Số lượng:</dt>
-                        <dd class="col-sm-8">@Model.Quantity.GetValueOrDefault().ToString("#,##0")</dd>
+                        <dd class="col-sm-4">@Model.Quantity.GetValueOrDefault().ToString("#,##0")</dd>
 
                         <dt class="col-sm-4">Trạng thái:</dt>
-                        <dd class="col-sm-8">
+                        <dd class="col-sm-4">
                             @switch (Model.Status)
                             {
                                 case 0:

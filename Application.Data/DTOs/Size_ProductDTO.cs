@@ -7,5 +7,6 @@ namespace Application.Data.Models
     {
         public Guid? SizeID { get; set; }
         public Guid? ProductID { get; set; }
+        public bool Available { get; set; }
     }
 }
