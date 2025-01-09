@@ -3,8 +3,8 @@
 <div class="breadcrumb-wrap">
     <div class="container-fluid">
         <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="#">Sản phẩm</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="/Product/Index">Sản phẩm</a></li>
             <li class="breadcrumb-item active">Giỏ hàng</li>
         </ul>
     </div>
@@ -27,7 +27,6 @@
                                             <th>Giá tiền</th>
                                             <th>Số lượng</th>
                                             <th>Tổng cộng</th>
-                                            <th>Mã Voucher</th>
                                             <th>Gỡ sản phẩm</th>
                                         </tr>
                                     </thead>
@@ -51,7 +50,15 @@
                                                             <div class="input-group-prepend pr-2">
                                                                 <button class="btn btn-primary btn-minus" onclick="Remove1('@Model[Idx]?.ProductDetailID.ToString()')" type="button"><i class="fa fa-minus"></i></button>
                                                             </div>
-                                                            <input class="form-control text-center" placeholder="1" onkeyup="Edit1('@Model[Idx]?.ProductDetailID.ToString()')" id="ProductAmount_@(Model[Idx]?.ProductDetailID.ToString() ?? "null")" type="number" asp-for="@(Model[Idx]!.QuantityCart)" value="@Model[Idx]?.QuantityCart" min="1" step="1">
+                                                            <input class="form-control text-center"
+                                                                placeholder="1"
+                                                                onkeyup="Edit1('@Model[Idx]?.ProductDetailID.ToString()')"
+                                                                id="ProductAmount_@(Model[Idx]?.ProductDetailID.ToString() ?? "null")"
+                                                                type="number" asp-for="@(Model[Idx]!.QuantityCart)"
+                                                                value="@Model[Idx]?.QuantityCart"
+                                                                min="1"
+                                                                max="@(Model[Idx]?.ProductDetail?.Quantity)"
+                                                                step="1">
                                                             <div class="input-group-prepend pl-2">
                                                                 <button class="btn btn-primary btn-plus" onclick="Add1('@Model[Idx]?.ProductDetailID.ToString()')" type="button"><i class="fa fa-plus"></i></button>
                                                             </div>
@@ -59,7 +66,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="PriceTotalItems align-middle" id="PriceTotal_@(Model[Idx]?.ProductDetailID.ToString() ?? "null")">
-                                                    @if (Model[Idx]?.ProductDetail?.Sale?.StartingAt.GetValueOrDefault() >= DateTime.UtcNow && Model[Idx]?.ProductDetail?.Sale?.EndingAt.GetValueOrDefault() <= DateTime.UtcNow)
+                                                    @* @if (Model[Idx]?.ProductDetail?.Sale?.StartingAt.GetValueOrDefault() >= DateTime.UtcNow && Model[Idx]?.ProductDetail?.Sale?.EndingAt.GetValueOrDefault() <= DateTime.UtcNow)
                                                     {
                                                         <input hidden id="SaleDiscount_@(Model[Idx]?.ProductDetail?.Sale?.SaleID)"/>
                                                     }
@@ -72,13 +79,8 @@
                                                     else
                                                     {
                                                         @Model[Idx]?.Price.GetValueOrDefault().ToString("#,##0")
-                                                    }
-                                                </td>
-                                                <td class="align-middle">
-                                                    <input class="form-control" type="text" name="VoucherCode" onkeyup="Notify()" placeholder="Mã Voucher" value="@(Model[Idx].VoucherID != null ? Model[Idx].Voucher?.VoucherCode : null)" style="text-transform: UPPERCASE">
-                                                    <div class="input-group-prepend pl-2">
-                                                        <button class="btn btn-primary" type="submit">Dùng</button>
-                                                    </div>
+                                                    } *@
+                                                    @Model[Idx]?.Price.GetValueOrDefault().ToString("#,##0")
                                                 </td>
                                                 <td class="align-middle"><button class="btn btn-danger delete_trigger" type="button" onclick="GetCartItemDataToDie('@(Model[Idx]?.ProductDetailID.ToString())')" data-toggle="modal" data-target="#ModalDelete"><i class="fa fa-trash"></i> Bỏ</button></td>
                                             </tr>
@@ -100,16 +102,21 @@
                                 <div class="cart-summary">
                                     <div class="cart-content">
                                         <h2>Tổng kết</h2>
+                                        @* <div class="input-group-prepend">
+                                            <input class="form-control mr-3" type="text" name="VoucherCode" onkeyup="Notify()" placeholder="Mã Voucher" style="text-transform: UPPERCASE">
+                                            <button class="btn btn-primary" type="submit">Dùng</button>
+                                        </div>
+                                        <hr /> *@
                                         <div class="row">
                                             <b class="col-md-5">Chi phí hàng hóa</b>
                                             <p class="col-md-7 text-right" id="PriceTotalSidebar">@((Model.Sum(x => x.Price)).GetValueOrDefault().ToString("#,##0"))</p>
                                             <b class="col-md-5">Chi phí giao hàng</b>
-                                            <p class="col-md-7 text-right" id="ShipFeeTotalSidebar">@((Model.Sum(x => x.Price) * 0.01).GetValueOrDefault().ToString("#,##0"))</p>
+                                            <p class="col-md-7 text-right" id="ShipFeeTotalSidebar">@(Model.Count() > 1 ? ((Model.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí")</p>
                                         </div>
                                         <hr />
                                         <div class="row">
                                             <h4 class="col-md-5">Tổng giá</h4>
-                                            <p class="col-md-7 text-right" id="GrandTotalSidebar">@((Model.Sum(x => x.Price) * 1.01).GetValueOrDefault().ToString("#,##0"))</p>
+                                            <p class="col-md-7 text-right" id="GrandTotalSidebar">@(((Model.Sum(x => x.Price) + (Model.Count() > 0 ? ((Model.Count() - 1) * 1000) : 0)).GetValueOrDefault().ToString("#,##0")))</p>
                                         </div>
                                     </div>
                                     <p id="WARNING_WARNING_ALARM"></p>
@@ -150,3 +157,4 @@
 </div>
 
 <script src="~/js/shopping_cart_logic.js"></script>
+<script src="~/js/modal_2.js"></script>

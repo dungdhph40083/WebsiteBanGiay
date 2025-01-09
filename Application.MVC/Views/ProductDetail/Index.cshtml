@@ -73,6 +73,7 @@
     .btn-delete:hover {
         background-color: #c82333;
     }
+
     /* Tùy chỉnh nút dropdown */
     .custom-dropdown-btn {
         background-color: #007bff; /* Màu xanh đậm */
@@ -101,8 +102,67 @@
         color: #721c24; /* Đỏ đậm */
     }
 </style>
+<style>
+    /* Style cho viền và hiệu ứng */
+    .form-check-inline {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .status-radio:checked + .form-check-label {
+        font-weight: bold;
+    }
+
+        .status-radio:checked + .form-check-label.text-primary {
+            color: #004085; /* Màu xanh đậm hơn khi chọn */
+        }
+
+        .status-radio:checked + .form-check-label.text-success {
+            color: #155724; /* Màu xanh lá đậm hơn khi chọn */
+        }
+
+        .status-radio:checked + .form-check-label.text-danger {
+            color: #721c24; /* Màu đỏ đậm hơn khi chọn */
+        }
+
+    /* Hiệu ứng hover */
+    .form-check-inline:hover {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        transform: scale(1.05);
+    }
+</style>
 
 <h1 class="text-center">Sản phẩm chi tiết</h1>
+
+<!-- Form tìm kiếm sản phẩm -->
+<div class="d-flex justify-content-center my-3">
+    <div class="input-group w-50">
+        <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên sản phẩm" value="@ViewBag.SearchTerm">
+        <div class="input-group-append">
+            <button class="btn btn-primary" id="searchBtn">
+                <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Bộ lọc trạng thái với màu sắc và viền -->
+<div class="d-flex justify-content-center my-3">
+    <div class="form-check form-check-inline border border-primary rounded p-2 mx-1">
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusAll" value="all"
+        @(ViewBag.CurrentStatus == "all" ? "checked" : "")>
+        <label class="form-check-label text-primary" for="statusAll">Tất cả</label>
+    </div>
+    <div class="form-check form-check-inline border border-success rounded p-2 mx-1">
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusActive" value="1"
+        @(ViewBag.CurrentStatus == "1" ? "checked" : "")>
+        <label class="form-check-label text-success" for="statusActive">Đang bán</label>
+    </div>
+    <div class="form-check form-check-inline border border-danger rounded p-2 mx-1">
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusInactive" value="0"
+        @(ViewBag.CurrentStatus == "0" ? "checked" : "")>
+        <label class="form-check-label text-danger" for="statusInactive">Dừng bán</label>
+    </div>
+</div>
 
 <p>
     <a class="btn btn-primary btn-custom" asp-action="Create">
@@ -116,7 +176,7 @@
         <thead class="thead-dark">
             <tr>
                 <th>#</th> <!-- Serial number header -->
-                <th>Tên SP</th>
+                <th>Tên sản phẩm</th>
                 <th>Ảnh SP</th>
                 <th>Kích cỡ</th>
                 <th>Màu</th>
@@ -124,6 +184,7 @@
                 <th>Chất liệu</th>
                 <th>Số lượng còn lại</th>
                 <th>Thời gian cập nhật</th>
+                <th>Trạng thái</th>
                 <th>Hành động</th>
             </tr>
         </thead>
@@ -131,7 +192,6 @@
             @foreach (var Entry in Model.Select((value, index) => new { value, index }))
             {
                 <tr>
-                    <!-- Serial number with offset based on page number -->
                     <td>@(Entry.index + 1 + (ViewBag.CurrentPage - 1) * ViewBag.PageSize)</td>
                     <td>@Entry.value.Product?.Name</td>
                     <td>
@@ -148,8 +208,18 @@
                     <td>@Entry.value.Color?.ColorName</td>
                     <td>@Entry.value.Category?.CategoryName</td>
                     <td>@Entry.value.Material</td>
-                    <td>@Entry.value.Quantity.GetValueOrDefault().ToString("#,##0")</td>
+                    <td>@Entry.value.Quantity.GetValueOrDefault().ToString("#,0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
                     <td>@Entry.value.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy | HH:mm")</td>
+                    <td>
+                        @if (Entry.value.Status == 1)
+                        {
+                            <span class="badge badge-success">Đang bán</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Dừng bán</span>
+                        }
+                    </td>
                     <td>
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -159,18 +229,21 @@
                                 <a class="dropdown-item text-warning" asp-action="Edit" asp-route-ID="@Entry.value.ProductDetailID">
                                     <i class="fas fa-edit"></i> Sửa
                                 </a>
-                                <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item text-success" asp-action="Details" asp-route-ID="@Entry.value.ProductDetailID">
                                     <i class="fas fa-info-circle"></i> Chi tiết
                                 </a>
-                                <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-primary" href="#" onclick="toggleStatus('@Entry.value.ProductDetailID')">
+                                    <i class="fas fa-toggle-on"></i> Đổi trạng thái
+                                </a>
+                                <div class="dropdown-divider"></div>
                                 <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@Entry.value.ProductDetailID" data-controller="ProductDetail" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
                                     <i class="fas fa-trash-alt"></i> Xóa
                                 </button>
                             </div>
                         </div>
                     </td>
-
                 </tr>
             }
         </tbody>
@@ -180,11 +253,10 @@
     <div class="d-flex justify-content-center mt-3">
         <nav>
             <ul class="pagination">
-                <!-- Previous Page -->
                 @if (ViewBag.CurrentPage > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, pageSize = ViewBag.PageSize })">Trước</a>
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, pageSize = ViewBag.PageSize, status = ViewBag.CurrentStatus, searchTerm = ViewBag.SearchTerm })">Trước</a>
                     </li>
                 }
                 else
@@ -193,8 +265,6 @@
                         <span class="page-link">Trước</span>
                     </li>
                 }
-
-                <!-- Page Numbers -->
                 @for (int i = 1; i <= ViewBag.TotalPages; i++)
                 {
                     if (i == ViewBag.CurrentPage)
@@ -206,16 +276,14 @@
                     else
                     {
                         <li class="page-item">
-                            <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = ViewBag.PageSize })">@i</a>
+                            <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = ViewBag.PageSize, status = ViewBag.CurrentStatus, searchTerm = ViewBag.SearchTerm })">@i</a>
                         </li>
                     }
                 }
-
-                <!-- Next Page -->
                 @if (ViewBag.CurrentPage < ViewBag.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize })">Tiếp</a>
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize, status = ViewBag.CurrentStatus, searchTerm = ViewBag.SearchTerm })">Tiếp</a>
                     </li>
                 }
                 else
@@ -230,28 +298,116 @@
 }
 else
 {
-    <h1 class="text-center">Chưa có chi tiết sản phẩm nào.</h1>
-    <p class="text-center">Bắt đầu tạo chi tiết sản phẩm bằng cách nhấn vào "<b>Tạo mới</b>"!</p>
+    <h1 class="text-center">Chưa có sản phẩm chi tiết nào</h1>
 }
 
-<!-- Modal -->
-<div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="DeleteLabel">KHOAN!!! <span style="font-size:x-small">(Khoan?)</span></h1>
-                <button type="button" class="close" data-dismiss="modal" id="close-btn" aria-label="Close">
-                    <i class="fa-cross"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn để xóa chi tiết này?<br />
-                <span style="font-size:small" class="font-monospace-cascadia">ID chi tiết: <span id="ItemID" class="font-monospace-cascadia"></span></span>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-btn">Hủy</button>
-                <button type="button" class="btn btn-danger" id="confirm_deletion">Xóa</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- JavaScript for handling search functionality -->
+<script>
+    document.getElementById('searchBtn').addEventListener('click', function () {
+        const searchTerm = document.getElementById('searchInput').value;
+        const url = `/ProductDetail/Index?page=1&pageSize=@ViewBag.PageSize&status=@ViewBag.CurrentStatus&searchTerm=${searchTerm}`;
+        window.location.href = url;
+    });
+    // Tự động tìm kiếm khi người dùng nhấn Enter
+    document.getElementById("searchInput").addEventListener("keypress", function (e) {
+        if (e.key === 'Enter') {
+            document.getElementById("searchBtn").click();
+        }
+    });
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script>
+    document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const selectedStatus = this.value;
+            const url = `/ProductDetail/Index?page=1&pageSize=@ViewBag.PageSize&status=${selectedStatus}`;
+            window.location.href = url;
+        });
+    });
+
+    async function toggleStatus(productDetailId) {
+        const url = `/ProductDetail/ToggleStatus/${productDetailId}`;
+        try {
+            const response = await fetch(url, { method: 'PUT' });
+            if (response.ok) {
+                swal({
+                    title: "Thành công!",
+                    text: "Đổi trạng thái thành công!",
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false,
+                }).then(() => location.reload());
+            } else {
+                swal({ title: "Lỗi!", text: "Không thể đổi trạng thái.", icon: "error" });
+            }
+        } catch {
+            swal({ title: "Lỗi!", text: "Đã xảy ra lỗi khi đổi trạng thái.", icon: "error" });
+        }
+    }
+</script>
+<script>
+    document.querySelectorAll('.delete_trigger').forEach(button => {
+        button.addEventListener('click', function () {
+            const productDetailId = this.getAttribute('data-id');
+            const controller = this.getAttribute('data-controller');
+            const action = this.getAttribute('data-action');
+            const deleteUrl = `/${controller}/${action}/${productDetailId}`;
+
+            // Hiển thị cảnh báo xác nhận xóa với SweetAlert
+            swal({
+                title: "Bạn có chắc chắn?",
+                text: "Sau khi xóa, bạn sẽ không thể khôi phục mục này!",
+                icon: "warning",
+                buttons: ["Hủy", "Xóa"],
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    // Gửi yêu cầu xóa
+                    fetch(deleteUrl, {
+                        method: 'DELETE'
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                // Thông báo thành công
+                                swal({
+                                    title: "Đã xóa!",
+                                    text: "Chi tiết sản phẩm đã được xóa thành công.",
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false,
+                                }).then(() => {
+                                    location.reload(); // Tải lại trang sau khi xóa
+                                });
+                            } else if (response.status === 409) { // Lỗi ràng buộc dữ liệu
+                                swal({
+                                    title: "Không thể xóa!",
+                                    text: "Sản phẩm này có liên quan đến các dữ liệu khác trong hệ thống.",
+                                    icon: "error",
+                                });
+                            } else {
+                                // Xử lý lỗi khác (như 400, 500)
+                                swal({
+                                    title: "Lỗi!",
+                                    text: "Không thể xóa. Vui lòng thử lại.",
+                                    icon: "error",
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+
+                            // Thông báo lỗi hệ thống
+                            swal({
+                                title: "Lỗi!",
+                                text: "Đã xảy ra lỗi trong quá trình xóa.",
+                                icon: "error",
+                            });
+                        });
+                }
+            });
+        });
+    });
+
+</script>

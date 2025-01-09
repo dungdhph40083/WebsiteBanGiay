@@ -18,15 +18,13 @@ function DisplayTotalPriceOnSidebar() {
     Sum = 0;
 
     var PriceTotalSidebar = document.getElementById("PriceTotalSidebar");
-    var ShipFeeTotalSidebar = document.getElementById("ShipFeeTotalSidebar");
     var GrandTotalSidebar = document.getElementById("GrandTotalSidebar");
 
     PriceTotalItemsArray = Array.from(document.getElementsByClassName("PriceTotalItems"));
     PriceTotalItemsArray.forEach(AddEmUp);
 
     PriceTotalSidebar.innerText = ThousandSeparator(Sum);
-    ShipFeeTotalSidebar.innerText = ThousandSeparator(parseInt(Sum * 0.01));
-    GrandTotalSidebar.innerText = ThousandSeparator(parseInt(Sum * 1.01));
+    GrandTotalSidebar.innerText = ThousandSeparator(parseInt(Sum * 1.00));
 }
 
 
@@ -53,12 +51,14 @@ function Edit1(ItemID) {
     let ProductAmount = document.getElementById("ProductAmount_" + ItemID);
     let PriceSingle = document.getElementById("PriceSingle_" + ItemID);
     let PriceTotal = document.getElementById("PriceTotal_" + ItemID);
+    let Max = parseInt(ProductAmount.max);
 
     Notify();
 
     let CurrentQuantity = 1;
 
     if (ProductAmount.value < 0) ProductAmount.value = 1;
+    if (ProductAmount.value > Max) ProductAmount.value = Max;
 
     if (ProductAmount.value <= 0 || ProductAmount.value == '') CurrentQuantity = 1;
     else CurrentQuantity = parseInt(ProductAmount.value);
@@ -76,12 +76,17 @@ function Add1(ItemID) {
     let ProductAmount = document.getElementById("ProductAmount_" + ItemID);
     let PriceSingle = document.getElementById("PriceSingle_" + ItemID);
     let PriceTotal = document.getElementById("PriceTotal_" + ItemID);
+    let Max = parseInt(ProductAmount.max);
 
     let CurrentQuantity = parseInt(ProductAmount.value == '' ? 0 : ProductAmount.value);
     Notify();
 
     if (!isNaN(CurrentQuantity)) {
-        ProductAmount.value = CurrentQuantity + 1;
+        if (CurrentQuantity < Max) {
+            ProductAmount.value = CurrentQuantity + 1;
+        }
+        else ProductAmount.value = Max;
+
         PriceTotal.innerText =
             ThousandSeparator(parseInt(PriceSingle.innerText.replace(/[$,.\s]/g, '')) * ProductAmount.value);
 

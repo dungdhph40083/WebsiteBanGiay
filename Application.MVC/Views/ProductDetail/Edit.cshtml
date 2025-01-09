@@ -5,82 +5,133 @@
     ViewData["Title"] = "Cập nhật chi tiết sản phẩm";
 }
 
-<h1>Cập nhật chi tiết sản phẩm</h1>
+<h1 class="text-center mt-4 text-primary">Cập nhật chi tiết sản phẩm</h1>
+<hr class="border-primary" />
 
-<form asp-action="Edit" method="post" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="shadow-lg p-4 rounded-3 bg-white">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <label asp-for="ProductID" class="form-label">Sản phẩm</label>
-            <select asp-for="ProductID" class="form-control" aria-label="Select category to assign to" asp-items="@ViewBag.Prods" >
-                <option selected value=null>(Chưa chọn)</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="CategoryID" class="form-label">Danh mục</label>
-            <select asp-for="CategoryID" class="form-control" aria-label="Select category to assign to" asp-items="@ViewBag.Catgs">
-                <option selected value=null>(Chưa chọn)</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="SizeID" class="form-label">Kích cỡ</label>
-            <select asp-for="SizeID" class="form-control" aria-label="Select size to assign to" asp-items="@ViewBag.Sizes">
-                <option selected value=null>(Chưa chọn)</option>
-            </select>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <label asp-for="ColorID" class="form-label">Màu</label>
-            <select asp-for="ColorID" class="form-control" aria-label="Select color to assign to" asp-items="@ViewBag.Colrs">
-                <option selected value=null>(Chưa chọn)</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="SaleID" class="form-label">Sự kiện</label>
-            <select asp-for="SaleID" class="form-control" aria-label="Select event to assign to" asp-items="@ViewBag.Sales">
-                <option selected value=null>(Chưa chọn)</option>
-            </select>
-        </div>
-@*         <div class="col-md-4">
-            <label class="form-label">Ảnh bìa</label>
-            <input type="file" name="Image" class="form-control-file" accept="image/png, image/jpeg" aria-label="Upload picture" />
-        </div> *@
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <label asp-for="Material" class="form-label">Chất liệu</label>
-            <input asp-for="Material" type="text" class="form-control" aria-label="Specify product material" />
-        </div>
-        <div class="col-md-8">
-            <label asp-for="Brand" class="form-label">Hãng hiệu</label>
-            <input asp-for="Brand" type="text" class="form-control" aria-label="Specify brand" />
-        </div>
-    </div>
-    <div class="row">
+    <div class="row g-3">
         <div class="col-md-6">
-            <label asp-for="PlaceOfOrigin" class="form-label">Xuất xứ</label>
-            <input asp-for="PlaceOfOrigin" type="text" class="form-control" aria-label="Specify place of origin" />
-        </div>
-        <div class="col-md-4">
-            <label asp-for="Quantity" class="form-label">Số lượng</label>
-            <input asp-for="Quantity" type="number" step="1" min="1" max="10000000" class="form-control" aria-label="Specify amount of products" />
-        </div>
-        <div class="col-md-2">
-            <label asp-for="Status" class="form-label">Trạng thái</label>
-            <select asp-for="Status" class="form-control">
-                <option value="@((int)VisibilityStatus.Available)" selected>Còn bán</option>
-                <option value="@((int)VisibilityStatus.Locked)" selected>Không bán</option>
+            <label asp-for="ProductID" class="form-label fw-semibold text-muted">Sản phẩm</label>
+            <select asp-for="ProductID" class="form-control shadow-sm" aria-label="Select product to assign to" readonly asp-items="@ViewBag.Prods">
+                <option selected readonly value="">(Chưa chọn)</option>
             </select>
+            <span asp-validation-for="ProductID" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="CategoryID" class="form-label fw-semibold text-muted">Danh mục</label>
+            <select asp-for="CategoryID" class="form-control shadow-sm" aria-label="Select category to assign to" asp-items="@ViewBag.Catgs">
+                <option selected value="">(Chưa chọn)</option>
+            </select>
+            <span asp-validation-for="CategoryID" class="text-danger"></span>
         </div>
     </div>
 
-    <button class="btn btn-primary mt-3" type="submit">Cập nhật</button>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <label asp-for="SizeID" class="form-label fw-semibold text-muted">Kích cỡ</label>
+            <select asp-for="SizeID" class="form-control shadow-sm" aria-label="Select size to assign to" asp-items="@ViewBag.Sizes">
+                <option selected value="">(Chưa chọn)</option>
+            </select>
+            <span asp-validation-for="SizeID" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="ColorID" class="form-label fw-semibold text-muted">Màu</label>
+            <select asp-for="ColorID" class="form-control shadow-sm" aria-label="Select color to assign to" asp-items="@ViewBag.Colrs">
+                <option selected value="">(Chưa chọn)</option>
+            </select>
+            <span asp-validation-for="ColorID" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <label asp-for="Material" class="form-label fw-semibold text-muted">Chất liệu</label>
+            <input asp-for="Material" type="text" class="form-control shadow-sm" placeholder="Nhập chất liệu" />
+            <span asp-validation-for="Material" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="Brand" class="form-label fw-semibold text-muted">Hãng hiệu</label>
+            <input asp-for="Brand" type="text" class="form-control shadow-sm" placeholder="Nhập hãng hiệu" />
+            <span asp-validation-for="Brand" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <label asp-for="PlaceOfOrigin" class="form-label fw-semibold text-muted">Xuất xứ</label>
+            <input asp-for="PlaceOfOrigin" type="text" class="form-control shadow-sm" placeholder="Nhập xuất xứ" />
+            <span asp-validation-for="PlaceOfOrigin" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Quantity" class="form-label fw-semibold text-muted">Số lượng</label>
+            <input asp-for="Quantity" type="number" step="1" min="0" max="10000000" class="form-control shadow-sm" placeholder="Nhập số lượng" />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-2">
+            <label asp-for="Status" class="form-label fw-semibold text-muted">Trạng thái</label>
+            <select asp-for="Status" class="form-control shadow-sm">
+                <option value="1" selected>Còn bán</option>
+                <option value="0">Không bán</option>
+            </select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <button type="submit" class="btn btn-primary px-5 py-2 shadow-sm">
+            <i class="bi bi-save"></i> Cập nhật
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary px-5 py-2 shadow-sm">
+            <i class="bi bi-arrow-left"></i> Về trang trước
+        </a>
+    </div>
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    /* Áp dụng hiệu ứng khi form load */
+    form {
+        animation: slideInFromTop 0.8s ease-in-out;
+    }
+
+    /* Tùy chỉnh bấm nút: */
+    .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #004bb5;
+            transform: translateY(-2px);
+        }
+
+    /* Sửa màu cho các inputs */
+    input.form-control, textarea.form-control, select.form-control {
+        border-radius: 0.375rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+        input.form-control:focus, textarea.form-control:focus, select.form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+        }
+
+    /* Thêm bóng cho form */
+    form {
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+</style>

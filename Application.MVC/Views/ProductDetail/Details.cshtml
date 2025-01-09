@@ -4,65 +4,136 @@
     ViewData["Title"] = "Chi tiết sản phẩm";
 }
 
-<h1>Chi tiết sản phẩm</h1>
+<div class="container">
+    <h1 class="display-4 text-center mb-4">Chi tiết sản phẩm</h1>
 
-<dl class="row">
-    <dt class="col-md-3">ID</dt>
-    <dd class="col-md-9">
-        <i class="font-monospace-cascadia">@Model.ProductDetailID</i>
-    </dd>
-    <dt class="col-md-3">Sản phẩm</dt>
-    <dd class="col-md-9">
-        @(Model.Product?.Name ?? "Không có")<br />
-        <i class="font-monospace-cascadia">(@(Model.ProductID == null ? "Không có" : Model.ProductID))</i><br />
-    </dd>
-    <dt class="col-md-3">Danh mục</dt>
-    <dd class="col-md-9">
-        @(Model.Category?.CategoryName ?? "Không có")<br />
-        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.CategoryID == null ? "Không có" : Model.CategoryID))</i>
-    </dd>
-    <dt class="col-md-3">Kích cỡ</dt>
-    <dd class="col-md-9">
-        @(Model.Size?.Name ?? "Không có")<br />
-        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.SizeID == null ? "Không có" : Model.SizeID))</i>
-    </dd>
-    <dt class="col-md-3">Màu</dt>
-    <dd class="col-md-9">
-        @(Model.Color?.ColorName ?? "Không có")<br />
-        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.ColorID == null ? "Không có" : Model.ColorID))</i>
-    </dd>
-    <dt class="col-md-3">Thuộc sự kiện</dt>
-    <dd class="col-md-9">
-        @(Model.Sale?.Name ?? "Không có")<br />
-        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.SizeID == null ? "Không có" : Model.SaleID))</i>
-    </dd>
-    <dt class="col-md-3">Chất liệu</dt>
-    <dd class="col-md-9">
-        @(Model.Material ?? "Không có")
-    </dd>
-    <dt class="col-md-3">Nhãn hiệu</dt>
-    <dd class="col-md-9">
-        @(Model.Brand ?? "Không có")
-    </dd>
-    <dt class="col-md-3">Xuất xứ</dt>
-    <dd class="col-md-9">
-        @(Model.PlaceOfOrigin ?? "Không có")
-    </dd>
-    <dt class="col-md-3">Số lượng</dt>
-    <dd class="col-md-9">
-        @(Model.Quantity.GetValueOrDefault().ToString("#,##0") ?? "N/A")
-    </dd>
-    <dt class="col-md-3">Trạng thái</dt>
-    <dd class="col-md-9">
-        @switch (Model.Status)
+    <div class="row">
+        <!-- Product Info Section -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title">Thông tin sản phẩm</h4>
+                    <hr />
+                    <dl class="row">
+                        <dt class="col-sm-4">Sản phẩm:</dt>
+                        <dd class="col-sm-4">@Model.Product?.Name </dd>
+
+                        <dt class="col-sm-4">Danh mục:</dt>
+                        <dd class="col-sm-4">@Model.Category?.CategoryName </dd>
+
+                        <dt class="col-sm-4">Các kích cỡ (LÀM THEO BẢNG):</dt>
+                        <dd class="col-sm-4">@Model.Size?.Name </dd>
+
+                        <dt class="col-sm-4">Các màu (LÀM THEO BẢNG):</dt>
+                        <dd class="col-sm-4">@Model.Color?.ColorName </dd>
+
+                        <dt class="col-sm-4">Chất liệu:</dt>
+                        <dd class="col-sm-4">@Model.Material </dd>
+
+                        <dt class="col-sm-4">Nhãn hiệu:</dt>
+                        <dd class="col-sm-4">@Model.Brand </dd>
+
+                        <dt class="col-sm-4">Xuất xứ:</dt>
+                        <dd class="col-sm-4">@Model.PlaceOfOrigin </dd>
+
+                        <dt class="col-sm-4">Số lượng:</dt>
+                        <dd class="col-sm-4">@Model.Quantity.GetValueOrDefault().ToString("#,##0")</dd>
+
+                        <dt class="col-sm-4">Trạng thái:</dt>
+                        <dd class="col-sm-4">
+                            @switch (Model.Status)
+                            {
+                                case 0:
+                                    <span class="badge bg-danger text-white">Dừng bán</span>
+                                    break;
+                                case 1:
+                                    <span class="badge bg-success text-white">Đang bán</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary text-white">N/A</span>
+                                    break;
+                            }
+                        </dd>
+
+
+                        <dt class="col-sm-4">Cập nhật lần cuối:</dt>
+                        <dd class="col-sm-8">@Model.UpdatedAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optional Image Section -->
+        @if (Model.Product?.Image != null)
         {
-            case 0: <text>Không bán</text> break;
-            case 1: <text>Còn bán</text> break;
-            default: <text>N/A</text> break;
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Ảnh sản phẩm</h5>
+                        <img src="https://localhost:7187/Images/@Model.Product.Image.ImageFileName" class="img-fluid mb-3" alt="Ảnh sản phẩm" />
+                        <div class="font-italic">@Model.Product.Image.ImageFileName</div>
+                    </div>
+                </div>
+            </div>
         }
-    </dd>
-    <dt class="col-md-3">Cập nhật lần cuối</dt>
-    <dd class="col-md-9">
-        @(Model.UpdatedAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss") ?? "N/A")
-    </dd>
-</dl>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-4 text-center">
+        <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.ProductDetailID })">Chỉnh sửa</a>
+        <a class="btn btn-secondary" href="@Url.Action("Index")">Quay lại danh sách</a>
+    </div>
+</div>
+
+<style>
+    .img-fluid {
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .row dt {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .row dd {
+        color: #343a40;
+        margin-bottom: 10px;
+    }
+
+    .card {
+        margin-bottom: 20px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+        margin: 0 5px;
+        border-radius: 5px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+    }
+
+        .btn-secondary:hover {
+            background-color: #565e64;
+        }
+</style>

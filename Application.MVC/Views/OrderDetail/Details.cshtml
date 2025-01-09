@@ -27,15 +27,6 @@
             <p>@(Model.Sale?.Name ?? "Không có")</p>
             <i class="font-monospace-cascadia">(@Model.SaleID ?? "Không có")</i>
         </dd>
-        <dt class="col-md-3">Voucher</dt>
-        <dd class="col-md-9">
-            <p>@(Model.Voucher?.VoucherCode ?? "Không có")</p>
-            <i class="font-monospace-cascadia">(@Model.SaleID ?? "Không có")</i>
-        </dd>
-        <dt class="col-md-3">Phương thức giao hàng</dt>
-        <dd class="col-md-9">
-            <p>@(Model.ShippingMethod?.MethodName ?? "Không có")</p>
-        </dd>
         <dt class="col-md-3">Số lượng x đơn giá</dt>
         <dd class="col-md-9">
             <p>@(Model.Quantity.GetValueOrDefault().ToString("#,##0") ?? "0") x @(Model.Price.GetValueOrDefault().ToString("#,##0"))</p>

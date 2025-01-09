@@ -16,35 +16,21 @@
 
 <form asp-action="Edit" method="post">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label asp-for="OrderID" class="form-label">ID đơn hàng</label>
             <select asp-for="OrderID" class="form-control" asp-items="ViewBag.Ordrs">
                 <option hidden value="null">(Chưa chọn hóa đơn)</option>
             </select>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label asp-for="ProductDetailID" class="form-label">Sản phẩm</label>
             <select asp-for="ProductDetailID" class="form-control" asp-items="ViewBag.Prods">
                 <option hidden value="null">(Chưa chọn sản phẩm)</option>
             </select>
         </div>
-    </div>
-    <div class="row">
         <div class="col-md-4">
             <label asp-for="SaleID" class="form-label">Sự kiện</label>
             <select asp-for="SaleID" class="form-control" asp-items="ViewBag.Sales">
-                <option hidden value="null">(Không có)</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="VoucherID" class="form-label">Voucher</label>
-            <select asp-for="VoucherID" class="form-control" asp-items="ViewBag.Vchrs">
-                <option hidden value="null">(Không có)</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="ShippingMethodID" class="form-label">Phương thức giao hàng</label>
-            <select asp-for="ShippingMethodID" class="form-control" asp-items="ViewBag.Ships">
                 <option hidden value="null">(Không có)</option>
             </select>
         </div>

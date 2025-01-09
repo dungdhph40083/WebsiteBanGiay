@@ -150,6 +150,15 @@
     font-family: 'Cascadia Code', 'Cascadia Mono', 'Cascadia'
 }
 
+@font-face {
+    font-family: '3 Of 9 Barcode';
+    src: url(../fonts/3Of9_New.ttf);
+}
+
+.font-to-barcode {
+    font-family: '3 Of 9 Barcode'
+}
+
 /*#region Import font: Asap*/
 
 @font-face {

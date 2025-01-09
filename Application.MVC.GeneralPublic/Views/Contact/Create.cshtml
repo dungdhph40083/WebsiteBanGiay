@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
-    var users = ViewBag.Users as List<Application.Data.Models.User>;
+    var user = ViewBag.DefaultUser as Application.Data.Models.User ?? new();
 }
 <style>
     /* Ensure that the labels are vertically aligned with the inputs */
@@ -24,7 +24,7 @@
 
 <div class="container-fluid">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
-        <span class="bg-secondary pr-3">Contact Us</span>
+        <span class="bg-secondary pr-3">Liên hệ</span>
     </h2>
     <div class="row px-xl-5">
         <div class="col-lg-7 mb-5">
@@ -46,28 +46,31 @@
                 <form asp-action="Create" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                    <div class="form-group">
+                    @* <div class="form-group">
                         <label asp-for="MessageID" class="control-label">Message ID</label>
                         <input asp-for="MessageID" class="form-control" readonly />
                         <span asp-validation-for="MessageID" class="text-danger"></span>
-                    </div>
+                    </div> *@
 
+                    <div class="col-md-6 form-group">
+                        <label>Tên</label>
+                        <input class="form-control" asp-for="FirstName" type="text" value="@user?.FirstName" />
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>E-mail</label>
+                        <input class="form-control" asp-for="Email" type="email" value="@user?.Email" />
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>Số điện thoại</label>
+                        <input class="form-control" asp-for="PhoneNumber" type="text" value="@user?.PhoneNumber" />
+                    </div>
                     <div class="form-group">
-                        <label asp-for="MessageContent" class="control-label">Message Content</label>
-                        <textarea asp-for="MessageContent" class="form-control" rows="4" placeholder="Message" required></textarea>
+                        <label asp-for="MessageContent" class="control-label">Nội dung tin nhắn</label>
+                        <textarea asp-for="MessageContent" class="form-control" rows="4" placeholder="Lời nhắn" required></textarea>
                         <span asp-validation-for="MessageContent" class="text-danger"></span>
                     </div>
-
-                    <div class="form-group">
-                        <label asp-for="UserID" class="control-label font-weight-bold">Email (User)</label>
-                        <select asp-for="UserID" class="form-control" asp-items="@(ViewBag.Users != null ? new SelectList(ViewBag.Users, "UserID", "Email") : new SelectList(Enumerable.Empty<SelectListItem>()))">
-                            <option value="">-- Select User --</option>
-                        </select>
-                        <span asp-validation-for="UserID" class="text-danger"></span>
-                    </div>
-
                     <div class="form-group text-center">
-                        <button class="btn btn-primary py-2 px-4" type="submit">Send Message</button>
+                        <button class="btn btn-primary py-2 px-4" type="submit">Gửi lời nhắn</button>
                     </div>
                 </form>
             </div>

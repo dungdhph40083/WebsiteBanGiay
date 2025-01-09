@@ -16,7 +16,7 @@ namespace Application.MVC.Controllers
         {
             _client = new HttpClient();
         }
-        public async Task<ActionResult> Index(int page = 1, int pageSize = 5)
+        public async Task<ActionResult> Index(string searchTerm, int page = 1, int pageSize = 15)
         {
             string token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
@@ -32,6 +32,12 @@ namespace Application.MVC.Controllers
                 return View(new List<Product>());
             }
 
+            // Lọc sản phẩm theo tên nếu có searchTerm
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                response = response.Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
             // Sắp xếp sản phẩm theo ngày tạo (mới nhất trước)
             var sortedResponse = response.OrderByDescending(p => p.CreatedAt).ToList();
 
@@ -44,13 +50,15 @@ namespace Application.MVC.Controllers
                 .Take(pageSize) // Lấy số sản phẩm của trang hiện tại
                 .ToList();
 
-            // Truyền thông tin phân trang sang View qua ViewBag
+            // Truyền thông tin phân trang và searchTerm sang View qua ViewBag
+            ViewBag.SearchTerm = searchTerm; // Lưu giá trị searchTerm để hiển thị lại trong input
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
             ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
             return View(pagedData);
         }
+
 
 
         public ActionResult Details(Guid id)
@@ -83,30 +91,37 @@ namespace Application.MVC.Controllers
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $"https://localhost:7187/api/Product";
 
-            MultipartFormDataContent Contents = new()
-            {
-                { new StringContent(product.Name!),                                nameof(product.Name) },
-                { new StringContent(product.Description!),                         nameof(product.Description) },
-                { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
-            };
+                MultipartFormDataContent Contents = new()
+        {
+            { new StringContent(product.Name!), nameof(product.Name) },
+            { new StringContent(product.Description!), nameof(product.Description) },
+            { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
+        };
 
-            if (Image != null)
-            {
-                var ImageStream = new StreamContent(Image.OpenReadStream());
-                Contents.Add(ImageStream, nameof(Image), Image.FileName);
-            }
+                if (Image != null)
+                {
+                    var ImageStream = new StreamContent(Image.OpenReadStream());
+                    Contents.Add(ImageStream, nameof(Image), Image.FileName);
+                }
 
-            var response = await client.PostAsync(requestURL, Contents);
+                var response = await client.PostAsync(requestURL, Contents);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Index");
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError(string.Empty, $"Create failed: {error}");
+                    return View(product); // Trả về form chỉnh sửa với thông báo lỗi
+                }
             }
             else
             {
-                var error = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError(string.Empty, $"Create failed: {error}");
-                return View(product); // Trả về form chỉnh sửa với thông báo lỗi
+                // Nếu tên sản phẩm trùng, trả về thông báo lỗi
+                ModelState.AddModelError(string.Empty, "Tên sản phẩm đã tồn tại.");
+                return View(product); // Trả về form với thông báo lỗi
             }
         }
 

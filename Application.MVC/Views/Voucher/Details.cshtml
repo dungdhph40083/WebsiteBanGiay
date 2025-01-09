@@ -13,24 +13,20 @@
     </dd>
     <dt class="col-md-3">Mã Voucher</dt>
     <dd class="col-md-9">
-        <i class="font-monospace-cascadia">@Model.VoucherCode</i><br />
+        <i class="font-monospace-cascadia">@Model.VoucherCode</i>
     </dd>
-    <dt class="col-md-3">Cho danh mục</dt>
-    <dd class="col-md-9">@(Model.Category?.CategoryName ?? "Không có")<br />
-        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.CategoryID == null ? "Không có" : Model.CategoryID))</i>
-    </dd>
-    <dt class="col-md-3">Cho sản phẩm</dt>
+    <dt class="col-md-3">Danh mục</dt>
     <dd class="col-md-9">
-            @(Model.Product?.Name ?? "Không có")<br />
-        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.ProductID == null ? "Không có" : Model.ProductID))</i>
+        @(Model.Category?.CategoryName ?? "Không có")<br />
+        <i style="font-size: x-small" class="font-monospace-cascadia">(@(Model.CategoryID == null ? "Không có" : Model.CategoryID))</i>
     </dd>
     <dt class="col-md-3">Còn lại</dt>
     <dd class="col-md-9">
-        @Model.UsesLeft.GetValueOrDefault().ToString("#,##0")<br />
+        @(Model.UsesLeft.GetValueOrDefault() == -1 ? "Vô số" : Model.UsesLeft.GetValueOrDefault().ToString("#,##0"))
     </dd>
-    <dt class="col-md-3">Giảm giá</dt>
+    <dt class="col-md-3">Giảm %</dt>
     <dd class="col-md-9">
-        @(Model.DiscountPrice <= 0 ? "Không giảm giá" : $"-{Model.DiscountPrice:#,##0}")
+        @(Model.DiscountPercent <= 0 ? "Không giảm giá" : $"{Model.DiscountPercent}%")
     </dd>
     <dt class="col-md-3">Bắt đầu vào</dt>
     <dd class="col-md-9">
@@ -42,11 +38,11 @@
     </dd>
     <dt class="col-md-3">Mô tả</dt>
     <dd class="col-md-9">
-            @Model.Description<br />
+            @Model.Description
     </dd>
     <dt class="col-md-3">Trạng thái</dt>
     <dd class="col-md-9">
-            @Model.Status<br />
+            @Model.Status
     </dd>
     <dt class="col-md-3">Ngày tạo</dt>
     <dd class="col-md-9">

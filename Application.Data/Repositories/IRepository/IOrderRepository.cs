@@ -14,9 +14,12 @@ namespace Application.Data.Repositories.IRepository
         Task<List<Order>> GetAllOrdersAsync();
         Task<Order?> GetOrderByIdAsync(Guid orderId);
         Task<List<Order>> GetOrdersByUserID(Guid UserID);
+        Task<List<Order>> GetOrdersByFilter(string SearchFilter);
+        Task<Order?> UpdateOrderAsyncBypass(Guid ID, OrderDto orderDto);
         Task<Order?> UpdateOrderAsync(Guid ID, OrderDto orderDto);
         Task<bool> DeleteOrderAsync(Guid orderId);
         Task<Order?> UpdateOrderStatus(Guid ID, byte StatusCode);
         Task<Order?> UpdateOrderHasPaid(Guid ID, bool Toggle);
+        Task<Order> GetOrderByOrderNumberAsync(string orderNumber);
     }
 }

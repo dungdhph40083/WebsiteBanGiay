@@ -34,7 +34,7 @@
                     <td>@Entry.ProductDetail?.Product?.Name</td>
                     <td>@Entry.Quantity<br />x<br />@Entry.ProductDetail?.Product?.Price.GetValueOrDefault().ToString("#,##0")</td>
                     <td>@Entry.TotalUnitPrice.GetValueOrDefault().ToString("#,##0")</td>
-                    <td>@(((Entry.Sale?.DiscountPrice ?? 0) + (Entry.Voucher?.DiscountPrice ?? 0)).ToString("#,##0"))</td>
+                    <td>@((Entry.Sale?.DiscountPrice ?? 0).ToString("#,##0"))</td>
                     <td>@Entry.SumTotalPrice.GetValueOrDefault().ToString("#,##0")</td>
                     <td>
                         <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.OrderDetailID)">Sửa</a>

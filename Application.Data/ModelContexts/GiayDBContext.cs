@@ -42,10 +42,38 @@ namespace Application.Data.ModelContexts
 			ModelBuilder.Entity<ProductDetail>()
 				.HasIndex(Idx => Idx.ProductID)
 				.IsUnique();
+            ModelBuilder.Entity<Order>()
+				.HasIndex(Idx => Idx.OrderNumber)
+				.IsUnique();
+			ModelBuilder.Entity<Order>()
+				.Property(Idx => Idx.Status)
+				.HasDefaultValue((byte)OrderStatus.Created);
+			ModelBuilder.Entity<Order>()
+				.Property(Idx => Idx.HasPaid)
+				.HasDefaultValue(false);
+			ModelBuilder.Entity<Order>()
+				.Property(Idx => Idx.HasExternalInfo)
+				.HasDefaultValue(false);
+			ModelBuilder.Entity<Order>()
+				.Property(Idx => Idx.HasChangedInfo)
+				.HasDefaultValue(false);
+            ModelBuilder.Entity<Voucher>()
+                .Property(Idx => Idx.UseDiscountPrice)
+                .HasDefaultValue(false);
+            ModelBuilder.Entity<Voucher>()
+				.Property(Idx => Idx.VoucherCode)
+				.HasDefaultValue($@"VOUCHER_{DateTime.UtcNow:ssffffmm}");
+			ModelBuilder.Entity<Color_Product>()
+				.Property(Idx => Idx.Available)
+				.HasDefaultValue(true);
+            ModelBuilder.Entity<Size_Product>()
+                .Property(Idx => Idx.Available)
+                .HasDefaultValue(true);
         }
 
         public DbSet<Category> Categories { get; set; }
 		public DbSet<Color> Colors { get; set; }
+		public DbSet<Color_Product> Color_Products { get; set; }
 		public DbSet<CustomerSupportMessage> CustomerSupportMessages { get; set; }
 		public DbSet<Image> Images { get; set; }
 		public DbSet<Order> Orders { get; set; }
@@ -63,6 +91,7 @@ namespace Application.Data.ModelContexts
 		public DbSet<ShippingMethod> ShippingMethods { get; set; }
 		public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 		public DbSet<Size> Sizes { get; set; }
+		public DbSet<Size_Product> Size_Products { get; set; }
 		public DbSet<User> Users { get; set; }
 		public DbSet<Voucher> Vouchers { get; set; }
 	}

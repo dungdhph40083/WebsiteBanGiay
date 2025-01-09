@@ -13,6 +13,7 @@ builder.Services.AddSession(Options =>
 });
 
 // builder.Services.AddHttpClient();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

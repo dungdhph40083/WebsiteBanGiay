@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Order\" />
     <Folder Include="WWWRoot\images\" />
     <Folder Include="wwwroot\vendor\fonts\fontawesome\css\" />
   </ItemGroup>

@@ -43,50 +43,23 @@ namespace Application.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ProductDetail>> Post([FromForm] ProductDetailDTO NewProductDetail, IFormFile? Image)
+        public async Task<ActionResult<ProductDetail>> Post([FromForm] ProductDetailDTO NewProductDetail)
         {
-            if (Image != null)
-            {
-                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(Image, 4_194_304))
-                {
-                    case ErrorResult.IMAGE_TOO_BIG_ERROR:
-                        return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!");
-                    case ErrorResult.IMAGE_IS_BROKEN_ERROR:
-                    default:
-                        return BadRequest("Tệp ảnh không hợp lệ!");
-                    case SuccessResult.IMAGE_OK:
-                        {
-                            var CreatedImage = await ImageRepository.CreateImageAsync(Image);
-                            NewProductDetail.ImageID = CreatedImage.ImageID;
-                        }
-                        break;
-                }
-            }
             var Response = await ProductDetailRepo.CreateNew(NewProductDetail);
             return CreatedAtAction(nameof(Get), new { Response.ProductDetailID }, Response);
         }
 
+        [HttpPost("VariationsFor/{DetailID}")]
+        public async Task<ActionResult<ProductDetailVariationMetadata>> PostVariations(Guid DetailID, [FromBody] List<ProductDetailVariationDTO> Variations)
+        {
+            var Response = await ProductDetailRepo.CreateNewVariations(DetailID, Variations);
+            return Response;
+        }
+
         [HttpPut("{ID}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromForm] ProductDetailDTO UpdatedProductDetail, IFormFile? Image)
+        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromForm] ProductDetailDTO UpdatedProductDetail)
         {
-            if (Image != null)
-            {
-                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(Image, 4_194_304))
-                {
-                    case ErrorResult.IMAGE_TOO_BIG_ERROR:
-                        return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!");
-                    case ErrorResult.IMAGE_IS_BROKEN_ERROR:
-                    default:
-                        return BadRequest("Tệp ảnh không hợp lệ!");
-                    case SuccessResult.IMAGE_OK:
-                        {
-                            var CreatedImage = await ImageRepository.CreateImageAsync(Image);
-                            UpdatedProductDetail.ImageID = CreatedImage.ImageID;
-                        }
-                        break;
-                }
-            }
             return await ProductDetailRepo.UpdateExisting(ID, UpdatedProductDetail);
         }
 
@@ -96,6 +69,25 @@ namespace Application.API.Controllers
         {
             await ProductDetailRepo.DeleteExisting(ID);
             return NoContent();
+        }
+        // Phương thức để chuyển trạng thái sản phẩm giữa "mở bán" và "dừng bán"
+        [HttpPut("{ID}/toggle-status")]
+        public async Task<ActionResult> ToggleStatus(Guid ID)
+        {
+            var productDetail = await ProductDetailRepo.GetProductDetailByID(ID);
+            if (productDetail == null)
+            {
+                return NotFound("Product detail not found");
+            }
+
+            // Đảo trạng thái của productDetail
+            byte newStatus = productDetail.Status == 1 ? (byte)0 : (byte)1;
+
+            // Cập nhật trạng thái mà không thay đổi các thuộc tính khác
+            await ProductDetailRepo.UpdateStatusOnly(ID, newStatus);
+
+            // Trả về sản phẩm đã được cập nhật
+            return Ok(await ProductDetailRepo.GetProductDetailByID(ID));
         }
     }
 }

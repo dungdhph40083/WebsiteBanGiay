@@ -3,18 +3,38 @@
 
 @{
     ViewData["Title"] = "Danh sách đơn hàng";
+    var Badge = ViewBag.BadgeData as Application.Data.Models.CategorizedOrdersCountModel ?? new();
+    string? SortByParamValue = ViewData["FilterValue"] as string;
 }
 
 <h1>Danh sách đơn hàng</h1>
-@if (Model.Count() > 0)
-{
-    <p>Tổng số đơn hàng: @Model.Count()</p>
-}
-<a class="btn btn-success mb-2" asp-action="Create">Tạo mới</a>
+<p>Tổng số đơn hàng: @Model.Count()</p>
+
+<div class="row mb-2">
+    <div class="col-9">
+        <input type="text" id="SearchInput" class="form-control text-monospace-cascadia" placeholder="Tìm kiếm đơn hàng... (nhập mã đơn)" onkeyup="SearchOrders()">
+    </div>
+    <div class="col-3">
+        <div class="dropdown">
+            <button class="btn btn-secondary" type="button" data-toggle="dropdown" aria-expanded="false">
+                Lọc trạng thái đơn
+            </button>
+            <div class="dropdown-menu rounded-3 border-1 text-center m-2" >
+                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_PENDING ? "active" : "")" style="border-radius: 10px; width: 94%" asp-route-Filter="@OrderFilters.ORDERS_PENDING">Chờ xác nhận @if(Badge.PendingOrders > 0) {<span class="badge badge-secondary">@Badge.PendingOrders</span>}</a>
+                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_ONGOING ? "active" : "")" style="border-radius: 10px; width: 94%" asp-route-Filter="@OrderFilters.ORDERS_ONGOING">Đang giao hàng @if(Badge.OngoingOrders > 0) {<span class="badge badge-secondary">@Badge.OngoingOrders</span>}</a>
+                <hr />
+                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_SUCCEEDED ? "active" : "")" style="border-radius: 10px; width: 94%" asp-route-Filter="@OrderFilters.ORDERS_SUCCEEDED">Thành công @if(Badge.SucceededOrders > 0) {<span class="badge badge-secondary">@Badge.SucceededOrders</span>}</a>
+                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_FAILED ? "active" : "")" style="border-radius: 10px; width: 94%" asp-route-Filter="@OrderFilters.ORDERS_FAILED">Thất bại @if(Badge.FailedOrders > 0) {<span class="badge badge-secondary">@Badge.FailedOrders</span>}</a>
+                <hr />
+                <a class="dropdown-item ml-1 mr-1 @(string.IsNullOrWhiteSpace(SortByParamValue) ? "active" : "")" style="border-radius: 10px; width: 94%" asp-action="Index">Tất cả</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 @if (Model.Count() != 0)
 {
-    <table class="table table-bordered table-striped border-info">
+    <table class="table table-bordered table-striped">
         <thead class="bg-primary">
             <tr>
                 <th>ID đơn hàng</th>
@@ -23,48 +43,68 @@
                 <th>Tổng tiền đơn</th>
                 <th>Trạng thái đơn</th>
                 <th>Trạng thái thanh toán</th>
-                <th>Thao tác đơn hàng</th>
+                <th>Thao tác đơn hàng&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="OrdersTableBody">
             @foreach (var Entry in Model)
             {
                 <tr>
-                    <td class="font-monospace-cascadia">@Entry.OrderID</td>
+                    <td>@Entry.OrderNumber</td>
                     <td>@Entry.User?.Username</td>
                     <td>@Entry.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
                     <td>@Entry.GrandTotal.GetValueOrDefault().ToString("#,##0")</td>
                     <td>
-                        @switch (Entry.Status)
+                        @switch ((OrderStatus)Entry.Status)
                         {
-                            case (byte)OrderStatus.Canceled:
+                            case OrderStatus.Canceled:
                                 <p style="color: maroon">Đã bị hủy</p>
                                 break;
-                            case (byte)OrderStatus.Refunded:
-                                <p style="color: red">Đã hoàn trả</p>
-                                break;
-                            case (byte)OrderStatus.CantRefund:
-                                <p style="color: darkmagenta">Hoàn thành, không hoàn trả nữa</p>
-                                break;
-                            case (byte)OrderStatus.Refunding:
-                            case (byte)OrderStatus.RefundingAgain:
+                            case OrderStatus.Refunding:
                                 <p style="color: #ff5555">Yêu cầu hoàn trả</p>
                                 break;
-                            case (byte)OrderStatus.Created:
-                                <p style="color: darkgoldenrod">Chờ xác nhận</p>
+                            case OrderStatus.RefundProcessed:
+                                <p style="color: darkorchid">Đã chấp nhận hoàn trả</p>
                                 break;
-                            case (byte)OrderStatus.Processed:
-                                <p style="color: blue">Đã xác nhận đơn</p>
+                            case OrderStatus.RefundDelivered:
+                                <p style="color: coral">Đang tiến hành hoàn trả</p>
                                 break;
-                            case (byte)OrderStatus.Delivered:
-                                <p style="color: teal">Đã giao đơn cho đơn vị vận chuyển</p>
+                            case OrderStatus.RefundReceived:
+                                <p style="color: lightsalmon">Đã lấy hàng trả & đang chuyển về</p>
                                 break;
-                            case (byte)OrderStatus.Arrived:
+                            case OrderStatus.Refunded:
                                 <p style="color: red">Đã hoàn trả</p>
                                 break;
-                            case (byte)OrderStatus.Received:
-                            case (byte)OrderStatus.ReceivedAgain:
-                                <p style="color: green">Khách đã nhận hàng</p>
+                            case OrderStatus.Created:
+                            <p style="color: darkgoldenrod">Chờ xác nhận</p>
+                                break;
+                            case OrderStatus.Processed:
+                            <p style="color: blue">Đã xác nhận đơn</p>
+                                break;
+                            case OrderStatus.Delivered:
+                            <p style="color: teal">Đã giao đơn cho đơn vị vận chuyển</p>
+                                break;
+                            case OrderStatus.Arrived:
+                            <p style="color: seagreen">Đã giao thành công</p>
+                                break;
+                            case OrderStatus.Received:
+                            case OrderStatus.ReceivedAgain:
+                            <p style="color: green">Khách đã nhận hàng</p>
+                                break;
+                            case OrderStatus.ReceivedCompleted:
+                            <p style="color: green">Khách đã nhận hàng (ko hoàn trả nữa)</p>
+                                break;
+                            case OrderStatus.ReceivedRefundFail:
+                                <p style="color: green">Khách đã nhận hàng, hoàn trả thất bại</p>
+                                break;
+                            case OrderStatus.DeliveryFailure:
+                                <p style="color: indianred">Giao hàng không thành công</p>
+                                break;
+                            case OrderStatus.DeliveryIsDead:
+                                <p style="color: red">Giao hàng thất bại</p>
+                                break;
+                            default:
+                            <p style="color: black">N/A</p>
                                 break;
                         }
                     </td>
@@ -72,27 +112,26 @@
                         @if (Entry.HasPaid)
                         {
                             <text>Đã thanh toán</text>
-                            <br />
-                            <a class="btn btn-danger mt-1" asp-action="UpdateOrderHasPaid" asp-route-ID="@Entry.OrderID" asp-route-Toggle="false">Hủy</a>
                         }
                         else
                         {
                             <text>Chưa thanh toán</text>
-                            <br />
-                            <a class="btn btn-success mt-1" asp-action="UpdateOrderHasPaid" asp-route-ID="@Entry.OrderID" asp-route-Toggle="true">Xác nhận</a>
                         }
                     </td>
                     <td>
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-toggle="dropdown" aria-expanded="false">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                        @switch (Entry.Status)
+                            <div class="dropdown-menu rounded-3 border-1 text-center m-2">
+                                <a asp-action="Details" asp-route-ID="@Entry.OrderID" class="btn btn-secondary">Chi tiết đơn</a>
+                                <hr />
+                        @switch ((OrderStatus)Entry.Status)
                         {
-                            case (byte)OrderStatus.Created:
+
+                            case OrderStatus.Created:
                             default:
                                 {
-                                    <div class="dropdown-menu rounded-3 border-1">
                                         <a class="btn btn-warning" 
                                         asp-action="UpdateOrderStatus" 
                                         asp-route-ID="@Entry.OrderID" 
@@ -104,77 +143,60 @@
                                         asp-route-ID="@Entry.OrderID" 
                                         asp-route-StatusCode="@((int)(OrderStatus.Canceled))">
                                         Hủy đơn</a>
-                                    </div>
                                 break;
                                 }
-                            case (byte)OrderStatus.Processed:
+                            case OrderStatus.Processed:
                                 {
-                                    <div class="dropdown-menu rounded-3 border-1">
                                         <a class="btn btn-warning" 
                                         asp-action="UpdateOrderStatus" 
                                         asp-route-ID="@Entry.OrderID" 
                                         asp-route-StatusCode="@((int)(OrderStatus.Delivered))">
-                                        Xác nhận giao đơn</a><br />
-
-                                        <a class="btn btn-danger mt-1" 
-                                        asp-action="UpdateOrderStatus" 
-                                        asp-route-ID="@Entry.OrderID" 
-                                        asp-route-StatusCode="@((int)(OrderStatus.Created))">
-                                        Để chờ</a>
-                                    </div>
+                                        Giao đơn</a>
                                 break;
                                 }
-                            case (byte)OrderStatus.Delivered:
+                            case OrderStatus.Delivered:
                                 {
-                                    <div class="dropdown-menu rounded-3 border-1">
-                                        <a class="btn btn-warning" 
-                                        asp-action="UpdateOrderStatus" 
-                                        asp-route-ID="@Entry.OrderID" 
-                                        asp-route-StatusCode="@((int)(OrderStatus.Arrived))">
-                                        Xác nhận đã đến nơi</a><br />
-
-                                        <a class="btn btn-danger mt-1" 
-                                        asp-action="UpdateOrderStatus" 
-                                        asp-route-ID="@Entry.OrderID" 
-                                        asp-route-StatusCode="@((int)(OrderStatus.Processed))">
-                                        Hủy giao tạm thời</a>
-                                    </div>
-                                break;
-                                }
-                            case (byte)OrderStatus.Arrived:
-                                {
-                                    <div class="dropdown-menu rounded-3 border-1 text-center">
-                                        <h5>Đơn hàng đã đến địa chỉ giao hàng.</h5>
-                                        <p>Hiện đang chờ khách hàng xác nhận hàng...</p>
-                                    </div>
-                                break;
-                                }
-                            case (byte)OrderStatus.Refunding:
-                                {
-                                    <div class="dropdown-menu rounded-3 border-1">
-                                        <a class="btn btn-warning"
-                                            asp-action="UpdateOrderStatus"
-                                            asp-route-ID="@Entry.OrderID"
-                                            asp-route-StatusCode="@((int)(OrderStatus.Refunded))">
-                                            Đồng ý
-                                        </a><br />
-
-                                        <a class="btn btn-danger mt-1"
-                                            asp-action="UpdateOrderStatus"
-                                            asp-route-ID="@Entry.OrderID"
-                                            asp-route-StatusCode="@((int)(OrderStatus.ReceivedAgain))">
-                                            Hủy
-                                        </a>
-                                    </div>
-                                break;
-                                }
-                            case (byte)OrderStatus.RefundingAgain:
-                            {
-                                <div class="dropdown-menu rounded-3 border-1">
                                     <a class="btn btn-warning"
                                         asp-action="UpdateOrderStatus"
                                         asp-route-ID="@Entry.OrderID"
-                                        asp-route-StatusCode="@((int)(OrderStatus.Refunded))">
+                                        asp-route-StatusCode="@((int)(OrderStatus.Arrived))">
+                                        Đã giao được hàng
+                                    </a>
+
+                                    <br />
+
+                                    @if (Entry.AttemptsLeft > 0)
+                                    {
+                                        <a class="btn btn-danger mt-1"
+                                            asp-action="UpdateOrderStatus"
+                                            asp-route-ID="@Entry.OrderID"
+                                            asp-route-StatusCode="@((int)(OrderStatus.DeliveryFailure))">
+                                            Chưa giao được hàng
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-danger mt-1"
+                                            asp-action="UpdateOrderStatus"
+                                            asp-route-ID="@Entry.OrderID"
+                                            asp-route-StatusCode="@((int)(OrderStatus.DeliveryFailure))">
+                                            Giao hàng thất bại
+                                        </a>
+                                    }
+                                    break;
+                                }
+                            case OrderStatus.Arrived:
+                                {
+                                        <h5>Đơn hàng đã giao thành công.</h5>
+                                        <p>Hiện đang chờ khách hàng xác nhận hàng...</p>
+                                break;
+                                }
+                            case OrderStatus.Refunding:
+                            {
+                                    <a class="btn btn-warning"
+                                        asp-action="UpdateOrderStatus"
+                                        asp-route-ID="@Entry.OrderID"
+                                        asp-route-StatusCode="@((int)(OrderStatus.RefundProcessed))">
                                         Đồng ý
                                     </a><br />
 
@@ -190,52 +212,88 @@
                                     <a class="btn btn-danger mt-1"
                                         asp-action="UpdateOrderStatus"
                                         asp-route-ID="@Entry.OrderID"
-                                        asp-route-StatusCode="@((int)(OrderStatus.CantRefund))">
+                                        asp-route-StatusCode="@((int)(OrderStatus.ReceivedCompleted))">
                                         Không chấp nhận đổi trả nữa
                                     </a>
-                                </div>
                                 break;
                             }
-                            case (byte)OrderStatus.CantRefund:
+                            case OrderStatus.RefundProcessed:
+                                <a class="btn btn-warning"
+                                    asp-action="UpdateOrderStatus"
+                                    asp-route-ID="@Entry.OrderID"
+                                    asp-route-StatusCode="@((int)(OrderStatus.RefundDelivered))">
+                                    Giao đơn đổi trả
+                                </a>
+                            break;
+                            case OrderStatus.RefundDelivered:
+                                <a class="btn btn-warning"
+                                    asp-action="UpdateOrderStatus"
+                                    asp-route-ID="@Entry.OrderID"
+                                    asp-route-StatusCode="@((int)(OrderStatus.RefundReceived))">
+                                    Đã nhận lại hàng
+                                </a>
+                                <br />
+                                <a class="btn btn-danger mt-1"
+                                    asp-action="UpdateOrderStatus"
+                                    asp-route-ID="@Entry.OrderID"
+                                    asp-route-StatusCode="@((int)(OrderStatus.ReceivedRefundFail))">
+                                    Hoàn trả thất bại
+                                </a>
+                                break;
+                                case OrderStatus.RefundReceived:
+                                    <a class="btn btn-warning"
+                                        asp-action="UpdateOrderStatus"
+                                        asp-route-ID="@Entry.OrderID"
+                                        asp-route-StatusCode="@((int)(OrderStatus.Refunded))">
+                                        Xác nhận hoàn trả
+                                    </a>
+                                break;
+                            case OrderStatus.ReceivedCompleted:
                                 {
-                                    <div class="dropdown-menu rounded-3 border-1 text-center">
                                         <h5>Đơn hàng đã bị hủy trả hàng.</h5>
                                         <p>Để khôi phục lại đơn hàng về trạng thái ban đầu, nhấn nút này.</p><hr />
                                             <a class="btn btn-warning"
                                                asp-action="UpdateOrderStatus"
                                                asp-route-ID="@Entry.OrderID"
-                                               asp-route-StatusCode="@((int)(OrderStatus.Refunded))">
+                                               asp-route-StatusCode="@((int)(OrderStatus.Received))">
                                                 Đồng ý
                                             </a>
-                                    </div>
                                     break;
                                 }
-                            case (byte)OrderStatus.Canceled:
+                            case OrderStatus.Canceled:
                                 {
-                                    <div class="dropdown-menu rounded-3 border-1 text-center">
                                         <h5>Đơn hàng đã bị hủy.</h5>
                                         <p>Đơn hàng đã bị hủy và không còn khả dụng nữa.</p>
-                                    </div>
                                     break;
                                 }
-                            case (byte)OrderStatus.Refunded:
+                            case OrderStatus.Refunded:
                                 {
-                                    <div class="dropdown-menu rounded-3 border-1 text-center">
                                         <h5>Đơn hàng đã hoàn trả.</h5>
                                         <p>Đơn hàng đã được hoàn trả và không còn khả dụng nữa.</p>
-                                    </div>
                                     break;
                                 }
-                            case (byte)OrderStatus.Received:
-                            case (byte)OrderStatus.ReceivedAgain:
+                            case OrderStatus.Received:
+                            case OrderStatus.ReceivedAgain:
+                            case OrderStatus.ReceivedRefundFail:
                                 {
-                                    <div class="dropdown-menu rounded-3 border-1 text-center">
                                         <h5>Đơn hàng đã hoàn thành.</h5>
                                         <p>Đơn hàng đã hoàn thành và không còn khả dụng nữa.</p>
-                                    </div>
                                     break;
                                 }
-                        }
+                            case OrderStatus.DeliveryFailure:
+                                        <a class="btn btn-warning"
+                                           asp-action="UpdateOrderStatus"
+                                           asp-route-ID="@Entry.OrderID"
+                                           asp-route-StatusCode="@((int)(OrderStatus.Delivered))">
+                                            Thử lại
+                                        </a>
+                                break;
+                            case OrderStatus.DeliveryIsDead:
+                                <h5>Đơn hàng đã thất bại.</h5>
+                                <p>Đơn hàng đã thất bại do giao hàng không thành công quá nhiều lần.</p>
+                                break;
+                            }
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -250,43 +308,44 @@
 }
 else
 {
-    <h1 class="text-center">Chưa có đơn hàng.</h1>
+    @if (SortByParamValue == null)
+    {
+        <h1 class="text-center">Chưa có đơn hàng.</h1>
+    }
+    else
+    {
+        <h1 class="text-center">Không thấy đơn hàng nào.</h1>
+    }
 }
 
-@*
-    case 0:
-{
-    <a class="btn btn-secondary mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Created))">Khôi phục đơn</a>
-    break;
-}
-case 2:
-{
-    <a class="btn btn-info mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Delivered))">X.nhận đã giao đơn</a><br />
-    <a class="btn btn-secondary mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Refunded))">Hoàn trả đơn</a>
-    break;
-}
-case 3:
-{
-    <a class="btn btn-success mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Received))">X.nhận khách đã nhận đơn</a><br />
-    <a class="btn btn-secondary mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Refunded))">Hoàn trả đơn</a>
-    break;
-}
-case 4:
-{
-    <a class="btn btn-secondary mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Created))">Khôi phục đơn</a><br />
-    <a class="btn btn-danger mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Canceled))">Hủy đơn</a>
-    break;
-}
-case 5:
-{
-    <a class="btn btn-secondary mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Refunded))">Hoàn trả đơn</a>
-    break;
-}
-case 1:
-default:
-{
-    <a class="btn btn-warning mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Processed))">Xác nhận đơn</a><br />
-    <a class="btn btn-danger mt-1" asp-action="UpdateOrderStatus" asp-route-ID="@Entry.OrderID" asp-route-StatusCode="@((int)(OrderStatus.Canceled))">Hủy đơn</a>
-    break;
-}
-*@
+<script>
+    /*
+     *  thanks for the free javascript search snippet
+     *  __  __   ____     ____   _   __   __ __    __
+     *  \ \/ /  / __ \   /  _/  / | / /  / //_/   / /
+     *   \  /  / / / /   / /   /  |/ /  / ,<     / / 
+     *   / /  / /_/ /  _/ /   / /|  /  / /| |   /_/  
+     *  /_/   \____/  /___/  /_/ |_/  /_/ |_|  (_)   
+     *                                               
+     */
+
+
+    function SearchOrders() {
+        var input = document.getElementById('SearchInput');
+        var filter = input.value.toLowerCase();
+        var table = document.getElementById('OrdersTableBody');
+        var rows = table.getElementsByTagName('tr');
+
+        for (var i = 0; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName('td');
+            var orderName = cells[0].textContent || cells[0].innerText; // Cột mã đơn là cột 1 (index 0)
+            
+            // Kiểm tra xem tên sản phẩm có chứa từ khóa tìm kiếm hay không
+            if (orderName.toLowerCase().indexOf(filter) > -1) {
+                rows[i].style.display = ""; // Hiển thị nếu khớp
+            } else {
+                rows[i].style.display = "none"; // Ẩn nếu không khớp
+            }
+        }
+    }
+</script>

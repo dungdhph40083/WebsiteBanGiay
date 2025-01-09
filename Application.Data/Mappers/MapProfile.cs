@@ -1,5 +1,6 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Models;
+using Application.Data.Repositories.IRepository;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,12 @@ namespace Application.Data.Mappers
         {
             // khi cần dùng mapper thì phải khai báo mới cái "sơ đồ ghép" cho mỗi thằng
             // cần hợp nhất hoặc trích xuất dữ liệu ra
+
+            CreateMap<Color_Product, Color_ProductDTO>();
+            CreateMap<Color_ProductDTO, Color_Product>();
+
+            CreateMap<Size_Product, Size_ProductDTO>();
+            CreateMap<Size_ProductDTO, Size_Product>();
 
             CreateMap<Category, CategoryDTO>();
             CreateMap<CategoryDTO, Category>();
@@ -39,6 +46,9 @@ namespace Application.Data.Mappers
 
             CreateMap<ProductDetail, ProductDetailDTO>();
             CreateMap<ProductDetailDTO, ProductDetail>();
+
+            CreateMap<ProductDetail, ProductDetailVariationDTO>();
+            CreateMap<ProductDetailVariationDTO, ProductDetail>();
 
             CreateMap<ProductWarranty, ProductWarrantyDTO>();
             CreateMap<ProductWarrantyDTO, ProductWarranty>();

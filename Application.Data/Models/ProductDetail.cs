@@ -13,12 +13,8 @@ namespace Application.Data.Models
         public Guid? SizeID { get; set; }
         [ForeignKey(nameof(Color))]
 		public Guid? ColorID { get; set; }
-		[ForeignKey(nameof(Image))]
-		public Guid? ImageID { get; set; }
         [ForeignKey(nameof(Category))]
         public Guid? CategoryID { get; set; }
-        [ForeignKey(nameof(Sale))]
-        public Guid? SaleID { get; set; }
         public string? Material { get; set; }
 		public int? Quantity { get; set; }
         public string? Brand { get; set; }
@@ -26,10 +22,8 @@ namespace Application.Data.Models
 		public byte? Status { get; set; }
 		public DateTime? UpdatedAt { get; set; }
 		public virtual Product? Product { get; set; }
-		public virtual Image? Image { get; set; }
 		public virtual Color? Color { get; set; }
 		public virtual Size? Size { get; set; }
 		public virtual Category? Category { get; set; }
-		public virtual Sale? Sale { get; set; }
     }
 }

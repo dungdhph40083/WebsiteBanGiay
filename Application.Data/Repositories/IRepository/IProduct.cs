@@ -15,5 +15,7 @@ namespace Application.Data.Repositories.IRepository
         Task<Product> Add(ProductDTO ProductDTO);
         Task<Product?> Update(Guid id,ProductDTO ProductDTO);
         Task Delete(Guid id);
+        // Thêm phương thức kiểm tra tên sản phẩm
+        Task<Product?> CheckProductNameAsync(string name);
     }
 }

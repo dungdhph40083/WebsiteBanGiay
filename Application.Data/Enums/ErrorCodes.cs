@@ -10,6 +10,7 @@
     {
         public const string IMAGE_OK                  = "IMAGE_OK";
         public const string VOUCHER_APPLIANCE_SUCCESS = "VOUCHER_APPLIANCE_SUCCESS";
+        public const string VOUCHER_DISCARDED_SUCCESS = "VOUCHER_DISCARDED_SUCCESS";
     }
 
     public class ValidateErrorResult
@@ -22,6 +23,7 @@
         public const string BAD_EMAIL_FORMAT            = "BAD_EMAIL_FORMAT";
         public const string BAD_FORMAT                  = "BAD_FORMAT";
         public const string BAD_USERNAME                = "BAD_USERNAME";
+        public const string BUT_NOBODY_CAME             = "BUT_NOBODY_CAME";
         public const string EMPTY_FIELD_NOT_ALLOWED     = "EMPTY_FIELD_NOT_ALLOWED";
         public const string OUT_OF_STOCK                = "OUT_OF_STOCK";
         public const string BAD_PHONE_NUMBER            = "BAD_PHONE_NUMBER";
@@ -34,6 +36,7 @@
         public const string VOUCHER_IS_PREMATURE        = "VOUCHER_IS_PREMATURE";
         public const string VOUCHER_RAN_OUT_OF_USES     = "VOUCHER_RAN_OUT_OF_USES";
         public const string VOUCHER_DOES_NOT_EXIST      = "VOUCHER_DOES_NOT_EXIST";
+        public const string VOUCHER_REQUIREMENT_FAIL    = "VOUCHER_REQUIREMENT_FAIL";
         public const string VOUCHER_VALID               = "VOUCHER_VALID";
         public const string VOUCHER_IS_UNCHANGED        = "VOUCHER_IS_UNCHANGED";
     }

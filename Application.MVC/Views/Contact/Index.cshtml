@@ -1,0 +1,192 @@
+﻿@model IEnumerable<Application.Data.Models.CustomerSupportMessage>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="text-center text-primary mb-4">Hỗ trợ Khách Hàng</h1>
+
+<!-- Thêm lớp cho bảng để tạo hiệu ứng đẹp mắt -->
+<table class="table table-bordered shadow-lg rounded w-100">
+    <thead class="table-secondary">
+        <tr>
+            @*             <th class="text-center">Tên khách hàng</th>
+            <th class="text-center">Email</th>
+            <th class="text-center">Số Điện thoại</th> *@
+            <th class="text-center">Lời nhắn</th>
+            <th class="text-center">Ngày gửi</th>
+            <th class="text-center">Trạng thái</th>
+            <th class="text-center">Tùy chọn</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="hover-table-row">
+                @*                 <td class="align-middle text-center">@Html.DisplayFor(modelItem => item.FirstName)</td>
+            <td class="align-middle text-center">@Html.DisplayFor(modelItem => item.Email)</td>
+            <td class="align-middle text-center">@Html.DisplayFor(modelItem => item.PhoneNumber)</td> *@
+                <td class="align-middle text-center message-content">
+                    @Html.DisplayFor(modelItem => item.MessageContent)
+                </td>
+                <td class="align-middle text-center">@Html.DisplayFor(modelItem => item.CreatedAt)</td>
+                <td class="align-middle text-center">
+                    @if (item.Status == 1)
+                    {
+                        <span class="badge bg-warning">Chưa xử lý</span> <!-- Status 1: Not Processed -->
+                    }
+                    else if (item.Status == 0)
+                    {
+                        <span class="badge bg-success">Đã xử lý</span> <!-- Status 0: Processed -->
+                    }
+                </td>
+                <td class="align-middle text-center">
+                    <a href="@Url.Action("Details", "Contact", new { id = item.MessageID })" class="btn btn-info btn-action">
+                        <i class="fas fa-info-circle"></i> Chi tiết
+                    </a>
+
+                    <!-- Thêm nút đổi trạng thái vào cạnh nút chi tiết -->
+                    @if (item.Status == 1)
+                    {
+                        <button class="btn btn-sm btn-danger ml-2 btn-action" onclick="toggleStatus('@item.MessageID')">
+                            <i class="fas fa-sync-alt"></i> Đổi trạng thái
+                        </button>
+                    }
+                    else if (item.Status == 0)
+                    {
+                        <button class="btn btn-sm btn-warning ml-2 btn-action" onclick="toggleStatus('@item.MessageID')">
+                            <i class="fas fa-sync-alt"></i> Đổi trạng thái
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Thêm một số CSS và hiệu ứng -->
+<style>
+    .badge {
+        color: #fff; /* White text for better visibility */
+    }
+
+        /* Optional: Update the color of the badges specifically */
+        .badge.bg-warning {
+            color: #000; /* Darker text for the warning status */
+        }
+
+        .badge.bg-success {
+            color: #fff; /* White text for the success status */
+        }
+
+    .hover-table-row:hover {
+        background-color: #f4f6f9; /* Màu nền khi hover, dễ nhìn hơn */
+        transition: background-color 0.3s ease;
+    }
+
+    .table th, .table td {
+        vertical-align: middle !important;
+        font-size: 1rem; /* Điều chỉnh kích thước chữ cho dễ nhìn */
+    }
+
+    /* Cải thiện hiển thị "Lời nhắn" */
+    .message-content {
+        max-width: 200px; /* Giới hạn chiều rộng */
+        word-wrap: break-word; /* Cho phép nội dung dài xuống dòng */
+        white-space: normal; /* Cho phép xuống dòng nếu nội dung dài */
+        overflow: hidden; /* Tránh tràn nếu vượt quá chiều rộng */
+    }
+
+    /* Thiết kế cho các nút */
+    .btn-action {
+        padding: 8px 16px; /* Đảm bảo kích thước nút đồng đều */
+        font-size: 14px; /* Giảm kích thước chữ một chút để nút dễ nhìn hơn */
+        transition: all 0.3s ease; /* Thêm hiệu ứng chuyển đổi mượt mà */
+        border-radius: 6px; /* Làm tròn các góc của nút */
+    }
+
+        .btn-action:hover {
+            transform: scale(1.05); /* Tăng kích thước nhẹ khi hover */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Thêm bóng mờ cho hiệu ứng nổi */
+        }
+
+    /* Cải thiện màu sắc cho nút Chi tiết */
+    .btn-info {
+        background-color: #17a2b8; /* Màu xanh dương nhạt */
+        border: none;
+    }
+
+        .btn-info:hover {
+            background-color: #138496; /* Màu xanh dương đậm khi hover */
+            transform: scale(1.05);
+        }
+
+    /* Cải thiện màu sắc cho nút Đổi trạng thái */
+    .btn-danger {
+        background-color: #dc3545; /* Màu đỏ cho trạng thái chưa xử lý */
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Màu đỏ đậm khi hover */
+        }
+
+    .btn-warning {
+        background-color: #ffc107; /* Màu vàng cho trạng thái đã xử lý */
+        border: none;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800; /* Màu vàng đậm khi hover */
+        }
+
+    /* Tùy chỉnh bảng */
+    .table {
+        table-layout: fixed; /* Đảm bảo bảng không vượt quá chiều rộng màn hình */
+        width: 100%;
+        overflow-x: auto; /* Thêm cuộn ngang nếu bảng quá rộng */
+    }
+
+    .table-secondary {
+        background-color: #f8f9fa !important; /* Sử dụng màu sáng cho tiêu đề bảng */
+    }
+
+    /* Đảm bảo các hàng có màu sắc phân biệt */
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+
+    .table-striped tbody tr:nth-of-type(even) {
+        background-color: #ffffff; /* Màu nền sáng cho các dòng chẵn */
+    }
+
+    /* Hiệu ứng cho tiêu đề */
+    h1 {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+</style>
+
+<!-- Thêm icon Font Awesome cho nút -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<script>
+    function toggleStatus(messageId) {
+        if (confirm("Bạn có chắc chắn muốn thay đổi trạng thái?")) {
+            fetch(`/Contact/ToggleStatus/${messageId}`, {
+                method: 'PUT',
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload(); // Tải lại trang để cập nhật thay đổi
+                    } else {
+                        alert("Đổi trạng thái thất bại.");
+                    }
+                })
+                .catch(error => {
+                    alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                });
+        }
+    }
+</script>

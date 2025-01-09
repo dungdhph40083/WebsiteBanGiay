@@ -6,10 +6,12 @@ using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Reflection;
 
 namespace Application.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[CoNtRoLlEr]")]
     [ApiController]
     [Authorize]
     public class OrdersController : ControllerBase
@@ -17,21 +19,44 @@ namespace Application.API.Controllers
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetails OrderDetailsRepository;
         private readonly IOrderTracking OrderTrackingRepo;
+        private readonly IProductDetail ProductDetailRepo;
 
-        public OrdersController(IOrderRepository orderRepository, IOrderTracking OrderTrackingRepo, IOrderDetails OrderDetailsRepository)
+        public OrdersController(IOrderRepository orderRepository, IOrderTracking OrderTrackingRepo, IOrderDetails OrderDetailsRepository, IProductDetail ProductDetailRepo)
         {
             _orderRepository = orderRepository;
             this.OrderTrackingRepo = OrderTrackingRepo;
             this.OrderDetailsRepository = OrderDetailsRepository;
+            this.ProductDetailRepo = ProductDetailRepo;
         }
 
         [HttpGet]
         [Authorize(Roles = "User,Admin")]
-        public async Task<IActionResult> GetAllOrders()
+        public async Task<IActionResult> GetAllOrders(string? Filter)
         {
-            var orders = await _orderRepository.GetAllOrdersAsync();
+            var orders = new List<Order>();
+
+            if (Filter == null) orders = await _orderRepository.GetAllOrdersAsync();
+            else orders = await _orderRepository.GetOrdersByFilter(Filter);
+
+            if (orders == null) return NoContent();
+
             return Ok(orders);
         }
+
+        [HttpGet("Count")]
+        public async Task<IActionResult> GetOrderCounts()
+        {
+            CategorizedOrdersCountModel Model = new()
+            {
+                PendingOrders = (await _orderRepository.GetOrdersByFilter(OrderFilters.ORDERS_PENDING)).Count,
+                OngoingOrders = (await _orderRepository.GetOrdersByFilter(OrderFilters.ORDERS_ONGOING)).Count,
+                SucceededOrders = (await _orderRepository.GetOrdersByFilter(OrderFilters.ORDERS_SUCCEEDED)).Count,
+                FailedOrders = (await _orderRepository.GetOrdersByFilter(OrderFilters.ORDERS_FAILED)).Count
+            };
+
+            return Ok(Model);
+        }
+
         [HttpGet("User/{ID}")]
         public async Task<IActionResult> GetOrdersByUserID(Guid ID)
         {
@@ -56,45 +81,71 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(GetOrderById), new { id = createdOrder.OrderID }, createdOrder);
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("Bypass/{id}")] // Debug purposes only
         [Authorize(Roles = "User,Admin")]
-        public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
+        public async Task<ActionResult<Order>> UpdateOrderBypass(Guid id, [FromBody] OrderDto orderDto)
+        {
+            var updatedOrder = await _orderRepository.UpdateOrderAsyncBypass(id, orderDto);
+            if (updatedOrder == null) return NotFound();
+            return updatedOrder;
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Order>> UpdateOrder(Guid id, [FromBody] OrderDto orderDto)
         {
             var updatedOrder = await _orderRepository.UpdateOrderAsync(id, orderDto);
-            if (updatedOrder == null) return NotFound();
-            return (IActionResult)updatedOrder;
+            if (updatedOrder == null)
+                return BadRequest("Không thể thay đổi thông tin: đơn hàng đã thay đổi thông tin trước đó, hoặc đơn hàng không tồn tại.");
+
+            if (updatedOrder.Status != (byte)OrderStatus.Created && updatedOrder.Status != (byte)OrderStatus.Processed)
+                return BadRequest("Không thể thay đổi thông tin: đơn hàng đã hoặc đang trong quá trình xử lý.");
+
+            return updatedOrder;
         }
 
         [HttpPatch("UpdateStatus/{id}")]
         public async Task<IActionResult> UpdateOrderStatus(Guid id, byte StatusCode)
         {
+            var Status = (OrderStatus)StatusCode;
             var updatedOrder = await _orderRepository.UpdateOrderStatus(id, StatusCode);
-            if (updatedOrder == null) return NotFound();
+            if (updatedOrder == null)
+            {
+                switch (Status)
+                {
+                    case OrderStatus.Canceled:
+                        return BadRequest("Không thể hủy đơn khi đã hủy đơn, đã đổi trả, đơn đang giao hoặc đã hoàn thành đơn!");
+                    case OrderStatus.Refunding:
+                        return BadRequest("Không thể hoàn trả đơn vì đã quá hạn, hoặc đơn này đã không được cho phép hoàn trả nữa!");
+                    default:
+                        return NotFound();
+                }
+            }
             else
             {
+                var ProductList = await OrderDetailsRepository.GetOrderDetailsFromOrderID(id);
+                if (ProductList == null) return NotFound("Không thể tìm thấy thông tin hóa đơn... (?????)");
+                switch ((OrderStatus)StatusCode)
+                {
+                    case OrderStatus.Processed:
+                        {
+                            foreach (var THING in ProductList)
+                            {
+                                // Trừ sản phẩm
+                                await ProductDetailRepo.DoAddProductCount
+                                    (THING.ProductDetailID.GetValueOrDefault(), -THING.Quantity.GetValueOrDefault());
+                            }
+                            break;
+                        }
+                    default:
+                        break;
+                }
+
+
                 OrderTrackingDTO NewRecord = new()
                 {
                     OrderID = updatedOrder.OrderID,
                     Status = StatusCode,
                     HasPaid = updatedOrder.HasPaid,
-                };
-                await OrderTrackingRepo.Add(NewRecord);
-                return NoContent();
-            }
-        }
-        
-        [HttpPatch("UpdateStatusPaid/{id}")]
-        public async Task<IActionResult> UpdateOrderHasPaid(Guid id, bool Toggle)
-        {
-            var updatedOrder = await _orderRepository.UpdateOrderHasPaid(id, Toggle);
-            if (updatedOrder == null || updatedOrder.HasPaid == Toggle) return NotFound();
-            else
-            {
-                OrderTrackingDTO NewRecord = new()
-                {
-                    OrderID = updatedOrder.OrderID,
-                    Status = updatedOrder.Status,
-                    HasPaid = Toggle
                 };
                 await OrderTrackingRepo.Add(NewRecord);
                 return NoContent();
@@ -109,6 +160,23 @@ namespace Application.API.Controllers
             var result = await _orderRepository.DeleteOrderAsync(id);
             if (!result) return NotFound();
             return NoContent();
+        }
+        [HttpGet("byOrderNumber/{orderNumber}")]
+        public async Task<IActionResult> GetOrderByOrderNumber(string orderNumber)
+        {
+            if (string.IsNullOrEmpty(orderNumber))
+            {
+                return BadRequest("Order number is required.");
+            }
+
+            var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
+
+            if (order == null)
+            {
+                return NotFound($"Order with OrderNumber {orderNumber} not found.");
+            }
+
+            return Ok(order);
         }
     }
 }

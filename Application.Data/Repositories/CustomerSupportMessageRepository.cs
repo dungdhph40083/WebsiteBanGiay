@@ -24,23 +24,49 @@ namespace Application.Data.Repositories
                 .Include(user => user.User).ToListAsync();
         }
 
-        public async Task<CustomerSupportMessage?> GetMessageByID(Guid MsgID)
+        public async Task<CustomerSupportMessage?> GetMessageByID(Guid Id)
         {
-            return await Context.CustomerSupportMessages.FindAsync(MsgID);
+            return await Context.CustomerSupportMessages.FindAsync(Id);
         }
 
         public async Task<CustomerSupportMessage> SendMessage(CustomerSupportMessageDTO NewMessage)
         {
-            var DateTimeUtcNow = DateTime.UtcNow;
-            CustomerSupportMessage CustomerSupportMessage = new()
+            // Tạo mới đối tượng CustomerSupportMessage
+            CustomerSupportMessage customerSupportMessage = new()
             {
-                MessageID = Guid.NewGuid(),
-                CreatedAt = DateTimeUtcNow,
+                MessageID = Guid.NewGuid(),  // Tạo MessageID mới
+                CreatedAt = DateTime.Now, // Lưu thời gian tạo
+                FirstName = NewMessage.FirstName, // Gán FirstName từ DTO
+                Email = NewMessage.Email, // Gán Email từ DTO
+                PhoneNumber = NewMessage.PhoneNumber, // Gán PhoneNumber từ DTO
+                MessageContent = NewMessage.MessageContent, // Gán MessageContent từ DTO
+                Status =1
             };
-            CustomerSupportMessage = Mapper.Map(NewMessage, CustomerSupportMessage);
-            await Context.CustomerSupportMessages.AddAsync(CustomerSupportMessage);
-            await Context.SaveChangesAsync();
-            return CustomerSupportMessage;
+
+            // Thêm đối tượng vào cơ sở dữ liệu
+            await Context.CustomerSupportMessages.AddAsync(customerSupportMessage);
+            await Context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu
+
+            return customerSupportMessage; // Trả về đối tượng đã được lưu
         }
+        public async Task<CustomerSupportMessage?> UpdateStatusOnly(Guid TargetID, byte Status)
+        {
+            var Target = await Context.CustomerSupportMessages.FindAsync(TargetID);
+            if (Target != null)
+            {
+                // Đánh dấu mục này là đã được sửa đổi
+                Context.CustomerSupportMessages.Attach(Target);
+
+                // Chỉ cập nhật trường Status mà không thay đổi các trường khác
+                Target.Status = Status;
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await Context.SaveChangesAsync();
+
+                return Target;
+            }
+            else return default; // Trả về null nếu không tìm thấy đối tượng
+        }
+
     }
 }

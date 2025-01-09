@@ -2,6 +2,8 @@
 using Application.Data.Enums;
 using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using NuGet.Protocol;
 using System.Net.Http.Headers;
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -66,9 +68,16 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             string URL_Order = $@"https://localhost:7187/api/Orders/{ID}";
 
-            var Response = await Client.GetFromJsonAsync<OrderDto>(URL_Order);
+            var Response = await Client.GetFromJsonAsync<Order>(URL_Order);
 
-            return View(Response);
+            if (Response == null || Response.HasChangedInfo)
+            {
+                ViewData["FAILURE"] = "Bạn không thể đổi thông tin đơn nữa do đã đổi thông tin trước đó.";
+                return RedirectToAction(nameof(Details), new { ID });
+            }
+            var TrueResponse = JsonConvert.DeserializeObject<OrderDto>(Response.ToJson());
+
+            return View(TrueResponse);
         }
 
         [HttpPost]
@@ -118,7 +127,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Canceled}";
                 var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
             {
@@ -141,7 +150,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Received}";
                 var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
             {
@@ -164,7 +173,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.ReceivedAgain}";
                 var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
             {
@@ -175,42 +184,53 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
         }
 
-        public async Task<ActionResult> Request2Refund(Guid ID)
+        public async Task<ActionResult> RequestRefund(Guid ID, ReturnDTO ReturnInfo, string Reason, string? Comments)
         {
             string token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
             }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            try
-            {
-                string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Refunding}";
-                var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception Msg)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(Msg.Message);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                return View();
-            }
-        }
+            ReturnInfo.OrderID = ID;
 
-        public async Task<ActionResult> Request2RefundAgain(Guid ID)
-        {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
+            switch (Reason)
             {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
+                case Reasoning.Generic:
+                    ReturnInfo.Reason = "Hàng không ưng ý";
+                    break;
+                case Reasoning.UsedProduct:
+                    ReturnInfo.Reason = "Hàng đã sử dụng";
+                    break;
+                case Reasoning.FakeProduct:
+                    ReturnInfo.Reason = "Hàng giả/hàng nhái";
+                    break;
+                case Reasoning.BrokenProduct:
+                    ReturnInfo.Reason = "Hàng bị lỗi hoặc gặp hỏng hóc";
+                    break;
+                case Reasoning.Other:
+                    if (Comments != null)
+                    {
+                        ReturnInfo.Reason = Comments;
+                        break;
+                    }
+                    else
+                    {
+                        ViewData["NoReasoningFound"] = "Đừng quên nhập lý do!";
+                        return View();
+                    }
+                default:
+                    ViewData["NoReasoningFound"] = "Đã có lỗi xảy ra. Hãy thử lại.";
+                    return View();
             }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             try
             {
-                string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.RefundingAgain}";
-                var Response = await Client.PatchAsync(URL, null);
-                return RedirectToAction(nameof(Index));
+                string URL_Returns = $@"https://localhost:7187/api/Returns";
+                var ReturnResponse = await Client.PostAsJsonAsync(URL_Returns, ReturnInfo);
+
+                string URL_Orders = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Refunding}";
+                var OrderResponse = await Client.PatchAsync(URL_Orders, null);
+                return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
             {
