@@ -70,7 +70,7 @@ namespace Application.MVC.Controllers
         public async Task<ActionResult> Create(ProductDTO product, IFormFile? Image)
         {
             // Kiểm tra xem tên sản phẩm đã tồn tại trong cơ sở dữ liệu chưa
-            string checkProductNameURL = $"https://localhost:7187/api/Product/check-name/{product.Name}";
+            string checkProductNameURL = $"https://localhost:7187/api/Product/CheckProductName/{product.Name}";
 
             var checkResponse = await client.GetAsync(checkProductNameURL);
 

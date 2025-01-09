@@ -12,8 +12,6 @@ namespace Application.Data.Models
 		public Guid? UserID { get; set; }
 		[ForeignKey(nameof(ProductDetail))]
 		public Guid? ProductDetailID { get; set; }
-        [ForeignKey(nameof(Voucher))]
-        public Guid? VoucherID { get; set; }
         public int? QuantityCart { get; set; }
         public long? Price { get; set; }
 		public virtual User? User { get; set; }

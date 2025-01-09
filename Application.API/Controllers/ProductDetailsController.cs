@@ -25,6 +25,7 @@ namespace Application.API.Controllers
             this.ImageRepository = ImageRepository;
         }
 
+        // Để debug
         [HttpGet]
         public async Task<ActionResult<List<ProductDetail>>> Get()
         {
@@ -32,9 +33,21 @@ namespace Application.API.Controllers
         }
 
         [HttpGet("{ID}")]
-        public async Task<ActionResult<ProductDetail?>> Get(Guid ID)
+        public async Task<ActionResult<ProductDetail?>> GetByDetailID(Guid ID)
         {
             return await ProductDetailRepo.GetProductDetailByID(ID);
+        }
+
+        [HttpGet("ByProduct/{ProductID}")]
+        public async Task<ActionResult<List<ProductDetail>>> GetByProductID(Guid ProductID)
+        {
+            return await ProductDetailRepo.GetProductDetailsByProductID(ProductID);
+        }
+
+        [HttpGet("ByProduct/VariationsOnly")]
+        public async Task<ActionResult<List<ProductDetail>>> GetVariations(Guid? ProductID)
+        {
+            return await ProductDetailRepo.GetVariationsByProductID(ProductID.GetValueOrDefault());
         }
 
         [HttpPost]
@@ -44,10 +57,10 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(Get), new { Response.ProductDetailID }, Response);
         }
 
-        [HttpPost("VariationsFor/{DetailID}")]
-        public async Task<ActionResult<ProductDetailVariationMetadata>> PostVariations(Guid DetailID, [FromBody] List<ProductDetailVariationDTO> Variations)
+        [HttpPost("AddVariations")]
+        public async Task<ActionResult<ProductDetailVariationMetadata>> PostVariations([FromBody] ProductDetailMultiDTO Variations)
         {
-            var Response = await ProductDetailRepo.CreateNewVariations(DetailID, Variations);
+            var Response = await ProductDetailRepo.CreateNewVariations(Variations);
             return Response;
         }
 
@@ -63,8 +76,16 @@ namespace Application.API.Controllers
             await ProductDetailRepo.DeleteExisting(ID);
             return NoContent();
         }
+
+        [HttpDelete("ByProduct/{ProductID}")]
+        public async Task<ActionResult> DeleteByProduct(Guid ProductID)
+        {
+            await ProductDetailRepo.DeleteExistingByProductID(ProductID);
+            return NoContent();
+        }
+
         // Phương thức để chuyển trạng thái sản phẩm giữa "mở bán" và "dừng bán"
-        [HttpPut("{ID}/toggle-status")]
+        [HttpPut("{ID}/ToggleStatus")]
         public async Task<ActionResult> ToggleStatus(Guid ID)
         {
             var productDetail = await ProductDetailRepo.GetProductDetailByID(ID);

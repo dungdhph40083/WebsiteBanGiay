@@ -62,7 +62,7 @@ namespace Application.Data.Repositories
                 await Context.SaveChangesAsync();
             }
         }
-        
+
         public async Task<ShoppingCart?> GetShoppingCartByID(Guid TargetID)
         {
             return await Context.ShoppingCarts
@@ -282,7 +282,7 @@ namespace Application.Data.Repositories
                 {
                     UserID = UserID,
                     ProductDetailID = ProductDetailID,
-                    QuantityCart = Quantity ?? 1
+                    QuantityCart = Quantity ?? 1,
                 };
 
                 var Response = await CreateNew(NewCart);
@@ -290,37 +290,6 @@ namespace Application.Data.Repositories
 
                 return Response;
             }
-        }
-
-        public async Task<List<ShoppingCart>> ExportFromOrder(Guid UserID, Guid OrderID)
-        {
-            var GetOrder = await Context.Orders.FindAsync(OrderID);
-            if (GetOrder == null) return new();
-
-            var MyOrder = await Context.OrderDetails
-                  .Where(UU => UU.OrderID.Equals(OrderID)).ToListAsync();
-
-            if (MyOrder != null)
-            {
-                var MyCart = new List<ShoppingCart>();
-                foreach (var OrderItem in MyOrder)
-                {
-                    ShoppingCart CartItem = new()
-                    {
-                        CartID = Guid.NewGuid(),
-                        UserID = UserID,
-                        Price = OrderItem.Price,
-                        ProductDetailID = OrderItem.ProductDetailID,
-                        QuantityCart = OrderItem.Quantity ?? 1,
-                    };
-                    MyCart.Add(CartItem);
-                }
-                await Context.ShoppingCarts.AddRangeAsync(MyCart);
-                await Context.SaveChangesAsync();
-
-                return await GetShoppingCartsByUserID(UserID);
-            }
-            else return [];
         }
     }
 }

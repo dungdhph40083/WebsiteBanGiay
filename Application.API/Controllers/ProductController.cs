@@ -130,15 +130,10 @@ namespace Application.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult>? DeleteProduct(Guid id)
         {
-            var CheckForRelations = await ProductDetailRepo.GetProductDetailByProductID(id);
-            if (CheckForRelations != null)
-            {
-                await ProductDetailRepo.DeleteExisting(CheckForRelations.ProductDetailID);
-            }
-            await _productRepository.Delete(id);
+            await ProductDetailRepo.DeleteExistingByProductID(id);
             return NoContent();
         }
-        [HttpGet("check-name/{name}")]
+        [HttpGet("CheckProductName/{name}")]
         public async Task<IActionResult> CheckProductName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))

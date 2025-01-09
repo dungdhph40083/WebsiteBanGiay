@@ -37,7 +37,7 @@ namespace Application.API.Controllers
             var Response = await CustomerSupportMessageRepo.SendMessage(NewMessage);
             return CreatedAtAction(nameof(Get), new {ID = Response.MessageID}, Response);
         }
-        [HttpPut("{ID}/toggle-status")]
+        [HttpPut("{ID}/ToggleStatus")]
         public async Task<ActionResult> ToggleStatus(Guid ID)
         {
             var customerSupportRepository = await CustomerSupportMessageRepo.GetMessageByID(ID);

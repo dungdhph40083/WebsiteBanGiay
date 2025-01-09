@@ -25,13 +25,19 @@
     }
 
     /*
+     *  TODO 2:
+     *  1. get all: hiển thị các sản phẩm biến thể theo product ID -- DONE
+     *  2. get by ID: theo product detail ID để sửa biến thể nếu có (có thể truyền ra list các thay đổi) -- DONE
+     *  3. edit: bấm vào sẽ hiển thị hàng loạt biến thể để sửa & các trường thông tin sản phẩm khác (hãng, xuất xứ...) -- DONE
+     *  4. delete: xóa theo product ID -- DONE
+     *  5. sửa lại view quản lý bên admin
+     */
+
+
+    /*
      *  TODO:
-     *  1: sửa số sản phẩm (thêm vào bị quá số) -- DONE
      *  2: sau khi đặt đơn: được phép đổi tăng giảm số lượng mặt hàng & thêm/xóa sản phẩm khác (chỉ trước trạng thái đang giao) [TODO]
-     *  3: khi admin xác nhận đơn trừ số lượng sản phẩm trực tiếp là trừ luôn -- DONE
-     *  4: khi giao hàng thành công: trạng thái thanh toán chuyển về đã thanh toán -- DONE
      *  5: hoàn đơn về không cộng lại (lưu ở bên bảng hoàn trả - thêm thông tin số lượng hàng đã hoàn trả & giá tiền) -- 50%: THÔNG TIN CHƯA CÓ
-     *  6: hoàn trả phải được chọn lý do & nhập lý do khác -- DONE
      *
      *  Lý do: 
      *  - Hàng đã qua sử dụng

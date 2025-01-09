@@ -52,14 +52,16 @@ namespace Application.Data.Repositories
                     .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.ProductDetailID == TargetID);
         }
 
-        public async Task<ProductDetail?> GetProductDetailByProductID(Guid TargetID)
+        public async Task<List<ProductDetail>> GetProductDetailsByProductID(Guid TargetID)
         {
             return await Context.ProductDetails
                     .Include(Prod => Prod.Product)
                         .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                     .Include(Siz => Siz.Size)
                     .Include(Col => Col.Color)
-                    .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.ProductID == TargetID);
+                    .Include(Ctg => Ctg.Category)
+                    .Where(x => x.ProductID == TargetID)
+                        .ToListAsync();
         }
 
         public async Task<List<ProductDetail>> GetProductDetails()
@@ -88,6 +90,7 @@ namespace Application.Data.Repositories
             }
             else return default;
         }
+
         public async Task<ProductDetail?> UpdateStatusOnly(Guid TargetID, byte Status)
         {
             var Target = await Context.ProductDetails.FindAsync(TargetID);
@@ -125,7 +128,7 @@ namespace Application.Data.Repositories
             else return default;
         }
 
-        public async Task<ProductDetailVariationMetadata> CreateNewVariations(Guid DetailID, List<ProductDetailVariationDTO> VariationDetails)
+        public async Task<ProductDetailVariationMetadata> CreateNewVariations(ProductDetailMultiDTO VariationDetails)
         {
             // Cái này để thông báo Admin nếu như gặp trường hợp thêm biến thể bị trùng lặp (VariationsNotAdded > 0 = thông báo)
             var Metadata = new ProductDetailVariationMetadata()
@@ -136,60 +139,83 @@ namespace Application.Data.Repositories
             };
 
             var NewVariations = new List<ProductDetail>(); // Danh sách biến thể SP 
-            var Target = await GetProductDetailByID(DetailID); // Lấy thông tin cũ
 
-            if (Target != null && VariationDetails.Count > 0)
+            if (VariationDetails.Variations.Count > 0)
             {
+                #region FOR DEBUG IN CONSOLE
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"\nTarget is not null. PID is {Random.Shared.Next(0, 100000)}\n");
                 Console.ForegroundColor = ConsoleColor.Gray;
+                #endregion
 
-                foreach (var Variation in VariationDetails)
+                foreach (var Variation in VariationDetails.Variations)
                 {
+                    #region FOR DEBUG IN CONSOLE
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"\nFound variation! PID is {Random.Shared.Next(0, 100000)}\n");
                     Console.ForegroundColor = ConsoleColor.Gray;
+                    #endregion
 
                     var IfThisHasValueThenPerish = await Context.ProductDetails
                         .Where(Qry =>
-                               Qry.ProductID == Target.ProductID && // Nếu trùng ProductID
+                               Qry.ProductID == VariationDetails.ProductID && // Nếu trùng ProductID
                                Qry.ColorID == Variation.ColorID &&  // và trùng màu + kích cỡ
                                Qry.SizeID == Variation.SizeID).SingleOrDefaultAsync(); // Kiểm tra trùng lặp
 
                     if (IfThisHasValueThenPerish == null) // Ko trùng = cho
                     {
+                        #region FOR DEBUG IN CONSOLE
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine($"\nNo variation is found, creating new! PID is {Random.Shared.Next(0, 100000)}\n");
                         Console.ForegroundColor = ConsoleColor.Gray;
+                        #endregion
 
-                        // Tạo Detail mới (biến thể)
-                        // & lấy dữ liệu cũ trước, sau đó
-                        ProductDetail NewVariation = new()
+                        if (Variation != null || (Variation?.ColorID != null &&
+                                               Variation.SizeID != null &&
+                                               Variation.Quantity != null)
+                        )
                         {
-                            // Tạo GUID mới
-                            ProductDetailID = Guid.NewGuid(),
-                            ProductID = Target.ProductID,
-                            CategoryID = Target.CategoryID,
-                            Material = Target.Material,
-                            Brand = Target.Brand,
-                            PlaceOfOrigin = Target.PlaceOfOrigin,
-                            Status = 1,
-                            UpdatedAt = DateTime.UtcNow
-                        };
+                            // Tạo Detail mới (biến thể)
+                            // & lấy dữ liệu cũ trước, sau đó
+                            ProductDetail NewVariation = new()
+                            {
+                                // Tạo GUID mới
+                                ProductDetailID = Guid.NewGuid(),
+                                ProductID = VariationDetails.ProductID,
+                                CategoryID = VariationDetails.CategoryID,
+                                Material = VariationDetails.Material,
+                                Brand = VariationDetails.Brand,
+                                PlaceOfOrigin = VariationDetails.PlaceOfOrigin,
+                                Status = 1,
+                                UpdatedAt = DateTime.UtcNow
+                            };
 
-                        // Lấy dữ liệu mới vào để làm biến thể mới
-                        NewVariation = Mapper.Map(Variation, NewVariation);
+                            // Lấy dữ liệu mới vào để làm biến thể mới
+                            NewVariation = Mapper.Map(Variation, NewVariation);
 
-                        NewVariations.Add(NewVariation); // Thêm vào danh sách biến thể
-                        Metadata.VariationsAdded += 1;
+                            NewVariations.Add(NewVariation); // Thêm vào danh sách biến thể
+                            Metadata.VariationsAdded += 1;
+                        }
+                        else
+                        {
+                            #region FOR DEBUG IN CONSOLE
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"\nVariation data isn't available: it could've been from an empty cell - ignoring anyway. PID is {Random.Shared.Next(0, 100000)}\n");
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            #endregion
+                        }
                     }
                     else
                     {
+                        #region FOR DEBUG IN CONSOLE
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"\nVariation already exists, ignoring. PID is {Random.Shared.Next(0, 100000)}\n");
+                        Console.WriteLine($"\nVariation already exists, ignoring (add 1 to not added). PID is {Random.Shared.Next(0, 100000)}\n");
                         Console.ForegroundColor = ConsoleColor.Gray;
+                        #endregion
 
                         Metadata.VariationsNotAdded += 1;
+
+                        // Có thể là thêm vào thêm số lượng nếu mà gặp phải cái đó
                     }
                 };
 
@@ -201,11 +227,50 @@ namespace Application.Data.Repositories
             }
             else
             {
+                #region FOR DEBUG IN CONSOLE
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"\nSOMETHING BROKE??? PID is {Random.Shared.Next(0, 100000)}\n");
                 Console.ForegroundColor = ConsoleColor.Gray;
+                #endregion
             }
             return Metadata;
+        }
+
+        public async Task DeleteExistingByProductID(Guid TargetID)
+        {
+            var Targets = await GetProductDetailsByProductID(TargetID);
+            if (Targets.Count > 0)
+            {
+                Context.ProductDetails.RemoveRange(Targets);
+                await Context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<ProductDetail>> GetVariationsByProductID(Guid? TargetID)
+        {
+            var FilteredPies = new List<ProductDetail>();
+            List<ProductDetail> Targets;
+
+            if (TargetID != null)
+            {
+                Targets = await GetProductDetailsByProductID(TargetID.GetValueOrDefault());
+            }
+            else Targets = await GetProductDetails();
+
+            foreach (var Ball in Targets)
+            {
+                FilteredPies.Add(new()
+                {
+                    ProductDetailID = Ball.ProductDetailID,
+                    ProductID = Ball.ProductID,
+                    ColorID = Ball.ColorID,
+                    SizeID = Ball.SizeID,
+                    Color = Ball.Color,
+                    Size = Ball.Size
+                });
+            }
+
+            return FilteredPies;
         }
     }
 }

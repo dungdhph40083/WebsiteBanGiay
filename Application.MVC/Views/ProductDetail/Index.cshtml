@@ -135,7 +135,7 @@
 
 <!-- Form tìm kiếm sản phẩm -->
 <div class="d-flex justify-content-center my-3">
-    <div class="input-group w-50">
+    <div class="input-group w-75">
         <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên sản phẩm" value="@ViewBag.SearchTerm">
         <div class="input-group-append">
             <button class="btn btn-primary" id="searchBtn">
@@ -148,19 +148,24 @@
 <!-- Bộ lọc trạng thái với màu sắc và viền -->
 <div class="d-flex justify-content-center my-3">
     <div class="form-check form-check-inline border border-primary rounded p-2 mx-1">
-        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusAll" value="all"
-        @(ViewBag.CurrentStatus == "all" ? "checked" : "")>
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusAll" value="All"
+        @(ViewBag.CurrentStatus == "All" ? "checked" : "")>
         <label class="form-check-label text-primary" for="statusAll">Tất cả</label>
     </div>
     <div class="form-check form-check-inline border border-success rounded p-2 mx-1">
-        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusActive" value="1"
-        @(ViewBag.CurrentStatus == "1" ? "checked" : "")>
-        <label class="form-check-label text-success" for="statusActive">Đang bán</label>
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusActive" value="Active"
+        @(ViewBag.CurrentStatus == "Active" ? "checked" : "")>
+        <label class="form-check-label text-success" for="statusActive">Còn hàng</label>
+    </div>
+    <div class="form-check form-check-inline border border-warning rounded p-2 mx-1">
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusRunningOut" value="RunningOut"
+        @(ViewBag.CurrentStatus == "RunningOut" ? "checked" : "")>
+        <label class="form-check-label text-warning" for="statusRunningOut">Sắp hết hàng</label>
     </div>
     <div class="form-check form-check-inline border border-danger rounded p-2 mx-1">
-        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusInactive" value="0"
-        @(ViewBag.CurrentStatus == "0" ? "checked" : "")>
-        <label class="form-check-label text-danger" for="statusInactive">Dừng bán</label>
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusInactive" value="Out"
+        @(ViewBag.CurrentStatus == "Out" ? "checked" : "")>
+        <label class="form-check-label text-danger" for="statusInactive">Hết hàng</label>
     </div>
 </div>
 
@@ -178,8 +183,6 @@
                 <th>#</th> <!-- Serial number header -->
                 <th>Tên sản phẩm</th>
                 <th>Ảnh SP</th>
-                <th>Kích cỡ</th>
-                <th>Màu</th>
                 <th>Danh mục</th>
                 <th>Chất liệu</th>
                 <th>Số lượng còn lại</th>
@@ -204,8 +207,6 @@
                             <span>Chưa có ảnh</span>
                         }
                     </td>
-                    <td>@Entry.value.Size?.Name</td>
-                    <td>@Entry.value.Color?.ColorName</td>
                     <td>@Entry.value.Category?.CategoryName</td>
                     <td>@Entry.value.Material</td>
                     <td>@Entry.value.Quantity.GetValueOrDefault().ToString("#,0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
@@ -305,7 +306,7 @@ else
 <script>
     document.getElementById('searchBtn').addEventListener('click', function () {
         const searchTerm = document.getElementById('searchInput').value;
-        const url = `/ProductDetail/Index?page=1&pageSize=@ViewBag.PageSize&status=@ViewBag.CurrentStatus&searchTerm=${searchTerm}`;
+        const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=@ViewBag.CurrentStatus&SearchQuery=${searchTerm}`;
         window.location.href = url;
     });
     // Tự động tìm kiếm khi người dùng nhấn Enter
@@ -322,7 +323,7 @@ else
     document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
         radio.addEventListener('change', function () {
             const selectedStatus = this.value;
-            const url = `/ProductDetail/Index?page=1&pageSize=@ViewBag.PageSize&status=${selectedStatus}`;
+            const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=${selectedStatus}`;
             window.location.href = url;
         });
     });
