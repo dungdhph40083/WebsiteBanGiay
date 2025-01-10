@@ -21,6 +21,10 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             // Lấy danh sách ProductDetails từ API
             var details = await client.GetFromJsonAsync<List<ProductDetail>>("https://localhost:7187/api/ProductDetails");
+
+            details = details?.OrderByDescending(Req => Req.Product?.CreatedAt)
+                .GroupBy(Sdf => Sdf.ProductID).Select(Req => Req.First()).ToList();
+
             ViewBag.Details = details ?? new List<ProductDetail>();
 
             // Lấy danh sách danh mục (Categories) từ API
@@ -118,6 +122,18 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             return View(productsForCurrentPage);
         }
+
+        // Plan is:
+        //
+        // Get all the product details into memory
+        // Then, list every color inside a combo box (dropdown selector)
+        // For the size selections, put the radios that corresponds to its color ID (one radio for each size in said list, or use dropdown instead)
+        // The colors dropdown selector will update the URL link in the form of a parameter once selecting a color
+        //
+        // Once you finished selecting your desired product, the function will look for the exact product detail ID in the given list,
+        // then it will POST into the shopping cart API.
+        //
+        // Hopefully it should work like this...
 
         public async Task<ActionResult> Details(Guid ID)
         {
