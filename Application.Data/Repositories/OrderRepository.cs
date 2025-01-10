@@ -376,5 +376,24 @@ namespace Application.Data.Repositories
         {
             return await _context.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
         }
+
+        public async Task<Order?> UpdateStatusHasPaid(Guid TargetID, bool HasPaid, byte Status)
+        {
+            var Order = await GetOrderByIdAsync(TargetID);
+            if (Order == null)
+            {
+                return null; // Không tìm thấy đơn hàng, trả về null
+            }
+
+
+            _context.Orders.Attach(Order);
+            Order.HasPaid = HasPaid;
+            Order.Status = Status; // Đặt Status thành 101
+            _context.Update(Order);
+            await _context.SaveChangesAsync();
+
+            return Order; // Trả về đơn hàng đã cập nhật
+        }
+
     }
 }

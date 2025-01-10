@@ -171,5 +171,34 @@ namespace Application.API.Controllers
 
             return Ok(order);
         }
+        [HttpPatch("SetHasPaidToTrue/{id}")]
+        public async Task<ActionResult> SetHasPaidToTrue(Guid id)
+        {
+            // Lấy thông tin đơn hàng
+            var order = await _orderRepository.GetOrderByIdAsync(id);
+            if (order == null)
+            {
+                return NotFound("Order not found");
+            }
+
+            // Kiểm tra nếu trạng thái đã là true và Status đã là 101
+            if (order.HasPaid && order.Status == 101)
+            {
+                return Ok(order); // Không cần cập nhật, trả về thông tin đơn hàng
+            }
+
+            // Cập nhật trạng thái HasPaid thành true và Status = 101
+            var updatedOrder = await _orderRepository.UpdateStatusHasPaid(id, true, 101);
+
+            if (updatedOrder == null)
+            {
+                return BadRequest("Failed to update payment status or status.");
+            }
+
+            // Trả về thông tin đơn hàng đã cập nhật
+            return Ok(updatedOrder);
+        }
+
+
     }
 }

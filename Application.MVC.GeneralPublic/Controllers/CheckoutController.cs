@@ -66,7 +66,26 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                     var RouteID = Content?.First().OrderID;
 
-                    return RedirectToAction(nameof(MyOrdersController.Details), Controller2String.Eat(nameof(MyOrdersController)), new {ID = RouteID});
+                    return RedirectToAction(nameof(MyOrdersController.Details), Controller2String.Eat(nameof(MyOrdersController)), new { ID = RouteID });
+                }
+                catch (Exception Msg)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(Msg.Message);
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            else if (PaymentMethod == PaymentMethods.VNPay)
+            {
+                try
+                {
+                    string URL = $@"https://localhost:7187/api/Payment";
+                    var Response = await _client.PostAsJsonAsync(URL, Details);
+
+                    var Content = Response.Content.ReadAsStringAsync().Result;
+
+                    return Redirect(Content);
                 }
                 catch (Exception Msg)
                 {
