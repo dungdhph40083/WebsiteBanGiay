@@ -2,10 +2,10 @@
 @using Application.Data.Enums;
 
 @{
-    ViewData["Title"] = "Tạo chi tiết sản phẩm";
+    ViewData["Title"] = "Thêm biến thể sản phẩm";
 }
 
-<h1 class="text-center mt-4 text-primary">Tạo chi tiết sản phẩm</h1>
+<h1 class="text-center mt-4 text-primary">Thêm biến thể sản phẩm</h1>
 <hr class="border-primary" />
 
 <!-- Validation Summary -->
@@ -91,7 +91,7 @@
                     <span asp-validation-for="@Model.Variations[0].Quantity" class="text-danger"></span>
                 </div>
                 <div class="col-md-1" id="Delete_0_">
-                    <label>Xóa</label><br />
+                    <label>Xóa</label>
                     <button class="btn btn-danger" type="button" onclick="DoRemoveExistingRow(Variated_0_)"><i class="fa fa-x"></i></button>
                 </div>
             </div>

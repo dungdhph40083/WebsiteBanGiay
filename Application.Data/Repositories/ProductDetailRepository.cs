@@ -5,6 +5,8 @@ using Application.Data.Repositories.IRepository;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Drawing.Drawing2D;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace Application.Data.Repositories
 {
@@ -44,17 +46,21 @@ namespace Application.Data.Repositories
 
         public async Task<ProductDetail?> GetProductDetailByID(Guid TargetID)
         {
-            return await Context.ProductDetails
+            var Item = await Context.ProductDetails
                     .Include(Prod => Prod.Product)
                         .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                     .Include(Siz => Siz.Size)
                     .Include(Col => Col.Color)
                     .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.ProductDetailID == TargetID);
+
+            await ConstantUpdates(Item);
+
+            return Item;
         }
 
         public async Task<List<ProductDetail>> GetProductDetailsByProductID(Guid TargetID)
         {
-            return await Context.ProductDetails
+            var LeList = await Context.ProductDetails
                     .Include(Prod => Prod.Product)
                         .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                     .Include(Siz => Siz.Size)
@@ -62,17 +68,29 @@ namespace Application.Data.Repositories
                     .Include(Ctg => Ctg.Category)
                     .Where(x => x.ProductID == TargetID)
                         .ToListAsync();
+
+            foreach (var Item in LeList)
+            {
+                await ConstantUpdates(Item);
+            }
+            return LeList;
         }
 
         public async Task<List<ProductDetail>> GetProductDetails()
         {
             // trích xuất cả dữ liệu image và product bằng cách .Include
-            return await Context.ProductDetails
+            var LeList = await Context.ProductDetails
                 .Include(Prod => Prod.Product)
                     .ThenInclude(ImgP => ImgP != null ? ImgP.Image : null)
                 .Include(Siz => Siz.Size)
                 .Include(Col => Col.Color)
                 .Include(Ctg => Ctg.Category).ToListAsync();
+
+            foreach (var Item in LeList)
+            {
+                await ConstantUpdates(Item);
+            }
+            return LeList;
         }
 
         public async Task<ProductDetail?> UpdateExisting(Guid TargetID, ProductDetailDTO UpdatedDetail)
@@ -91,24 +109,44 @@ namespace Application.Data.Repositories
             else return default;
         }
 
-        public async Task<ProductDetail?> UpdateStatusOnly(Guid TargetID, byte Status)
+        public async Task<ProductDetail?> UpdateSetToZero(Guid TargetID)
         {
             var Target = await Context.ProductDetails.FindAsync(TargetID);
             if (Target != null)
             {
-                // Đánh dấu mục này là đã được sửa đổi
                 Context.ProductDetails.Attach(Target);
 
-                // Chỉ cập nhật trường Status mà không thay đổi các trường khác
-                Target.Status = Status;
-                Target.UpdatedAt = DateTime.UtcNow; // Cập nhật thời gian khi thay đổi trạng thái
+                Target.Quantity = 0;
+                Target.Status = 0;
+                Target.UpdatedAt = DateTime.UtcNow;
 
-                // Lưu thay đổi vào cơ sở dữ liệu
+                Context.Update(Target);
                 await Context.SaveChangesAsync();
-
                 return Target;
             }
-            else return default; // Trả về null nếu không tìm thấy đối tượng
+            else return default;
+        }
+
+        public async Task<List<ProductDetail>> UpdateStatusOnly(Guid ProductID)
+        {
+            var Items = await GetProductDetailsByProductID(ProductID);
+            if (Items == null) return [];
+
+            byte Status = (byte)(Items.First().Status == 1 ? 0 : 1);
+
+            // Đánh dấu mục này là đã được sửa đổi
+            Context.ProductDetails.AttachRange(Items);
+            foreach (var Tem in Items)
+            {
+                // Chỉ cập nhật trường Status mà không thay đổi các trường khác
+                Tem.Status = Status;
+                Tem.UpdatedAt = DateTime.UtcNow; // Cập nhật thời gian khi thay đổi trạng thái
+            }
+
+            Context.ProductDetails.UpdateRange(Items);
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await Context.SaveChangesAsync();
+            return Items;
         }
 
         public async Task<ProductDetail?> DoAddProductCount(Guid ID, int Count)
@@ -180,13 +218,13 @@ namespace Application.Data.Repositories
                             ProductDetail NewVariation = new()
                             {
                                 // Tạo GUID mới
-                                ProductDetailID = Guid.NewGuid(),
+                                ProductDetailID = Variation.ProductDetailID,
                                 ProductID = VariationDetails.ProductID,
                                 CategoryID = VariationDetails.CategoryID,
                                 Material = VariationDetails.Material,
                                 Brand = VariationDetails.Brand,
                                 PlaceOfOrigin = VariationDetails.PlaceOfOrigin,
-                                Status = 1,
+                                Status = VariationDetails.Status,
                                 UpdatedAt = DateTime.UtcNow
                             };
 
@@ -236,6 +274,37 @@ namespace Application.Data.Repositories
             return Metadata;
         }
 
+        public async Task<bool?> UpdateVariations(Guid ID, ProductDetailMultiDTO VariationDetails)
+        {
+            var UpdatedVariations = new List<ProductDetail>();
+
+            var HUGE_THING = await GetProductDetailsByProductID(ID);
+            if (HUGE_THING != null)
+            {
+                foreach (var Item in HUGE_THING)
+                {
+                    Item.ProductID = VariationDetails.ProductID;
+                    Item.CategoryID = VariationDetails.CategoryID;
+                    Item.Material = VariationDetails.Material;
+                    Item.Brand = VariationDetails.Brand;
+                    Item.PlaceOfOrigin = VariationDetails.PlaceOfOrigin;
+                    Item.Status = VariationDetails.Status;
+                    Item.UpdatedAt = DateTime.UtcNow;
+
+                    // Nevermind
+                    Item.Quantity = VariationDetails.Variations
+                        .Single(Bruh => Bruh.ProductDetailID == Item.ProductDetailID).Quantity;
+                    UpdatedVariations.Add(Item);
+                }
+                Context.ProductDetails.AttachRange(UpdatedVariations);
+                Context.ProductDetails.UpdateRange(UpdatedVariations);
+                await Context.SaveChangesAsync();
+
+                return true;
+            }
+            else return false;
+        }
+
         public async Task DeleteExistingByProductID(Guid TargetID)
         {
             var Targets = await GetProductDetailsByProductID(TargetID);
@@ -271,6 +340,17 @@ namespace Application.Data.Repositories
             }
 
             return FilteredPies;
+        }
+
+        private async Task ConstantUpdates(ProductDetail? Item)
+        {
+            if (Item?.Quantity == 0)
+            {
+                Context.ProductDetails.Attach(Item);
+                Item.Status = 0;
+                Context.Update(Item);
+                await Context.SaveChangesAsync();
+            }
         }
     }
 }

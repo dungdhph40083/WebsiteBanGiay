@@ -1,8 +1,12 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.VisualBasic;
+using Mono.TextTemplating;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 
@@ -12,7 +16,7 @@ namespace Application.MVC.Controllers
     {
         HttpClient Client = new HttpClient();
 
-        public async Task<ActionResult> Index(int Page = 1, int PageSize = 10, string SearchQuery = "")
+        public async Task<ActionResult> Index(int Page = 1, int PageSize = 10, string SearchQuery = "", string Status = "")
         {
             string URL_Products = $@"https://localhost:7187/api/ProductDetails";
             string URL_Variants = $@"https://localhost:7187/api/ProductDetails/ByProduct/VariationsOnly";
@@ -27,7 +31,30 @@ namespace Application.MVC.Controllers
                      Gfgd.Product.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
-            var SortedList = ProductList?.OrderByDescending(Sdf => Sdf.UpdatedAt).ToList();
+            var SortedList =
+                ProductList?.OrderByDescending(Sdf => Sdf.UpdatedAt)
+                            .GroupBy(Fltr => Fltr.ProductID)
+                            .Select(Req => Req.First(Sdf => Sdf.Status == 1 ? Sdf.Status == 1 : Sdf.Status == 0))
+                            .ToList();
+            switch (Status)
+            {
+                case "Active":
+                    {
+                        SortedList = SortedList?.Where(Sdf => Sdf.Status == 1).ToList();
+                        break;
+                    }
+                case "Inactive":
+                    {
+                        SortedList = SortedList?.Where(Sdf => Sdf.Status == 0).ToList();
+                        break;
+                    }
+                case "All": // mheheheheh "Case" "All" = CaseOh mehjejjehjfkhjkfhn okay i'm stopping
+                default:
+                    {
+                        break;
+                    }
+            }
+
             int? ItemCount = SortedList?.Count;
             int TotalPages = (int)Math.Ceiling((double)ItemCount.GetValueOrDefault() / PageSize);
 
@@ -47,18 +74,48 @@ namespace Application.MVC.Controllers
 
         public async Task<ActionResult> Details(Guid ID)
         {
-            string URL = $@"https://localhost:7187/api/ProductDetails/{ID}";
-            var Response = await Client.GetFromJsonAsync<ProductDetail>(URL);
+            string URL = $@"https://localhost:7187/api/ProductDetails/ByProduct/{ID}";
+            var Response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
             return View(Response);
         }
 
-        public async Task<ActionResult> Create()
+        [HttpGet]
+        public async Task<ActionResult> Create(Guid? FromID)
         {
             try
             {
                 // Populate dropdowns
                 await PopulateDropdowns();
-                return View();
+                if (FromID != null)
+                {
+                    string URL = $@"https://localhost:7187/api/ProductDetails/ByProduct/{FromID}";
+                    var Response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
+
+                    if (Response != null)
+                    {
+                        Console.WriteLine(Response.ToJson(Formatting.Indented));
+
+                        var ParsedOutInfo = new ProductDetailMultiDTO();
+
+                        ParsedOutInfo.ProductID = Response?.First().ProductID;
+                        ParsedOutInfo.CategoryID = Response?.First().CategoryID;
+                        ParsedOutInfo.Brand = Response?.First().Brand;
+                        ParsedOutInfo.Material = Response?.First().Material;
+                        ParsedOutInfo.PlaceOfOrigin = Response?.First().PlaceOfOrigin;
+                        ParsedOutInfo.Status = Response?.First(Sdf => Sdf.Status == 1 ? Sdf.Status == 1 : Sdf.Status == 0).Status;
+                        ParsedOutInfo.Variations.Add(new()
+                        {
+                            ProductDetailID = Guid.NewGuid(),
+                            ColorID = null,
+                            SizeID = null,
+                            Quantity = null
+                        });
+
+                        return View(ParsedOutInfo);
+                    }
+                    else return RedirectToAction(nameof(Index));
+                }
+                else return View();
             }
             catch (Exception ex)
             {
@@ -124,6 +181,7 @@ namespace Application.MVC.Controllers
 
         // POST: ProductDetail/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ProductDetailMultiDTO Details)
         {
             Console.WriteLine(Details.ToJson(Formatting.Indented));
@@ -181,41 +239,68 @@ namespace Application.MVC.Controllers
         }
         public async Task<ActionResult> Edit(Guid id)
         {
-            await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofdss();
+            var CategoriesList = await Client.GetFromJsonAsync<List<Category>>($@"https://localhost:7187/api/Category");
+
+            var CatgsItems = CategoriesList?
+                            .Select(Being => new SelectListItem
+                            { Text = Being.CategoryName, Value = Being.CategoryID.ToString() }).ToList();
+
+            ViewBag.Catgs = CatgsItems;
+
 
             // Lấy thông tin ProductDetail theo ID
-            var productDetail = await Client.GetFromJsonAsync<ProductDetailDTO>($@"https://localhost:7187/api/ProductDetails/{id}");
-            return View(productDetail);
+            var ProductDetail = await Client.GetFromJsonAsync<List<ProductDetail>>($@"https://localhost:7187/api/ProductDetails/ByProduct/{id}");
+
+            var ProductsList = await Client.GetFromJsonAsync<List<Product>>($@"https://localhost:7187/api/Product");
+            var ColorsList = await Client.GetFromJsonAsync<List<Color>>($@"https://localhost:7187/api/Color");
+            var SizesList = await Client.GetFromJsonAsync<List<Size>>($@"https://localhost:7187/api/Size");
+
+            ViewBag.Prods = ProductsList;
+            ViewBag.Colrs = ColorsList;
+            ViewBag.Sizes = SizesList;
+
+            if (ProductDetail != null || ProductDetail?.Count > 0)
+            {
+                var ParsedOutInfo = new ProductDetailMultiDTO()
+                {
+                    ProductID = ProductDetail?.First().ProductID,
+                    CategoryID = ProductDetail?.First().CategoryID,
+                    Brand = ProductDetail?.First().Brand,
+                    Material = ProductDetail?.First().Material,
+                    PlaceOfOrigin = ProductDetail?.First().PlaceOfOrigin,
+                    Status = ProductDetail?.First().Status
+                };
+
+                foreach (var Detail in ProductDetail!)
+                {
+                    ParsedOutInfo.Variations.Add(new()
+                    {
+                        ProductDetailID = Detail.ProductDetailID,
+                        ColorID = Detail.ColorID,
+                        SizeID = Detail.SizeID,
+                        Quantity = Detail.Quantity
+                    });
+                }
+
+                return View(ParsedOutInfo);
+            }
+            else return RedirectToAction(nameof(Index));
         }
 
         // POST: ProductDetail/Edit/{id}
         [HttpPost]
-        public async Task<ActionResult> Edit(Guid id, ProductDetailDTO Detail, IFormFile? Image)
+        public async Task<ActionResult> Edit(Guid ID, ProductDetailMultiDTO Details)
         {
-            MultipartFormDataContent Contents = new()
-            {
-                { new StringContent(Detail.ProductID.ToString() ?? ""),  nameof(Detail.ProductID) },
-                { new StringContent(Detail.SizeID.ToString() ?? ""),     nameof(Detail.SizeID) },
-                { new StringContent(Detail.ColorID.ToString() ?? ""),    nameof(Detail.ColorID) },
-                { new StringContent(Detail.CategoryID.ToString() ?? ""), nameof(Detail.CategoryID) },
-                { new StringContent(Detail.Material ?? ""),              nameof(Detail.Material) },
-                { new StringContent(Detail.Quantity.ToString() ?? ""),   nameof(Detail.Quantity) },
-                { new StringContent(Detail.Brand ?? ""),                 nameof(Detail.Brand) },
-                { new StringContent(Detail.PlaceOfOrigin ?? ""),         nameof(Detail.PlaceOfOrigin) },
-                { new StringContent(Detail.Status.ToString() ?? "1"),    nameof(Detail.Status) }
-            };
-
-            if (Image != null)
-            {
-                var ImageStream = new StreamContent(Image.OpenReadStream());
-                Contents.Add(ImageStream, nameof(Image), Image.FileName);
-            }
-
             try
             {
-                string URL = $@"https://localhost:7187/api/ProductDetails/{id}";
-                var Response = await Client.PutAsync(URL, Contents);
-                return RedirectToAction(nameof(Index));
+                Console.WriteLine("Sent data is (Indented formatting for easier view):\n\n" + Details.ToJson(Formatting.Indented));
+
+                string URL = $@"https://localhost:7187/api/ProductDetails/UpdateVariations/{ID}";
+                var Response = await Client.PutAsJsonAsync(URL, Details);
+
+                Console.WriteLine("Response received is:\n\n" + Response.ToJson(Formatting.Indented));
+
+                return RedirectToAction(nameof(Edit), new { ID });
             }
             catch (Exception Msg)
             {
@@ -223,15 +308,25 @@ namespace Application.MVC.Controllers
                 Console.WriteLine(Msg.Message);
                 Console.ForegroundColor = ConsoleColor.Gray;
                 TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
-                return View(Detail);
+                return View(Details);
             }
         }
-        public async Task<ActionResult> Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid ID, Guid FromID)
         {
-            string requestURL = $@"https://localhost:7187/api/ProductDetails/{id}";
+            string requestURL = $@"https://localhost:7187/api/ProductDetails/{ID}";
             var response = await Client.DeleteAsync(requestURL);
+
+            return RedirectToAction(nameof(Edit), new { ID = FromID });
+        }
+
+        public async Task<ActionResult> TryDeleteWhole(Guid ID, Guid FromID)
+        {
+            string requestURL = $@"https://localhost:7187/api/ProductDetails/ByProduct/{ID}";
+            var response = await Client.DeleteAsync(requestURL);
+
             return RedirectToAction(nameof(Index));
         }
+
         [HttpPut]
         public async Task<IActionResult> ToggleStatus(Guid id)
         {

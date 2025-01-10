@@ -4,6 +4,7 @@ namespace Application.Data.DTOs
 {
     public class ProductDetailVariationDTO
     {
+        public Guid ProductDetailID { get; set; } = Guid.NewGuid();
         [Required(ErrorMessage = "Vui lòng chọn kích cỡ")]
         public Guid? SizeID { get; set; }
 

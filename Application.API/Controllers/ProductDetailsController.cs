@@ -10,6 +10,7 @@ using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
 using Application.Data.DTOs;
 using Application.Data.Enums;
+using Newtonsoft.Json;
 
 namespace Application.API.Controllers
 {
@@ -18,11 +19,13 @@ namespace Application.API.Controllers
     public class ProductDetailsController : ControllerBase
     {
         private readonly IProductDetail ProductDetailRepo;
-        private readonly IImageRepository ImageRepository;
-        public ProductDetailsController(IProductDetail ProductDetailRepo, IImageRepository ImageRepository)
+        private readonly IOrderDetails OrderDetailRepository;
+        private readonly IShoppingCart ShoppingCartRepository;
+        public ProductDetailsController(IProductDetail ProductDetailRepo, IOrderDetails OrderDetailRepository, IShoppingCart ShoppingCartRepository)
         {
             this.ProductDetailRepo = ProductDetailRepo;
-            this.ImageRepository = ImageRepository;
+            this.OrderDetailRepository = OrderDetailRepository;
+            this.ShoppingCartRepository = ShoppingCartRepository;
         }
 
         // Để debug
@@ -51,7 +54,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductDetail>> Post([FromForm] ProductDetailDTO NewProductDetail)
+        public async Task<ActionResult<ProductDetail>> Post([FromBody] ProductDetailDTO NewProductDetail)
         {
             var Response = await ProductDetailRepo.CreateNew(NewProductDetail);
             return CreatedAtAction(nameof(Get), new { Response.ProductDetailID }, Response);
@@ -65,9 +68,15 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{ID}")]
-        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromForm] ProductDetailDTO UpdatedProductDetail)
+        public async Task<ActionResult<ProductDetail?>> Put(Guid ID, [FromBody] ProductDetailDTO UpdatedProductDetail)
         {
             return await ProductDetailRepo.UpdateExisting(ID, UpdatedProductDetail);
+        }
+
+        [HttpPut("UpdateVariations/{ID}")]
+        public async Task<ActionResult<bool?>> PutVariations(Guid ID, [FromBody] ProductDetailMultiDTO NewVariations)
+        {
+            return await ProductDetailRepo.UpdateVariations(ID, NewVariations);
         }
 
         [HttpDelete("{ID}")]
@@ -78,30 +87,32 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("ByProduct/{ProductID}")]
-        public async Task<ActionResult> DeleteByProduct(Guid ProductID)
+        public async Task<ActionResult> DeleteAllByProduct(Guid ProductID)
         {
-            await ProductDetailRepo.DeleteExistingByProductID(ProductID);
+            var Items = await ProductDetailRepo.GetProductDetailsByProductID(ProductID);
+            Console.WriteLine("\nGot product details, proceeding\n");
+            foreach (var Item in Items)
+            {
+                Console.WriteLine($"\nTrying to remove all cart entries of item {Item.ProductDetailID}\n");
+                await ShoppingCartRepository.DeleteShoppingCartsByDetailID(Item.ProductDetailID);
+                Console.WriteLine($"\nRemoving all cart entries of item {Item.ProductDetailID}\n");
+
+                if ((await OrderDetailRepository.GetDetailsByProductDetailID(Item.ProductDetailID)).Count > 0)
+                {
+                    await ProductDetailRepo.UpdateSetToZero(Item.ProductDetailID);
+                    Console.WriteLine($"\nProduct {Item.ProductDetailID} exists in bill, setting quantity to 0 instead\n");
+                }
+                else await ProductDetailRepo.DeleteExisting(Item.ProductDetailID);
+                Console.WriteLine($"\nProduct {Item.ProductDetailID} doesn't exist in bill, deleting\n");
+            }
             return NoContent();
         }
 
         // Phương thức để chuyển trạng thái sản phẩm giữa "mở bán" và "dừng bán"
-        [HttpPut("{ID}/ToggleStatus")]
-        public async Task<ActionResult> ToggleStatus(Guid ID)
+        [HttpPut("{ProductID}/ToggleStatus")]
+        public async Task<ActionResult> ToggleStatus(Guid ProductID)
         {
-            var productDetail = await ProductDetailRepo.GetProductDetailByID(ID);
-            if (productDetail == null)
-            {
-                return NotFound("Product detail not found");
-            }
-
-            // Đảo trạng thái của productDetail
-            byte newStatus = productDetail.Status == 1 ? (byte)0 : (byte)1;
-
-            // Cập nhật trạng thái mà không thay đổi các thuộc tính khác
-            await ProductDetailRepo.UpdateStatusOnly(ID, newStatus);
-
-            // Trả về sản phẩm đã được cập nhật
-            return Ok(await ProductDetailRepo.GetProductDetailByID(ID));
+            return Ok(await ProductDetailRepo.UpdateStatusOnly(ProductID));
         }
     }
 }

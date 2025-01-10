@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Sản phẩm chi tiết";
+    int Index = 0;
 }
 
 <!-- Link to Bootstrap CSS (Ensure you have the correct path or use CDN) -->
@@ -145,7 +146,6 @@
     </div>
 </div>
 
-<!-- Bộ lọc trạng thái với màu sắc và viền -->
 <div class="d-flex justify-content-center my-3">
     <div class="form-check form-check-inline border border-primary rounded p-2 mx-1">
         <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusAll" value="All"
@@ -155,17 +155,12 @@
     <div class="form-check form-check-inline border border-success rounded p-2 mx-1">
         <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusActive" value="Active"
         @(ViewBag.CurrentStatus == "Active" ? "checked" : "")>
-        <label class="form-check-label text-success" for="statusActive">Còn hàng</label>
-    </div>
-    <div class="form-check form-check-inline border border-warning rounded p-2 mx-1">
-        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusRunningOut" value="RunningOut"
-        @(ViewBag.CurrentStatus == "RunningOut" ? "checked" : "")>
-        <label class="form-check-label text-warning" for="statusRunningOut">Sắp hết hàng</label>
+        <label class="form-check-label text-success" for="statusActive">Đang bán</label>
     </div>
     <div class="form-check form-check-inline border border-danger rounded p-2 mx-1">
-        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusInactive" value="Out"
-        @(ViewBag.CurrentStatus == "Out" ? "checked" : "")>
-        <label class="form-check-label text-danger" for="statusInactive">Hết hàng</label>
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusInactive" value="Inactive"
+        @(ViewBag.CurrentStatus == "Inactive" ? "checked" : "")>
+        <label class="form-check-label text-danger" for="statusInactive">Dừng bán</label>
     </div>
 </div>
 
@@ -185,34 +180,33 @@
                 <th>Ảnh SP</th>
                 <th>Danh mục</th>
                 <th>Chất liệu</th>
-                <th>Số lượng còn lại</th>
                 <th>Thời gian cập nhật</th>
                 <th>Trạng thái</th>
                 <th>Hành động</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var Entry in Model.Select((value, index) => new { value, index }))
+            @foreach (var Entry in Model)
             {
+                Index++;
                 <tr>
-                    <td>@(Entry.index + 1 + (ViewBag.CurrentPage - 1) * ViewBag.PageSize)</td>
-                    <td>@Entry.value.Product?.Name</td>
+                    <td>@(Index + ((ViewBag.CurrentPage ?? 1) - 1) * (ViewBag.PageSize ?? 10))</td>
+                    <td>@Entry.Product?.Name</td>
                     <td>
-                        @if (Entry.value.Product?.Image != null)
+                        @if (Entry.Product?.Image != null)
                         {
-                            <img src="https://localhost:7187/Images/@(Entry.value.Product.Image.ImageFileName)" class="img-thumbnail" alt="Product Image" />
+                            <img src="https://localhost:7187/Images/@(Entry.Product.Image.ImageFileName)" class="img-thumbnail" alt="Product Image" />
                         }
                         else
                         {
                             <span>Chưa có ảnh</span>
                         }
                     </td>
-                    <td>@Entry.value.Category?.CategoryName</td>
-                    <td>@Entry.value.Material</td>
-                    <td>@Entry.value.Quantity.GetValueOrDefault().ToString("#,0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
-                    <td>@Entry.value.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy | HH:mm")</td>
+                    <td>@Entry.Category?.CategoryName</td>
+                    <td>@Entry.Material</td>
+                    <td>@Entry.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy | HH:mm")</td>
                     <td>
-                        @if (Entry.value.Status == 1)
+                        @if (Entry.Status == 1)
                         {
                             <span class="badge badge-success">Đang bán</span>
                         }
@@ -226,21 +220,21 @@
                             <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-ellipsis-v"></i>
                             </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item text-warning" asp-action="Edit" asp-route-ID="@Entry.value.ProductDetailID">
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item text-warning" asp-action="Edit" asp-route-ID="@Entry.Product?.ProductID">
                                     <i class="fas fa-edit"></i> Sửa
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-success" asp-action="Details" asp-route-ID="@Entry.value.ProductDetailID">
+                                <a class="dropdown-item text-success" asp-action="Details" asp-route-ID="@Entry.Product?.ProductID">
                                     <i class="fas fa-info-circle"></i> Chi tiết
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-primary" href="#" onclick="toggleStatus('@Entry.value.ProductDetailID')">
+                                <a class="dropdown-item text-primary" href="#" onclick="toggleStatus('@Entry.ProductID')">
                                     <i class="fas fa-toggle-on"></i> Đổi trạng thái
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@Entry.value.ProductDetailID" data-controller="ProductDetail" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
-                                    <i class="fas fa-trash-alt"></i> Xóa
+                                <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@Entry.ProductID" data-controller="ProductDetail" data-action="TryDeleteWhole" data-toggle="modal" data-target="#ModalDelete">
+                                    <i class="fas fa-trash-alt"></i> Xóa tất
                                 </button>
                             </div>
                         </div>

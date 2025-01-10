@@ -16,6 +16,5 @@ namespace Application.Data.Models
         public long? Price { get; set; }
 		public virtual User? User { get; set; }
         public virtual ProductDetail? ProductDetail { get; set; }
-        public virtual Voucher? Voucher { get; set; }
 	}
 }

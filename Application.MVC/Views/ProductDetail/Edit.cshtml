@@ -1,86 +1,119 @@
-﻿@model Application.Data.DTOs.ProductDetailDTO
+﻿@model Application.Data.DTOs.ProductDetailMultiDTO
 @using Application.Data.Enums;
 
 @{
     ViewData["Title"] = "Cập nhật chi tiết sản phẩm";
+
+    var ProdsList = ViewBag.Prods as List<Application.Data.Models.Product> ?? [];
+    var ColorList = ViewBag.Colrs as List<Application.Data.Models.Color> ?? [];
+    var SizesList = ViewBag.Sizes as List<Application.Data.Models.Size> ?? [];
 }
 
 <h1 class="text-center mt-4 text-primary">Cập nhật chi tiết sản phẩm</h1>
 <hr class="border-primary" />
 
-<form asp-action="Edit" method="post" enctype="multipart/form-data" class="shadow-lg p-4 rounded-3 bg-white">
+<!-- Validation Summary -->
+<form asp-action="Edit" method="post" class="shadow-lg p-4 rounded-3 bg-white">
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
     <div class="row g-3">
         <div class="col-md-6">
             <label asp-for="ProductID" class="form-label fw-semibold text-muted">Sản phẩm</label>
-            <select asp-for="ProductID" class="form-control shadow-sm" aria-label="Select product to assign to" readonly asp-items="@ViewBag.Prods">
-                <option selected readonly value="">(Chưa chọn)</option>
-            </select>
-            <span asp-validation-for="ProductID" class="text-danger"></span>
+            <input hidden asp-for="@Model.ProductID" value="@Model.ProductID" />
+            <input type="text" readonly class="form-control" value="@ProdsList.FirstOrDefault(Fsd => Fsd.ProductID == Model.ProductID)?.Name" />
         </div>
 
         <div class="col-md-6">
             <label asp-for="CategoryID" class="form-label fw-semibold text-muted">Danh mục</label>
             <select asp-for="CategoryID" class="form-control shadow-sm" aria-label="Select category to assign to" asp-items="@ViewBag.Catgs">
-                <option selected value="">(Chưa chọn)</option>
+                <option selected value="" hidden>(Chưa chọn)</option> <!-- Use value="" to prevent "null" being sent -->
             </select>
             <span asp-validation-for="CategoryID" class="text-danger"></span>
         </div>
+
     </div>
 
     <div class="row mt-3">
-        <div class="col-md-6">
-            <label asp-for="SizeID" class="form-label fw-semibold text-muted">Kích cỡ</label>
-            <select asp-for="SizeID" class="form-control shadow-sm" aria-label="Select size to assign to" asp-items="@ViewBag.Sizes">
-                <option selected value="">(Chưa chọn)</option>
-            </select>
-            <span asp-validation-for="SizeID" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6">
-            <label asp-for="ColorID" class="form-label fw-semibold text-muted">Màu</label>
-            <select asp-for="ColorID" class="form-control shadow-sm" aria-label="Select color to assign to" asp-items="@ViewBag.Colrs">
-                <option selected value="">(Chưa chọn)</option>
-            </select>
-            <span asp-validation-for="ColorID" class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label asp-for="Material" class="form-label fw-semibold text-muted">Chất liệu</label>
             <input asp-for="Material" type="text" class="form-control shadow-sm" placeholder="Nhập chất liệu" />
             <span asp-validation-for="Material" class="text-danger"></span>
         </div>
-
-        <div class="col-md-8">
+        <div class="col-md-3">
             <label asp-for="Brand" class="form-label fw-semibold text-muted">Hãng hiệu</label>
             <input asp-for="Brand" type="text" class="form-control shadow-sm" placeholder="Nhập hãng hiệu" />
             <span asp-validation-for="Brand" class="text-danger"></span>
         </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-md-6">
+        <div class="col-md-3">
             <label asp-for="PlaceOfOrigin" class="form-label fw-semibold text-muted">Xuất xứ</label>
             <input asp-for="PlaceOfOrigin" type="text" class="form-control shadow-sm" placeholder="Nhập xuất xứ" />
             <span asp-validation-for="PlaceOfOrigin" class="text-danger"></span>
         </div>
-
-        <div class="col-md-4">
-            <label asp-for="Quantity" class="form-label fw-semibold text-muted">Số lượng</label>
-            <input asp-for="Quantity" type="number" step="1" min="0" max="10000000" class="form-control shadow-sm" placeholder="Nhập số lượng" />
-            <span asp-validation-for="Quantity" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-2">
+        <div class="col-md-3">
             <label asp-for="Status" class="form-label fw-semibold text-muted">Trạng thái</label>
             <select asp-for="Status" class="form-control shadow-sm">
                 <option value="1" selected>Còn bán</option>
                 <option value="0">Không bán</option>
             </select>
             <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <h1 class="text-secondary">Danh sách biến thể</h1>
+        </div>
+        <div class="col-md-6 text-right">
+            <a class="btn btn-success text-light" asp-action="Create" asp-route-FromID="@Model.ProductID"><i class="fa fa-plus"></i> Thêm biến thể mới</a>
+        </div>
+    </div>
+
+    <div class="alert alert-dark">
+        <div id="DATA_TABLE">
+            @for (int Idx = 0; Idx < Model.Variations.Count(); Idx++)
+            {
+                <div class="row mt-2 mb-2 DATA_CELL" id="Variated_@(Idx)_">
+                    <input hidden asp-for="@Model.Variations[Idx].ProductDetailID" value="@Model.Variations[Idx].ProductDetailID" />
+                    <div class="col-lg-4">
+                        <label class="form-label fw-semibold text-muted">Kích cỡ</label>
+                        <input hidden asp-for="@Model.Variations[Idx].SizeID" value="@Model.Variations[Idx].SizeID" />
+                        <input type="text" readonly class="form-control" value="@SizesList.FirstOrDefault(Fsd => Fsd.SizeID == Model.Variations[Idx].SizeID)?.Name" />
+                    </div>
+                    <div class="col-lg-4">
+                        <label class="form-label fw-semibold text-muted">Màu</label>
+                        <input hidden asp-for="@Model.Variations[Idx].ColorID" value="@Model.Variations[Idx].ColorID" />
+                        <input type="text" readonly class="form-control" value="@ColorList.FirstOrDefault(Fsd => Fsd.ColorID == Model.Variations[Idx].ColorID)?.ColorName"/>
+                    </div>
+                    <div class="col-lg-3">
+                        <label asp-for="@Model.Variations[Idx].Quantity" class="form-label fw-semibold text-muted">Số lượng</label>
+                        <input asp-for="@Model.Variations[Idx].Quantity" type="number" step="1" min="0" max="10000000" class="form-control shadow-sm" placeholder="Nhập số lượng" />
+                        <span asp-validation-for="@Model.Variations[Idx].Quantity" class="text-danger"></span>
+                    </div>
+                    <div class="col-lg-1" id="Delete_@(Idx)_">
+                    @if (Idx != 0)
+                    {
+                        
+                            <label>Xóa</label>
+                            <div class="dropdown">
+                                <button class="btn btn-danger" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-x"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right rounded-4 text-center" style="width: 250px;">
+                                    <h1><b>Xác nhận</b></h1>
+                                    Thao tác này là vĩnh viễn và không thể khôi phục được.<br />
+                                    <i class="text-danger">Nếu như khách hàng nào còn sản phẩm cùng biến thể trong giỏ hàng thì chúng sẽ bị xóa đi.</i><br />
+                                    <a class="btn btn-danger" asp-action="Delete" asp-route-ID="@Model.Variations[Idx].ProductDetailID" asp-route-FromID="@Model.ProductID">Xác nhận</a>
+                                    <a class="btn btn-secondary" asp-action="Edit">Hủy</a>
+                                </div>
+                            </div>
+                    }
+                    else
+                    {
+                        <i>Biến thể mặc định</i>
+                    }
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
@@ -102,6 +135,11 @@
     /* Áp dụng hiệu ứng khi form load */
     form {
         animation: slideInFromTop 0.8s ease-in-out;
+    }
+
+    .btn
+    {
+        border-radius: 10px;
     }
 
     /* Tùy chỉnh bấm nút: */
@@ -134,4 +172,5 @@
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
+
 </style>

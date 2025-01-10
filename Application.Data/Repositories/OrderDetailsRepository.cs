@@ -71,6 +71,29 @@ namespace Application.Data.Repositories
                     .SingleOrDefaultAsync(Crayfish => Crayfish.OrderDetailID == id);
         }
 
+        public async Task<List<OrderDetail>> GetDetailsByProductDetailID(Guid ID)
+        {
+            return await _context.OrderDetails
+
+                .Include(Pikachu => Pikachu.Sale)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
+                .Include(Pikachu => Pikachu.Sale)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
+
+                .Include(Pikachu => Pikachu.Order)
+
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
+                        .ThenInclude(Cinderace => Cinderace != null ? Cinderace.Image : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Color : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
+                .Where(Crayfish => Crayfish.ProductDetailID == ID).ToListAsync();
+        }
+
         public async Task DeleteOrderDetailsFromOrderID(Guid OrderID)
         {
             var Targets = await _context.OrderDetails
@@ -129,7 +152,6 @@ namespace Application.Data.Repositories
 
             var MyShoppingCart = await _context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : null)
                 .Include(UU => UU.ProductDetail)
@@ -156,7 +178,7 @@ namespace Application.Data.Repositories
                         Quantity = CartItem.QuantityCart,
                         Price = CartItem.ProductDetail?.Product?.Price,
                         TotalUnitPrice = CartItem.ProductDetail?.Product?.Price * CartItem.QuantityCart,
-                        SumTotalPrice = CartItem.ProductDetail?.Product?.Price * CartItem.QuantityCart - (CartItem.Voucher?.DiscountPrice ?? 0), // Tương tự...
+                        SumTotalPrice = CartItem.ProductDetail?.Product?.Price * CartItem.QuantityCart, // Tương tự...
                         CreatedAt = DateTime.UtcNow
                     };
                     MyOrders.Add(NewDetail);
@@ -174,6 +196,17 @@ namespace Application.Data.Repositories
                 return MyOrders;
             }
             else return [];
+        }
+
+        public async Task DeleteByProductID(Guid DeleteByProductID)
+        {
+            var Target = await _context.OrderDetails.Where(SDF => SDF.ProductDetail!.ProductID == DeleteByProductID).ToListAsync();
+            if (Target != null)
+            {
+                _context.OrderDetails.AttachRange(Target);
+                _context.RemoveRange(Target);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

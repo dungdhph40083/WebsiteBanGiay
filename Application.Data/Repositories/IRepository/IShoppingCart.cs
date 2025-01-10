@@ -9,6 +9,7 @@ namespace Application.Data.Repositories.IRepository
         Task<ShoppingCart?> GetShoppingCartByID(Guid TargetID);
         Task<ShoppingCart?> GetShoppingCartByUserIDAndDetailID(Guid UserID, Guid TargetID);
         Task<List<ShoppingCart>> GetShoppingCartsByUserID(Guid TargetID);
+        Task DeleteShoppingCartsByDetailID(Guid TargetID);
         Task<ShoppingCart> CreateNew(ShoppingCartDTO NewShoppingCart);
         Task<ShoppingCart?> Update(Guid TargetID, ShoppingCartDTO UpdatedShoppingCart);
         Task<ShoppingCart?> Add2Cart(Guid UserID, Guid ProductDetailID, int? Quantity, bool? AdditionMode);

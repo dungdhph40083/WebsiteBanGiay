@@ -67,7 +67,6 @@ namespace Application.Data.Repositories
         {
             return await Context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : default)
                 .Include(UU => UU.ProductDetail)
@@ -86,7 +85,6 @@ namespace Application.Data.Repositories
         {
             return await Context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : default)
                 .Include(UU => UU.ProductDetail)
@@ -101,11 +99,36 @@ namespace Application.Data.Repositories
                   .Where(UU => UU.UserID.Equals(TargetID)).ToListAsync();
         }
 
+        public async Task DeleteShoppingCartsByDetailID(Guid TargetID)
+        {
+            var Target = await Context.ShoppingCarts
+                //.Include(UU => UU.User)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Category : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Color : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Size : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                        .ThenInclude(WW => WW != null ? WW.Image : default)
+                  .Where(UU => UU.ProductDetailID.Equals(TargetID)).ToListAsync();
+
+            if (Target.Count > 0)
+            {
+                Context.ShoppingCarts.AttachRange(Target);
+                Context.ShoppingCarts.RemoveRange(Target);
+                await Context.SaveChangesAsync();
+            }
+        }
+
         public async Task<ShoppingCart?> GetShoppingCartByUserIDAndDetailID(Guid UserID, Guid TargetID)
         {
             return await Context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
+                
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : default)
                 .Include(UU => UU.ProductDetail)
@@ -122,7 +145,7 @@ namespace Application.Data.Repositories
         {
             return await Context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
+                
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : default)
                 .Include(UU => UU.ProductDetail)
