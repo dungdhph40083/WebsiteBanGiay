@@ -3,6 +3,7 @@ using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Drawing;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -20,26 +21,17 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Index()
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            string URL = $@"HTTPS://LOCALHOST:7187/API/SHOPPINGCART";
+            Guid ID = GetCurrentUserId();
+            string URL = $@"HTTPS://LOCALHOST:7187/API/SHOPPINGCART/{ID}";
 
             var Response = await _httpClient.GetFromJsonAsync<List<ShoppingCart>>(URL);
             return View(Response);
         }
 
-        public async Task<ActionResult> Add2Cart(Guid? ID, int? Quantity, bool? AdditionMode)
+        public async Task<ActionResult> Add2Cart(int? Quantity, bool? AdditionMode)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            Guid ID = GetCurrentUserId();
+
             if (ID != null)
             {
                 try
@@ -61,16 +53,10 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> UpdateWholeCart(List<ShoppingCart> BigCart)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             foreach (var Item in BigCart)
             {
-                string URL =
-        $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{Item.ProductDetailID}?Quantity={Item.QuantityCart ?? 0}&AdditionMode=false";
+                string URL = $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{Item.ProductDetailID}?Quantity={Item.QuantityCart ?? 0}&AdditionMode=false";
 
                 var Response = await Client.PutAsync(URL, null);
             }
@@ -78,14 +64,10 @@ namespace Application.MVC.GeneralPublic.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<ActionResult> ApplyVoucher(Guid ID, string VoucherCode)
+        public async Task<ActionResult> ApplyVoucher(string VoucherCode)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            Guid ID = GetCurrentUserId();
+
             try
             {
                 string URL = $@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{ID}?VoucherCode={VoucherCode}";
@@ -99,14 +81,9 @@ namespace Application.MVC.GeneralPublic.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<ActionResult> UnapplyVoucher(Guid ID)
+        public async Task<ActionResult> UnapplyVoucher()
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            Guid ID = GetCurrentUserId();
             try
             {
                 string URL = $@"https://localhost:7187/api/ShoppingCart/UnapplyVoucher/{ID}";
@@ -118,6 +95,25 @@ namespace Application.MVC.GeneralPublic.Controllers
                 throw;
             }
             return RedirectToAction(nameof(Index));
+        }
+        private Guid GetCurrentUserId()
+        {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID");
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("UserId không tồn tại trong token.");
+            }
+
+            return Guid.Parse(userIdClaim.Value);
         }
     }
 }

@@ -19,14 +19,14 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Color>>> GetAllColors()
         {
             return Ok( await _colorRepository.GetAllColors());
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult> GetColorById(Guid id)
         {
             var color = await _colorRepository.GetColorById(id);

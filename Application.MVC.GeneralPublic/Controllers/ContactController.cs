@@ -2,6 +2,8 @@
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -9,7 +11,6 @@ namespace Application.MVC.GeneralPublic.Controllers
     {
         private readonly ICustomerSupportMessage _customerSupportRepository;
         private readonly HttpClient client = new HttpClient();
-        private readonly Guid UserID = Guid.Parse("BBD122D1-8961-4363-820E-3AD1A87064E4");
 
         public ContactController(ICustomerSupportMessage customerSupportRepository)
         {
@@ -23,9 +24,12 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<IActionResult> Create()
         {
+          
+
+            Guid ID = GetCurrentUserId();
             try
             {
-                var user = await client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{UserID}");
+                var user = await client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{ID}");
                 ViewBag.DefaultUser = user;
 
                 if (TempData["SuccessMessage"] != null)
@@ -77,6 +81,25 @@ namespace Application.MVC.GeneralPublic.Controllers
                 }
             }
             return View(model);
+        }
+        private Guid GetCurrentUserId()
+        {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID");
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("UserId không tồn tại trong token.");
+            }
+
+            return Guid.Parse(userIdClaim.Value);
         }
 
     }

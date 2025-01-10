@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -13,7 +14,7 @@ namespace Application.MVC.GeneralPublic.Controllers
     public class LoginController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-
+        HttpClient Client = new HttpClient();
         public LoginController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
@@ -43,10 +44,9 @@ namespace Application.MVC.GeneralPublic.Controllers
             try
             {
                 var httpClient = _httpClientFactory.CreateClient();
-                var requestContent = new StringContent(JsonSerializer.Serialize(loginPayload), Encoding.UTF8, "application/json");
+                var requestContent = new StringContent(JsonSerializer.Serialize(loginPayload), Encoding.UTF8, "application/json");            
 
                 var response = await httpClient.PostAsync("https://localhost:7187/api/Login/login", requestContent);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = await response.Content.ReadAsStringAsync();
@@ -55,6 +55,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                     if (!string.IsNullOrEmpty(token))
                     {
                         HttpContext.Session.SetString("JwtToken", token);
+                        HttpContext.Session.SetString(nameof(Metadata.Username), Username);
                         HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions
                         {
                             HttpOnly = true,
@@ -65,10 +66,17 @@ namespace Application.MVC.GeneralPublic.Controllers
                         var handler = new JwtSecurityTokenHandler();
                         var jwtToken = handler.ReadJwtToken(token);
                         var role = jwtToken.Claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+                        Guid ID = GetCurrentUserId();
+                        string URL = $@"https://localhost:7187/api/User/{ID}";
+                        var Response = await Client.GetFromJsonAsync<User>(URL);
 
+                        if (Response != null)
+                        {
+                            HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName ?? "default-avatar.png");
+                        }
                         if (role == "Admin")
                         {
-                            return Redirect("https://localhost:7282/#");
+                            return Redirect("https://localhost:7200/#");
                         }
                         else if (role == "User")
                         {
@@ -84,12 +92,13 @@ namespace Application.MVC.GeneralPublic.Controllers
                 {
                     TempData["ErrorMessage"] = "Có lỗi xảy ra trong quá trình đăng nhập.";
                 }
+
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Lỗi kết nối: {ex.Message}";
             }
-
+           
             return RedirectToAction("index");
         }
 
@@ -109,6 +118,25 @@ namespace Application.MVC.GeneralPublic.Controllers
         public ActionResult Register()
         {
             return View();
+        }
+        private Guid GetCurrentUserId()
+        {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID");
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("UserId không tồn tại trong token.");
+            }
+
+            return Guid.Parse(userIdClaim.Value);
         }
     }
 }

@@ -1,22 +1,24 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Microsoft.IdentityModel.Tokens;
 
 public class UserService
 {
-    private readonly List<User> _users = new();
+    private readonly GiayDBContext _dbContext;
     private readonly string _jwtKey;
 
-    public UserService(string jwtKey)
+    public UserService(string jwtKey, GiayDBContext dBContext)
     {
         _jwtKey = jwtKey;
+        _dbContext = dBContext;
     }
 
     public User Register(string username, string password)
     {
-        if (_users.Any(u => u.Username == username))
+        if (_dbContext.Users.Any(u => u.Username == username))
             throw new Exception("User already exists");
 
         var user = new User 
@@ -25,13 +27,13 @@ public class UserService
             Username = username, 
             Password = password
         };
-        _users.Add(user);
+        _dbContext.Users.Add(user);
         return user;
     }
 
     public string Authenticate(string username, string password)
     {
-        var user = _users.SingleOrDefault(u => u.Username == username && u.Password == password);
+        var user = _dbContext.Users.SingleOrDefault(u => u.Username == username && u.Password == password);
         if (user == null) return null;
 
         // Tạo JWT
@@ -41,7 +43,9 @@ public class UserService
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
-                new Claim(ClaimTypes.Name, user.Username)
+                new Claim("UserId", user.UserID.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role.RoleName)
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

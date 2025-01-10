@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
@@ -18,12 +19,6 @@ namespace Application.MVC.Controllers
         }
         public async Task<ActionResult> Index(string searchTerm, int page = 1, int pageSize = 15)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = "https://localhost:7187/api/Product";
             var response = await client.GetFromJsonAsync<List<Product>>(requestURL);
 
@@ -63,12 +58,6 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $"https://localhost:7187/api/Product/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<Product>(response);
@@ -79,60 +68,41 @@ namespace Application.MVC.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public async Task<ActionResult> Create(ProductDTO product, IFormFile? Image)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+          
             string requestURL = $"https://localhost:7187/api/Product";
 
-                MultipartFormDataContent Contents = new()
-        {
-            { new StringContent(product.Name!), nameof(product.Name) },
-            { new StringContent(product.Description!), nameof(product.Description) },
-            { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
-        };
+            MultipartFormDataContent Contents = new()
+            {
+                { new StringContent(product.Name!),                                nameof(product.Name) },
+                { new StringContent(product.Description!),                         nameof(product.Description) },
+                { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
+            };
 
-                if (Image != null)
-                {
-                    var ImageStream = new StreamContent(Image.OpenReadStream());
-                    Contents.Add(ImageStream, nameof(Image), Image.FileName);
-                }
+            if (Image != null)
+            {
+                var ImageStream = new StreamContent(Image.OpenReadStream());
+                Contents.Add(ImageStream, nameof(Image), Image.FileName);
+            }
 
-                var response = await client.PostAsync(requestURL, Contents);
+            var response = await client.PostAsync(requestURL, Contents);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    ModelState.AddModelError(string.Empty, $"Create failed: {error}");
-                    return View(product); // Trả về form chỉnh sửa với thông báo lỗi
-                }
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index");
             }
             else
             {
-                // Nếu tên sản phẩm trùng, trả về thông báo lỗi
-                ModelState.AddModelError(string.Empty, "Tên sản phẩm đã tồn tại.");
-                return View(product); // Trả về form với thông báo lỗi
+                var error = await response.Content.ReadAsStringAsync();
+                ModelState.AddModelError(string.Empty, $"Create failed: {error}");
+                return View(product); // Trả về form chỉnh sửa với thông báo lỗi
             }
         }
-
         public async Task<ActionResult> Edit(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+          
             string productRequestURL = $"https://localhost:7187/api/Product/{id}";
             var productResponse = await client.GetStringAsync(productRequestURL);
 
@@ -147,17 +117,11 @@ namespace Application.MVC.Controllers
 
             return View(product);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Guid ID, ProductDTO product, IFormFile? Image)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+          
             if (product == null)
             {
                 return BadRequest("Invalid product data.");
@@ -195,12 +159,6 @@ namespace Application.MVC.Controllers
 
         public async Task<ActionResult> Delete(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
             {
                 string requestURL = $"https://localhost:7187/api/Product/{id}";

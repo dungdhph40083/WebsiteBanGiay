@@ -29,14 +29,14 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Product?>>> GetProducts()
         {
             return await _productRepository.GetAll();
         }
         
         [HttpGet("{id}")]
-        [Authorize(Roles = "User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<Product?>> GetProduct(Guid id)
         {
             return await _productRepository.GetById(id);

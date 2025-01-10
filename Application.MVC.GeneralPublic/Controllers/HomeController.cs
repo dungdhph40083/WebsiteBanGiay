@@ -22,13 +22,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             _context = giayDBContext;
         }
         public async Task<ActionResult> Index()
-        {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        {          
             var userId = HttpContext.Session.GetString("UserID");
             if (userId != null)
             {

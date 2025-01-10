@@ -16,12 +16,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Index(int page = 1, string priceRange = "all", string sortOrder = "default", Guid? categoryId = null, Guid? colorId = null)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+            var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             ViewBag.Orders = products ?? new List<Product>();
 
             // Lấy danh sách ProductDetails từ API
@@ -131,8 +126,8 @@ namespace Application.MVC.GeneralPublic.Controllers
             {
                 return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
             }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var productss = await _client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var productss = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             ViewBag.Products = productss ?? new List<Product>();
 
             var sizes = await client.GetFromJsonAsync<List<Size>>("https://localhost:7187/api/Size");

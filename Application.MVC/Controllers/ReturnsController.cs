@@ -15,13 +15,6 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Index()
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             string requestURL = "https://localhost:7187/api/Returns";
             var response = client.GetStringAsync(requestURL).Result;
             var Returns = JsonConvert.DeserializeObject<List<Return>>(response);
@@ -30,13 +23,6 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             string requestURL = $"https://localhost:7187/api/Returns/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var Returns = JsonConvert.DeserializeObject<Return>(response);
@@ -44,13 +30,6 @@ namespace Application.MVC.Controllers
         }
         public async Task<IActionResult> Create()
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             try
             {
                 var orders = await client.GetFromJsonAsync<List<Order>>("https://localhost:7187/api/Orders");
@@ -71,26 +50,12 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Return Return)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             string requestURL = "https://localhost:7187/api/Returns";
             var response = await client.PostAsJsonAsync(requestURL, Return);
             return RedirectToAction("Index");
         }
         public ActionResult Update(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             string requestURL = $"https://localhost:7187/api/Returns/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             Return Returns = JsonConvert.DeserializeObject<Return>(response);
@@ -101,12 +66,6 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, Return Return)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             string requestURL = $@"https://localhost:7187/api/Returns/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, Return);
@@ -114,13 +73,6 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Delete(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             string requestURL = $"https://localhost:7187/api/Returns/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");

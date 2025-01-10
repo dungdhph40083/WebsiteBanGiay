@@ -20,12 +20,6 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Index()
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $@"https://localhost:7187/api/Category";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<List<Category>>(response);
@@ -33,12 +27,6 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Details(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<Category>(response);
@@ -56,12 +44,7 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CategoryDTO categoryDTO)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+  
             try
             {
             string requestURL = $"https://localhost:7187/api/Category";
@@ -81,12 +64,6 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public ActionResult Edit(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $"https://localhost:7187/api/Category/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<Category>(response);
@@ -96,12 +73,6 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(Guid id, CategoryDTO categoryDTO)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = await client.PutAsJsonAsync(requestURL, categoryDTO);    
                 return RedirectToAction(nameof(Index));
@@ -110,12 +81,6 @@ namespace Application.MVC.Controllers
 
         public ActionResult Delete(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
             {
             string requestURL = $@"https://localhost:7187/api/Category/{id}";

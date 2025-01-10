@@ -19,14 +19,14 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Size>>> Get()
         {
             return await SizeRepo.GetSizes();
         }
 
         [HttpGet("{ID}")]
-        [Authorize(Roles = "User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<Size?>> Get(Guid ID)
         {
             return await SizeRepo.GetSizeByID(ID);

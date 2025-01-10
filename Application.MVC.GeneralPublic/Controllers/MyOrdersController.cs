@@ -4,6 +4,7 @@ using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -17,16 +18,30 @@ namespace Application.MVC.GeneralPublic.Controllers
         {
             _httpClient = new HttpClient();
         }
-
-        public async Task<ActionResult> Index()
+        private Guid GetCurrentUserId()
         {
             string token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
             {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
+                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
             }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            string URL = $@"https://localhost:7187/api/Orders/User";
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID");
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("UserId không tồn tại trong token.");
+            }
+
+            return Guid.Parse(userIdClaim.Value);
+        }
+        public async Task<ActionResult> Index()
+        {
+            Guid ID = GetCurrentUserId();
+
+            string URL = $@"https://localhost:7187/api/Orders/User/{ID}";
 
             var Response = await Client.GetFromJsonAsync<List<Order>>(URL);
 
@@ -35,14 +50,9 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Details(Guid ID)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            string URL_OList = $@"https://localhost:7187/api/OrderDetails/Order/{ID}";
-            string URL_Order = $@"https://localhost:7187/api/Orders/{ID}";
+            Guid userId = GetCurrentUserId();
+            string URL_OList = $@"https://localhost:7187/api/OrderDetails/Order/{ID}/{userId}";
+            string URL_Order = $@"https://localhost:7187/api/Orders/{ID}/{userId}";
 
             var Items = await Client.GetFromJsonAsync<List<OrderDetail>>(URL_OList);
             ViewBag.OrderItems = Items ?? new List<OrderDetail>();
@@ -54,14 +64,8 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> QuickEdit(Guid ID)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            // Gọi API để lấy danh sách người dùng
-            var user = await Client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User");
+            Guid userId = GetCurrentUserId();
+            var user = await Client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{userId}");
 
             // Truyền thông tin người dùng vào ViewBag
             ViewBag.DefaultUser = user;
@@ -84,13 +88,8 @@ namespace Application.MVC.GeneralPublic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> QuickEdit(Guid ID, OrderDto NewDetail, bool HasExternalInfo)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var User = await Client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User");
+            Guid userId = GetCurrentUserId();
+            var User = await Client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{userId}");
             // fake data 2 - khi tích hợp thì if User exists then proceed, if not then throw into login
 
             string URL_Order = $@"https://localhost:7187/api/Orders/{ID}";
@@ -184,13 +183,9 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
         }
 
-        public async Task<ActionResult> RequestRefund(Guid ID, ReturnDTO ReturnInfo, string Reason, string? Comments)
+        public async Task<ActionResult> RequestRefund( ReturnDTO ReturnInfo, string Reason, string? Comments)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
+            Guid ID = GetCurrentUserId();
             ReturnInfo.OrderID = ID;
 
             switch (Reason)

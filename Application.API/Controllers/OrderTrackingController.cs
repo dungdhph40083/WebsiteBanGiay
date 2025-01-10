@@ -55,23 +55,23 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(GetOrderTracking), new { id = orderTracking.TrackingID }, orderTracking);
         }
 
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<OrderTracking?>> PutOrderTracking(Guid id, OrderTrackingDTO orderTracking)
-        {
-            var Response = await _orderTrackingRepository.Update(id, orderTracking);
-            if (Response != null)
-            {
-                return Response;
-            }
-            else return NoContent();
-        }
+        //[HttpPut("{id}")]
+        //[Authorize(Roles = "Admin")]
+        //public async Task<ActionResult<OrderTracking?>> PutOrderTracking(Guid id, OrderTrackingDTO orderTracking)
+        //{
+        //    var Response = await _orderTrackingRepository.Update(id, orderTracking);
+        //    if (Response != null)
+        //    {
+        //        return Response;
+        //    }
+        //    else return NoContent();
+        //}
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteOrderTracking(Guid id)
-        {
-            await _orderTrackingRepository.Delete(id);
-            return NoContent();
-        }
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult> DeleteOrderTracking(Guid id)
+        //{
+        //    await _orderTrackingRepository.Delete(id);
+        //    return NoContent();
+        //}
     }
 }

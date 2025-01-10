@@ -22,14 +22,14 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Category>>> GetAll()
         {
             return Ok(await _categoryRepository.GetAllCategory());
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<Category>> GetById(Guid id)
         {
             var category = await _categoryRepository.GetByIdCategory(id);

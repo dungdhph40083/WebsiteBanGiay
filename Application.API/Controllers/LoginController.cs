@@ -30,7 +30,7 @@ namespace Application.API.Controllers
             if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
                 return BadRequest("Username and password are required.");
 
-            var user = await _context.Users
+            var user = await _context.Users.Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Username == request.Username && u.Password == request.Password);
 
             if (user == null)
@@ -49,6 +49,7 @@ namespace Application.API.Controllers
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim("UserID", user.UserID.ToString()),
                 new Claim(ClaimTypes.Role, user.Role?.RoleName ?? "User"),
+                new Claim("Role", user.Role?.RoleName ?? "User"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

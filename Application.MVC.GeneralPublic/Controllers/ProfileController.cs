@@ -10,6 +10,8 @@ using Application.Data.Models;
 using Newtonsoft.Json;
 using Application.Data.DTOs;
 using NuGet.Protocol;
+using System.Net.Http.Headers;
+using System.IdentityModel.Tokens.Jwt;
 
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -25,13 +27,14 @@ namespace Application.MVC.GeneralPublic.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            string URL = $@"https://localhost:7187/api/User";
-            var Response = await Client.GetFromJsonAsync<List<User>>(URL);
+            Guid ID = GetCurrentUserId();
 
-            if (Response != null && Response.Any())
+            string URL = $@"https://localhost:7187/api/User/{ID}";
+            var Response = await Client.GetFromJsonAsync<User>(URL);
+
+            if (Response != null)
             {
-                var user = Response.First(); 
-                return View(user);
+                return View(Response);
             }
 
             return View(new User()); 
@@ -95,11 +98,26 @@ namespace Application.MVC.GeneralPublic.Controllers
                 return View(updatedUser);
             }
         }
-
         private Guid GetCurrentUserId()
         {
-            return Guid.Parse("a1411fdb-f4fa-43b6-afc4-4f9c4fc811bb");
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID");
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("UserId không tồn tại trong token.");
+            }
+
+            return Guid.Parse(userIdClaim.Value);
         }
+
 
     }
 }

@@ -15,13 +15,6 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Index()
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             string requestURL = "https://localhost:7187/api/ShippingMethod";
             var response = client.GetStringAsync(requestURL).Result;
             var ShippingMethods = JsonConvert.DeserializeObject<List<ShippingMethod>>(response);
@@ -30,13 +23,6 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             string requestURL = $"https://localhost:7187/api/ShippingMethod/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var ShippingMethods = JsonConvert.DeserializeObject<ShippingMethod>(response);
@@ -44,12 +30,6 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Create()
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             ShippingMethod ShippingMethod = new ShippingMethod()
             {
@@ -60,12 +40,6 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ShippingMethod ShippingMethod)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             string requestURL = "https://localhost:7187/api/ShippingMethod";
             var response = await client.PostAsJsonAsync(requestURL, ShippingMethod);
@@ -73,12 +47,6 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Update(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             string requestURL = $"https://localhost:7187/api/ShippingMethod/{id}";
             var response = client.GetStringAsync(requestURL).Result;
@@ -90,12 +58,6 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, ShippingMethod ShippingMethod)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             string requestURL = $@"https://localhost:7187/api/ShippingMethod/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, ShippingMethod);
@@ -103,12 +65,6 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Delete(Guid id)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Bạn không có quyền vào trang này");
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             string requestURL = $"https://localhost:7187/api/ShippingMethod/{id}";
             var response = client.DeleteAsync(requestURL).Result;
