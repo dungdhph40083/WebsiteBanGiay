@@ -77,6 +77,10 @@
         <dd class="col-md-6">
             @Model.ShippingAddress
         </dd>
+        <dt class="col-md-6 text-uppercase">Trạng thái thanh toán</dt>
+        <dd class="col-md-6">
+            @(Model.HasPaid ? "Đã thanh toán" : "Chưa thanh toán")
+        </dd>
         <dt class="col-md-6 text-uppercase">Trạng thái đơn hàng</dt>
         <dd class="col-md-6">
             @switch ((OrderStatus)Model.Status)
