@@ -51,7 +51,7 @@ namespace Application.API.Controllers
                 model.OrderType = "other";
                 model.OrderDescription = "Thanh toán qua VNPay hóa đơn " + CreatedOrder.OrderID;
                 model.Name = model.HoTen;
-                model.MaHoaDon = CreatedOrder.OrderNumber.ToString();
+                model.MaHoaDon = CreatedOrder.OrderID.ToString();
 
                 var url = CreatePaymentUrl(model, HttpContext);
 

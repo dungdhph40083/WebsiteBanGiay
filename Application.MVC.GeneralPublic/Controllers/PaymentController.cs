@@ -44,7 +44,11 @@ namespace Application.MVC.GeneralPublic.Controllers
                     var ContentUpdate = JsonConvert.DeserializeObject<Order>
                         (await ResponseUpdate.Content.ReadAsStringAsync());
 
-                    ViewBag.Message = "Thanh toán thành công";
+                    ViewBag.Message = "THANH TOÁN THÀNH CÔNG.!";
+                }
+                else if (vnp_TransactionStatus == "02")
+                {
+                    ViewBag.Message = "ĐÃ ĐẶT HÀNG THÀNH CÔNG , NHƯNG CHƯA THANH TOÁN ĐƠN HÀNG!!!";
                 }
             }
             catch

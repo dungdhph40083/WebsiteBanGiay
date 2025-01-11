@@ -19,7 +19,7 @@ namespace Application.Data.DTOs
         [StringLength(100, MinimumLength = 3, ErrorMessage = "Chất liệu phải có độ dài từ 3 đến 100 ký tự.")]
         public string? Material { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập số lượng")]
-        [Range(1, 10000000, ErrorMessage = "Số lượng phải lớn hơn 0 và không vượt quá 10 triệu.")]
+        [Range(0, 10000000, ErrorMessage = "Số lượng phải bằng hoặc lớn hơn 0 và không vượt quá 10 triệu.")]
         public int? Quantity { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập thương hiệu")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "Thương hiệu phải có độ dài từ 3 đến 100 ký tự.")]
