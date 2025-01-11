@@ -7,6 +7,7 @@ namespace Application.Data.Repositories.IRepository
     {
         Task<List<Voucher>> GetVouchers();
         Task<Voucher?> GetVoucherByID(Guid TargetID);
+        Task<Voucher?> GetVoucherByUserID(Guid TargetID);
         Task<Voucher?> GetVoucherByVoucherCode(string VoucherCode);
         Task<Voucher> CreateVoucher(VoucherDTO NewVoucher);
         Task<Voucher?> UpdateVoucher(Guid TargetID, VoucherDTO UpdatedVoucher);

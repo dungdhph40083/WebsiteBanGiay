@@ -3,7 +3,7 @@ function ThousandSeparator(MyNumber) {
     return MyNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 var Sum = 0;
-var PriceTotalItemsArray = [];
+/*var PriceTotalItemsArray = [];*/
 
 function AddEmUp(ItemPrice) {
     Sum += parseInt(ItemPrice.innerText.replace(/[$,.\s]/g, ''));
@@ -11,7 +11,7 @@ function AddEmUp(ItemPrice) {
 
 function Notify() {
     let Notify = document.getElementById("WARNING_WARNING_ALARM");
-    Notify.innerHTML = '<p class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu!</p>';
+    Notify.innerHTML = '<span class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu! Bấm nút để cập nhật đơn. ▶</span>';
 }
 
 function DisplayTotalPriceOnSidebar() {
@@ -43,7 +43,7 @@ function Remove1(ItemID) {
         PriceTotal.innerText =
             ThousandSeparator(parseInt(PriceSingle.innerText.replace(/[$,.\s]/g, '')) * ProductAmount.value);
 
-            DisplayTotalPriceOnSidebar();
+            /*DisplayTotalPriceOnSidebar();*/
     }
 }
 
@@ -67,7 +67,7 @@ function Edit1(ItemID) {
         PriceTotal.innerText =
             ThousandSeparator(parseInt(PriceSingle.innerText.replace(/[$,.\s]/g, '')) * CurrentQuantity);
 
-        DisplayTotalPriceOnSidebar();
+        /*DisplayTotalPriceOnSidebar();*/
     }
 }
 
@@ -90,7 +90,7 @@ function Add1(ItemID) {
         PriceTotal.innerText =
             ThousandSeparator(parseInt(PriceSingle.innerText.replace(/[$,.\s]/g, '')) * ProductAmount.value);
 
-            DisplayTotalPriceOnSidebar();
+        //    DisplayTotalPriceOnSidebar();
     }
 }
 

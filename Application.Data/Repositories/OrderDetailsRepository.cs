@@ -148,6 +148,8 @@ namespace Application.Data.Repositories
         public async Task<List<OrderDetail>> ImportFromUserCart(Guid UserID, Guid OrderID)
         {
             var GetOrder = await _context.Orders.FindAsync(OrderID);
+            var GetUser = await _context.Users.FindAsync(UserID) ?? new();
+            var GetVoucher = await _context.Vouchers.FindAsync(GetUser.VoucherID);
             if (GetOrder == null) return new();
 
             var MyShoppingCart = await _context.ShoppingCarts
@@ -188,7 +190,26 @@ namespace Application.Data.Repositories
 
                 _context.Orders.Attach(GetOrder);
 
-                GetOrder.GrandTotal = MyOrders.Sum(S => S.SumTotalPrice);
+                GetOrder.RawTotal = MyOrders.Sum(S => S.SumTotalPrice);
+
+                if (GetVoucher != null)
+                {
+                    GetOrder.VoucherID = GetVoucher.VoucherID;
+                    if (GetVoucher.UseDiscountPrice)
+                    {
+                        GetOrder.DiscountValue = GetVoucher.DiscountPrice;
+                    }
+                    else
+                    {
+                        GetOrder.DiscountValue = (long)(GetOrder.RawTotal * GetVoucher.DiscountPercent / 100).GetValueOrDefault();
+                    }
+                    GetOrder.GrandTotal = GetOrder.RawTotal - GetOrder.DiscountValue;
+                }
+                else
+                {
+                    GetOrder.DiscountValue = 0;
+                    GetOrder.GrandTotal = GetOrder.RawTotal;
+                }
 
                 _context.Update(GetOrder);
                 await _context.SaveChangesAsync();

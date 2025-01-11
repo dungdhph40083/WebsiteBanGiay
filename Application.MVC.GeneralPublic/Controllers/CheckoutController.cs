@@ -28,6 +28,10 @@ namespace Application.MVC.GeneralPublic.Controllers
             // Tính tổng giá trị đơn hàng
             var totalAmount = cartItems?.Sum(item => item.QuantityCart * item.Price) ?? 0;
 
+            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{UserID}";
+            var Voucher = JsonConvert.DeserializeObject<Voucher>(await _client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
+            ViewBag.VoucherInfo = Voucher;
+
             // Truyền thông tin người dùng và giỏ hàng vào ViewBag
             ViewBag.DefaultUser = user;
             ViewBag.CartItems = cartItems;
@@ -51,11 +55,12 @@ namespace Application.MVC.GeneralPublic.Controllers
                 Details.Email = UserData!.Email;
                 Details.PhoneNumber = UserData!.PhoneNumber;
                 Details.ShippingAddress = UserData!.Address;
+                Details.VoucherID = UserData!.VoucherID;
             }
 
             if (PaymentMethod == PaymentMethods.CashOnDelivery)
             {
-
+                Details.PaymentMethodID = Guid.Parse(DefaultValues.CoDGUID); // No, it's not "Call of Duty". It's "Cash on Delivery".                                                                                 Did I mention I hate working on this project when being rushed?
                 try
                 {
                     string URL = $@"https://localhost:7187/api/OrderDetails/Checkout?PaymentMethod={PaymentMethods.CashOnDelivery}";
@@ -78,6 +83,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
             else if (PaymentMethod == PaymentMethods.VNPay)
             {
+                Details.PaymentMethodID = Guid.Parse(DefaultValues.VNPayGUID);
                 try
                 {
                     string URL = $@"https://localhost:7187/api/Payment";

@@ -56,11 +56,18 @@ namespace Application.Data.Repositories
         public async Task DeleteAllFromUserID(Guid TargetID)
         {
             var Targets = await GetShoppingCartsByUserID(TargetID);
+            var User = await Context.Users.FindAsync(TargetID);
             if (Targets != null)
             {
                 Context.ShoppingCarts.RemoveRange(Targets);
-                await Context.SaveChangesAsync();
             }
+            if (User != null)
+            {
+                Context.Users.Attach(User);
+                User.VoucherID = null;
+                Context.Users.Update(User);
+            }
+            await Context.SaveChangesAsync();
         }
 
         public async Task<ShoppingCart?> GetShoppingCartByID(Guid TargetID)
@@ -188,15 +195,14 @@ namespace Application.Data.Repositories
         public async Task<string> ApplyVoucher(Guid UserID, string? VoucherCode)
         {
             var TargetUser = await Context.Users.SingleOrDefaultAsync(U => U.UserID == UserID);
-            var TargetVoucher = await Context.Vouchers.SingleOrDefaultAsync(V => V.VoucherCode == VoucherCode);
-            var Shoppings = await GetShoppingCartsByUserID(UserID);
-
             if (TargetUser == null) return ValidateErrorResult.BUT_NOBODY_CAME;
+
+            var Shoppings = await GetShoppingCartsByUserID(UserID);
 
             if (string.IsNullOrWhiteSpace(VoucherCode))
             {
                 var OldVoucher = await Context.Vouchers.SingleOrDefaultAsync(V => V.VoucherID == TargetUser.VoucherID);
-                if (OldVoucher == null) return ValidateErrorResult.WTF_HOW_DID_IT_FAIL;
+                if (OldVoucher == null) return SuccessResult.VOUCHER_ALREADY_DISCARDED;
 
                 if (OldVoucher.UsesLeft != -1)
                 {
@@ -214,6 +220,8 @@ namespace Application.Data.Repositories
             }
             else
             {
+                var TargetVoucher = await Context.Vouchers.SingleOrDefaultAsync(V => V.VoucherCode == VoucherCode);
+
                 if (TargetVoucher == null) return ValidateErrorResult.VOUCHER_DOES_NOT_EXIST;
                 if (Shoppings.Sum(P => P.Price) < TargetVoucher.RequiredGrandTotal.GetValueOrDefault()) return ValidateErrorResult.VOUCHER_REQUIREMENT_FAIL;
                 if (TargetVoucher.UsesLeft == 0) return ValidateErrorResult.VOUCHER_RAN_OUT_OF_USES;

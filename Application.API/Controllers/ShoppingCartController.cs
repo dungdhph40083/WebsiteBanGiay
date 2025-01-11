@@ -72,7 +72,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPatch("ApplyVoucher/{UserID}")]
-        public async Task<ActionResult<string>> ApplyVoucher(Guid UserID, string VoucherCode)
+        public async Task<ActionResult<string>> ApplyVoucher(Guid UserID, string? VoucherCode)
         {
             var Response = await ShoppingCartRepo.ApplyVoucher(UserID, VoucherCode);
             if (Response == SuccessResult.VOUCHER_APPLIANCE_SUCCESS || Response == SuccessResult.VOUCHER_DISCARDED_SUCCESS)

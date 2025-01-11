@@ -24,34 +24,15 @@
         ReceivedRefundFail = 203   // Đã nhận hàng nhưng hoàn trả thất bại
     }
 
-    /*
-     *  TODO 2:
-     *  1. get all: hiển thị các sản phẩm biến thể theo product ID -- DONE
-     *  2. get by ID: theo product detail ID để sửa biến thể nếu có (có thể truyền ra list các thay đổi) -- DONE
-     *  3. edit: bấm vào sẽ hiển thị hàng loạt biến thể để sửa & các trường thông tin sản phẩm khác (hãng, xuất xứ...) -- DONE
-     *  4. delete: xóa theo product ID -- DONE
-     *  5. sửa lại view quản lý bên admin
-     */
+    public enum VoucherStatus
+    {
+        Disabled = 0,
+        Active = 1,
 
+        DisabledPrivate = 100,
+        ActivePrivate = 101
+    }
 
-    /*
-     *  TODO:
-     *  2: sau khi đặt đơn: được phép đổi tăng giảm số lượng mặt hàng & thêm/xóa sản phẩm khác (chỉ trước trạng thái đang giao) [TODO]
-     *  5: hoàn đơn về không cộng lại (lưu ở bên bảng hoàn trả - thêm thông tin số lượng hàng đã hoàn trả & giá tiền) -- 50%: THÔNG TIN CHƯA CÓ
-     *
-     *  Lý do: 
-     *  - Hàng đã qua sử dụng
-     *  - Hàng giả hàng nhái
-     *  - Hàng lỗi
-     *  - Khác (cho nhập)
-     *
-     *  6.5: cho phép gửi ảnh với chọn số lượng muốn hoàn trả (cần thêm bảng ReturnDetail)
-     *
-     *  7: voucher giảm giá theo % giá trị đơn hàng và/hoặc giảm giá theo số tiền (điều kiện: đơn hàng tối thiểu số tiền tổng trong đơn)
-     *  8: phải có size & màu giày (n size/color - n giày) [TODO]
-     *  9: sửa icon tăng giảm số lượng sp khi thêm vào giỏ
-     *  10: ghép nhánh JWT (LÂU)
-     */
 
     public class OrderFilters
     {
@@ -66,6 +47,27 @@
 
         // Giao hàng thất bại
         public const string ORDERS_FAILED = "ORDERS_FAILED";
+    }
+
+    public class VoucherFilters
+    {
+        
+        // Sắp ra mắt
+        public const string VOUCHER_COMING_SOON = "VOUCHER_COMING_SOON";
+        
+        // Đang diễn ra
+        public const string VOUCHER_ONGOING = "VOUCHER_ONGOING";
+        
+        // Chết rồi
+        public const string VOUCHER_DIED = "VOUCHER_DIED";
+
+        ////////////////////////////////////////////////////////////////
+
+        // Voucher công khai
+        public const string VOUCHER_PUBLIC = "VOUCHER_PUBLIC";
+
+        // Voucher không công khai
+        public const string VOUCHER_PRIVATE = "VOUCHER_PRIVATE";
     }
 
     public class Reasoning
@@ -86,6 +88,9 @@
     public class DefaultValues
     {
         public const string UserRoleGUID = "1bfa7246-60e1-4d82-a469-cdecf867fd01";
+        public const string CoDGUID = "4c205562-9c3f-418b-8d89-9fb7176dd10e";
+        public const string VNPayGUID = "ab2ed960-8765-47e4-8053-7143ecbe824a";
+        public const string MoMoGUID = "ab2ed960-8765-47e4-8053-7143ddddd24a";
     }
 
     public class Metadata

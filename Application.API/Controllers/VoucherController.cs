@@ -3,6 +3,7 @@ using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Application.API.Controllers
 {
@@ -26,6 +27,13 @@ namespace Application.API.Controllers
         public async Task<ActionResult<Voucher?>> Get(Guid ID)
         {
             return await VoucherRepo.GetVoucherByID(ID);
+        }
+
+        [HttpGet("WhatVoucherAreTheyUsing/{ID}")]
+        public async Task<ActionResult<Voucher?>> GetByUser(Guid ID)
+        {
+            var Response = await VoucherRepo.GetVoucherByUserID(ID);
+            return Response;
         }
 
         [HttpPost]

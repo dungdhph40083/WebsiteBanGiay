@@ -31,6 +31,10 @@ namespace Application.Data.Repositories
 
             NewVoucher.VoucherCode = NewVoucher.VoucherCode.ToUpper();
             Voucher = Mapper.Map(NewVoucher, Voucher);
+
+            Voucher.StartingAt = Voucher.StartingAt.GetValueOrDefault().ToUniversalTime();
+            Voucher.EndingAt = Voucher.EndingAt.GetValueOrDefault().ToUniversalTime();
+
             await Context.Vouchers.AddAsync(Voucher);
             await Context.SaveChangesAsync();
             return Voucher;
@@ -54,6 +58,20 @@ namespace Application.Data.Repositories
             return Target;
         }
 
+        public async Task<Voucher?> GetVoucherByUserID(Guid TargetID)
+        {
+            var Target = await Context.Users
+                .SingleOrDefaultAsync(x => x.UserID == TargetID);
+            if (Target != null)
+            {
+                var VoucherIs = await Context.Vouchers
+                    .Include(UU => UU.Category)
+                    .SingleOrDefaultAsync(x => x.VoucherID == Target.VoucherID);
+                return VoucherIs;
+            }
+            else return default;
+        }
+
         public Task<List<Voucher>> GetVouchers()
         {
             return Context.Vouchers
@@ -70,6 +88,10 @@ namespace Application.Data.Repositories
                 UpdatedVoucher.VoucherCode = UpdatedVoucher.VoucherCode.ToUpper();
                 var UpdatedTarget = Mapper.Map(UpdatedVoucher, Target);
                 UpdatedTarget.UpdatedAt = DateTime.UtcNow;
+
+                UpdatedTarget.StartingAt = UpdatedTarget.StartingAt.GetValueOrDefault().ToUniversalTime();
+                UpdatedTarget.EndingAt = UpdatedTarget.EndingAt.GetValueOrDefault().ToUniversalTime();
+
                 Context.Update(UpdatedTarget);
                 await Context.SaveChangesAsync();
                 return UpdatedTarget;

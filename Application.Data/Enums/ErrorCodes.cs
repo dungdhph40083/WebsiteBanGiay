@@ -11,6 +11,7 @@
         public const string IMAGE_OK                  = "IMAGE_OK";
         public const string VOUCHER_APPLIANCE_SUCCESS = "VOUCHER_APPLIANCE_SUCCESS";
         public const string VOUCHER_DISCARDED_SUCCESS = "VOUCHER_DISCARDED_SUCCESS";
+        public const string VOUCHER_ALREADY_DISCARDED = "VOUCHER_ALREADY_DISCARDED";
     }
 
     public class ValidateErrorResult

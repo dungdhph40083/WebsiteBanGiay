@@ -194,6 +194,17 @@ namespace Application.API.Controllers
             {
                 return BadRequest("Failed to update payment status or status.");
             }
+            else
+            {
+                var ProductList = await OrderDetailsRepository.GetOrderDetailsFromOrderID(id);
+                if (ProductList == null) return NotFound("Không thể tìm thấy thông tin hóa đơn... (?????)");
+                foreach (var THING in ProductList)
+                {
+                    // Trừ sản phẩm
+                    await ProductDetailRepo.DoAddProductCount
+                        (THING.ProductDetailID.GetValueOrDefault(), -THING.Quantity.GetValueOrDefault());
+                }
+            }
 
             // Trả về thông tin đơn hàng đã cập nhật
             return Ok(updatedOrder);

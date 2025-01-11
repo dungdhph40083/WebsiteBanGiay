@@ -2,6 +2,7 @@
 using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using NuGet.Protocol;
 using System.Drawing;
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -17,8 +18,12 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<ActionResult> Index()
         {
             string URL = $@"HTTPS://LOCALHOST:7187/API/SHOPPINGCART/USER/{UserID}";
+            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{UserID}";
 
             var Response = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
+            var Voucher = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
+            ViewBag.VoucherInfo = Voucher;
+
             return View(Response);
         }
 
@@ -53,30 +58,36 @@ namespace Application.MVC.GeneralPublic.Controllers
                 var Response = await Client.PutAsync(URL, null);
             }
 
+            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{UserID}";
+            var VoucherChecker = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
+            if (VoucherChecker != null)
+            {
+                var Response = await Client.PatchAsync($@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{UserID}?VoucherCode={VoucherChecker.VoucherCode}", null);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<ActionResult> ApplyVoucher(Guid ID, string VoucherCode)
+        public async Task<ActionResult> ApplyVoucher(Guid ID, string? VoucherCode)
         {
             try
             {
-                string URL = $@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{UserID}/{ID}?VoucherCode={VoucherCode}";
-                var Response = await Client.PatchAsync(URL, null);
-            }
-            catch (Exception Exc)
-            {
-                Console.WriteLine($"{Exc.Message} ({Exc.HResult})");
-                throw;
-            }
-            return RedirectToAction(nameof(Index));
-        }
+                Console.WriteLine($"\nUser ID is {ID}\nVoucher code is {VoucherCode}\n");
+                Console.WriteLine($"Voucher code is null or white space: {string.IsNullOrWhiteSpace(VoucherCode)}");
 
-        public async Task<ActionResult> UnapplyVoucher(Guid ID)
-        {
-            try
-            {
-                string URL = $@"https://localhost:7187/api/ShoppingCart/UnapplyVoucher/{UserID}/{ID}";
+                string URL = $@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{ID}?VoucherCode={VoucherCode}";
+    
                 var Response = await Client.PatchAsync(URL, null);
+
+                var Msg = Response.Content.ReadAsStringAsync();
+                if (Msg.Result == SuccessResult.VOUCHER_APPLIANCE_SUCCESS)
+                {
+                    ViewBag.Success = "Sử dụng Voucher thành công!";
+                }
+                if (Msg.Result == SuccessResult.VOUCHER_DISCARDED_SUCCESS)
+                {
+                    ViewBag.Success = "Bỏ Voucher thành công!";
+                }
             }
             catch (Exception Exc)
             {
