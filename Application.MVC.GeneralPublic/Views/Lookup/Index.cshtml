@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Application.Data.Enums
+@{
     ViewData["Title"] = "Tra cứu đơn hàng";
 }
 
@@ -34,7 +35,7 @@
 
     @if (ViewBag.Order != null)
     {
-        var order = ViewBag.Order;
+        var order = ViewBag.Order as Application.Data.Models.Order;
         <div class="order-detail-box p-4 mt-5">
             <h4 class="text-primary mb-4">Thông tin đơn hàng</h4>
 
@@ -72,7 +73,15 @@
                         {
                             <span class="text-secondary"><i class="bi bi-box-arrow-in-down"></i> Lấy hàng thành công và đang chuyển về</span>
                         }
+                        else if (order.Status == 5)
+                        {
+                            <span class="text-danger"><i class="bi bi-x-circle"></i> Đã hoàn trả</span>
+                        }
                         else if (order.Status == 6)
+                        {
+                            <span class="text-danger"><i class="bi bi-x-circle"></i> Giao hàng chưa thành công</span>
+                        }
+                        else if (order.Status == 66)
                         {
                             <span class="text-danger"><i class="bi bi-x-circle"></i> Giao hàng thất bại</span>
                         }
@@ -96,7 +105,7 @@
                         {
                             <span class="text-success"><i class="bi bi-check-circle-fill"></i> Đơn hàng đã giao đến bạn</span>
                         }
-                        else if (order.Status == 200 || order.Status == 201 || order.Status == 202)
+                        else if (order.Status == 200 || order.Status == 201 || order.Status == 202 || order.Status == 203)
                         {
                             <span class="text-success"><i class="bi bi-check-all"></i> Đơn hàng thành công</span>
                         }
@@ -119,13 +128,13 @@
                     </p>
                     <p>
                         <i class="bi bi-gift"></i><strong>Mã Giảm Giá: </strong>
-                        @if (string.IsNullOrEmpty(order.VoucherID))
+                        @if (order.VoucherID == null)
                         {
                             <span>Không áp dụng</span>
                         }
                         else
                         {
-                            @order.VoucherID
+                            @order.Voucher?.VoucherCode
                         }
                     </p>
 
@@ -137,12 +146,24 @@
                         }
                         else
                         {
-                            @order.DiscountValue
+                            @order.DiscountValue.GetValueOrDefault().ToString("#,##0 VNĐ");
                             }
                     </p>
 
                     <p><i class="bi bi-cash-coin"></i><strong>Tổng Tiền: </strong> @string.Format("{0:N0} VNĐ", order.GrandTotal)</p>
-                    <p><i class="bi bi-wallet"></i><strong>Hình thức thanh toán: </strong> Thanh toán khi nhận hàng</p>
+                    <p><i class="bi bi-wallet"></i><strong>Hình thức thanh toán: </strong>
+                        @switch (order.PaymentMethodID.GetValueOrDefault().ToString())
+                        {
+                            case DefaultValues.CoDGUID:
+                                <text>Ship COD</text>
+                                break;
+                            case DefaultValues.VNPayGUID:
+                                <text>VNPay</text>
+                                break;
+                            default:
+                                break;
+                        }
+                        </p>
                 </div>
             </div>
         </div>

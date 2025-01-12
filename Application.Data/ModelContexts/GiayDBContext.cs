@@ -60,9 +60,9 @@ namespace Application.Data.ModelContexts
             ModelBuilder.Entity<Voucher>()
                 .Property(Idx => Idx.UseDiscountPrice)
                 .HasDefaultValue(false);
-            ModelBuilder.Entity<Voucher>()
-				.Property(Idx => Idx.VoucherCode)
-				.HasDefaultValue($@"VOUCHER_{DateTime.UtcNow:ssffffmm}");
+    //        ModelBuilder.Entity<Voucher>()
+				//.Property(Idx => Idx.VoucherCode)
+				//.HasDefaultValue($@"VOUCHER_{DateTime.UtcNow:ssffffmm}");
 			ModelBuilder.Entity<Color_Product>()
 				.Property(Idx => Idx.Available)
 				.HasDefaultValue(true);

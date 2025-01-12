@@ -86,6 +86,12 @@
                                                 case OrderStatus.ReceivedCompleted:
                                                     <p>Đã nhận hàng thành công</p>
                                                     break;
+                                                case OrderStatus.DeliveryFailure:
+                                                    <p>Chưa giao thành công</p>
+                                                    break;
+                                                case OrderStatus.DeliveryIsDead:
+                                                    <p>Giao hàng thất bại</p>
+                                                    break;
                                                 case OrderStatus.ReceivedRefundFail:
                                                     <p>Đã nhận hàng, hoàn trả không thành công</p>
                                                     break;
