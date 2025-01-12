@@ -1,5 +1,6 @@
 ﻿using Application.Data.Enums;
 using Application.Data.Models;
+using Application.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuGet.Protocol;
@@ -22,7 +23,25 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             var Response = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
             var Voucher = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
-            ViewBag.VoucherInfo = Voucher;
+
+            if (Voucher != null)
+            {
+                string URL_VoucherValidator = $@"https://localhost:7187/api/Voucher/Validate/{UserID}/{Voucher.VoucherCode}";
+                var VoucherResponse = await Client.PostAsync(URL_VoucherValidator, null).Result.Content.ReadAsStringAsync();
+                if (VoucherResponse == ValidateErrorResult.VOUCHER_VALID)
+                {
+                    ViewBag.VoucherInfo = Voucher;
+                }
+                else
+                {
+                    switch (VoucherResponse)
+                    {
+                        default:
+                            ViewBag.ErrorMessage = "No";
+                            break;
+                    }
+                }
+            }
 
             return View(Response);
         }

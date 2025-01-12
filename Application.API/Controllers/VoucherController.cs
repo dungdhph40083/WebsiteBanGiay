@@ -1,4 +1,5 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
@@ -12,9 +13,11 @@ namespace Application.API.Controllers
     public class VoucherController : ControllerBase
     {
         private readonly IVoucher VoucherRepo;
-        public VoucherController(IVoucher VoucherRepo)
+        private readonly IShoppingCart ShoppingCartRepo;
+        public VoucherController(IVoucher VoucherRepo, IShoppingCart ShoppingCartRepo)
         {
             this.VoucherRepo = VoucherRepo;
+            this.ShoppingCartRepo = ShoppingCartRepo;
         }
 
         [HttpGet]
@@ -43,6 +46,17 @@ namespace Application.API.Controllers
             return CreatedAtAction(nameof(Get), new { ID = Response.VoucherID }, Response);
         }
 
+        [HttpPost("Validate/{UserID}/{VoucherCode}")]
+        public async Task<ActionResult<string>> ValidateVoucher(Guid UserID, string VoucherCode)
+        {
+            var Response = await VoucherRepo.VoucherValidator(UserID, VoucherCode);
+            if (Response != ValidateErrorResult.VOUCHER_VALID)
+            {
+                await ShoppingCartRepo.ApplyVoucher(UserID, null);
+            }
+            return Response;
+        }
+
         [HttpPut("{ID}")]
         public async Task<ActionResult<Voucher?>> Put(Guid ID, [FromBody] VoucherDTO UpdatedVoucher)
         {
@@ -55,6 +69,12 @@ namespace Application.API.Controllers
         public async Task<ActionResult<Voucher?>> ChangeStatus(Guid ID)
         {
             return await VoucherRepo.ToggleStatus(ID);
+        }
+
+        [HttpPatch("StopVoucher/{ID}")]
+        public async Task<ActionResult<Voucher?>> StopVoucher(Guid ID)
+        {
+            return await VoucherRepo.StopVoucher(ID);
         }
 
         [HttpDelete("{ID}")]

@@ -85,6 +85,10 @@
                         {
                             <span class="text-danger"><i class="bi bi-x-circle"></i> Giao hàng thất bại</span>
                         }
+                        else if (order.Status == 203)
+                        {
+                            <span class="text-danger"><i class="bi bi-x-circle"></i> Hoàn trả thất bại</span>
+                        }
                         else if (order.Status == 0)
                         {
                             <span class="text-danger"><i class="bi bi-x-circle-fill"></i> Đã huỷ đơn</span>
@@ -105,7 +109,7 @@
                         {
                             <span class="text-success"><i class="bi bi-check-circle-fill"></i> Đơn hàng đã giao đến bạn</span>
                         }
-                        else if (order.Status == 200 || order.Status == 201 || order.Status == 202 || order.Status == 203)
+                        else if (order.Status == 200 || order.Status == 201 || order.Status == 202)
                         {
                             <span class="text-success"><i class="bi bi-check-all"></i> Đơn hàng thành công</span>
                         }

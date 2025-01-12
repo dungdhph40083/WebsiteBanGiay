@@ -54,7 +54,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5" class="text-right">Thành tiền</td>
+                        <td colspan="5" class="text-center" style="font-size: larger">Thành tiền:</td>
                         <td class="text-right" style="font-size:larger"><b>@Model.RawTotal.GetValueOrDefault().ToString("#,##0")</b></td>
                     </tr>
                 </tfoot>
@@ -146,7 +146,7 @@
                     <p>Giao hàng thất bại</p>
                     break;
                 case OrderStatus.ReceivedRefundFail:
-                    <p>Đã nhận hàng, hoàn trả không thành công</p>
+                    <p>Hoàn trả thất bại</p>
                     break;
                 default:
                     <p>N/A</p>
@@ -158,7 +158,7 @@
         {
             <dt class="col-md-6 text-uppercase">Thành tiền</dt>
             <dd class="col-md-6 text-right">
-                @((Model.GrandTotal.GetValueOrDefault()/*+ ((OrderItems.Count() - 1) * 1000) */).ToString("#,##0"))
+                @((Model.RawTotal.GetValueOrDefault()/*+ ((OrderItems.Count() - 1) * 1000) */).ToString("#,##0"))
             </dd>
             <dt class="col-md-6 text-uppercase">Giảm giá</dt>
             <dd class="col-md-6 text-right">
@@ -242,31 +242,21 @@
                     break;
                 }
             case OrderStatus.Received:
-                {
-                    <div class="dropdown">
-                        <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
-                            Yêu cầu hoàn trả
-                        </button>
-                        <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
-                            <h3>Xác nhận</h3>
-                            <a class="btn btn-success" style="width: 120px" asp-action="Request2Refund" asp-route-ID="@Model.OrderID">Xác nhận</a>
-                            <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
-                        </div>
-                    </div>
-                    break;
-                }
             case OrderStatus.ReceivedAgain:
                 {
-                    <div class="dropdown">
-                        <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
-                            Yêu cầu hoàn trả
-                        </button>
-                        <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
-                            <h3>Xác nhận</h3>
-                            <a class="btn btn-success" style="width: 120px" asp-action="Request2RefundAgain" asp-route-ID="@Model.OrderID">Xác nhận</a>
-                            <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
+                    @if (Model.AcceptEnd != null || DateTime.UtcNow <= Model.AcceptEnd)
+                    {
+                        <div class="dropdown">
+                            <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                                Yêu cầu hoàn trả
+                            </button>
+                            <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                                <h3>Xác nhận</h3>
+                                <a class="btn btn-success" style="width: 120px" asp-action="RequestRefund" asp-route-ID="@Model.OrderID">Xác nhận</a>
+                                <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
+                            </div>
                         </div>
-                    </div>
+                    }
                     break;
                 }
             case OrderStatus.ReceivedCompleted:
@@ -274,3 +264,19 @@
         }
     </div>
 </div>
+
+@*
+                // {
+                //     <div class="dropdown">
+                //         <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                //             Yêu cầu hoàn trả
+                //         </button>
+                //         <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                //             <h3>Xác nhận</h3>
+                //             <a class="btn btn-success" style="width: 120px" asp-action="RequestRefundAgain" asp-route-ID="@Model.OrderID">Xác nhận</a>
+                //             <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
+                //         </div>
+                //     </div>
+                //     break;
+                // }
+*@

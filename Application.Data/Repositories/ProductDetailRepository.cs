@@ -53,7 +53,7 @@ namespace Application.Data.Repositories
                     .Include(Col => Col.Color)
                     .Include(Ctg => Ctg.Category).SingleOrDefaultAsync(x => x.ProductDetailID == TargetID);
 
-            await ConstantUpdates(Item);
+            //await ConstantUpdates(Item);
 
             return Item;
         }
@@ -69,10 +69,10 @@ namespace Application.Data.Repositories
                     .Where(x => x.ProductID == TargetID)
                         .ToListAsync();
 
-            foreach (var Item in LeList)
-            {
-                await ConstantUpdates(Item);
-            }
+            //foreach (var Item in LeList)
+            //{
+            //    await ConstantUpdates(Item);
+            //}
             return LeList;
         }
 
@@ -86,10 +86,10 @@ namespace Application.Data.Repositories
                 .Include(Col => Col.Color)
                 .Include(Ctg => Ctg.Category).ToListAsync();
 
-            foreach (var Item in LeList)
-            {
-                await ConstantUpdates(Item);
-            }
+            //foreach (var Item in LeList)
+            //{
+            //    await ConstantUpdates(Item);
+            //}
             return LeList;
         }
 
@@ -117,7 +117,6 @@ namespace Application.Data.Repositories
                 Context.ProductDetails.Attach(Target);
 
                 Target.Quantity = 0;
-                Target.Status = 0;
                 Target.UpdatedAt = DateTime.UtcNow;
 
                 Context.Update(Target);

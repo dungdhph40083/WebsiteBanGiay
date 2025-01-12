@@ -1,4 +1,5 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,10 @@ namespace Application.MVC.Controllers
     public class UserController : Controller
     {
         HttpClient Client = new HttpClient();
+
+        // FAKE DATA - Replace this with UserID from session
+        Guid SessionUserID = Guid.Parse("bbd122d1-8961-4363-820e-3ad1a87064e4");
+
         // GET: UserController
 
         [HttpGet]
@@ -71,14 +76,15 @@ namespace Application.MVC.Controllers
 
                 MultipartFormDataContent Contents = new()
                 {
-                    { new StringContent(Input.Username!),                  nameof(Input.Username) },
-                    { new StringContent(Input.Password ?? ""),             nameof(Input.Password) },
-                    { new StringContent(Input.FirstName ?? ""),            nameof(Input.FirstName) },
-                    { new StringContent(Input.LastName ?? ""),             nameof(Input.LastName) },
-                    { new StringContent(Input.Email ?? ""),                nameof(Input.Email) },
-                    { new StringContent(Input.Address ?? ""),              nameof(Input.Address) },
-                    { new StringContent(Input.PhoneNumber ?? ""),          nameof(Input.PhoneNumber) },
-                    { new StringContent(Input.Status.ToString() ?? "1"),   nameof(Input.Status) },
+                    { new StringContent(Input.Username!),                                         nameof(Input.Username) },
+                    { new StringContent(Input.Password ?? ""),                                    nameof(Input.Password) },
+                    { new StringContent(Input.FirstName ?? ""),                                   nameof(Input.FirstName) },
+                    { new StringContent(Input.LastName ?? ""),                                    nameof(Input.LastName) },
+                    { new StringContent(Input.Email ?? ""),                                       nameof(Input.Email) },
+                    { new StringContent(Input.Address ?? ""),                                     nameof(Input.Address) },
+                    { new StringContent(Input.PhoneNumber ?? ""),                                 nameof(Input.PhoneNumber) },
+                    { new StringContent(Input.Status.ToString() ?? "1"),                          nameof(Input.Status) },
+                    { new StringContent(Input.RoleID.ToString() ?? DefaultValues.UserRoleGUID),   nameof(Input.RoleID) }
                 };
 
                 if (ProfilePic != null)
@@ -104,6 +110,9 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(Guid ID)
         {
+            ViewBag.UserID = SessionUserID;
+            ViewBag.UserIDRoute = ID;
+
             await FetchInfoPlsPlsPlsPls();
             string URL = $@"https://localhost:7187/api/User/{ID}";
             var Response = await Client.GetFromJsonAsync<UserDTO>(URL);
@@ -122,14 +131,15 @@ namespace Application.MVC.Controllers
 
                 MultipartFormDataContent Contents = new()
                 {
-                    { new StringContent(NewInput.Username!),                nameof(NewInput.Username) },
-                    { new StringContent(NewInput.Password ?? ""),           nameof(NewInput.Password) },
-                    { new StringContent(NewInput.FirstName ?? ""),          nameof(NewInput.FirstName) },
-                    { new StringContent(NewInput.LastName ?? ""),           nameof(NewInput.LastName) },
-                    { new StringContent(NewInput.Email ?? ""),              nameof(NewInput.Email) },
-                    { new StringContent(NewInput.Address ?? ""),            nameof(NewInput.Address) },
-                    { new StringContent(NewInput.PhoneNumber ?? ""),        nameof(NewInput.PhoneNumber) },
-                    { new StringContent(NewInput.Status.ToString() ?? "1"), nameof(NewInput.Status) },
+                    { new StringContent(NewInput.Username!),                                         nameof(NewInput.Username) },
+                    { new StringContent(NewInput.Password ?? ""),                                    nameof(NewInput.Password) },
+                    { new StringContent(NewInput.FirstName ?? ""),                                   nameof(NewInput.FirstName) },
+                    { new StringContent(NewInput.LastName ?? ""),                                    nameof(NewInput.LastName) },
+                    { new StringContent(NewInput.Email ?? ""),                                       nameof(NewInput.Email) },
+                    { new StringContent(NewInput.Address ?? ""),                                     nameof(NewInput.Address) },
+                    { new StringContent(NewInput.PhoneNumber ?? ""),                                 nameof(NewInput.PhoneNumber) },
+                    { new StringContent(NewInput.Status.ToString() ?? "1"),                          nameof(NewInput.Status) },
+                    { new StringContent(NewInput.RoleID.ToString() ?? DefaultValues.UserRoleGUID),   nameof(NewInput.RoleID) }
                 };
 
                 if (NewProfilePic != null)

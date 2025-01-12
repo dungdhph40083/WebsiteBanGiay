@@ -225,6 +225,10 @@ namespace Application.Data.Repositories
                 if (TargetVoucher == null) return ValidateErrorResult.VOUCHER_DOES_NOT_EXIST;
                 if (Shoppings.Sum(P => P.Price) < TargetVoucher.RequiredGrandTotal.GetValueOrDefault()) return ValidateErrorResult.VOUCHER_REQUIREMENT_FAIL;
                 if (TargetVoucher.UsesLeft == 0) return ValidateErrorResult.VOUCHER_RAN_OUT_OF_USES;
+                if (TargetVoucher.StartingAt > DateTime.UtcNow) return ValidateErrorResult.VOUCHER_IS_PREMATURE;
+                if (TargetVoucher.EndingAt < DateTime.UtcNow ||
+                    TargetVoucher.Status == 0 ||
+                    TargetVoucher.Status == 100) return ValidateErrorResult.VOUCHER_EXPIRED;
 
                 if (TargetUser.VoucherID != null)
                 {

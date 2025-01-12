@@ -3,6 +3,14 @@
 
 @{
     ViewData["Title"] = "Cập nhật người dùng";
+    var SessionUserID = ViewBag.UserID as Guid?;
+    var SessionUserIDRoute = ViewBag.UserIDRoute as Guid?;
+
+    var RolesBag = ViewBag.Roles as List<SelectListItem>;
+    if (SessionUserID == SessionUserIDRoute)
+    {
+        RolesBag = RolesBag?.Where(Bruh => Bruh.Value == Model.RoleID.GetValueOrDefault().ToString()).ToList();
+    }
 }
 
 <h1>Cập nhật người dùng</h1>
@@ -25,8 +33,8 @@ else
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-md-6">
-            <label asp-for="Username" class="form-label">Tên người dùng</label>
-            <input asp-for="Username" class="form-control" type="text" maxlength="30" required aria-label="Enter unique username">
+            <label asp-for="Username" class="form-label">Tên tài khoản</label>
+            <input asp-for="Username" class="form-control" type="text" maxlength="30" required readonly aria-label="Enter unique username">
             <span asp-validation-for="Username"></span>
         </div>
 
@@ -47,7 +55,7 @@ else
         </div>
         <div class="col-md-6">
             <label asp-for="RoleID" class="form-label">Vai trò</label>
-            <select asp-for="RoleID" class="form-control" aria-label="What permissions?" asp-items="@ViewBag.Roles">
+            <select asp-for="RoleID" class="form-control" aria-label="What permissions?" asp-items="@RolesBag">
             </select>
         </div>
     </div>

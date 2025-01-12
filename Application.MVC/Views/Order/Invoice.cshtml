@@ -61,8 +61,8 @@
                 <th>STT</th>
                 <th class="text-center">Tên sản phẩm</th>
                 <th class="text-center">Màu & kích cỡ</th>
-                <th class="text-right">Số lượng</th>
-                <th class="text-right">Đơn giá</th>
+                <th class="text-center">Số lượng</th>
+                <th class="text-center">Đơn giá</th>
                 <th class="text-right">Tổng giá</th>
             </tr>
         </thead>
@@ -75,8 +75,8 @@
                     <td class="text-center">
                         @Items[Idx].ProductDetail?.Color?.ColorName - Kích cỡ @Items[Idx].ProductDetail?.Size?.Name
                     </td>
-                    <td class="text-right">@Items[Idx].Quantity.GetValueOrDefault().ToString("#,##0")</td>
-                    <td class="text-right">@Items[Idx].Price.GetValueOrDefault().ToString("#,##0")</td>
+                    <td class="text-center">@Items[Idx].Quantity.GetValueOrDefault().ToString("#,##0")</td>
+                    <td class="text-center">@Items[Idx].Price.GetValueOrDefault().ToString("#,##0")</td>
                     <td class="text-right">@((Items[Idx].Price.GetValueOrDefault() * Items[Idx].Quantity.GetValueOrDefault()).ToString("#,##0"))</td>
                 </tr>
             }
@@ -162,7 +162,7 @@
         <i>Cảm ơn bạn vì đã mua hàng tại Cửa hàng Giày Adidas của chúng mình! <text>@("<3")</text></i>
     </div>
         <div class="text-center font-monospace-cascadia">
-            <i style="font-size:x-small">ID: @Infos.OrderID</i>
+            <i style="font-size:xx-small">@Infos.OrderID</i>
         </div>
     </div>
 </div>

@@ -1,0 +1,121 @@
+﻿@model List<Application.Data.Models.Voucher>
+
+<div class="container-fluid mt-5" style="width: 90%">
+    <div class="text-center mb-4">
+        <h1>Voucher khuyến mại</h1>
+        <p>Bạn có thể áp dụng ít nhất một Voucher cho mỗi đơn hàng - nhanh tay kẻo lỡ, vì chúng sẽ không dùng được nữa nếu quá hạn!</p>
+    </div>
+
+    <div class="row">
+    @if (Model.Count() > 0)
+    {
+        foreach (var Voucher in Model)
+        {
+            <div class="col-sm-6">
+                <div class="card shadow-lg mt-3" style="border-radius: 35px">
+                    <div class="row ml-1 mr-1">
+                        <div class="card-body col-sm-7">
+                            <h3 class="card-title">@Voucher.Description</h3>
+                            <p class="card-subtitle mb-2 text-muted">
+                                @if (Voucher.UseDiscountPrice)
+                                {
+                                    <text>Giảm <b>@Voucher.DiscountPrice.GetValueOrDefault().ToString("#,##0 VNĐ")</b> cho các đơn hàng từ <b>@Voucher.RequiredGrandTotal.GetValueOrDefault().ToString("#,##0 VNĐ")</b> trở lên!</text>
+                                }
+                                else
+                                {
+                                    <text>Giảm <b>@Voucher.DiscountPercent.GetValueOrDefault().ToString("N0")%</b> cho các đơn hàng từ <b>@Voucher.RequiredGrandTotal.GetValueOrDefault().ToString("#,##0 VNĐ")</b> trở lên!</text>
+                                }
+                            </p>
+                            @if (DateTime.UtcNow < Voucher.StartingAt.GetValueOrDefault())
+                            {
+                                <p class="card-text">Ra mắt vào: <span class="text-success">@Voucher.StartingAt.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</span><br />
+                                @{
+                                    var Span = (Voucher.StartingAt.GetValueOrDefault()) - DateTime.UtcNow;
+                                    if (Span > TimeSpan.Zero)
+                                    {
+                                        if ((int)Span.TotalDays > 0)
+                                        {
+                                            <text>(@((int)Span.TotalDays) ngày @((int)Span.TotalHours % 24) giờ)</text>
+                                        }
+                                        else if ((int)Span.TotalHours > 0)
+                                        {
+                                            <text>(@((int)Span.TotalHours) giờ @((int)Span.TotalMinutes % 60) phút)</text>
+                                        }
+                                        else if ((int)Span.TotalMinutes > 0)
+                                        {
+                                            <text>(@((int)Span.TotalMinutes) phút @((int)Span.TotalSeconds % 60) giây)</text>
+                                        }
+                                        else
+                                        {
+                                            <text>(@((int)Span.TotalSeconds) giây)</text>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <text>Đã bắt đầu</text>
+                                    }
+                                }
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="card-text">
+                                            Hạn sử dụng: <span class="text-danger">@Voucher.EndingAt.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</span><br />
+                                    @{
+                                        var Span = (Voucher.EndingAt.GetValueOrDefault()) - DateTime.UtcNow;
+                                        if (Span > TimeSpan.Zero)
+                                        {
+                                            if ((int)Span.TotalDays > 0)
+                                            {
+                                                <text>(@((int)Span.TotalDays) ngày @((int)Span.TotalHours % 24) giờ)</text>
+                                            }
+                                            else if ((int)Span.TotalHours > 0)
+                                            {
+                                                <text>(@((int)Span.TotalHours) giờ @((int)Span.TotalMinutes % 60) phút)</text>
+                                            }
+                                            else if ((int)Span.TotalMinutes > 0)
+                                            {
+                                                <text>(@((int)Span.TotalMinutes) phút @((int)Span.TotalSeconds % 60) giây)</text>
+                                            }
+                                            else
+                                            {
+                                                <text>(@((int)Span.TotalSeconds) giây)</text>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <text>Đã hết hạn</text>
+                                        }
+                                    }
+                                </p>
+                            }
+                        </div>
+                        <div class="col-sm-5 text-center">
+                            <button class="btn btn-primary btn-lg btn-block mt-lg-5" onclick="Copy2Clipboard('@Voucher.VoucherCode')" style="border-radius: 25px">Lấy mã</button>
+                            <small>Số lần dùng còn lại: @Voucher.UsesLeft.GetValueOrDefault().ToString("#,##0")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center">
+            <h3>Hiện đang chưa có Voucher nào.</h3>
+            <p>Hãy thường xuyên kiểm tra để đón chờ các ưu đãi đặc biệt khác!</p>
+        </div>
+    }
+    </div>
+</div>
+
+<script>
+    function Copy2Clipboard(VCode)
+    {
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(VCode);
+
+        // Alert the copied text
+        alert("Đã sao chép mã Voucher vào bảng ghi tạm!");
+    }
+</script>
