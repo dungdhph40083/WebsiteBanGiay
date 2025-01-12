@@ -28,33 +28,11 @@ namespace Application.Data.DTOs
         [EmailAddress(ErrorMessage = "Email sai!")]
         public string? Email { get; set; }
         public string? Address { get; set; }
-        // 
         [Length(9, 30, ErrorMessage = "SĐT quá ngắn hoặc quá dài!")]
         [RegularExpression(@"^\d*$", ErrorMessage = "SĐT không khớp.")]
         public string? PhoneNumber { get; set; }
-        [Required(ErrorMessage = "Không khớp.")]
-        public byte? Status { get; set; }
+        //[Required(ErrorMessage = "Không khớp.")]
+        //public byte? Status { get; set; }
 
-
-
-
-
-
-
-
-
-
-
-        /*
-         * I don't know why I'm constantly getting déjà vu from just looking at this code
-         * Or when doing something else...
-         * Or when drawing anything...
-         * Or when chatting...
-         * Or when modding a game...
-         * Or when just trying to rest...
-         * Or when I'm figuring out why I'm having the weirdest déjà vus ever...
-         * ...
-         * Am I going crazy?
-         */
     }
 }

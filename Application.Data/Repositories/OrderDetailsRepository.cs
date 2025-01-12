@@ -71,6 +71,29 @@ namespace Application.Data.Repositories
                     .SingleOrDefaultAsync(Crayfish => Crayfish.OrderDetailID == id);
         }
 
+        public async Task<List<OrderDetail>> GetDetailsByProductDetailID(Guid ID)
+        {
+            return await _context.OrderDetails
+
+                .Include(Pikachu => Pikachu.Sale)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Product : null)
+                .Include(Pikachu => Pikachu.Sale)
+                    .ThenInclude(Sceptile => Sceptile != null ? Sceptile.Category : null)
+
+                .Include(Pikachu => Pikachu.Order)
+
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Product : null)
+                        .ThenInclude(Cinderace => Cinderace != null ? Cinderace.Image : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Category : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Color : null)
+                .Include(Pikachu => Pikachu.ProductDetail)
+                    .ThenInclude(Buizel => Buizel != null ? Buizel.Size : null)
+                .Where(Crayfish => Crayfish.ProductDetailID == ID).ToListAsync();
+        }
+
         public async Task DeleteOrderDetailsFromOrderID(Guid OrderID)
         {
             var Targets = await _context.OrderDetails
@@ -125,11 +148,12 @@ namespace Application.Data.Repositories
         public async Task<List<OrderDetail>> ImportFromUserCart(Guid UserID, Guid OrderID)
         {
             var GetOrder = await _context.Orders.FindAsync(OrderID);
+            var GetUser = await _context.Users.FindAsync(UserID) ?? new();
+            var GetVoucher = await _context.Vouchers.FindAsync(GetUser.VoucherID);
             if (GetOrder == null) return new();
 
             var MyShoppingCart = await _context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : null)
                 .Include(UU => UU.ProductDetail)
@@ -156,7 +180,7 @@ namespace Application.Data.Repositories
                         Quantity = CartItem.QuantityCart,
                         Price = CartItem.ProductDetail?.Product?.Price,
                         TotalUnitPrice = CartItem.ProductDetail?.Product?.Price * CartItem.QuantityCart,
-                        SumTotalPrice = CartItem.ProductDetail?.Product?.Price * CartItem.QuantityCart - (CartItem.Voucher?.DiscountPrice ?? 0), // Tương tự...
+                        SumTotalPrice = CartItem.ProductDetail?.Product?.Price * CartItem.QuantityCart, // Tương tự...
                         CreatedAt = DateTime.UtcNow
                     };
                     MyOrders.Add(NewDetail);
@@ -166,7 +190,26 @@ namespace Application.Data.Repositories
 
                 _context.Orders.Attach(GetOrder);
 
-                GetOrder.GrandTotal = MyOrders.Sum(S => S.SumTotalPrice);
+                GetOrder.RawTotal = MyOrders.Sum(S => S.SumTotalPrice);
+
+                if (GetVoucher != null)
+                {
+                    GetOrder.VoucherID = GetVoucher.VoucherID;
+                    if (GetVoucher.UseDiscountPrice)
+                    {
+                        GetOrder.DiscountValue = GetVoucher.DiscountPrice;
+                    }
+                    else
+                    {
+                        GetOrder.DiscountValue = (long)(GetOrder.RawTotal * GetVoucher.DiscountPercent / 100).GetValueOrDefault();
+                    }
+                    GetOrder.GrandTotal = GetOrder.RawTotal - GetOrder.DiscountValue;
+                }
+                else
+                {
+                    GetOrder.DiscountValue = 0;
+                    GetOrder.GrandTotal = GetOrder.RawTotal;
+                }
 
                 _context.Update(GetOrder);
                 await _context.SaveChangesAsync();
@@ -174,6 +217,17 @@ namespace Application.Data.Repositories
                 return MyOrders;
             }
             else return [];
+        }
+
+        public async Task DeleteByProductID(Guid DeleteByProductID)
+        {
+            var Target = await _context.OrderDetails.Where(SDF => SDF.ProductDetail!.ProductID == DeleteByProductID).ToListAsync();
+            if (Target != null)
+            {
+                _context.OrderDetails.AttachRange(Target);
+                _context.RemoveRange(Target);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

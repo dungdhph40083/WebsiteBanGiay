@@ -12,6 +12,8 @@ using Application.Data.DTOs;
 using NuGet.Protocol;
 using System.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Policy;
 
 
 namespace Application.MVC.GeneralPublic.Controllers
@@ -56,15 +58,14 @@ namespace Application.MVC.GeneralPublic.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, UserDTO updatedUser, [FromForm] IFormFile? ProfilePicture)
+        public async Task<IActionResult> Edit( UserDTO updatedUser, [FromForm] IFormFile? ProfilePicture)
         {
             if (updatedUser == null)
             {
                 return BadRequest("Invalid user data.");
             }
 
-            id = GetCurrentUserId();
+           Guid id = GetCurrentUserId();
 
             string requestURL = $"https://localhost:7187/api/User/{id}";
 
@@ -76,7 +77,6 @@ namespace Application.MVC.GeneralPublic.Controllers
         { new StringContent(updatedUser.Address ?? string.Empty), nameof(updatedUser.Address) },
         { new StringContent(updatedUser.LastName ?? string.Empty), nameof(updatedUser.LastName) },
         { new StringContent(updatedUser.FirstName ?? string.Empty), nameof(updatedUser.FirstName) },
-        { new StringContent(updatedUser.Status.GetValueOrDefault().ToString() ?? "1"), nameof(updatedUser.Status) },
     };
 
             if (ProfilePicture != null)
@@ -86,7 +86,12 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
 
             var response = await Client.PutAsync(requestURL, contents);
-
+      
+            var Response = await Client.GetFromJsonAsync<User>(requestURL);
+            if (Response != null)
+            {
+                HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName ?? "default-avatar.png");
+            }
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -98,6 +103,16 @@ namespace Application.MVC.GeneralPublic.Controllers
                 return View(updatedUser);
             }
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("CookieAuthentication"); 
+            HttpContext.Session.Clear(); 
+
+            return RedirectToAction("Index", "Home");
+        }
+
         private Guid GetCurrentUserId()
         {
             string token = HttpContext.Session.GetString("JwtToken");

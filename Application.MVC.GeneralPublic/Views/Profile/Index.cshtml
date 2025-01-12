@@ -73,17 +73,15 @@
             </div>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label class="font-weight-bold">Status:</label>
-            </div>
-            <div class="col-md-8">
-                <p>@(Model.Status == 1 ? "Active" : "Inactive")</p>
-            </div>
+        <div class="text-center mt-4">
+            <a asp-action="Edit" style="border-radius: 4px;" class="btn btn-primary">Edit Profile</a>
         </div>
 
-        <div class="text-center mt-4">
-            <a asp-action="Edit" class="btn btn-primary">Edit Profile</a>
+        <div class="text-right mt-4">        
+            @using (Html.BeginForm("Logout", "Profile", FormMethod.Post))
+            {
+                <button style="border-radius: 4px;" type="submit" class="btn btn-danger ml-2">Logout</button>
+            }
         </div>
     </div>
 </div>

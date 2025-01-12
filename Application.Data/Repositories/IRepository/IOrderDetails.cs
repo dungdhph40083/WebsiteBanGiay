@@ -13,7 +13,9 @@ namespace Application.Data.Repositories.IRepository
         Task<List<OrderDetail>> GetAll();
         Task<OrderDetail?> GetById(Guid id);
         Task<List<OrderDetail>> GetOrderDetailsFromOrderID(Guid OrderID);
+        Task<List<OrderDetail>> GetDetailsByProductDetailID(Guid ID);
         Task DeleteOrderDetailsFromOrderID(Guid OrderID);
+        Task DeleteByProductID(Guid DeleteByProductID);
         Task<OrderDetail> Add(OrderDetailDto orderDetails);
         Task<List<OrderDetail>> ImportFromUserCart(Guid UserID, Guid OrderID);
     }

@@ -1,10 +1,37 @@
-﻿@model IEnumerable<Application.Data.Models.Voucher>;
+﻿@using Application.Data.Enums
+@model IEnumerable<Application.Data.Models.Voucher>;
 
 @{
     ViewData["Title"] = "Danh sách Voucher";
+    string? SortByTime = ViewData["FilterValueByTime"] as string;
+    string? SortByLook = ViewData["FilterValueByLook"] as string;
 }
 
 <h1>Danh sách Voucher</h1>
+
+<div class="row mb-2">
+    <div class="col-12">
+        <input type="text" id="SearchInput" class="form-control text-monospace-cascadia" placeholder="Tìm kiếm Voucher... (nhập mã Voucher)" onkeyup="SearchVouchers()">
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-7">
+        <div class="alert alert-light rounded-5 text-center">
+            <a asp-route-SortByLook="@SortByLook" asp-route-SortByTime="@(null)" class="btn @(string.IsNullOrWhiteSpace(SortByTime) ? "btn-primary text-light" : "btn-outline-primary")">Tất cả</a>
+            <a asp-route-SortByLook="@SortByLook" asp-route-SortByTime="@VoucherFilters.VOUCHER_COMING_SOON" class="btn @(SortByTime == VoucherFilters.VOUCHER_COMING_SOON ? "btn-warning text-light" : "btn-outline-warning")">Sắp diễn ra</a>
+            <a asp-route-SortByLook="@SortByLook" asp-route-SortByTime="@VoucherFilters.VOUCHER_ONGOING" class="btn @(SortByTime == VoucherFilters.VOUCHER_ONGOING ? "btn-success text-light" : "btn-outline-success")">Đang diễn ra</a>
+            <a asp-route-SortByLook="@SortByLook" asp-route-SortByTime="@VoucherFilters.VOUCHER_DIED" class="btn @(SortByTime == VoucherFilters.VOUCHER_DIED ? "btn-danger text-light" : "btn-outline-danger ")">Đã kết thúc</a>
+        </div>
+    </div>
+    <div class="col-5">
+        <div class="alert alert-light rounded-5 text-center">
+            <a asp-route-SortByTime="@SortByTime" asp-route-SortByLook="@(null)" class="btn @(string.IsNullOrWhiteSpace(SortByLook) ? "btn-primary text-light" : "btn-outline-primary")">Tất cả</a>
+            <a asp-route-SortByTime="@SortByTime" asp-route-SortByLook="@VoucherFilters.VOUCHER_PUBLIC" class="btn @(SortByLook == VoucherFilters.VOUCHER_PUBLIC ? "btn-success text-light" : "btn-outline-success")">Công khai</a>
+            <a asp-route-SortByTime="@SortByTime" asp-route-SortByLook="@VoucherFilters.VOUCHER_PRIVATE" class="btn @(SortByLook == VoucherFilters.VOUCHER_PRIVATE ? "btn-danger text-light" : "btn-outline-danger ")">Không công khai</a>
+        </div>
+    </div>
+</div>
+
 <a type="button" class="btn btn-success mb-2" asp-action="Create">Tạo mới</a>
 
 @if (Model.Count() != 0)
@@ -13,27 +40,82 @@
         <thead>
             <tr>
                 <th>Mã</th>
-                <th>Danh mục</th>
-                <th>Sản phẩm</th>
                 <th>Giảm giá</th>
                 <th>Còn lại</th>
+                <th>Loại Voucher</th>
                 <th>Bắt đầu</th>
                 <th>Kết thúc</th>
+                <th>Trạng thái</th>
                 <th>Thao tác</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="VouchersTableBody">
             @foreach (var Entry in Model)
             {
                 <tr>
                     <td><i class="font-monospace-cascadia">@Entry.VoucherCode</i></td>
-                    <td>@(Entry.Category?.CategoryName ?? "Không có")</td>
-                    <td>@(Entry.DiscountPercent <= 0 ? "Không!%" : $"{Entry.DiscountPercent}%")</td>
-                    <td>@(Entry.UsesLeft.GetValueOrDefault().ToString("#,##0"))</td>
-                    <td>@(Entry.StartingAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss"))</td>
                     <td>
-                        @(Entry.EndingAt.GetValueOrDefault().ToString("d/M/yyyy H:mm:ss"))<br />
-                        (@((Entry.EndingAt.GetValueOrDefault() - Entry.StartingAt.GetValueOrDefault()).TotalSeconds) giây còn lại)
+                        @{
+                            if (Entry.UseDiscountPrice)
+                            {
+                                @(Entry.DiscountPrice <= 0 ? "Không!" : $"{Entry.DiscountPrice.GetValueOrDefault().ToString("#,##0")}")
+                            }
+                            else
+                            {
+                                @(Entry.DiscountPercent <= 0 ? "Không!" : $"{Entry.DiscountPercent.GetValueOrDefault().ToString("N0")}%")
+                            }
+                        }
+                    </td>
+                    <td>@(Entry.UsesLeft.GetValueOrDefault().ToString("#,##0"))</td>
+                    <td>
+                        @if (Entry.Status.GetValueOrDefault() < 100)
+                        {
+                            <span class="badge badge-success">Công khai</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Riêng tư</span>
+                        }
+                    </td>
+                    <td>@(Entry.StartingAt.GetValueOrDefault().ToLocalTime().ToString("H:mm:ss d/M/yyyy"))</td>
+                    <td>
+                        @(Entry.EndingAt.GetValueOrDefault().ToLocalTime().ToString("H:mm:ss d/M/yyyy"))<br />
+                    </td>
+                    <td>
+                        @if (Entry.Status == (byte)VoucherStatus.Active || Entry.Status == (byte)VoucherStatus.ActivePrivate)
+                        {
+                            @if (DateTime.UtcNow > Entry.EndingAt.GetValueOrDefault())
+                            {
+                                <span class="badge badge-danger">Đã hết hạn</span>
+                            }
+                            else if (Entry.StartingAt.GetValueOrDefault() <= DateTime.UtcNow && DateTime.UtcNow <= Entry.EndingAt.GetValueOrDefault())
+                            {
+                                <span class="badge badge-success">Đang diễn ra</span>
+                            }
+                            else if (DateTime.UtcNow < Entry.StartingAt.GetValueOrDefault())
+                            {
+                                <span class="badge badge-warning">Sắp diễn ra</span>
+                            }
+                            else
+                            {
+                                <p>N/A</p>
+                            }
+                        }
+                        else if (Entry.Status == (byte)VoucherStatus.Disabled || Entry.Status == (byte)VoucherStatus.DisabledPrivate)
+                        {
+                            if (Entry.StartingAt.GetValueOrDefault() <= DateTime.UtcNow && DateTime.UtcNow <= Entry.EndingAt.GetValueOrDefault())
+                            {
+                                <span class="badge badge-warning">Đã tạm dừng</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">Đã bị hủy</span>
+                            }
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
                     </td>
                     <td>
                         <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.VoucherID)">Sửa</a>
@@ -47,8 +129,15 @@
 }
 else
 {
-    <h1 class="text-center">Chưa có Voucher nào.</h1>
-    <p class="text-center">Bắt đầu tạo Voucher bằng cách nhấn vào "<b>Tạo mới</b>"!</p>
+    @if (SortByTime != null || SortByLook != null)
+    {
+        <h1 class="text-center">Không tìm thấy Voucher nào.</h1>
+    }
+    else
+    {
+        <h1 class="text-center">Chưa có Voucher nào.</h1>
+        <p class="text-center">Bắt đầu tạo Voucher bằng cách nhấn vào "<b>Tạo mới</b>"!</p>
+    }
 }
 
 <!-- Modal -->
@@ -72,3 +161,35 @@ else
         </div>
     </div>
 </div>
+
+<script>
+    /*
+     *  thanks for the free javascript search snippet 2
+     *  __  __   ____     ____   _   __   __ __    __      22222
+     *  \ \/ /  / __ \   /  _/  / | / /  / //_/   / /     22   22
+     *   \  /  / / / /   / /   /  |/ /  / ,<     / /         22
+     *   / /  / /_/ /  _/ /   / /|  /  / /| |   /_/       22
+     *  /_/   \____/  /___/  /_/ |_/  /_/ |_|  (_)       22222222
+     *
+     */
+
+
+    function SearchVouchers() {
+        var input = document.getElementById('SearchInput');
+        var filter = input.value.toLowerCase();
+        var table = document.getElementById('VouchersTableBody');
+        var rows = table.getElementsByTagName('tr');
+
+        for (var i = 0; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName('td');
+            var orderName = cells[0].textContent || cells[0].innerText; // Cột mã đơn là cột 1 (index 0)
+
+            // Kiểm tra xem tên sản phẩm có chứa từ khóa tìm kiếm hay không
+            if (orderName.toLowerCase().indexOf(filter) > -1) {
+                rows[i].style.display = ""; // Hiển thị nếu khớp
+            } else {
+                rows[i].style.display = "none"; // Ẩn nếu không khớp
+            }
+        }
+    }
+</script>

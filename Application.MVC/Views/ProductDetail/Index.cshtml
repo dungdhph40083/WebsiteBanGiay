@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Sản phẩm chi tiết";
+    int Index = 0;
 }
 
 <!-- Link to Bootstrap CSS (Ensure you have the correct path or use CDN) -->
@@ -135,7 +136,7 @@
 
 <!-- Form tìm kiếm sản phẩm -->
 <div class="d-flex justify-content-center my-3">
-    <div class="input-group w-50">
+    <div class="input-group w-75">
         <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên sản phẩm" value="@ViewBag.SearchTerm">
         <div class="input-group-append">
             <button class="btn btn-primary" id="searchBtn">
@@ -145,21 +146,20 @@
     </div>
 </div>
 
-<!-- Bộ lọc trạng thái với màu sắc và viền -->
 <div class="d-flex justify-content-center my-3">
     <div class="form-check form-check-inline border border-primary rounded p-2 mx-1">
-        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusAll" value="all"
-        @(ViewBag.CurrentStatus == "all" ? "checked" : "")>
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusAll" value="All"
+        @(ViewBag.CurrentStatus == "All" ? "checked" : "")>
         <label class="form-check-label text-primary" for="statusAll">Tất cả</label>
     </div>
     <div class="form-check form-check-inline border border-success rounded p-2 mx-1">
-        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusActive" value="1"
-        @(ViewBag.CurrentStatus == "1" ? "checked" : "")>
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusActive" value="Active"
+        @(ViewBag.CurrentStatus == "Active" ? "checked" : "")>
         <label class="form-check-label text-success" for="statusActive">Đang bán</label>
     </div>
     <div class="form-check form-check-inline border border-danger rounded p-2 mx-1">
-        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusInactive" value="0"
-        @(ViewBag.CurrentStatus == "0" ? "checked" : "")>
+        <input class="form-check-input status-radio" type="radio" name="statusFilter" id="statusInactive" value="Inactive"
+        @(ViewBag.CurrentStatus == "Inactive" ? "checked" : "")>
         <label class="form-check-label text-danger" for="statusInactive">Dừng bán</label>
     </div>
 </div>
@@ -178,40 +178,35 @@
                 <th>#</th> <!-- Serial number header -->
                 <th>Tên sản phẩm</th>
                 <th>Ảnh SP</th>
-                <th>Kích cỡ</th>
-                <th>Màu</th>
                 <th>Danh mục</th>
                 <th>Chất liệu</th>
-                <th>Số lượng còn lại</th>
                 <th>Thời gian cập nhật</th>
                 <th>Trạng thái</th>
                 <th>Hành động</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var Entry in Model.Select((value, index) => new { value, index }))
+            @foreach (var Entry in Model)
             {
+                Index++;
                 <tr>
-                    <td>@(Entry.index + 1 + (ViewBag.CurrentPage - 1) * ViewBag.PageSize)</td>
-                    <td>@Entry.value.Product?.Name</td>
+                    <td>@(Index + ((ViewBag.CurrentPage ?? 1) - 1) * (ViewBag.PageSize ?? 10))</td>
+                    <td>@Entry.Product?.Name</td>
                     <td>
-                        @if (Entry.value.Product?.Image != null)
+                        @if (Entry.Product?.Image != null)
                         {
-                            <img src="https://localhost:7187/Images/@(Entry.value.Product.Image.ImageFileName)" class="img-thumbnail" alt="Product Image" />
+                            <img src="https://localhost:7187/Images/@(Entry.Product.Image.ImageFileName)" class="img-thumbnail" alt="Product Image" />
                         }
                         else
                         {
                             <span>Chưa có ảnh</span>
                         }
                     </td>
-                    <td>@Entry.value.Size?.Name</td>
-                    <td>@Entry.value.Color?.ColorName</td>
-                    <td>@Entry.value.Category?.CategoryName</td>
-                    <td>@Entry.value.Material</td>
-                    <td>@Entry.value.Quantity.GetValueOrDefault().ToString("#,0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
-                    <td>@Entry.value.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy | HH:mm")</td>
+                    <td>@Entry.Category?.CategoryName</td>
+                    <td>@Entry.Material</td>
+                    <td>@Entry.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy | HH:mm")</td>
                     <td>
-                        @if (Entry.value.Status == 1)
+                        @if (Entry.Status == 1)
                         {
                             <span class="badge badge-success">Đang bán</span>
                         }
@@ -225,21 +220,21 @@
                             <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-ellipsis-v"></i>
                             </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item text-warning" asp-action="Edit" asp-route-ID="@Entry.value.ProductDetailID">
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item text-warning" asp-action="Edit" asp-route-ID="@Entry.Product?.ProductID">
                                     <i class="fas fa-edit"></i> Sửa
                                 </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-success" asp-action="Details" asp-route-ID="@Entry.value.ProductDetailID">
+ @*                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-success" asp-action="Details" asp-route-ID="@Entry.Product?.ProductID">
                                     <i class="fas fa-info-circle"></i> Chi tiết
-                                </a>
+                                </a> *@
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-primary" href="#" onclick="toggleStatus('@Entry.value.ProductDetailID')">
+                                <a class="dropdown-item text-primary" href="#" onclick="toggleStatus('@Entry.ProductID')">
                                     <i class="fas fa-toggle-on"></i> Đổi trạng thái
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@Entry.value.ProductDetailID" data-controller="ProductDetail" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
-                                    <i class="fas fa-trash-alt"></i> Xóa
+                                <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@Entry.ProductID" data-controller="ProductDetail" data-action="TryDeleteWhole" data-toggle="modal" data-target="#ModalDelete">
+                                    <i class="fas fa-trash-alt"></i> Xóa tất
                                 </button>
                             </div>
                         </div>
@@ -305,7 +300,7 @@ else
 <script>
     document.getElementById('searchBtn').addEventListener('click', function () {
         const searchTerm = document.getElementById('searchInput').value;
-        const url = `/ProductDetail/Index?page=1&pageSize=@ViewBag.PageSize&status=@ViewBag.CurrentStatus&searchTerm=${searchTerm}`;
+        const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=@ViewBag.CurrentStatus&SearchQuery=${searchTerm}`;
         window.location.href = url;
     });
     // Tự động tìm kiếm khi người dùng nhấn Enter
@@ -322,7 +317,7 @@ else
     document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
         radio.addEventListener('change', function () {
             const selectedStatus = this.value;
-            const url = `/ProductDetail/Index?page=1&pageSize=@ViewBag.PageSize&status=${selectedStatus}`;
+            const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=${selectedStatus}`;
             window.location.href = url;
         });
     });

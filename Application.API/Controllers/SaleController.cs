@@ -11,7 +11,6 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class SaleController : ControllerBase
     {
         private readonly ISale Salerepos;
@@ -21,20 +20,17 @@ namespace Application.API.Controllers
             this.Salerepos = Salerepos;
         }
         [HttpGet]
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<List<Sale>>> get()
         {
             return await Salerepos.GetSale();
         }
         [HttpGet("{ID}")]
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<Sale?>> Get(Guid ID)
         {
             return await Salerepos.GetSalelByID(ID);
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Sale>> Post([FromBody] SaleDTO NewSale)
         {
             var Response = await Salerepos.CreateNew(NewSale);
@@ -42,14 +38,12 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{ID}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Sale?>> Put(Guid ID, [FromBody] SaleDTO UpdateSale)
         {
             return await Salerepos.UpdateExisting(ID, UpdateSale);
         }
 
         [HttpDelete("{ID}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await Salerepos.DeleteExisting(ID);

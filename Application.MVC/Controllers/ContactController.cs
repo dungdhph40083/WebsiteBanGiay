@@ -33,7 +33,7 @@ namespace Application.MVC.Controllers
         [HttpPut]
         public async Task<IActionResult> ToggleStatus(Guid id)
         {
-            string requestURL = $@"https://localhost:7187/api/CustomerSupportMessage/{id}/toggle-status";
+            string requestURL = $@"https://localhost:7187/api/CustomerSupportMessage/{id}/ToggleStatus";
             var response = await client.PutAsync(requestURL, null);
 
             if (response.IsSuccessStatusCode)

@@ -16,7 +16,6 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUser UserRepo;
@@ -115,7 +114,6 @@ namespace Application.API.Controllers
 
         // cập nhật người dùng (1 cái)
         [HttpPut("{ID}")]
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserDTO UpdatedUser, IFormFile? NewProfilePic)
         {
             if (NewProfilePic != null)
@@ -140,15 +138,12 @@ namespace Application.API.Controllers
 
         // cập nhật người dùng (1 cái) (2)
         [HttpPatch("Toggle/{ID}")]
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult> ToggleUser(Guid ID)
         {
             bool Result = await UserRepo.ToggleUser(ID);
             if (Result) return Ok("SUCCESS");
             else return BadRequest("FAILURE");
         }
-        [Authorize(Roles = "User,Admin")]
-        // ko dùng nhưng cần thiết để xóa mấy cái người dùng ma đi
         [HttpDelete("{ID}")]
         public async Task<ActionResult> DeleteUser(Guid ID)
         {

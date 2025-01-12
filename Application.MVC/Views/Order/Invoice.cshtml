@@ -9,7 +9,16 @@
     var Items = ViewBag.Grrrrrrrrrr as List<Application.Data.Models.OrderDetail> ?? new List<Application.Data.Models.OrderDetail>();
 }
 
-<button class="btn btn-primary" onclick="GoPrint()">In hóa đơn</button>
+<div class="row">
+    <div class="col-md-6">
+    <br/>
+        <button class="btn btn-primary" onclick="GoPrint()">In hóa đơn</button>
+    </div>
+    <div class="col-md-6 text-right">
+    <b>Địa chỉ</b>
+        <input id="CustomAddressInput" onkeyup="UpdateAddress()" maxlength="128" onkeypress="UpdateAddress()" class="form-control w-100 text-right align-right" placeholder="Ghi địa chỉ cửa hàng (nếu có)" value="Số 13, đường Trịnh Văn Bô, quận Nam Từ Liêm, TP. Hà Nội" />
+    </div>
+</div>
 <hr />
 <div id="PrintView" class="container-fluid">
     <div class=" pt-5 pb-3 pl-4 pr-4">
@@ -27,7 +36,7 @@
         </div>
         <div class="col-sm-4 text-right">
             <b style="color: red">Cửa hàng Giày Adidas</b>
-            <p>Địa chỉ: Số 11 Trịnh Văn Bô, ....., Hà Nội</p>
+            <p>Địa chỉ: <span id="CustomAddress">Số 13, Trịnh Văn Bô, Hà Nội</span></p>
         </div>
     </div>
     <hr />
@@ -50,10 +59,11 @@
         <thead>
             <tr>
                 <th>STT</th>
-                <th>Tên sản phẩm</th>
-                <th>Số lượng</th>
-                <th>Đơn giá</th>
-                <th>Tổng giá</th>
+                <th class="text-center">Tên sản phẩm</th>
+                <th class="text-center">Màu & kích cỡ</th>
+                <th class="text-right">Số lượng</th>
+                <th class="text-right">Đơn giá</th>
+                <th class="text-right">Tổng giá</th>
             </tr>
         </thead>
         <tbody>
@@ -61,26 +71,46 @@
             {
                 <tr>
                     <td>@(Idx + 1)</td>
-                    <td>@Items[Idx].ProductDetail?.Product?.Name <text>[(Kích cỡ)]</text></td>
-                    <td>@Items[Idx].Quantity.GetValueOrDefault().ToString("#,##0")</td>
-                    <td>@Items[Idx].Price.GetValueOrDefault().ToString("#,##0")</td>
-                    <td>@((Items[Idx].Price.GetValueOrDefault() * Items[Idx].Quantity.GetValueOrDefault()).ToString("#,##0"))</td>
+                    <td class="text-center">@Items[Idx].ProductDetail?.Product?.Name</td>
+                    <td class="text-center">
+                        @Items[Idx].ProductDetail?.Color?.ColorName - Kích cỡ @Items[Idx].ProductDetail?.Size?.Name
+                    </td>
+                    <td class="text-right">@Items[Idx].Quantity.GetValueOrDefault().ToString("#,##0")</td>
+                    <td class="text-right">@Items[Idx].Price.GetValueOrDefault().ToString("#,##0")</td>
+                    <td class="text-right">@((Items[Idx].Price.GetValueOrDefault() * Items[Idx].Quantity.GetValueOrDefault()).ToString("#,##0"))</td>
                 </tr>
             }
         </tbody>
     </table>
     <br />
-    <div class="row">
-        <div class="col-sm-6 text-left"><b>Giảm giá</b>: </div>
-        <div class="col-sm-6 text-right">@(0)</div>
-    </div>
+
+        @if (Infos.VoucherID != null)
+        {
+            <div class="row">
+                <div class="col-sm-6 text-left"><b>Thành tiền</b>: </div>
+                <div class="col-sm-6 text-right">@((Infos?.RawTotal.GetValueOrDefault().ToString("#,##0")))</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 text-left"><b>Giảm giá</b>: </div>
+                <div class="col-sm-6 text-right">
+                    @if (Infos!.Voucher!.UseDiscountPrice)
+                    {
+                        <text>-@Infos?.Voucher.DiscountPrice.GetValueOrDefault().ToString("#,##0")</text>
+                    }
+                    else
+                    {
+                        <text>-@Infos?.Voucher.DiscountPercent.GetValueOrDefault().ToString("N0")%</text>
+                    }
+                </div>
+            </div>
+        }
     <div class="row">
         <div class="col-sm-6 text-left"><b>Phí vận chuyển</b>: </div>
-        <div class="col-sm-6 text-right">@((Items.Count() > 1 ? ((Items.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí"))</div>
+        <div class="col-sm-6 text-right">@*((Items.Count() > 1 ? ((Items.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí"))*@ Miễn phí</div>
     </div>
     <div class="row">
         <div class="col-sm-6 text-left"><b>Tổng tiền phải thanh toán</b>: </div>
-        <div class="col-sm-6 text-right">@((Infos?.GrandTotal + (Items.Count() - 1) * 1000).GetValueOrDefault().ToString("#,##0"))</div>
+        <div class="col-sm-6 text-right">@((Infos?.GrandTotal/*  + (Items.Count() - 1) * 1000) */.GetValueOrDefault().ToString("#,##0")))</div>
     </div>
     <div class="row">
         <div class="col-sm-6 text-left"><b>Trạng thái đơn</b>: </div>
@@ -129,7 +159,7 @@
     </div>
     <br /><br />
     <div class="text-center">
-        <i>Cảm ơn bạn vì đã mua hàng tại Cửa hàng Giày Adidas của chúng mình! <text><3</text></i>
+        <i>Cảm ơn bạn vì đã mua hàng tại Cửa hàng Giày Adidas của chúng mình! <text>@("<3")</text></i>
     </div>
         <div class="text-center font-monospace-cascadia">
             <i style="font-size:x-small">ID: @Infos.OrderID</i>
@@ -148,6 +178,10 @@
         WinPrint.document.close();
         WinPrint.focus();
         WinPrint.print();
-        WinPrint.close();
+    }
+
+    function UpdateAddress()
+    {
+        document.getElementById('CustomAddress').innerText = document.getElementById('CustomAddressInput').value;
     }
 </script>

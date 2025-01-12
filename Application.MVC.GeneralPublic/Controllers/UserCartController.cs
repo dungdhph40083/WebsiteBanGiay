@@ -1,7 +1,9 @@
 ﻿using Application.Data.Enums;
 using Application.Data.Models;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using NuGet.Protocol;
 using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -22,9 +24,13 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<ActionResult> Index()
         {
             Guid ID = GetCurrentUserId();
-            string URL = $@"HTTPS://LOCALHOST:7187/API/SHOPPINGCART/{ID}";
+            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{ID}";
+
+            string URL = $@"https://localhost:7187/api/ShoppingCart/User/{ID}";
 
             var Response = await _httpClient.GetFromJsonAsync<List<ShoppingCart>>(URL);
+            var Voucher = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
+            ViewBag.VoucherInfo = Voucher;
             return View(Response);
         }
 
@@ -53,12 +59,20 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> UpdateWholeCart(List<ShoppingCart> BigCart)
         {
+            Guid ID = GetCurrentUserId();
 
             foreach (var Item in BigCart)
             {
                 string URL = $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{Item.ProductDetailID}?Quantity={Item.QuantityCart ?? 0}&AdditionMode=false";
 
                 var Response = await Client.PutAsync(URL, null);
+            }
+
+            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{ID}";
+            var VoucherChecker = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
+            if (VoucherChecker != null)
+            {
+                var Response = await Client.PatchAsync($@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{ID}?VoucherCode={VoucherChecker.VoucherCode}", null);
             }
 
             return RedirectToAction(nameof(Index));
@@ -70,24 +84,22 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             try
             {
-                string URL = $@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{ID}?VoucherCode={VoucherCode}";
-                var Response = await Client.PatchAsync(URL, null);
-            }
-            catch (Exception Exc)
-            {
-                Console.WriteLine($"{Exc.Message} ({Exc.HResult})");
-                throw;
-            }
-            return RedirectToAction(nameof(Index));
-        }
+                Console.WriteLine($"\nUser ID is {ID}\nVoucher code is {VoucherCode}\n");
+                Console.WriteLine($"Voucher code is null or white space: {string.IsNullOrWhiteSpace(VoucherCode)}");
 
-        public async Task<ActionResult> UnapplyVoucher()
-        {
-            Guid ID = GetCurrentUserId();
-            try
-            {
-                string URL = $@"https://localhost:7187/api/ShoppingCart/UnapplyVoucher/{ID}";
+                string URL = $@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{ID}?VoucherCode={VoucherCode}";
+    
                 var Response = await Client.PatchAsync(URL, null);
+
+                var Msg = Response.Content.ReadAsStringAsync();
+                if (Msg.Result == SuccessResult.VOUCHER_APPLIANCE_SUCCESS)
+                {
+                    ViewBag.Success = "Sử dụng Voucher thành công!";
+                }
+                if (Msg.Result == SuccessResult.VOUCHER_DISCARDED_SUCCESS)
+                {
+                    ViewBag.Success = "Bỏ Voucher thành công!";
+                }
             }
             catch (Exception Exc)
             {

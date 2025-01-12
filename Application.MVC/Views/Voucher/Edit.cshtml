@@ -10,12 +10,6 @@
 <form asp-action="Edit" method="post">
     <div class="row">
         <div class="col-md-4">
-            <label asp-for="CategoryID" class="form-label">Danh mục</label>
-            <select asp-for="CategoryID" class="custom-select" aria-label="Select category to assign to" asp-items="@ViewBag.Catgs">
-                <option selected value=null>(Chưa chọn)</option>
-            </select>
-        </div>
-        <div class="col-md-4">
             <label asp-for="VoucherCode" class="form-label">Mã Voucher</label>
             <input asp-for="VoucherCode" class="form-control font-monospace-cascadia" required aria-label="Input voucher code to use" />
             <span>Mã Voucher phải độc nhất và không chứa ký tự đặc biệt!</span>
@@ -26,34 +20,56 @@
                    aria-label="Input how many uses this voucher can be used. Select -1 for INFINITE USES!!!" />
             <span>Điền <b>-1</b> để có vô số Voucher này.</span>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label asp-for="RequiredGrandTotal" class="form-label">Yêu cầu tổng giá tối thiểu</label>
             <input asp-for="RequiredGrandTotal" class="form-control" type="number" placeholder="0" step="100" min="0" max="@(1e15)" aria-label="" />
             <span>Tối đa: 1,000,000,000,000.</span>
         </div>
-        <div class="col-md-6">
-            <label asp-for="DiscountPercent" class="form-label">Giảm %</label>
-            <input asp-for="DiscountPercent" class="form-control" type="number" placeholder="0" step="0.01" min="0" max="100" aria-label="" />
-            <span>Từ 0 đến 100%.</span>
-        </div>
     </div>
     <div class="row">
         <div class="col-md-4">
-            <label asp-for="Status" class="form-label">Trạng thái</label>
-            <select asp-for="Status" class="form-control" aria-label="Is it available?">
-                <option selected value="@((int)VisibilityStatus.Available)">Hiệu lực</option>
-                <option value="@((int)VisibilityStatus.Locked)">Hết hiệu lực</option>
-            </select>
+            <label asp-for="UseDiscountPrice" class="form-label">Giảm giá theo</label><br />
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" onchange="Toggle()" id="RadioPercent" value="False" asp-for="UseDiscountPrice" class="custom-control-input" checked>
+                <label class="custom-control-label" for="RadioPercent">Phần trăm đơn</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" onchange="Toggle()" id="RadioNumber" value="True" asp-for="UseDiscountPrice" class="custom-control-input">
+                <label class="custom-control-label" for="RadioNumber">Số tiền nhất định</label>
+            </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-8" id="PercentInput">
+            <label asp-for="DiscountPercent" class="form-label">Giảm % giá</label>
+            <input asp-for="DiscountPercent" class="form-control" type="number" placeholder="0" step="0.01" min="0" max="100" aria-label="" />
+            <span>Từ 0 đến 100%.</span>
+        </div>
+        <div class="col-md-8" id="NumberInput" hidden>
+            <label asp-for="DiscountPrice" class="form-label">Giảm giá tiền</label>
+            <input asp-for="DiscountPrice" class="form-control" type="number" placeholder="0" step="100" min="0" max="@(1e15)" aria-label="" />
+            <span>Từ 0 đến 1,000,000,000,000.</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
             <label asp-for="StartingAt" class="form-label">Bắt đầu vào</label>
-            <input asp-for="StartingAt" class="form-control" type="datetime-local" step="1" required aria-label="Starting date of voucher" />
+            <input asp-for="StartingAt" value="@Model.StartingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control" type="datetime-local" step="1" required aria-label="Starting date of voucher" />
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <label asp-for="EndingAt" class="form-label">Kết thúc vào</label>
-            <input asp-for="EndingAt" class="form-control" type="datetime-local" step="1" required aria-label="Ending date of voucher" />
+            <input asp-for="EndingAt" value="@Model.EndingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control" type="datetime-local" step="1" required aria-label="Ending date of voucher" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label class="form-label" asp-for="Status">Trạng thái</label><br />
+            <div class="custom-control custom-radio custom-control-inline col-5 align-right">
+                <input type="radio" id="RadioPublic" value="1" asp-for="Status" class="custom-control-input" checked>
+                <label class="custom-control-label" for="RadioPublic">Công khai</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline col-5 align-middle">
+                <input type="radio" id="RadioPrivate" value="101" asp-for="Status" class="custom-control-input">
+                <label class="custom-control-label" for="RadioPrivate">Riêng tư</label>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -64,5 +80,18 @@
             </textarea>
         </div>
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Update</button>
+    <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
 </form>
+
+<script>
+    function Toggle() {
+        if (document.getElementById('RadioPercent').checked == true) {
+            document.getElementById('PercentInput').removeAttribute('hidden');
+            document.getElementById('NumberInput').setAttribute('hidden', '');
+        }
+        if (document.getElementById('RadioPercent').checked == false) {
+            document.getElementById('PercentInput').setAttribute('hidden', '');
+            document.getElementById('NumberInput').removeAttribute('hidden');
+        }
+    }
+</script>

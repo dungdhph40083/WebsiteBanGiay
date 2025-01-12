@@ -15,8 +15,8 @@
     <div class="row px-xl-5">
         <div class="col-12">
             <nav class="breadcrumb bg-light mb-30">
-                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                <li class="breadcrumb-item"><a href="/Product/Index">Sản phẩm</a></li>
+                <a class="breadcrumb-item" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                <a class="breadcrumb-item" href="/Product/Index">Sản phẩm</a>
                 <span class="breadcrumb-item active">Chi tiết sản phẩm</span>
             </nav>
         </div>
@@ -31,18 +31,18 @@
                     <div class="carousel-inner bg-light">
                         <div class="carousel-item active">
                             <img class="img-fluid w-100 product-image"
-                                    src="https://localhost:7187/Images/@(selectedProduct.Image?.ImageFileName)"
-                                    alt="@selectedProduct.Name"
-                                    style="width: 100%; height: 600px; object-fit: cover;" />
+                                 src="https://localhost:7187/Images/@(selectedProduct.Image?.ImageFileName)"
+                                 alt="@selectedProduct.Name"
+                                 style="width: 100%; height: 600px; object-fit: cover;" />
 
                         </div>
                     </div>
-@*                     <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
-                        <i class="fa fa-2x fa-angle-left text-dark"></i>
-                    </a>
-                    <a class="carousel-control-next" href="#product-carousel" data-slide="next">
-                        <i class="fa fa-2x fa-angle-right text-dark"></i>
-                    </a> *@
+                    @*                     <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+                <i class="fa fa-2x fa-angle-left text-dark"></i>
+                </a>
+                <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+                <i class="fa fa-2x fa-angle-right text-dark"></i>
+                </a> *@
                 </div>
             }
             else
@@ -74,20 +74,28 @@
 
 
                 <div class="d-flex mb-3">
-                    <strong class="text-dark mr-3">Sizes:</strong>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-1" name="size">
-                            <label class="custom-control-label" for="size-1">@(selectedSize != null ? selectedSize.Name : "Not available")</label>
-                        </div>
-                        @*   <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" class="custom-control-input" id="size-1" name="size">
-                        <label class="custom-control-label" for="size-1">@(selectedSize != null ? selectedSize.Name : "Not available")</label>
-                        </div> *@
-                </div>
-
-                <div class="d-flex mb-3" style="font-size: 1.2rem;">
-                    <strong class="text-dark mr-3">Màu: </strong>
-                    <span style="font-style: italic;">@(selectedColor != null ? selectedColor.ColorName : "Not available")</span>
+                    <div class="d-flex mb-3" style="font-size: 1.2rem;">
+                        <strong class="text-dark mr-3">Màu: </strong>
+                        <select id="color" onchange="ResetCounter()" class="form-control" data-productId="@Model.ProductID">
+                        </select>
+                        @* <span style="font-style: italic;">@(selectedColor != null ? selectedColor.ColorName : "Not available")</span> *@
+                    </div>
+                    <br />
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <strong class="text-dark mr-3">Kích cỡ:</strong>
+                        <select id="size" onchange="ResetCounter()" class="form-control" data-productId="@Model.ProductID">
+                        </select>
+                        @* <input type="radio" class="custom-control-input" id="size-1" name="size">
+                        <label class="custom-control-label" for="size-1">@(selectedSize != null ? selectedSize.Name : "Not available")</label> *@
+                    </div>
+                    @* <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="size-1" name="size">
+                    <label class="custom-control-label" for="size-1">@(selectedSize != null ? selectedSize.Name : "Not available")</label>
+                    </div> *@
+                    @*   <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="size-1" name="size">
+                    <label class="custom-control-label" for="size-1">@(selectedSize != null ? selectedSize.Name : "Not available")</label>
+                    </div> *@
                 </div>
                 <div class="d-flex mb-3" style="font-size: 1.2rem;">
                     <strong class="text-dark mr-3">Chất liệu: </strong>
@@ -113,9 +121,9 @@
                                 </button>
                             </div>
                         </div>
-                        <div style="font-size: 0.9rem;">@Model.Quantity sản phẩm có sẵn</div>
+                        <div style="font-size: 0.9rem;" id="quantity">0 sản phẩm có sẵn</div>
                     </div>
-                    <button class="btn btn-primary px-4 py-2" style="font-size: 1.2rem;" type="submit">
+                    <button class="btn btn-primary px-4 py-2" style="font-size: 1.2rem;" id="btnAddCart" type="button">
                         <i class="fa fa-shopping-cart mr-1"></i> Thêm vào giỏ hàng
                     </button>
                 </form>
@@ -137,7 +145,7 @@
         <div class="bg-light p-30">
             <div class="nav nav-tabs mb-4">
                 <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Mô tả</a>
-                                <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-3">Cách vệ sinh</a>
+                <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-3">Cách vệ sinh</a>
             </div>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="tab-pane-1">
@@ -217,5 +225,10 @@
     document.getElementById('closeButton').addEventListener('click', function () {
         document.getElementById('toggleImage').checked = false;
     });
+
+    function ResetCounter()
+    {
+        document.getElementById('ProductAmount').value = 1;
+    }
 </script>
 <script src="~/js/shopping_cart_logic.js"></script>

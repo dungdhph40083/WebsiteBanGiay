@@ -66,6 +66,7 @@ namespace Application.Data.Repositories
             var LeList = await _context.Orders
                 .Include(ASD => ASD.User)
                 .Include(ASF => ASF.PaymentMethod)
+                .Include(KillSusie => KillSusie.Voucher)
                 .OrderByDescending(DTN => DTN.OrderDate)
                 .ToListAsync();
             foreach (var Order in LeList)
@@ -80,6 +81,7 @@ namespace Application.Data.Repositories
             var order = await _context.Orders
                 .Include(ASD => ASD.User)
                 .Include(ASF => ASF.PaymentMethod)
+                .Include(KillSusie => KillSusie.Voucher)
                 .OrderByDescending(DTN => DTN.OrderDate)
                 .SingleOrDefaultAsync(x => x.OrderID == orderId);
             if (order == null) return default!;
@@ -93,6 +95,7 @@ namespace Application.Data.Repositories
             var Orders = await _context.Orders
                 .Include(ASD => ASD.User)
                 .Include (ASF => ASF.PaymentMethod)
+                .Include(KillSusie => KillSusie.Voucher)
                 .OrderByDescending(DTN => DTN.OrderDate)
                 .Where(x => x.UserID == UserID)
             .ToListAsync();
@@ -291,6 +294,7 @@ namespace Application.Data.Repositories
                         LeList = await _context.Orders
                             .Include(ASD => ASD.User)
                             .Include(ASF => ASF.PaymentMethod)
+                            .Include(KillSusie => KillSusie.Voucher)
                             .OrderByDescending(DTN => DTN.OrderDate)
                             .OrderByDescending(DTS => DTS.Status)
                             .Where(FLT => FLT.Status == (byte)OrderStatus.Created)
@@ -302,6 +306,7 @@ namespace Application.Data.Repositories
                         LeList = await _context.Orders
                             .Include(ASD => ASD.User)
                             .Include(ASF => ASF.PaymentMethod)
+                            .Include(KillSusie => KillSusie.Voucher)
                             .OrderByDescending(DTN => DTN.OrderDate)
                             .OrderByDescending(DTS => DTS.Status)
                             .Where(FLT => FLT.Status == (byte)OrderStatus.Processed || FLT.Status == (byte)OrderStatus.Delivered || FLT.Status == (byte)OrderStatus.Arrived)
@@ -313,6 +318,7 @@ namespace Application.Data.Repositories
                         LeList = await _context.Orders
                             .Include(ASD => ASD.User)
                             .Include(ASF => ASF.PaymentMethod)
+                            .Include(KillSusie => KillSusie.Voucher)
                             .OrderByDescending(DTN => DTN.OrderDate)
                             .OrderByDescending(DTS => DTS.Status)
                             .Where(FLT => FLT.Status == (byte)OrderStatus.Received || FLT.Status == (byte)OrderStatus.ReceivedAgain || FLT.Status == (byte)OrderStatus.ReceivedCompleted)
@@ -324,6 +330,7 @@ namespace Application.Data.Repositories
                         LeList = await _context.Orders
                             .Include(ASD => ASD.User)
                             .Include(ASF => ASF.PaymentMethod)
+                            .Include(KillSusie => KillSusie.Voucher)
                             .OrderByDescending(DTN => DTN.OrderDate)
                             .OrderByDescending(DTS => DTS.Status)
                             .Where(FLT => FLT.Status == (byte)OrderStatus.DeliveryIsDead || FLT.Status == (byte)OrderStatus.DeliveryFailure)
@@ -372,9 +379,31 @@ namespace Application.Data.Repositories
                 }
             }
         }
-        public async Task<Order> GetOrderByOrderNumberAsync(string orderNumber)
+        public async Task<Order?> GetOrderByOrderNumberAsync(string orderNumber)
         {
-            return await _context.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+            return await _context.Orders
+                .Include(ASF => ASF.PaymentMethod)
+                .Include(KillSusie => KillSusie.Voucher)
+                .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
         }
+
+        public async Task<Order?> UpdateStatusHasPaid(Guid TargetID, bool HasPaid, byte Status)
+        {
+            var Order = await GetOrderByIdAsync(TargetID);
+            if (Order == null)
+            {
+                return null; // Không tìm thấy đơn hàng, trả về null
+            }
+
+
+            _context.Orders.Attach(Order);
+            Order.HasPaid = HasPaid;
+            Order.Status = Status; // Đặt Status thành 101
+            _context.Update(Order);
+            await _context.SaveChangesAsync();
+
+            return Order; // Trả về đơn hàng đã cập nhật
+        }
+
     }
 }

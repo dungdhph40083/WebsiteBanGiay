@@ -56,18 +56,24 @@ namespace Application.Data.Repositories
         public async Task DeleteAllFromUserID(Guid TargetID)
         {
             var Targets = await GetShoppingCartsByUserID(TargetID);
+            var User = await Context.Users.FindAsync(TargetID);
             if (Targets != null)
             {
                 Context.ShoppingCarts.RemoveRange(Targets);
-                await Context.SaveChangesAsync();
             }
+            if (User != null)
+            {
+                Context.Users.Attach(User);
+                User.VoucherID = null;
+                Context.Users.Update(User);
+            }
+            await Context.SaveChangesAsync();
         }
-        
+
         public async Task<ShoppingCart?> GetShoppingCartByID(Guid TargetID)
         {
             return await Context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : default)
                 .Include(UU => UU.ProductDetail)
@@ -86,7 +92,6 @@ namespace Application.Data.Repositories
         {
             return await Context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : default)
                 .Include(UU => UU.ProductDetail)
@@ -101,11 +106,36 @@ namespace Application.Data.Repositories
                   .Where(UU => UU.UserID.Equals(TargetID)).ToListAsync();
         }
 
+        public async Task DeleteShoppingCartsByDetailID(Guid TargetID)
+        {
+            var Target = await Context.ShoppingCarts
+                //.Include(UU => UU.User)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Category : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Color : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Size : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                        .ThenInclude(WW => WW != null ? WW.Image : default)
+                  .Where(UU => UU.ProductDetailID.Equals(TargetID)).ToListAsync();
+
+            if (Target.Count > 0)
+            {
+                Context.ShoppingCarts.AttachRange(Target);
+                Context.ShoppingCarts.RemoveRange(Target);
+                await Context.SaveChangesAsync();
+            }
+        }
+
         public async Task<ShoppingCart?> GetShoppingCartByUserIDAndDetailID(Guid UserID, Guid TargetID)
         {
             return await Context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
+                
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : default)
                 .Include(UU => UU.ProductDetail)
@@ -122,7 +152,7 @@ namespace Application.Data.Repositories
         {
             return await Context.ShoppingCarts
                 //.Include(UU => UU.User)
-                .Include(UU => UU.Voucher)
+                
                 .Include(UU => UU.ProductDetail)
                     .ThenInclude(VV => VV != null ? VV.Category : default)
                 .Include(UU => UU.ProductDetail)
@@ -165,15 +195,14 @@ namespace Application.Data.Repositories
         public async Task<string> ApplyVoucher(Guid UserID, string? VoucherCode)
         {
             var TargetUser = await Context.Users.SingleOrDefaultAsync(U => U.UserID == UserID);
-            var TargetVoucher = await Context.Vouchers.SingleOrDefaultAsync(V => V.VoucherCode == VoucherCode);
-            var Shoppings = await GetShoppingCartsByUserID(UserID);
-
             if (TargetUser == null) return ValidateErrorResult.BUT_NOBODY_CAME;
+
+            var Shoppings = await GetShoppingCartsByUserID(UserID);
 
             if (string.IsNullOrWhiteSpace(VoucherCode))
             {
                 var OldVoucher = await Context.Vouchers.SingleOrDefaultAsync(V => V.VoucherID == TargetUser.VoucherID);
-                if (OldVoucher == null) return ValidateErrorResult.WTF_HOW_DID_IT_FAIL;
+                if (OldVoucher == null) return SuccessResult.VOUCHER_ALREADY_DISCARDED;
 
                 if (OldVoucher.UsesLeft != -1)
                 {
@@ -191,6 +220,8 @@ namespace Application.Data.Repositories
             }
             else
             {
+                var TargetVoucher = await Context.Vouchers.SingleOrDefaultAsync(V => V.VoucherCode == VoucherCode);
+
                 if (TargetVoucher == null) return ValidateErrorResult.VOUCHER_DOES_NOT_EXIST;
                 if (Shoppings.Sum(P => P.Price) < TargetVoucher.RequiredGrandTotal.GetValueOrDefault()) return ValidateErrorResult.VOUCHER_REQUIREMENT_FAIL;
                 if (TargetVoucher.UsesLeft == 0) return ValidateErrorResult.VOUCHER_RAN_OUT_OF_USES;
@@ -282,7 +313,7 @@ namespace Application.Data.Repositories
                 {
                     UserID = UserID,
                     ProductDetailID = ProductDetailID,
-                    QuantityCart = Quantity ?? 1
+                    QuantityCart = Quantity ?? 1,
                 };
 
                 var Response = await CreateNew(NewCart);
@@ -290,37 +321,6 @@ namespace Application.Data.Repositories
 
                 return Response;
             }
-        }
-
-        public async Task<List<ShoppingCart>> ExportFromOrder(Guid UserID, Guid OrderID)
-        {
-            var GetOrder = await Context.Orders.FindAsync(OrderID);
-            if (GetOrder == null) return new();
-
-            var MyOrder = await Context.OrderDetails
-                  .Where(UU => UU.OrderID.Equals(OrderID)).ToListAsync();
-
-            if (MyOrder != null)
-            {
-                var MyCart = new List<ShoppingCart>();
-                foreach (var OrderItem in MyOrder)
-                {
-                    ShoppingCart CartItem = new()
-                    {
-                        CartID = Guid.NewGuid(),
-                        UserID = UserID,
-                        Price = OrderItem.Price,
-                        ProductDetailID = OrderItem.ProductDetailID,
-                        QuantityCart = OrderItem.Quantity ?? 1,
-                    };
-                    MyCart.Add(CartItem);
-                }
-                await Context.ShoppingCarts.AddRangeAsync(MyCart);
-                await Context.SaveChangesAsync();
-
-                return await GetShoppingCartsByUserID(UserID);
-            }
-            else return [];
         }
     }
 }

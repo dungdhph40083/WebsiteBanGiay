@@ -35,7 +35,6 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult> CreateColor(ColorDTO colorDTO)
         {
             var createdColor = await _colorRepository.CreateColor(colorDTO);
@@ -43,7 +42,6 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> UpdateColor(Guid id, ColorDTO colorDTO)
         {
             await _colorRepository.UpdateColor(id, colorDTO);
@@ -51,7 +49,6 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteColor(Guid id)
         {
             await _colorRepository.DeleteColor(id);

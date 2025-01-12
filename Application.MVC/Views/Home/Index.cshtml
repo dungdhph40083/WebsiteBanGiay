@@ -57,11 +57,11 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="startDate" class="form-label">Ngày bắt đầu</label>
-                                    <input type="datetime-local" class="form-control" id="startDate" name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-ddTHH:mm:ss")" />
+                                    <input type="datetime-local" step="1" class="form-control" id="startDate" name="startDate" value="@Model.StartDate.GetValueOrDefault().ToString("yyyy-MM-ddTHH:mm:ss")" />
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="endDate" class="form-label">Ngày kết thúc</label>
-                                    <input type="datetime-local" class="form-control" id="endDate" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-ddTHH:mm:ss")" />
+                                    <input type="datetime-local" step="1" class="form-control" id="endDate" name="endDate" value="@Model.EndDate.GetValueOrDefault().ToString("yyyy-MM-ddTHH:mm:ss")" />
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">

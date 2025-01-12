@@ -1,9 +1,15 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.VisualBasic;
+using Mono.TextTemplating;
 using Newtonsoft.Json;
+using NuGet.Protocol;
+using System.Security.Permissions;
 using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
@@ -17,73 +23,105 @@ namespace Application.MVC.Controllers
             _httpClient = new HttpClient();
         }
 
-        public async Task<ActionResult> Index(int page = 1, int pageSize = 15, string status = "all", string searchTerm = "")
+        public async Task<ActionResult> Index(int Page = 1, int PageSize = 10, string SearchQuery = "", string Status = "")
         {
-            string URL = $@"https://localhost:7187/api/ProductDetails";
-            var response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
+            string URL_Products = $@"https://localhost:7187/api/ProductDetails";
 
-            // Lọc theo trạng thái
-            if (status == "1") // Lọc "Đang bán"
+            var ProductList = await Client.GetFromJsonAsync<List<ProductDetail>>(URL_Products);
+
+            if (!string.IsNullOrWhiteSpace(SearchQuery))
             {
-                response = response.Where(p => p.Status == 1).ToList();
-            }
-            else if (status == "0") // Lọc "Dừng bán"
-            {
-                response = response.Where(p => p.Status == 0).ToList();
+                ProductList = ProductList?.Where
+                    (Gfgd => Gfgd.Product != null && Gfgd.Product.Name != null &&
+                     Gfgd.Product.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
-            // Lọc theo tên sản phẩm nếu có từ searchTerm
-            if (!string.IsNullOrEmpty(searchTerm))
+            var SortedList =
+                ProductList?.OrderByDescending(Sdf => Sdf.UpdatedAt)
+                            .GroupBy(Fltr => Fltr.ProductID)
+                            .Select(Req => Req.First(Sdf => Sdf.Status == 1 ? Sdf.Status == 1 : Sdf.Status == 0))
+                            .ToList();
+            switch (Status)
             {
-                response = response.Where(p => p.Product?.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) == true).ToList();
+                case "Active":
+                    {
+                        SortedList = SortedList?.Where(Sdf => Sdf.Status == 1).ToList();
+                        break;
+                    }
+                case "Inactive":
+                    {
+                        SortedList = SortedList?.Where(Sdf => Sdf.Status == 0).ToList();
+                        break;
+                    }
+                case "All": // mheheheheh "Case" "All" = CaseOh mehjejjehjfkhjkfhn okay i'm stopping
+                default:
+                    {
+                        break;
+                    }
             }
 
-            // Sắp xếp theo ngày cập nhật (giảm dần)
-            var sortedResponse = response.OrderByDescending(p => p.UpdatedAt).ToList();
+            int? ItemCount = SortedList?.Count;
+            int TotalPages = (int)Math.Ceiling((double)ItemCount.GetValueOrDefault() / PageSize);
 
-            // Tổng số mục
-            int totalItems = sortedResponse.Count();
+            Page = Page < 1 ? 1 : (Page > TotalPages ? TotalPages : Page);
 
-            // Tính tổng số trang
-            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var PaginatedList = SortedList?
+                .Skip((Page - 1) * PageSize)
+                .Take(PageSize).ToList();
 
-            // Xác thực số trang
-            page = (page < 1) ? 1 : (page > totalPages) ? totalPages : page;
+            ViewBag.Page = Page;
+            ViewBag.PageSize = PageSize;
+            ViewBag.TotalPages = TotalPages;
+            ViewBag.SearchQuery = SearchQuery;
 
-            // Lấy dữ liệu cho trang hiện tại
-            var productDetailsForPage = sortedResponse
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            // Truyền dữ liệu phân trang, trạng thái hiện tại và search term cho view
-            ViewBag.CurrentPage = page;
-            ViewBag.PageSize = pageSize;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentStatus = status;
-            ViewBag.SearchTerm = searchTerm; // Truyền từ searchTerm vào ViewBag
-
-            // Trả về dữ liệu đã phân trang
-            return View(productDetailsForPage);
+            return View(PaginatedList);
         }
-
-
 
         public async Task<ActionResult> Details(Guid ID)
         {
-            string URL = $@"https://localhost:7187/api/ProductDetails/{ID}";
-            var Response = await Client.GetFromJsonAsync<ProductDetail>(URL);
+            string URL = $@"https://localhost:7187/api/ProductDetails/ByProduct/{ID}";
+            var Response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
             return View(Response);
         }
 
-        public async Task<ActionResult> Create()
+        [HttpGet]
+        public async Task<ActionResult> Create(Guid? FromID)
         {
         
             try
             {
                 // Populate dropdowns
                 await PopulateDropdowns();
-                return View();
+                if (FromID != null)
+                {
+                    string URL = $@"https://localhost:7187/api/ProductDetails/ByProduct/{FromID}";
+                    var Response = await Client.GetFromJsonAsync<List<ProductDetail>>(URL);
+
+                    if (Response != null)
+                    {
+                        Console.WriteLine(Response.ToJson(Formatting.Indented));
+
+                        var ParsedOutInfo = new ProductDetailMultiDTO();
+
+                        ParsedOutInfo.ProductID = Response?.First().ProductID;
+                        ParsedOutInfo.CategoryID = Response?.First().CategoryID;
+                        ParsedOutInfo.Brand = Response?.First().Brand;
+                        ParsedOutInfo.Material = Response?.First().Material;
+                        ParsedOutInfo.PlaceOfOrigin = Response?.First().PlaceOfOrigin;
+                        ParsedOutInfo.Status = Response?.First(Sdf => Sdf.Status == 1 ? Sdf.Status == 1 : Sdf.Status == 0).Status;
+                        ParsedOutInfo.Variations.Add(new()
+                        {
+                            ProductDetailID = Guid.NewGuid(),
+                            ColorID = null,
+                            SizeID = null,
+                            Quantity = null
+                        });
+
+                        return View(ParsedOutInfo);
+                    }
+                    else return RedirectToAction(nameof(Index));
+                }
+                else return View();
             }
             catch (Exception ex)
             {
@@ -103,7 +141,6 @@ namespace Application.MVC.Controllers
 
             // Lọc các sản phẩm chưa được sử dụng trong ProductDetails
             var AvailableProducts = ProductsList?
-                .Where(product => !ProductDetailsList!.Any(detail => detail.ProductID == product.ProductID))
                 .ToList();
 
             var ColorsList = await Client.GetFromJsonAsync<List<Color>>(@"https://localhost:7187/api/Color");
@@ -150,30 +187,14 @@ namespace Application.MVC.Controllers
 
         // POST: ProductDetail/Create
         [HttpPost]
-        public async Task<ActionResult> Create(ProductDetailDTO Detail, IFormFile? Image)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(ProductDetailMultiDTO Details)
         {
-            MultipartFormDataContent Contents = new()
-            {
-                { new StringContent(Detail.ProductID.ToString() ?? ""),  nameof(Detail.ProductID) },
-                { new StringContent(Detail.SizeID.ToString() ?? ""),     nameof(Detail.SizeID) },
-                { new StringContent(Detail.ColorID.ToString() ?? ""),    nameof(Detail.ColorID) },
-                { new StringContent(Detail.CategoryID.ToString() ?? ""), nameof(Detail.CategoryID) },
-                { new StringContent(Detail.Material ?? ""),              nameof(Detail.Material) },
-                { new StringContent(Detail.Quantity.ToString() ?? ""),   nameof(Detail.Quantity) },
-                { new StringContent(Detail.Brand ?? ""),                 nameof(Detail.Brand) },
-                { new StringContent(Detail.PlaceOfOrigin ?? ""),         nameof(Detail.PlaceOfOrigin) },
-                { new StringContent(Detail.Status.ToString() ?? "1"),    nameof(Detail.Status) }
-            };
-
-            if (Image != null)
-            {
-                var ImageStream = new StreamContent(Image.OpenReadStream());
-                Contents.Add(ImageStream, nameof(Image), Image.FileName);
-            }
+            Console.WriteLine(Details.ToJson(Formatting.Indented));
 
             try
             {
-                var response = await Client.PostAsync($@"https://localhost:7187/api/ProductDetails", Contents);
+                var Response = await Client.PostAsJsonAsync($@"https://localhost:7187/api/ProductDetails/AddVariations", Details);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -182,12 +203,9 @@ namespace Application.MVC.Controllers
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Error: {Msg.Message}");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                return View(Detail);
+                return View(Details);
             }
         }
-
-
-
 
         private async Task Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofdss()
         {
@@ -227,42 +245,68 @@ namespace Application.MVC.Controllers
         }
         public async Task<ActionResult> Edit(Guid id)
         {
-            await Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofdss();
+            var CategoriesList = await Client.GetFromJsonAsync<List<Category>>($@"https://localhost:7187/api/Category");
+
+            var CatgsItems = CategoriesList?
+                            .Select(Being => new SelectListItem
+                            { Text = Being.CategoryName, Value = Being.CategoryID.ToString() }).ToList();
+
+            ViewBag.Catgs = CatgsItems;
+
 
             // Lấy thông tin ProductDetail theo ID
-            var productDetail = await Client.GetFromJsonAsync<ProductDetailDTO>($@"https://localhost:7187/api/ProductDetails/{id}");
-            return View(productDetail);
+            var ProductDetail = await Client.GetFromJsonAsync<List<ProductDetail>>($@"https://localhost:7187/api/ProductDetails/ByProduct/{id}");
+
+            var ProductsList = await Client.GetFromJsonAsync<List<Product>>($@"https://localhost:7187/api/Product");
+            var ColorsList = await Client.GetFromJsonAsync<List<Color>>($@"https://localhost:7187/api/Color");
+            var SizesList = await Client.GetFromJsonAsync<List<Size>>($@"https://localhost:7187/api/Size");
+
+            ViewBag.Prods = ProductsList;
+            ViewBag.Colrs = ColorsList;
+            ViewBag.Sizes = SizesList;
+
+            if (ProductDetail != null || ProductDetail?.Count > 0)
+            {
+                var ParsedOutInfo = new ProductDetailMultiDTO()
+                {
+                    ProductID = ProductDetail?.First().ProductID,
+                    CategoryID = ProductDetail?.First().CategoryID,
+                    Brand = ProductDetail?.First().Brand,
+                    Material = ProductDetail?.First().Material,
+                    PlaceOfOrigin = ProductDetail?.First().PlaceOfOrigin,
+                    Status = ProductDetail?.First().Status
+                };
+
+                foreach (var Detail in ProductDetail!)
+                {
+                    ParsedOutInfo.Variations.Add(new()
+                    {
+                        ProductDetailID = Detail.ProductDetailID,
+                        ColorID = Detail.ColorID,
+                        SizeID = Detail.SizeID,
+                        Quantity = Detail.Quantity
+                    });
+                }
+
+                return View(ParsedOutInfo);
+            }
+            else return RedirectToAction(nameof(Index));
         }
 
         // POST: ProductDetail/Edit/{id}
         [HttpPost]
-        public async Task<ActionResult> Edit(Guid id, ProductDetailDTO Detail, IFormFile? Image)
+        public async Task<ActionResult> Edit(Guid ID, ProductDetailMultiDTO Details)
         {
-
-            MultipartFormDataContent Contents = new()
-            {
-                { new StringContent(Detail.ProductID.ToString() ?? ""),  nameof(Detail.ProductID) },
-                { new StringContent(Detail.SizeID.ToString() ?? ""),     nameof(Detail.SizeID) },
-                { new StringContent(Detail.ColorID.ToString() ?? ""),    nameof(Detail.ColorID) },
-                { new StringContent(Detail.CategoryID.ToString() ?? ""), nameof(Detail.CategoryID) },
-                { new StringContent(Detail.Material ?? ""),              nameof(Detail.Material) },
-                { new StringContent(Detail.Quantity.ToString() ?? ""),   nameof(Detail.Quantity) },
-                { new StringContent(Detail.Brand ?? ""),                 nameof(Detail.Brand) },
-                { new StringContent(Detail.PlaceOfOrigin ?? ""),         nameof(Detail.PlaceOfOrigin) },
-                { new StringContent(Detail.Status.ToString() ?? "1"),    nameof(Detail.Status) }
-            };
-
-            if (Image != null)
-            {
-                var ImageStream = new StreamContent(Image.OpenReadStream());
-                Contents.Add(ImageStream, nameof(Image), Image.FileName);
-            }
-
             try
             {
-                string URL = $@"https://localhost:7187/api/ProductDetails/{id}";
-                var Response = await Client.PutAsync(URL, Contents);
-                return RedirectToAction(nameof(Index));
+                Console.WriteLine("Sent data is (Indented formatting for easier view):\n\n" + Details.ToJson(Formatting.Indented));
+
+                string URL = $@"https://localhost:7187/api/ProductDetails/UpdateVariations/{ID}";
+                var Response = await Client.PutAsJsonAsync(URL, Details);
+
+                Console.WriteLine("Response received is:\n\n" + Response.ToJson(Formatting.Indented));
+
+                return RedirectToAction(nameof(Edit), new { ID });
             }
             catch (Exception Msg)
             {
@@ -270,19 +314,29 @@ namespace Application.MVC.Controllers
                 Console.WriteLine(Msg.Message);
                 Console.ForegroundColor = ConsoleColor.Gray;
                 TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
-                return View(Detail);
+                return View(Details);
             }
         }
-        public async Task<ActionResult> Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid ID, Guid FromID)
         {
-            string requestURL = $@"https://localhost:7187/api/ProductDetails/{id}";
+            string requestURL = $@"https://localhost:7187/api/ProductDetails/{ID}";
             var response = await Client.DeleteAsync(requestURL);
+
+            return RedirectToAction(nameof(Edit), new { ID = FromID });
+        }
+
+        public async Task<ActionResult> TryDeleteWhole(Guid ID, Guid FromID)
+        {
+            string requestURL = $@"https://localhost:7187/api/ProductDetails/ByProduct/{ID}";
+            var response = await Client.DeleteAsync(requestURL);
+
             return RedirectToAction(nameof(Index));
         }
+
         [HttpPut]
         public async Task<IActionResult> ToggleStatus(Guid id)
         {
-            string requestURL = $@"https://localhost:7187/api/ProductDetails/{id}/toggle-status";
+            string requestURL = $@"https://localhost:7187/api/ProductDetails/{id}/ToggleStatus";
             var response = await Client.PutAsync(requestURL, null);
 
             if (response.IsSuccessStatusCode)
@@ -295,6 +349,11 @@ namespace Application.MVC.Controllers
             }
         }
 
-
+        [HttpPost]
+        public async Task<ActionResult> PauseOrContinueVoucher(Guid ID)
+        {
+            string URL = $@"";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -9,7 +9,6 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class SizeController : ControllerBase
     {
         private readonly ISize SizeRepo;
@@ -33,7 +32,6 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<Size>> Post([FromBody] SizeDTO NewSize)
         {
             var Response = await SizeRepo.AddSize(NewSize);
@@ -41,14 +39,12 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{ID}")]
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<Size?>> Put(Guid ID, [FromBody] SizeDTO UpdatedSize)
         {
             return await SizeRepo.UpdateSize(ID, UpdatedSize);
         }
 
         [HttpDelete("{ID}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(Guid ID)
         {
             await SizeRepo.DeleteSize(ID);

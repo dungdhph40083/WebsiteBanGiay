@@ -10,7 +10,6 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "User,Admin")]
     public class OrderTrackingController : ControllerBase
     {
         private readonly IOrderTracking _orderTrackingRepository;
@@ -21,7 +20,6 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<List<OrderTracking>>> GetOrderTracking()
         {
             return await _orderTrackingRepository.GetAll();
@@ -34,7 +32,6 @@ namespace Application.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<OrderTracking?>> GetOrderTracking(Guid id)
         {
             var orderTracking = await _orderTrackingRepository.GetById(id);
@@ -48,7 +45,6 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OrderTracking>> PostOrderTracking(OrderTrackingDTO orderTracking)
         {
             await _orderTrackingRepository.Add(orderTracking);

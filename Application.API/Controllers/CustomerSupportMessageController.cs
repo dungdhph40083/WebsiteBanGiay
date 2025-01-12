@@ -10,7 +10,7 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class CustomerSupportMessageController : ControllerBase
     {
         private readonly ICustomerSupportMessage CustomerSupportMessageRepo;
@@ -20,7 +20,6 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<CustomerSupportMessage>>> Get()
         {
             return await CustomerSupportMessageRepo.GetAll();
@@ -35,13 +34,12 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<CustomerSupportMessage>> Post(CustomerSupportMessageDTO NewMessage)
         {
             var Response = await CustomerSupportMessageRepo.SendMessage(NewMessage);
             return CreatedAtAction(nameof(Get), new {ID = Response.MessageID}, Response);
         }
-        [HttpPut("{ID}/toggle-status")]
+        [HttpPut("{ID}/ToggleStatus")]
         public async Task<ActionResult> ToggleStatus(Guid ID)
         {
             var customerSupportRepository = await CustomerSupportMessageRepo.GetMessageByID(ID);

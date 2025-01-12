@@ -1,4 +1,5 @@
 ﻿using Application.Data.DTOs;
+using Application.Data.Enums;
 using Application.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +21,43 @@ namespace Application.MVC.Controllers
             _httpClient = new HttpClient();
         }
         [HttpGet]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string SortByTime, string SortByLook)
         {
             string URL = $@"https://localhost:7187/api/Voucher";
             var Response = await Client.GetFromJsonAsync<List<Voucher>>(URL);
+
+            switch (SortByTime)
+            {
+                case VoucherFilters.VOUCHER_COMING_SOON:
+                    Response = Response?.Where(Flt => Flt.StartingAt.GetValueOrDefault() > DateTime.UtcNow).ToList();
+                    break;
+                case VoucherFilters.VOUCHER_ONGOING:
+                    Response = Response?.Where
+                        (Flt => Flt.StartingAt.GetValueOrDefault() <= DateTime.UtcNow && DateTime.UtcNow <= Flt.EndingAt.GetValueOrDefault())
+                        .ToList();
+                    break;
+                case VoucherFilters.VOUCHER_DIED:
+                    Response = Response?.Where(Flt => Flt.EndingAt.GetValueOrDefault() < DateTime.UtcNow).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            switch (SortByLook)
+            {
+                case VoucherFilters.VOUCHER_PUBLIC:
+                    Response = Response?.Where(Flt => Flt.Status == (byte)VoucherStatus.Disabled || Flt.Status == (byte)VoucherStatus.Active).ToList();
+                    break;
+                case VoucherFilters.VOUCHER_PRIVATE:
+                    Response = Response?.Where(Flt => Flt.Status == (byte)VoucherStatus.DisabledPrivate || Flt.Status == (byte)VoucherStatus.ActivePrivate).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            ViewData["FilterValueByTime"] = SortByTime;
+            ViewData["FilterValueByLook"] = SortByLook;
+
             return View(Response);
         }
 
@@ -73,6 +107,8 @@ namespace Application.MVC.Controllers
         {
             try
             {
+                Console.WriteLine($"Using price discount: {Input.UseDiscountPrice}");
+
                 string URL = $@"https://localhost:7187/api/Voucher";
                 var Response = await Client.PostAsJsonAsync(URL, Input);
                 return RedirectToAction(nameof(Index));

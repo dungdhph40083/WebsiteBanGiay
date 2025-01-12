@@ -1,6 +1,8 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
 using Application.Data.Models;
+using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -102,14 +104,6 @@ namespace Application.MVC.GeneralPublic.Controllers
             return RedirectToAction("index");
         }
 
-
-        [HttpGet]
-        public IActionResult Logout()
-        {
-            HttpContext.Response.Cookies.Delete("AuthToken");
-            return RedirectToAction("Login");
-        }
-
         private class LoginResponse
         {
             public string Token { get; set; }
@@ -118,6 +112,38 @@ namespace Application.MVC.GeneralPublic.Controllers
         public ActionResult Register()
         {
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register([FromForm] UserDTO model, IFormFile? profilePic)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["FailureBanner"] = "Dữ liệu nhập không hợp lệ. Vui lòng kiểm tra lại.";
+                return View(model);
+            }
+            try
+            {
+               
+                string apiUrl = $@"https://localhost:7187/api/User";
+                var response = await Client.PostAsJsonAsync(apiUrl, model);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessBanner"] = "Tài khoản đã được tạo thành công!";
+                    return RedirectToAction("Index", "Account");
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    TempData["FailureBanner"] = $"Tạo tài khoản không thành công! {errorMessage}";
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["FailureBanner"] = $"Có lỗi xảy ra: {ex.Message}";
+                return View(model);
+            }
         }
         private Guid GetCurrentUserId()
         {

@@ -13,7 +13,6 @@ namespace Application.API.Controllers
 {
     [Route("api/[CoNtRoLlEr]")]
     [ApiController]
-    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
@@ -30,7 +29,6 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> GetAllOrders(string? Filter)
         {
             var orders = new List<Order>();
@@ -65,7 +63,6 @@ namespace Application.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> GetOrderById(Guid id)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
@@ -74,7 +71,6 @@ namespace Application.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderDto orderDto)
         {
             var createdOrder = await _orderRepository.CreateOrderAsync(orderDto);
@@ -82,7 +78,6 @@ namespace Application.API.Controllers
         }
 
         [HttpPatch("Bypass/{id}")] // Debug purposes only
-        [Authorize(Roles = "User,Admin")]
         public async Task<ActionResult<Order>> UpdateOrderBypass(Guid id, [FromBody] OrderDto orderDto)
         {
             var updatedOrder = await _orderRepository.UpdateOrderAsyncBypass(id, orderDto);
@@ -153,7 +148,6 @@ namespace Application.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> DeleteOrder(Guid id)
         {
             await OrderDetailsRepository.DeleteOrderDetailsFromOrderID(id);
@@ -178,5 +172,45 @@ namespace Application.API.Controllers
 
             return Ok(order);
         }
+        [HttpPatch("SetHasPaidToTrue/{id}")]
+        public async Task<ActionResult> SetHasPaidToTrue(Guid id)
+        {
+            // Lấy thông tin đơn hàng
+            var order = await _orderRepository.GetOrderByIdAsync(id);
+            if (order == null)
+            {
+                return NotFound("Order not found");
+            }
+
+            // Kiểm tra nếu trạng thái đã là true và Status đã là 101
+            if (order.HasPaid && order.Status == 101)
+            {
+                return Ok(order); // Không cần cập nhật, trả về thông tin đơn hàng
+            }
+
+            // Cập nhật trạng thái HasPaid thành true và Status = 101
+            var updatedOrder = await _orderRepository.UpdateStatusHasPaid(id, true, 101);
+
+            if (updatedOrder == null)
+            {
+                return BadRequest("Failed to update payment status or status.");
+            }
+            else
+            {
+                var ProductList = await OrderDetailsRepository.GetOrderDetailsFromOrderID(id);
+                if (ProductList == null) return NotFound("Không thể tìm thấy thông tin hóa đơn... (?????)");
+                foreach (var THING in ProductList)
+                {
+                    // Trừ sản phẩm
+                    await ProductDetailRepo.DoAddProductCount
+                        (THING.ProductDetailID.GetValueOrDefault(), -THING.Quantity.GetValueOrDefault());
+                }
+            }
+
+            // Trả về thông tin đơn hàng đã cập nhật
+            return Ok(updatedOrder);
+        }
+
+
     }
 }

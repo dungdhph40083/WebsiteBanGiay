@@ -84,7 +84,7 @@ namespace Application.MVC.Controllers
                     { new StringContent(Input.Email ?? ""),                nameof(Input.Email) },
                     { new StringContent(Input.Address ?? ""),              nameof(Input.Address) },
                     { new StringContent(Input.PhoneNumber ?? ""),          nameof(Input.PhoneNumber) },
-                    { new StringContent(Input.Status.ToString() ?? "1"),   nameof(Input.Status) },
+                    //{ new StringContent(Input.Status.ToString() ?? "1"),   nameof(Input.Status) },
                 };
 
                 if (ProfilePic != null)
@@ -135,7 +135,7 @@ namespace Application.MVC.Controllers
                     { new StringContent(NewInput.Email ?? ""),              nameof(NewInput.Email) },
                     { new StringContent(NewInput.Address ?? ""),            nameof(NewInput.Address) },
                     { new StringContent(NewInput.PhoneNumber ?? ""),        nameof(NewInput.PhoneNumber) },
-                    { new StringContent(NewInput.Status.ToString() ?? "1"), nameof(NewInput.Status) },
+                    //{ new StringContent(NewInput.Status.ToString() ?? "1"), nameof(NewInput.Status) },
                 };
 
                 if (NewProfilePic != null)

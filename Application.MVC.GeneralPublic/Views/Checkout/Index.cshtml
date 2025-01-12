@@ -4,6 +4,19 @@
     ViewData["Title"] = "Checkout";
     var user = ViewBag.DefaultUser as Application.Data.Models.User ?? new();
     var cartItems = ViewBag.CartItems as List<Application.Data.Models.ShoppingCart> ?? new();
+
+    var VoucherInfo = ViewBag.VoucherInfo as Application.Data.Models.Voucher;
+    var TotalPrice = cartItems.Sum(x => x.Price).GetValueOrDefault();
+    bool? UseDiscountPrice = VoucherInfo?.UseDiscountPrice;
+    long DiscountedPrice = 0;
+    if (UseDiscountPrice == true)
+    {
+        DiscountedPrice = (VoucherInfo?.DiscountPrice).GetValueOrDefault();
+    }
+    else if (UseDiscountPrice == false)
+    {
+        DiscountedPrice = (long)(TotalPrice * (VoucherInfo?.DiscountPercent / 100)).GetValueOrDefault();
+    }
 }
 
 <div class="container-fluid">
@@ -106,17 +119,36 @@
                 <div class="border-bottom pt-3 pb-2">
                     <div class="d-flex justify-content-between mb-3">
                         <h6>Tổng cộng</h6>
-                        <h6>@(cartItems.Sum(x => x.Price).GetValueOrDefault().ToString("#,##0"))</h6>
+                        <h6>@(TotalPrice.ToString("#,##0"))</h6>
                     </div>
+                    @if (UseDiscountPrice == true)
+                    {
+                    <div class="d-flex justify-content-between mb-3">
+                        <h6>Giảm giá</h6>
+                        <h6>
+                            -@(VoucherInfo?.DiscountPrice.GetValueOrDefault().ToString("#,##0"))
+                        </h6>
+                    </div>
+                    }
+                    else if (UseDiscountPrice == false)
+                    {
+                    <div class="d-flex justify-content-between mb-3">
+                        <h6>Giảm giá (%)</h6>
+                        <h6>
+                            -@(VoucherInfo?.DiscountPercent.GetValueOrDefault().ToString("###.##"))%
+                        </h6>
+                    </div>
+                    }
                     <div class="d-flex justify-content-between">
                         <h6 class="font-weight-medium">Phí vận chuyển</h6>
-                        <h6 class="font-weight-medium">@(cartItems.Count() > 1 ? ((cartItems.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí")</h6>
+                        <h6 class="font-weight-medium">@*(cartItems.Count() > 1 ? ((cartItems.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí") *@Miễn phí</h6>
                     </div>
                 </div>
                 <div class="pt-2">
                     <div class="d-flex justify-content-between mt-2">
                         <h5>Thành tiền</h5>
-                        <h5 class="font-weight-medium">@((cartItems.Sum(x => x.Price) + (cartItems.Count() - 1) * 1000).GetValueOrDefault().ToString("#,##0"))</h5>
+                            <h5 class="font-weight-medium">@(
+                                (TotalPrice - DiscountedPrice /* + (cartItems.Count() > 1 ?(cartItems.Count() - 1) * 1000 : 0) */).ToString("#,##0"))</h5>
                     </div>
                 </div>
             </div>
@@ -135,12 +167,6 @@
                     <div class="custom-control custom-radio">
                         <input type="radio" class="custom-control-input" name="PaymentMethod" value="@PaymentMethods.VNPay" id="vnpay">
                         <label class="custom-control-label" for="vnpay">Thanh toán VNPay</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" name="PaymentMethod" value="@PaymentMethods.MoMo" id="momo">
-                        <label class="custom-control-label" for="momo">Thanh toán MoMo</label>
                     </div>
                 </div>
                 <button class="btn btn-block btn-primary font-weight-bold py-3">Đặt hàng</button>

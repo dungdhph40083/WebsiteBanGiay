@@ -29,7 +29,7 @@ namespace Application.MVC.Controllers
 
 
             // Tạo URL cho API với startDate và endDate
-            var uri = $"https://localhost:7187/api/Statistics/status?startDate={startDate.Value:yyyy-MM-ddTHH:mm:ss}&endDate={endDate.Value:yyyy-MM-ddTHH:mm:ss}";
+            var uri = $"https://localhost:7187/api/Statistics/status?startDate={startDate.GetValueOrDefault().ToUniversalTime():yyyy-MM-ddTHH:mm:ss}&endDate={endDate.GetValueOrDefault().ToUniversalTime():yyyy-MM-ddTHH:mm:ss}";
 
             // Gửi yêu cầu tới API
             var response = await _httpClient.GetAsync(uri);

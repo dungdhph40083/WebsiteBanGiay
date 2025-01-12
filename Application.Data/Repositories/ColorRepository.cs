@@ -35,7 +35,18 @@ namespace Application.Data.Repositories
 
             return color;
         }
-
+        public List<Color?> GetColorsByProductId(Guid productId)
+        {
+            GiayDBContext _context = new GiayDBContext();
+            return _context.ProductDetails.Where(p => p.ProductID == productId).Select(p => p.Color).Distinct()
+           .ToList();
+        }
+        public List<Color?> GetColorsByProductIdAndSize(Guid productId, Guid size)
+        {
+            GiayDBContext _context = new GiayDBContext();
+            return _context.ProductDetails.Where(p => p.ProductID == productId && p.SizeID == size)
+                .Select(p => p.Color).Distinct().ToList();
+        }
         public async Task DeleteColor(Guid id)
         {
             var color = await _context.Colors.FindAsync(id);

@@ -1,4 +1,22 @@
 ﻿@model List<Application.Data.Models.ShoppingCart>
+@{
+    var VoucherInfo = ViewBag.VoucherInfo as Application.Data.Models.Voucher;
+    var TotalPrice = Model.Sum(x => x.Price).GetValueOrDefault();
+    bool? UseDiscountPrice = VoucherInfo?.UseDiscountPrice;
+    long DiscountedPrice = 0;
+    if (UseDiscountPrice == true)
+    {
+        DiscountedPrice = (VoucherInfo?.DiscountPrice).GetValueOrDefault();
+    }
+    else if (UseDiscountPrice == false)
+    {
+        DiscountedPrice = (long)(TotalPrice * (VoucherInfo?.DiscountPercent / 100)).GetValueOrDefault();
+    }
+
+    var SuccessMessage = ViewBag.Success as string;
+    var FailureMessage = ViewBag.Failure as string;
+
+}
 
 <div class="breadcrumb-wrap">
     <div class="container-fluid">
@@ -10,11 +28,20 @@
     </div>
 </div>
 
-<form asp-controller="UserCart" asp-action="UpdateWholeCart" method="post">
+<div>
     <div class="cart-page">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-8">
+                <form class="col-lg-8" asp-controller="UserCart" asp-action="UpdateWholeCart" method="post">
+                    <div class="row">
+                        <div class="col-7 text-right">
+                            
+                        </div>
+                        <div class="col-5 text-right">
+                            <span id="WARNING_WARNING_ALARM" class="mr-1"></span>
+                            <button type="submit" class="btn btn-primary mb-1">Cập nhật giỏ hàng</button>
+                        </div>
+                    </div>
                     <div class="cart-page-inner">
                         <div class="table-responsive">
                             @if (Model.Count() > 0)
@@ -23,6 +50,7 @@
                                     <thead class="thead-dark text-center">
                                         <tr>
                                             <th>Sản phẩm</th>
+                                            <th>Màu</th>
                                             <th>Kích cỡ</th>
                                             <th>Giá tiền</th>
                                             <th>Số lượng</th>
@@ -39,6 +67,9 @@
                                                 <td class="align-middle">
                                                     <a href="#"><img class="img-fluid img-thumbnail" style="width: 150px; height: 150px" src="@($"https://localhost:7187/Images/{Model[Idx]?.ProductDetail?.Product?.Image?.ImageFileName}")" alt="Image"></a>
                                                     <p>@Model[Idx]?.ProductDetail?.Product?.Name</p>
+                                                </td>
+                                                <td class="align-middle">
+                                                    @Model[Idx]?.ProductDetail?.Color?.ColorName
                                                 </td>
                                                 <td class="align-middle">
                                                     @Model[Idx]?.ProductDetail?.Size?.Name
@@ -94,36 +125,74 @@
                             }
                         </div>
                     </div>
-                </div>
+                </form>
                 <div class="col-lg-4">
                     <div class="cart-page-inner">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="cart-summary">
                                     <div class="cart-content">
-                                        <h2>Tổng kết</h2>
-                                        @* <div class="input-group-prepend">
-                                            <input class="form-control mr-3" type="text" name="VoucherCode" onkeyup="Notify()" placeholder="Mã Voucher" style="text-transform: UPPERCASE">
-                                            <button class="btn btn-primary" type="submit">Dùng</button>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h2>Tổng kết</h2>
+                                            </div>
+                                            <div class="col-md-6 text-right">
+                                                @if (ViewData["VOUCHER_ERROR"] != null)
+                                                {
+                                                    <p class="text-danger"><i class="fa fa-x"></i> @ViewData["VOUCHER_ERROR"]</p>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(SuccessMessage))
+                                                {
+                                                    <p class="text-success"><i class="fa fa-check"></i> @SuccessMessage</p>
+                                                }
+                                            </div>
                                         </div>
-                                        <hr /> *@
+                                        @if (Model.Count() > 0)
+                                        {
+                                            <form asp-controller="UserCart" asp-action="ApplyVoucher" method="post">
+                                                <input hidden name="ID" value="@Model.First().UserID" />
+                                                <div class="input-group-prepend">
+                                                    <input class="form-control mr-2" value="@(VoucherInfo?.VoucherCode)" type="text" name="VoucherCode" placeholder="Mã Voucher" style="text-transform: UPPERCASE">
+                                                    <button class="btn btn-primary" type="submit">Dùng</button>
+                                                    @if (VoucherInfo != null)
+                                                    {
+                                                        <a class="btn btn-danger ml-2" asp-action="ApplyVoucher" asp-route-ID="@Model.First().UserID" asp-route-VoucherCode="">Bỏ</a>
+                                                    }
+                                                </div>
+                                            </form>
+                                        }
+                                        <hr />
                                         <div class="row">
                                             <b class="col-md-5">Chi phí hàng hóa</b>
-                                            <p class="col-md-7 text-right" id="PriceTotalSidebar">@((Model.Sum(x => x.Price)).GetValueOrDefault().ToString("#,##0"))</p>
+                                            <p class="col-md-7 text-right" id="PriceTotalSidebar">@(TotalPrice.ToString("#,##0"))</p>
+                                            @if (UseDiscountPrice == true)
+                                            {
+                                                <b class="col-md-5">Giảm giá</b>
+                                                <p class="col-md-7 text-right" id="DiscountTotalSidebar">
+                                                    -@(VoucherInfo?.DiscountPrice.GetValueOrDefault().ToString("#,##0"))
+                                                </p>
+                                            }
+                                            else if (UseDiscountPrice == false)
+                                            {
+                                                <b class="col-md-5">Giảm giá (%)</b>
+                                                <p class="col-md-7 text-right" id="DiscountPercentSidebar">
+                                                    -@(VoucherInfo?.DiscountPercent.GetValueOrDefault().ToString("###.##"))%
+                                                </p>
+                                            }
                                             <b class="col-md-5">Chi phí giao hàng</b>
-                                            <p class="col-md-7 text-right" id="ShipFeeTotalSidebar">@(Model.Count() > 1 ? ((Model.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí")</p>
+                                            <p class="col-md-7 text-right" id="ShipFeeTotalSidebar">@* @(Model.Count() > 1 ? ((Model.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí") *@ Miễn phí</p>
                                         </div>
                                         <hr />
                                         <div class="row">
                                             <h4 class="col-md-5">Tổng giá</h4>
-                                            <p class="col-md-7 text-right" id="GrandTotalSidebar">@(((Model.Sum(x => x.Price) + (Model.Count() > 0 ? ((Model.Count() - 1) * 1000) : 0)).GetValueOrDefault().ToString("#,##0")))</p>
+                                            <p class="col-md-7 text-right" id="GrandTotalSidebar">
+                                                @((TotalPrice - DiscountedPrice) @* + (Model.Count() > 1 ? ((Model.Count() - 1) * 1000) : 0)) *@.ToString("#,##0"))
+                                            </p>
                                         </div>
                                     </div>
-                                    <p id="WARNING_WARNING_ALARM"></p>
                                     @if (Model.Count() > 0)
                                     {
                                         <div class="cart-btn">
-                                            <button type="submit" class="btn btn-primary">Cập nhật giỏ hàng</button>
                                             <a asp-controller="Checkout" class="btn btn-success">Thanh toán</a>
                                         </div>
                                     }
@@ -135,7 +204,7 @@
             </div>
         </div>
     </div>
-</form>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
