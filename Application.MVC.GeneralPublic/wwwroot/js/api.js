@@ -97,6 +97,38 @@ $('#size').off('change').on('change', (e) => {
         }
     });
 })
+document.addEventListener("DOMContentLoaded", function () {
+    // Lấy phần tử ô nhập số lượng
+    const quantityInput = document.getElementById("txtQuantity");
+
+    // Hàm giảm số lượng sản phẩm
+    function Remove1Generic() {
+        let currentValue = parseInt(quantityInput.value) || 1;
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+    }
+
+    // Hàm tăng số lượng sản phẩm
+    function Add1Generic() {
+        let currentValue = parseInt(quantityInput.value) || 1;
+        quantityInput.value = currentValue + 1; // Không có giới hạn tối đa
+    }
+
+    // Hàm kiểm tra và chỉnh sửa số lượng hợp lệ khi người dùng nhập trực tiếp
+    function Edit1Generic() {
+        let currentValue = parseInt(quantityInput.value);
+        if (isNaN(currentValue) || currentValue < 1) {
+            quantityInput.value = 1; // Gán giá trị tối thiểu là 1 nếu nhập sai
+        }
+    }
+
+    // Gắn sự kiện cho các nút và ô nhập
+    document.querySelector(".btn-minus").addEventListener("click", Remove1Generic);
+    document.querySelector(".btn-plus").addEventListener("click", Add1Generic);
+    quantityInput.addEventListener("input", Edit1Generic);
+    quantityInput.addEventListener("blur", Edit1Generic);
+});
 $('#color').off('change').on('change', (e) => {
     e.preventDefault();
     var dataQuantity = {
