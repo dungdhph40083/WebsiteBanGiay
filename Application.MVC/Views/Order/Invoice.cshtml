@@ -76,11 +76,11 @@
     </div>
     <div class="row">
         <div class="col-sm-6 text-left"><b>Phí vận chuyển</b>: </div>
-        <div class="col-sm-6 text-right">@((Items.Count() > 1 ? ((Items.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí"))</div>
+        <div class="col-sm-6 text-right">@*((Items.Count() > 1 ? ((Items.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí"))*@ Miễn phí</div>
     </div>
     <div class="row">
         <div class="col-sm-6 text-left"><b>Tổng tiền phải thanh toán</b>: </div>
-        <div class="col-sm-6 text-right">@((Infos?.GrandTotal + (Items.Count() - 1) * 1000).GetValueOrDefault().ToString("#,##0"))</div>
+        <div class="col-sm-6 text-right">@((Infos?.GrandTotal/*  + (Items.Count() - 1) * 1000) */.GetValueOrDefault().ToString("#,##0")))</div>
     </div>
     <div class="row">
         <div class="col-sm-6 text-left"><b>Trạng thái đơn</b>: </div>

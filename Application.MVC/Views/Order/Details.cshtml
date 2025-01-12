@@ -236,11 +236,11 @@
         </dd>
         <dt>Phí ship</dt>
         <dd>
-            @((Items.Count() > 1 ? ((Items.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí"))
+            @*((Items.Count() > 1 ? ((Items.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí"))*@ Miễn phí
         </dd>
         <dt>Tổng tiền</dt>
         <dd>
-            @((Infos?.GrandTotal + (Items.Count() - 1) * 1000).GetValueOrDefault().ToString("#,##0"))
+            @((Infos?.GrandTotal /* + (Items.Count() - 1) * 1000) */ .GetValueOrDefault().ToString("#,##0"))
         </dd>
         <dt></dt>
         <dd><a asp-action="Invoice" asp-route-ID="@Infos?.OrderID" class="btn btn-primary">In hóa đơn</a></dd>

@@ -59,7 +59,7 @@
     <dl class="row px-xl-5">
         <dt class="col-md-6 text-uppercase">Phí ship</dt>
         <dd class="col-md-6">
-            @(OrderItems.Count() > 1 ? ((OrderItems.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí")
+            @*(OrderItems.Count() > 1 ? ((OrderItems.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí")*@ Miễn phí
         </dd>
         <dt class="col-md-6 text-uppercase">Tên người dùng</dt>
         <dd class="col-md-6">
@@ -76,6 +76,20 @@
         <dt class="col-md-6 text-uppercase">Địa chỉ giao hàng</dt>
         <dd class="col-md-6">
             @Model.ShippingAddress
+        </dd>
+        <dt class="col-md-6 text-uppercase">Phương thức thanh toán</dt>
+        <dd class="col-md-6">
+            @switch (Model.PaymentMethodID.GetValueOrDefault().ToString())
+            {
+                case DefaultValues.CoDGUID:
+                    <text>Ship COD</text>
+                    break;
+                case DefaultValues.VNPayGUID:
+                    <text>VNPay</text>
+                    break;
+                default:
+                    break;
+            }
         </dd>
         <dt class="col-md-6 text-uppercase">Trạng thái thanh toán</dt>
         <dd class="col-md-6">
@@ -135,7 +149,7 @@
         </dd>
         <dt class="col-md-6 text-uppercase">Tổng tiền</dt>
         <dd class="col-md-6">
-            @((Model.GrandTotal.GetValueOrDefault() + ((OrderItems.Count() - 1) * 1000)).ToString("#,##0"))
+            @((Model.GrandTotal.GetValueOrDefault()/*+ ((OrderItems.Count() - 1) * 1000) */).ToString("#,##0"))
         </dd>
     </dl>
 

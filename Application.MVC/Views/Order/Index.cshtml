@@ -40,6 +40,7 @@
                 <th>ID đơn hàng</th>
                 <th>Tên người dùng</th>
                 <th>Ngày đặt</th>
+                <th>Phương thức thanh toán</th>
                 <th>Tổng tiền đơn</th>
                 <th>Trạng thái đơn</th>
                 <th>Trạng thái thanh toán</th>
@@ -53,6 +54,7 @@
                     <td>@Entry.OrderNumber</td>
                     <td>@Entry.User?.Username</td>
                     <td>@Entry.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
+                    <td>@Entry.PaymentMethod?.MethodName</td>
                     <td>@Entry.GrandTotal.GetValueOrDefault().ToString("#,##0")</td>
                     <td>
                         @switch ((OrderStatus)Entry.Status)

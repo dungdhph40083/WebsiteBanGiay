@@ -21,21 +21,35 @@
                     {
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>Mã đơn</th>
-                                    <th>Ngày đặt đơn</th>
-                                    <th>Trạng thái</th>
-                                    <th>Tổng giá</th>
+                                <tr class="align-center">
+                                    <th class="text-left">Mã đơn</th>
+                                    <th class="text-center">Ngày đặt đơn</th>
+                                    <th class="text-center">Phương thức thanh toán</th>
+                                    <th class="text-center">Trạng thái</th>
+                                    <th class="text-right">Tổng giá</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var Order in Model)
                                 {
-                                    <tr>
-                                        <td>@Order.OrderNumber</td>
-                                        <td>@Order.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
-                                        <td>
+                                    <tr class="align-center">
+                                        <td class="text-left">@Order.OrderNumber</td>
+                                        <td class="text-center">@Order.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
+                                        <td class="text-center">
+                                            @switch (Order.PaymentMethodID.GetValueOrDefault().ToString())
+                                            {
+                                                case DefaultValues.CoDGUID:
+                                                    <text>Ship COD</text>
+                                                    break;
+                                                case DefaultValues.VNPayGUID:
+                                                    <text>VNPay</text>
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        </td>
+                                        <td class="text-center">
                                             @switch ((OrderStatus)Order.Status)
                                             {
                                                 case OrderStatus.Canceled:
@@ -80,7 +94,7 @@
                                                     break;
                                             }
                                         </td>
-                                        <td>@Order.GrandTotal.GetValueOrDefault().ToString("#,##0")</td>
+                                        <td class="text-right">@Order.GrandTotal.GetValueOrDefault().ToString("#,##0")</td>
                                         <td><a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Order.OrderID">Chi tiết</a></td>
                                     </tr>
                                 }

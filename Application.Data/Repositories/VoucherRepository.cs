@@ -133,5 +133,32 @@ namespace Application.Data.Repositories
                 .SingleOrDefaultAsync(x => x.VoucherCode == VoucherCode);
             return Target;
         }
+        public async Task<Voucher?> ToggleStatus(Guid ID)
+        {
+            var Target = await GetVoucherByID(ID);
+            if (Target != null)
+            {
+                Context.Vouchers.Attach(Target);
+                switch ((VoucherStatus)Target.Status.GetValueOrDefault())
+                {
+                    case VoucherStatus.Disabled:
+                        Target.Status = (byte)VoucherStatus.Active;
+                        break;
+                    case VoucherStatus.Active:
+                        Target.Status = (byte)VoucherStatus.Disabled;
+                        break;
+                    case VoucherStatus.DisabledPrivate:
+                        Target.Status = (byte)VoucherStatus.ActivePrivate;
+                        break;
+                    case VoucherStatus.ActivePrivate:
+                        Target.Status = (byte)VoucherStatus.DisabledPrivate;
+                        break;
+                    default:
+                        break;
+                }
+                return Target;
+            }
+            else return default;
+        }
     }
 }

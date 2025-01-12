@@ -18,12 +18,14 @@ namespace Application.API.Controllers
         private readonly IProductDetail ProductDetailRepo;
         private readonly IConfiguration _configuration;
         private readonly IShoppingCart ShoppingCartRepository;
+        private readonly IVoucher VoucherRepository;
 
         public PaymentController(IOrderRepository orderRepository, 
             IOrderTracking OrderTrackingRepo, IOrderDetails OrderDetailsRepository, 
             IProductDetail ProductDetailRepo, 
             IConfiguration configuration,
-            IShoppingCart ShoppingCartRepository)
+            IShoppingCart ShoppingCartRepository,
+            IVoucher VoucherRepository)
         {
             _orderRepository = orderRepository;
             this.OrderTrackingRepo = OrderTrackingRepo;
@@ -31,6 +33,7 @@ namespace Application.API.Controllers
             this.ProductDetailRepo = ProductDetailRepo;
             this._configuration = configuration;
             this.ShoppingCartRepository = ShoppingCartRepository;
+            this.VoucherRepository = VoucherRepository;
         }
 
         [HttpPost]
@@ -44,10 +47,24 @@ namespace Application.API.Controllers
 
             if (Thingies != null)
             {
+                var WhatVoucherAreTheyUsing = await VoucherRepository.GetVoucherByUserID(NewOrder.UserID.GetValueOrDefault());
                 PaymentInformationModel model = new PaymentInformationModel();
                 List<ShoppingCart> shoppingCarts = ShoppingCartRepository.GetShoppingCarts().Result;
-                model.Amount = (double)shoppingCarts.Sum(x => x.Price) +
-                   (double)(shoppingCarts.Count() > 0 ? ((shoppingCarts.Count() - 1) * 1000) : 0);
+                long PriceAmount = shoppingCarts.Sum(x => x.Price).GetValueOrDefault();
+
+                if (WhatVoucherAreTheyUsing != null)
+                {
+                    if (WhatVoucherAreTheyUsing.UseDiscountPrice)
+                    {
+                        PriceAmount -= WhatVoucherAreTheyUsing.DiscountPrice.GetValueOrDefault();
+                    }
+                    else
+                    {
+                        PriceAmount -= (long)(PriceAmount * WhatVoucherAreTheyUsing.DiscountPercent / 100).GetValueOrDefault();
+                    }
+                }
+
+                model.Amount = PriceAmount /*+ (shoppingCarts.Count() > 1 ? ((shoppingCarts.Count() - 1) * 1000) : 0)*/;
                 model.OrderType = "other";
                 model.OrderDescription = "Thanh toán qua VNPay hóa đơn " + CreatedOrder.OrderID;
                 model.Name = model.HoTen;

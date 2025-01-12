@@ -9,6 +9,7 @@ using Microsoft.VisualBasic;
 using Mono.TextTemplating;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Security.Permissions;
 
 namespace Application.MVC.Controllers
 {
@@ -341,6 +342,11 @@ namespace Application.MVC.Controllers
             }
         }
 
-
+        [HttpPost]
+        public async Task<ActionResult> PauseOrContinueVoucher(Guid ID)
+        {
+            string URL = $@"";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -51,6 +51,12 @@ namespace Application.API.Controllers
             else return Response;
         }
 
+        [HttpPatch("ToggleStatus/{ID}")]
+        public async Task<ActionResult<Voucher?>> ChangeStatus(Guid ID)
+        {
+            return await VoucherRepo.ToggleStatus(ID);
+        }
+
         [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID) 
         {

@@ -180,13 +180,13 @@
                                                 </p>
                                             }
                                             <b class="col-md-5">Chi phí giao hàng</b>
-                                            <p class="col-md-7 text-right" id="ShipFeeTotalSidebar">@(Model.Count() > 1 ? ((Model.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí")</p>
+                                            <p class="col-md-7 text-right" id="ShipFeeTotalSidebar">@* @(Model.Count() > 1 ? ((Model.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí") *@ Miễn phí</p>
                                         </div>
                                         <hr />
                                         <div class="row">
                                             <h4 class="col-md-5">Tổng giá</h4>
                                             <p class="col-md-7 text-right" id="GrandTotalSidebar">
-                                                @((TotalPrice - DiscountedPrice + (Model.Count() > 0 ? ((Model.Count() - 1) * 1000) : 0)).ToString("#,##0"))
+                                                @((TotalPrice - DiscountedPrice) @* + (Model.Count() > 1 ? ((Model.Count() - 1) * 1000) : 0)) *@.ToString("#,##0"))
                                             </p>
                                         </div>
                                     </div>

@@ -141,13 +141,14 @@
                     }
                     <div class="d-flex justify-content-between">
                         <h6 class="font-weight-medium">Phí vận chuyển</h6>
-                        <h6 class="font-weight-medium">@(cartItems.Count() > 1 ? ((cartItems.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí")</h6>
+                        <h6 class="font-weight-medium">@*(cartItems.Count() > 1 ? ((cartItems.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí") *@Miễn phí</h6>
                     </div>
                 </div>
                 <div class="pt-2">
                     <div class="d-flex justify-content-between mt-2">
                         <h5>Thành tiền</h5>
-                            <h5 class="font-weight-medium">@((TotalPrice - DiscountedPrice + (cartItems.Count() - 1) * 1000).ToString("#,##0"))</h5>
+                            <h5 class="font-weight-medium">@(
+                                (TotalPrice - DiscountedPrice /* + (cartItems.Count() > 1 ?(cartItems.Count() - 1) * 1000 : 0) */).ToString("#,##0"))</h5>
                     </div>
                 </div>
             </div>
@@ -166,12 +167,6 @@
                     <div class="custom-control custom-radio">
                         <input type="radio" class="custom-control-input" name="PaymentMethod" value="@PaymentMethods.VNPay" id="vnpay">
                         <label class="custom-control-label" for="vnpay">Thanh toán VNPay</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" name="PaymentMethod" value="@PaymentMethods.MoMo" id="momo">
-                        <label class="custom-control-label" for="momo">Thanh toán MoMo</label>
                     </div>
                 </div>
                 <button class="btn btn-block btn-primary font-weight-bold py-3">Đặt hàng</button>
