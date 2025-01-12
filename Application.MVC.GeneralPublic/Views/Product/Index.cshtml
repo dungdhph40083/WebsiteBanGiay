@@ -101,10 +101,10 @@
                     </div>
                     @foreach (var category in ViewBag.Categories)
                     {
-                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                            <input type="radio" class="custom-control-input" name="categoryId" value="@category.CategoryID" id="category-@category.CategoryID" onchange="this.form.submit()" @(ViewBag.SelectedCategory != null && Guid.Parse(ViewBag.SelectedCategory.ToString()) == category.CategoryID ? "checked" : "")>
-                            <label class="custom-control-label" for="category-@category.CategoryID">@category.CategoryName </label>
-                        </div>
+                            <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                                <input type="radio" class="custom-control-input" name="categoryId" value="@category.CategoryID" id="category-@category.CategoryID" onchange="this.form.submit()" @(ViewBag.SelectedCategory != null && Guid.Parse(ViewBag.SelectedCategory.ToString()) == category.CategoryID ? "checked" : "")>
+                                <label class="custom-control-label" for="category-@category.CategoryID">@category.CategoryName </label>
+                            </div>
                     }
                 </form>
             </div>
@@ -121,10 +121,10 @@
                     </div>
                     @foreach (var color in ViewBag.Colors)
                     {
-                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                            <input type="radio" class="custom-control-input" name="colorId" value="@color.ColorID" id="color-@color.ColorID" onchange="this.form.submit()" @(ViewBag.SelectedColor != null && Guid.Parse(ViewBag.SelectedColor.ToString()) == color.ColorID ? "checked" : "")>
-                            <label class="custom-control-label" for="color-@color.ColorID">@color.ColorName </label>
-                        </div>
+                            <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                                <input type="radio" class="custom-control-input" name="colorId" value="@color.ColorID" id="color-@color.ColorID" onchange="this.form.submit()" @(ViewBag.SelectedColor != null && Guid.Parse(ViewBag.SelectedColor.ToString()) == color.ColorID ? "checked" : "")>
+                                <label class="custom-control-label" for="color-@color.ColorID">@color.ColorName </label>
+                            </div>
                     }
                 </form>
             </div>
@@ -155,42 +155,42 @@
                         var productPrice = product?.Price ?? 0;
                         var productImage = product?.Image?.ImageFileName;
 
-                        <div class="col-md-4 pb-1">
-                            <div class="product-item bg-light mb-4">
-                                <div class="product-img position-relative overflow-hidden">
-                                    <img class="img-fluid w-100 product-image" src="https://localhost:7187/Images/@productImage" alt="@productName">
-                                    <div class="product-action">
-                                        <a class="btn btn-outline-dark btn-square" asp-controller="UserCart" asp-action="Add2Cart"
-                                           asp-route-ID="@item.ProductDetailID"
-                                           asp-route-Quantity="1"
-                                           asp-route-AdditionMode="true"><i class="fa fa-shopping-cart"></i></a>
-@*                                         <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a> *@
-                                        <a class="btn btn-outline-dark btn-square" href="@Url.Action("Details", new { id = item.ProductDetailID })"><i class="fa fa-search"></i></a>
+                                <div class="col-md-4 pb-1">
+                                    <div class="product-item bg-light mb-4">
+                                        <div class="product-img position-relative overflow-hidden">
+                                            <img class="img-fluid w-100 product-image" src="https://localhost:7187/Images/@productImage" alt="@productName">
+                                            <div class="product-action">
+                                                <button data-productid="@item.ProductID" class="btn btn-outline-dark btn-square addCart" asp-controller="UserCart" asp-action="Add2Cart"
+                                                   asp-route-ID="@item.ProductDetailID"
+                                                   asp-route-Quantity="1"
+                                                   asp-route-AdditionMode="true"><i class="fa fa-shopping-cart"></i></button>
+                                        @*                                         <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a> *@
+                                                <a class="btn btn-outline-dark btn-square" href="@Url.Action("Details", new { id = item.ProductDetailID })"><i class="fa fa-search"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="text-center py-4">
+                                            <a class="h6 text-decoration-none text-truncate" href="@Url.Action("Details", new { id = item.ProductDetailID })">@productName</a>
+                                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                                <h5>@(Convert.ToDecimal(productPrice).ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) VNĐ</h5>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-center mb-1">
+                                                <small class="fa fa-star text-primary mr-1"></small>
+                                                <small class="fa fa-star text-primary mr-1"></small>
+                                                <small class="fa fa-star text-primary mr-1"></small>
+                                                <small class="fa fa-star text-primary mr-1"></small>
+                                                <small class="fa fa-star text-primary mr-1"></small>
+                                            </div>
+                                            <div>
+                                                <a class="btn btn-primary" href="@Url.Action("Details", new { id = item.ProductDetailID })">Xem Ngay</a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="text-center py-4">
-                                    <a class="h6 text-decoration-none text-truncate" href="@Url.Action("Details", new { id = item.ProductDetailID })">@productName</a>
-                                    <div class="d-flex align-items-center justify-content-center mt-2">
-                                        <h5>@(Convert.ToDecimal(productPrice).ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) VNĐ</h5>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-center mb-1">
-                                        <small class="fa fa-star text-primary mr-1"></small>
-                                        <small class="fa fa-star text-primary mr-1"></small>
-                                        <small class="fa fa-star text-primary mr-1"></small>
-                                        <small class="fa fa-star text-primary mr-1"></small>
-                                        <small class="fa fa-star text-primary mr-1"></small>
-                                    </div>
-                                    <div>
-                                        <a class="btn btn-primary" href="@Url.Action("Details", new { id = item.ProductDetailID })">Xem Ngay</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     }
                 }
                 else
                 {
-                    <b>Hiện chưa có sản phẩm nào...</b>
+                        <b>Hiện chưa có sản phẩm nào...</b>
                 }
             </div>
 
@@ -202,9 +202,9 @@
                         </li>
                         @for (int i = 1; i <= ViewBag.TotalPages; i++)
                         {
-                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                                <a class="page-link" href="?page=@i">@i</a>
-                            </li>
+                                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="?page=@i">@i</a>
+                                </li>
                         }
                         <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
                             <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)">Tiếp</a>

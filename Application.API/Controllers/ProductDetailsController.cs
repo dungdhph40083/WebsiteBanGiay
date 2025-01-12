@@ -42,18 +42,15 @@ namespace Application.API.Controllers
         }
 
         [HttpGet("ByProduct/{ProductID}")]
-        public async Task<ActionResult<List<ProductDetail>>> GetByProductID(Guid ProductID, Guid? ColorID, Guid? SizeID)
+        public async Task<ActionResult<List<ProductDetail>>> GetByProductID(Guid ProductID)
         {
-            var Result = await ProductDetailRepo.GetProductDetailsByProductID(ProductID);
-            if (ColorID != null)
-            {
-                Result = Result.Where(Req => Req.ColorID == ColorID).ToList();
-            }
-            if (SizeID != null)
-            {
-                Result = Result.Where(Req => Req.SizeID == SizeID).ToList();
-            }
-            return Result;
+            return await ProductDetailRepo.GetProductDetailsByProductID(ProductID);
+        }
+
+        [HttpGet("ByProduct/VariationsOnly")]
+        public async Task<ActionResult<List<ProductDetail>>> GetVariations(Guid? ProductID)
+        {
+            return await ProductDetailRepo.GetVariationsByProductID(ProductID.GetValueOrDefault());
         }
 
         [HttpPost]

@@ -1,8 +1,10 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.ModelContexts;
 using Application.Data.Models;
+using Aspose.Pdf;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Policy;
 
 namespace Application.Data.Repositories
 {
@@ -19,7 +21,8 @@ namespace Application.Data.Repositories
         {
             var DateTimeUtcNow = DateTime.UtcNow;
 
-            Size Size = new() {
+            Size Size = new()
+            {
                 SizeID = Guid.NewGuid(),
                 CreatedAt = DateTimeUtcNow,
                 UpdatedAt = DateTimeUtcNow
@@ -40,6 +43,65 @@ namespace Application.Data.Repositories
             }
         }
 
+        public Guid getProductDetail(Guid ProductId, Guid color, Guid size)
+        {
+            GiayDBContext Context = new GiayDBContext();
+            if (Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.ColorID == color && p.SizeID == size).Distinct().ToList().Count == 0)
+                return Guid.Empty;
+            return Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.ColorID == color && p.SizeID == size).FirstOrDefault().ProductDetailID;
+        }
+
+        public Guid getProductDetail(Guid ProductId)
+        {
+            GiayDBContext Context = new GiayDBContext();
+            if (Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.Quantity > 0).Distinct().ToList().Count == 0)
+                return Guid.Empty;
+            return Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.Quantity > 0).ToList()[0].ProductDetailID;
+        }
+
+        public int getQuantity(Guid ProductId, Guid color, Guid size)
+        {
+            GiayDBContext Context = new GiayDBContext();
+            if (Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.ColorID == color && p.SizeID == size).Distinct().ToList().Count == 0)
+                return 0;
+            return Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.ColorID == color && p.SizeID == size).FirstOrDefault().Quantity.Value;
+        }
+
+        public int getQuantity(Guid ProductId)
+        {
+            GiayDBContext Context = new GiayDBContext();
+            if (Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.Quantity > 0).Distinct().ToList().Count == 0)
+                return 0;
+            return Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.Quantity > 0).Distinct().ToList()[0].Quantity.Value;
+        }
+
+        public int getQuantityRemoveCart(Guid ProductId, Guid color, Guid size, Guid userId)
+        {
+            GiayDBContext Context = new GiayDBContext();
+            if (Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.ColorID == color && p.SizeID == size).Distinct().ToList().Count == 0)
+                return -1;
+            int quantityCart = 0;
+            if (Context.ShoppingCarts.Where(c => c.ProductDetail.ColorID == color
+            && c.ProductDetail.SizeID == size && c.ProductDetail.ProductID == ProductId && c.UserID == userId)
+                .FirstOrDefault() == null)
+                quantityCart = 0;
+            else
+                quantityCart = Context.ShoppingCarts.Where(c => c.ProductDetail.ColorID == color
+            && c.ProductDetail.SizeID == size && c.ProductDetail.ProductID == ProductId && c.UserID == userId)
+                .FirstOrDefault().QuantityCart.Value;
+            return Context.ProductDetails.Where(p => p.ProductID == ProductId
+            && p.ColorID == color && p.SizeID == size).FirstOrDefault().Quantity.Value - quantityCart;
+        }
+
         public async Task<Size?> GetSizeByID(Guid TargetID)
         {
             var Target = await Context.Sizes.FindAsync(TargetID);
@@ -49,6 +111,20 @@ namespace Application.Data.Repositories
         public Task<List<Size>> GetSizes()
         {
             return Context.Sizes.ToListAsync();
+        }
+
+        public List<Size?> GetSizesByProductId(Guid ProductId)
+        {
+            GiayDBContext Context = new GiayDBContext();
+            return Context.ProductDetails.Where(p => p.ProductID == ProductId).Select(p => p.Size)
+            .Distinct().ToList();
+        }
+
+        public List<Size?> GetSizesByProductIdAndColor(Guid ProductId, Guid color)
+        {
+            GiayDBContext Context = new GiayDBContext();
+            return Context.ProductDetails.Where(p => p.ProductID == ProductId && p.ColorID == color).Select(p => p.Size)
+           .Distinct().ToList();
         }
 
         public async Task<Size?> UpdateSize(Guid TargetID, SizeDTO UpdatedSize)
