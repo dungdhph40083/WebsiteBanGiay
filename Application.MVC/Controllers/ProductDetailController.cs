@@ -19,10 +19,8 @@ namespace Application.MVC.Controllers
         public async Task<ActionResult> Index(int Page = 1, int PageSize = 10, string SearchQuery = "", string Status = "")
         {
             string URL_Products = $@"https://localhost:7187/api/ProductDetails";
-            string URL_Variants = $@"https://localhost:7187/api/ProductDetails/ByProduct/VariationsOnly";
 
             var ProductList = await Client.GetFromJsonAsync<List<ProductDetail>>(URL_Products);
-            var DetailList = await Client.GetFromJsonAsync<List<ProductDetail>>(URL_Variants);
 
             if (!string.IsNullOrWhiteSpace(SearchQuery))
             {
