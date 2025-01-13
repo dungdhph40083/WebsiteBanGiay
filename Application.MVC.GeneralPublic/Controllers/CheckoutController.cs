@@ -132,7 +132,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                 Details.PaymentMethodID = Guid.Parse(DefaultValues.VNPayGUID);
                 try
                 {
-                    string URL = $@"https://localhost:7187/api/Payment";
+                    string URL = $@"https://localhost:7187/api/Payment/{UserID}";
                     var Response = await _client.PostAsJsonAsync(URL, Details);
 
                     var Content = Response.Content.ReadAsStringAsync().Result;

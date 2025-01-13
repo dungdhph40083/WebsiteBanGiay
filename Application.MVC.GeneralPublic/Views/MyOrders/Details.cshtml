@@ -187,7 +187,7 @@
                         <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
                             Hủy yêu cầu trả hàng
                         </button>
-                        <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                        <div class="dropdown-menu text-center mt-2 mb-2 shadow-lg" style="width: 400px; border-radius: 25px">
                             <h3>Xác nhận</h3>
                             <p>Điều này sẽ hủy yêu cầu trả hàng.</p>
                             <a class="btn btn-success" style="width: 120px" asp-action="DestroyRequest2Refund" asp-route-ID="@Model.OrderID">Xác nhận</a>
@@ -203,10 +203,10 @@
                         <a class="btn btn-primary mr-2" asp-action="QuickEdit" asp-route-ID="@Model.OrderID">Đổi thông tin</a>
                     }
                     <div class="dropdown">
-                        <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-danger" type="button" data-toggle="dropdown" aria-expanded="false">
                             Hủy đơn
                         </button>
-                        <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                        <div class="dropdown-menu text-center mt-2 mb-2 shadow-lg" style="width: 400px; border-radius: 25px">
                             <h3>Xác nhận</h3>
                             <p>
                                 Điều này sẽ <span style="text-decoration: underline">hủy toàn bộ</span> đơn hàng.<br />
@@ -233,7 +233,7 @@
                         <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
                             Xác nhận đã nhận hàng
                         </button>
-                        <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                        <div class="dropdown-menu text-center mt-2 mb-2 shadow-lg" style="width: 400px; border-radius: 25px">
                             <h3>Xác nhận</h3>
                             <a class="btn btn-success" style="width: 120px" asp-action="ReceivedOrder" asp-route-ID="@Model.OrderID">Xác nhận</a>
                             <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>
@@ -247,10 +247,10 @@
                     @if (Model.AcceptEnd != null || DateTime.UtcNow <= Model.AcceptEnd)
                     {
                         <div class="dropdown">
-                            <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-danger" type="button" data-toggle="dropdown" aria-expanded="false">
                                 Yêu cầu hoàn trả
                             </button>
-                            <div class="dropdown-menu text-center mt-2 mb-2" style="width: 400px">
+                            <div class="dropdown-menu text-center mt-2 mb-2 shadow-lg" style="width: 400px; border-radius: 25px">
                                 <h3>Xác nhận</h3>
                                 <a class="btn btn-success" style="width: 120px" asp-action="RequestRefund" asp-route-ID="@Model.OrderID">Xác nhận</a>
                                 <a class="btn btn-danger" style="width: 120px" href="#">Hủy</a>

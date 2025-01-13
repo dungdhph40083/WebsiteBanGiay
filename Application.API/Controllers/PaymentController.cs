@@ -36,8 +36,8 @@ namespace Application.API.Controllers
             this.VoucherRepository = VoucherRepository;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<String?>> CreateOrder([FromBody] OrderDto NewOrder)
+        [HttpPost("{UserID}")]
+        public async Task<ActionResult<String?>> CreateOrder(Guid UserID, [FromBody] OrderDto NewOrder)
         {
             var CreatedOrder = await _orderRepository.CreateOrderAsync(NewOrder);
             var OrderDetailsCreatedResponse =
@@ -49,7 +49,7 @@ namespace Application.API.Controllers
             {
                 var WhatVoucherAreTheyUsing = await VoucherRepository.GetVoucherByUserID(NewOrder.UserID.GetValueOrDefault());
                 PaymentInformationModel model = new PaymentInformationModel();
-                List<ShoppingCart> shoppingCarts = ShoppingCartRepository.GetShoppingCarts().Result;
+                List<ShoppingCart> shoppingCarts = ShoppingCartRepository.GetShoppingCartsByUserID(UserID).Result;
                 long PriceAmount = shoppingCarts.Sum(x => x.Price).GetValueOrDefault();
 
                 if (WhatVoucherAreTheyUsing != null)
