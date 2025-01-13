@@ -5,6 +5,7 @@ using Application.Data.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Application.Data.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Application.API.Controllers
 {

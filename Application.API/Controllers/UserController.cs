@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Application.API.Controllers
 {
@@ -27,6 +28,7 @@ namespace Application.API.Controllers
 
         // lấy hết
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<User>>> Get()
         {
             return await UserRepo.GetUsers();
@@ -34,6 +36,7 @@ namespace Application.API.Controllers
 
         // lấy theo ID (1 cái)
         [HttpGet("{ID}")]
+        [AllowAnonymous]
         public async Task<ActionResult<User?>> Get(Guid ID)
         {
             return await UserRepo.GetUserByID(ID);
@@ -57,6 +60,7 @@ namespace Application.API.Controllers
 
         // tạo mới người dùng
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> Post([FromForm] UserDTO NewUser, IFormFile? ProfilePic)
         {
             try
@@ -140,8 +144,6 @@ namespace Application.API.Controllers
             if (Result) return Ok("SUCCESS");
             else return BadRequest("FAILURE");
         }
-
-        // ko dùng nhưng cần thiết để xóa mấy cái người dùng ma đi
         [HttpDelete("{ID}")]
         public async Task<ActionResult> DeleteUser(Guid ID)
         {

@@ -2,6 +2,7 @@
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,5 +50,24 @@ namespace Application.API.Controllers
             await _orderTrackingRepository.Add(orderTracking);
             return CreatedAtAction(nameof(GetOrderTracking), new { id = orderTracking.TrackingID }, orderTracking);
         }
+
+        //[HttpPut("{id}")]
+        //[Authorize(Roles = "Admin")]
+        //public async Task<ActionResult<OrderTracking?>> PutOrderTracking(Guid id, OrderTrackingDTO orderTracking)
+        //{
+        //    var Response = await _orderTrackingRepository.Update(id, orderTracking);
+        //    if (Response != null)
+        //    {
+        //        return Response;
+        //    }
+        //    else return NoContent();
+        //}
+
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult> DeleteOrderTracking(Guid id)
+        //{
+        //    await _orderTrackingRepository.Delete(id);
+        //    return NoContent();
+        //}
     }
 }

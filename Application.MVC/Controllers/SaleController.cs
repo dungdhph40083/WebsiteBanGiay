@@ -2,15 +2,17 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class SaleController : Controller
     {
         HttpClient client = new HttpClient();
+        private readonly HttpClient _httpClient;
         public SaleController()
         {
-            client = new HttpClient();
+            _httpClient = new HttpClient();
         }
         public ActionResult Index()
         {
@@ -53,12 +55,14 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Sale Sale)
         {
+
             string requestURL = "https://localhost:7187/api/Sale";
             var response = await client.PostAsJsonAsync(requestURL, Sale);
             return RedirectToAction("Index");
         }
         public async Task<ActionResult> Update(Guid id)
         {
+
             var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             var categories = await client.GetFromJsonAsync<List<Category>>("https://localhost:7187/api/Category");
 
@@ -74,12 +78,14 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, Sale Sale)
         {
+
             string requestURL = $@"https://localhost:7187/api/Sale/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, Sale);
             return RedirectToAction("Index");
         }
         public ActionResult Delete(Guid id)
         {
+
             string requestURL = $"https://localhost:7187/api/Sale/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");

@@ -10,6 +10,7 @@ using Application.Data.Repositories.IRepository;
 using Application.Data.Repositories;
 using Application.Data.DTOs;
 using Application.Data.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 
 namespace Application.API.Controllers
@@ -30,12 +31,14 @@ namespace Application.API.Controllers
 
         // Để debug
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<ProductDetail>>> Get()
         {
             return await ProductDetailRepo.GetProductDetails();
         }
 
         [HttpGet("{ID}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ProductDetail?>> GetByDetailID(Guid ID)
         {
             return await ProductDetailRepo.GetProductDetailByID(ID);

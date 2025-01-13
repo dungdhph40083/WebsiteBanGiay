@@ -3,15 +3,16 @@ using Application.Data.Enums;
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Application.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class OrderDetailsController : ControllerBase
-    {
+	[Route("api/[controller]")]
+	[ApiController]
+	public class OrderDetailsController : ControllerBase
+	{
         private readonly IOrderDetails _orderDetailsRepository;
         private readonly IOrderRepository OrderRepository;
         private readonly IShoppingCart ShoppingCartRepository;
@@ -25,7 +26,7 @@ namespace Application.API.Controllers
 
         // GET: api/OrderDetails
         [HttpGet]
-        public async Task<ActionResult<List<OrderDetail>>> GetOrderDetails()
+        public async Task<IEnumerable<OrderDetail>> GetOrderDetails()
         {
             return await _orderDetailsRepository.GetAll();
         }
@@ -38,9 +39,9 @@ namespace Application.API.Controllers
 
         // GET: api/OrderDetails/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrderDetail>> GetOrderDetails(Guid ID)
+        public async Task<ActionResult<OrderDetail>> GetOrderDetails(Guid id)
         {
-            var orderDetails = await _orderDetailsRepository.GetById(ID);
+            var orderDetails =  await _orderDetailsRepository.GetById(id);
 
             if (orderDetails == null)
             {

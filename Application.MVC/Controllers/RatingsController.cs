@@ -1,18 +1,21 @@
 ﻿using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class RatingsController : Controller
     {
         HttpClient client = new HttpClient();
+        private readonly HttpClient _httpClient;
         public RatingsController()
         {
-            client = new HttpClient();
+            _httpClient = new HttpClient();
         }
         public ActionResult Index()
         {
+
             string requestURL = "https://localhost:7187/api/Ratings";
             var response = client.GetStringAsync(requestURL).Result;
             var Ratings = JsonConvert.DeserializeObject<List<Rating>>(response);
@@ -21,6 +24,7 @@ namespace Application.MVC.Controllers
 
         public ActionResult Details(Guid id)
         {
+
             string requestURL = $"https://localhost:7187/api/Ratings/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var Ratings = JsonConvert.DeserializeObject<Rating>(response);
@@ -28,6 +32,8 @@ namespace Application.MVC.Controllers
         }
         public async Task<IActionResult> Create()
         {
+           
+
             try
             {
                 var products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
@@ -50,12 +56,15 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Rating Rating)
         {
+           
+
             string requestURL = "https://localhost:7187/api/Ratings/create";
             var response = await client.PostAsJsonAsync(requestURL, Rating);
             return RedirectToAction("Index");
         }
         public ActionResult Update(Guid id)
-        {
+        {       
+
             string requestURL = $"https://localhost:7187/api/Ratings/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             Rating Ratings = JsonConvert.DeserializeObject<Rating>(response);
@@ -65,13 +74,15 @@ namespace Application.MVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, Rating Rating)
-        {
+        {         
+
             string requestURL = $@"https://localhost:7187/api/Ratings/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, Rating);
             return RedirectToAction("Index");
         }
         public ActionResult Delete(Guid id)
         {
+
             string requestURL = $"https://localhost:7187/api/Ratings/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");

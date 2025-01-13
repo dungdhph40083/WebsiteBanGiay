@@ -1,55 +1,74 @@
 ﻿using Application.Data.Enums;
 using Application.Data.Models;
+using Humanizer;
 using Application.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using System.Drawing;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
     public class UserCartController : Controller
     {
         HttpClient Client = new HttpClient();
-
+        //private readonly HttpClient _httpClient;
+        //public UserCartController()
+        //{
+        //    _httpClient = new HttpClient();
+        //}
         // Fake data; xóa sau khi có Đăng nhập/Đăng ký!!!
         // USER ID LÀ MỘT USER ĐỊNH SẴN NÊN NÓ CŨNG LÀ FAKE DATA
-        Guid UserID = Guid.Parse("bbd122d1-8961-4363-820e-3ad1a87064e4");
 
         public async Task<ActionResult> Index()
         {
-            string URL = $@"HTTPS://LOCALHOST:7187/API/SHOPPINGCART/USER/{UserID}";
-            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{UserID}";
-
-            var Response = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
-            var Voucher = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
-
-            if (Voucher != null)
+            try
             {
-                string URL_VoucherValidator = $@"https://localhost:7187/api/Voucher/Validate/{UserID}/{Voucher.VoucherCode}";
-                var VoucherResponse = await Client.PostAsync(URL_VoucherValidator, null).Result.Content.ReadAsStringAsync();
-                if (VoucherResponse == ValidateErrorResult.VOUCHER_VALID)
+                Guid ID = GetCurrentUserId();
+                string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{ID}";
+                string URL = $@"https://localhost:7187/api/ShoppingCart/User/{ID}";
+
+                var Response = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
+                var Voucher = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
+
+                if (Voucher != null)
                 {
-                    ViewBag.VoucherInfo = Voucher;
-                }
-                else
-                {
-                    switch (VoucherResponse)
+                    string URL_VoucherValidator = $@"https://localhost:7187/api/Voucher/Validate/{ID}/{Voucher.VoucherCode}";
+                    var VoucherResponse = await Client.PostAsync(URL_VoucherValidator, null).Result.Content.ReadAsStringAsync();
+                    if (VoucherResponse == ValidateErrorResult.VOUCHER_VALID)
                     {
-                        default:
-                            ViewBag.ErrorMessage = "No";
-                            break;
+                        ViewBag.VoucherInfo = Voucher;
+                    }
+                    else
+                    {
+                        switch (VoucherResponse)
+                        {
+                            default:
+                                ViewBag.ErrorMessage = "No";
+                                break;
+                        }
                     }
                 }
-            }
 
-            return View(Response);
+                return View(Response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View(new List<ShoppingCart>());
+            }
         }
+        
 
         public async Task<ActionResult> Add2Cart(Guid? ID, int? Quantity, bool? AdditionMode)
         {
-            Console.WriteLine("Quantity is: " + (Quantity.ToString() ?? "null"));
-            if (ID != null)
+            Console.WriteLine("Quantity: " + Quantity ?? "null");
+
+            Guid UserID = GetCurrentUserId();
+
+            if (UserID != null && ID != null)
             {
                 try
                 {
@@ -70,19 +89,20 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> UpdateWholeCart(List<ShoppingCart> BigCart)
         {
+            Guid ID = GetCurrentUserId();
+
             foreach (var Item in BigCart)
             {
-                string URL =
-        $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{UserID}/{Item.ProductDetailID}?Quantity={Item.QuantityCart ?? 0}&AdditionMode=false";
+                string URL = $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{ID}/{Item.ProductDetailID}?Quantity={Item.QuantityCart ?? 0}&AdditionMode=false";
 
                 var Response = await Client.PutAsync(URL, null);
             }
 
-            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{UserID}";
+            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{ID}";
             var VoucherChecker = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
             if (VoucherChecker != null)
             {
-                var Response = await Client.PatchAsync($@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{UserID}?VoucherCode={VoucherChecker.VoucherCode}", null);
+                var Response = await Client.PatchAsync($@"https://localhost:7187/api/ShoppingCart/ApplyVoucher/{ID}?VoucherCode={VoucherChecker.VoucherCode}", null);
             }
 
             return RedirectToAction(nameof(Index));
@@ -115,6 +135,25 @@ namespace Application.MVC.GeneralPublic.Controllers
                 throw;
             }
             return RedirectToAction(nameof(Index));
+        }
+        private Guid GetCurrentUserId()
+        {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID");
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("UserId không tồn tại trong token.");
+            }
+
+            return Guid.Parse(userIdClaim.Value);
         }
     }
 }

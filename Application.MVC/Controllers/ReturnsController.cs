@@ -1,15 +1,17 @@
 ﻿using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class ReturnsController : Controller
     {
         HttpClient client = new HttpClient();
+        private readonly HttpClient _httpClient;
         public ReturnsController()
         {
-            client = new HttpClient();
+            _httpClient = new HttpClient();
         }
         public ActionResult Index()
         {
@@ -64,6 +66,7 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(Guid ID, Return Return)
         {
+
             string requestURL = $@"https://localhost:7187/api/Returns/{ID}";
             var response = await client.PutAsJsonAsync(requestURL, Return);
             return RedirectToAction("Index");

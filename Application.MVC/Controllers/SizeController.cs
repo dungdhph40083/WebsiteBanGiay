@@ -6,17 +6,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class SizeController : Controller
     {
         HttpClient Client = new HttpClient();
+        private readonly HttpClient _httpClient;
+        public SizeController()
+        {
+            _httpClient = new HttpClient();
+        }
         // GET: SizeController
 
         [HttpGet]
         public async Task<ActionResult> Index()
         {
+
             string URL = $@"https://localhost:7187/api/Size";
             var Response = await Client.GetFromJsonAsync<List<Size>>(URL);
             return View(Response);
@@ -26,6 +33,7 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Details(Guid ID)
         {
+
             string URL = $@"https://localhost:7187/api/Size/{ID}";
             var Response = await Client.GetFromJsonAsync<Size>(URL);
             return View(Response);

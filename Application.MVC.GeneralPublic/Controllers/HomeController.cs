@@ -1,19 +1,36 @@
+using Application.Data.DTOs;
 using Application.Data.Enums;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
     public class HomeController : Controller
     {
         HttpClient Client = new HttpClient();
-
-        public async Task<ActionResult> Index()
+        private readonly HttpClient _httpClient;
+        private readonly GiayDBContext _context;
+        public HomeController(HttpClient httpClient, GiayDBContext giayDBContext)
         {
+            _httpClient = httpClient;
+            _context = giayDBContext;
+        }
+        public async Task<ActionResult> Index()
+        {          
+            var userId = HttpContext.Session.GetString("UserID");
+            if (userId != null)
+            {
+                var user = _context.Users.FirstOrDefault(u => u.UserID == Guid.Parse(userId));
+                return View(user);
+            }
             await FetchInfo();
-            return View();
+            return View(new User());
         }
 
         private async Task FetchInfo()

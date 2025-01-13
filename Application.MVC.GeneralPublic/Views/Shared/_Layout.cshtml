@@ -1,17 +1,32 @@
 ﻿@using Application.Data.Enums
 @using Application.Data.Models
 @using Microsoft.AspNetCore.Http;
+@using System.IdentityModel.Tokens.Jwt;
 @inject IHttpContextAccessor HttpContextAccessor;
 
 @{
     HttpClient Client = new HttpClient();
 
     var HttpContext = HttpContextAccessor.HttpContext!;
-    var UserID = "bbd122d1-8961-4363-820e-3ad1a87064e4"; /* HttpContext.Session.GetString("USERID_KEY_GOES_HERE"); */
+    IHttpContextAccessor httpContextAccessor = new HttpContextAccessor();
+
+    string token = httpContextAccessor.HttpContext?.Session.GetString("JwtToken");
+    Guid UserID = Guid.Empty;
+
+    if (!string.IsNullOrEmpty(token))
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(token);
+
+        var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID");
+        if (userIdClaim != null)
+        {
+            UserID = Guid.Parse(userIdClaim.Value);
+        }
+    }
 
     string URL = $@"https://localhost:7187/api/ShoppingCart/User/{UserID}";
-
-    var ShoppingCart = (await Client.GetFromJsonAsync<List<ShoppingCart>>(URL)) ?? [];
+    var ShoppingCart = (await Client.GetFromJsonAsync<List<ShoppingCart>>(URL)) ?? new List<ShoppingCart>();
     int ItemsInSC = ShoppingCart.Count();
 }
 
@@ -77,21 +92,41 @@
             <div class="col-lg-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Tài khoản</button>
-                        @if (HttpContext.Session.GetString(nameof(Metadata.UserID)) != null || HttpContext.Session.GetString(nameof(Metadata.Username)) != null)
+                        @if (HttpContext.Session.GetString(nameof(Metadata.Username)) != null)
                         {
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a asp-controller="Account" asp-action="Login" class="dropdown-item">Đăng nhập</a>
-                                <a asp-controller="Account" asp-action="Signup" class="dropdown-item">Đăng ký</a>
-                            </div>
+                            <a href="#" onclick="navigateAdmin()" class="btn btn-sm btn-primary ml-2">
+                                <i class="fas fa-user-shield mr-2"></i>
+                                Admin
+                            </a>
+                            <a href="#" onclick="navigatePrfile()" class="btn btn-sm btn-white ml-2">
+                                <div style="position: absolute; margin-top: -10px">
+                                    @if (HttpContext.Session.GetString("UserAvatar") != null)
+                                    {
+                                        var nam = "https://localhost:7187/Images/" + @HttpContext.Session.GetString("UserAvatar");
+                                        <img src="@nam"
+                                             alt="User Avatar"
+                                             class="rounded-circle"
+                                             style="width: 39px; height: 39px; object-fit: cover; border: 2px solid #ddd;">
+                                    }
+                                    else
+                                    {
+                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                                             style="width: 39px; height: 39px;">
+                                            <span class="text-white">N/A</span>
+                                        </div>
+                                    }
+                                </div>
+                            </a>
                         }
                         else
                         {
+                            <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Tài khoản</button>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a asp-controller="Account" asp-action="Login" class="dropdown-item">Đăng nhập</a>
-                                <a asp-controller="Account" asp-action="Signup" class="dropdown-item">Đăng ký</a>
+                                <a href="#" onclick="navigateLogin()" class="dropdown-item">Đăng nhập</a>
+                                <a href="#" onclick="navigateRegister()" class="dropdown-item">Đăng ký</a>
                             </div>
                         }
+
                     </div>
                 </div>
                 <div class="d-inline-flex align-items-center d-block d-lg-none">
@@ -267,7 +302,7 @@
                 </p>
             </div>
             <div class="col-md-6 px-xl-0 text-center text-md-right">
-@*                 <img class="img-fluid" src="img/payments.png" alt=""> *@
+                @*                 <img class="img-fluid" src="img/payments.png" alt=""> *@
             </div>
         </div>
     </div>
@@ -289,9 +324,23 @@
 
     <!-- Template Javascript -->
     <script src="~/js/main.js"></script>
-    <script src="~/js/modal_2.js"></script>
+    @*    navigation *@
+    <script>
+        function navigatePrfile() {
+            window.location.href = '/Profile/Index';
+        }
+        function navigateRegister() {
+            window.location.href = '/Login/Register';
+        }
+        function navigateLogin() {
+            window.location.href = '/Login/Index';
+        }
+        function navigateAdmin() {
+            window.location.href = 'https://localhost:7200/';
+        }
+    </script>
+        <script src="~/js/modal_2.js"></script>
     <script src="~/js/api.js"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

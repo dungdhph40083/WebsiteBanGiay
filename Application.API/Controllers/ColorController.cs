@@ -1,6 +1,7 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +19,14 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Color>>> GetAllColors()
         {
             return Ok( await _colorRepository.GetAllColors());
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult> GetColorById(Guid id)
         {
             var color = await _colorRepository.GetColorById(id);

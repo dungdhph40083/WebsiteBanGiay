@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class CategoriesController : Controller
     {
        HttpClient client;
+        private readonly HttpClient _client;
         public CategoriesController()
         {
             client = new HttpClient();
@@ -41,7 +43,8 @@ namespace Application.MVC.Controllers
         // POST: Category/Create
         [HttpPost]
         public async Task<ActionResult> Create(CategoryDTO categoryDTO)
-        { 
+        {
+  
             try
             {
             string requestURL = $"https://localhost:7187/api/Category";
@@ -77,7 +80,8 @@ namespace Application.MVC.Controllers
 
 
         public ActionResult Delete(Guid id)
-        { try
+        {
+            try
             {
             string requestURL = $@"https://localhost:7187/api/Category/{id}";
             var response = client.DeleteAsync(requestURL).Result;

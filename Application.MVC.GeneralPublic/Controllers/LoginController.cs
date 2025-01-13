@@ -1,13 +1,26 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
+using Application.Data.Models;
+using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
     public class LoginController : Controller
     {
+        private readonly IHttpClientFactory _httpClientFactory;
         HttpClient Client = new HttpClient();
+        public LoginController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
 
         [HttpGet]
         public IActionResult Index()
@@ -15,55 +28,141 @@ namespace Application.MVC.GeneralPublic.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
         [ValidateAntiForgeryToken]
         public ActionResult Login()
         {
             return View();
         }
+        [HttpPost]
+        public async Task<IActionResult> Login(string Username, string Password, bool RememberMe)
+        {
+            var loginPayload = new
+            {
+                username = Username,
+                password = Password
+            };
 
+            try
+            {
+                var httpClient = _httpClientFactory.CreateClient();
+                var requestContent = new StringContent(JsonSerializer.Serialize(loginPayload), Encoding.UTF8, "application/json");            
+
+                var response = await httpClient.PostAsync("https://localhost:7187/api/Login/login", requestContent);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    var token = JsonSerializer.Deserialize<LoginResponse>(responseData, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true})?.Token;
+
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        HttpContext.Session.SetString("JwtToken", token);
+                        HttpContext.Session.SetString(nameof(Metadata.Username), Username);
+                        HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions
+                        {
+                            HttpOnly = true,
+                            Secure = true,
+                            Expires = RememberMe ? DateTimeOffset.UtcNow.AddDays(7) : DateTimeOffset.UtcNow.AddHours(1)
+                        });
+
+                        var handler = new JwtSecurityTokenHandler();
+                        var jwtToken = handler.ReadJwtToken(token);
+                        var role = jwtToken.Claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
+                        Guid ID = GetCurrentUserId();
+                        string URL = $@"https://localhost:7187/api/User/{ID}";
+                        var Response = await Client.GetFromJsonAsync<User>(URL);
+
+                        if (Response != null)
+                        {
+                            HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName ?? "N/A");
+                        }
+                        if (role == "Admin")
+                        {
+                            return Redirect("https://localhost:7200/#");
+                        }
+                        else if (role == "User")
+                        {
+                            return RedirectToAction("index", "Home");
+                        }
+                    }
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    TempData["ErrorMessage"] = "Tên người dùng hoặc mật khẩu không đúng.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Có lỗi xảy ra trong quá trình đăng nhập.";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Lỗi kết nối: {ex.Message}";
+            }
+           
+            return RedirectToAction("index", "Home");
+        }
+
+        private class LoginResponse
+        {
+            public string Token { get; set; }
+        }
         [HttpGet]
         public ActionResult Register()
         {
             return View();
         }
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(UserDTO Input)
+        public async Task<IActionResult> Register([FromForm] UserDTO NewUser, IFormFile? profilePic)
         {
+            if (!ModelState.IsValid)
+            {
+                TempData["FailureBanner"] = "Dữ liệu nhập không hợp lệ. Vui lòng kiểm tra lại.";
+                return View(NewUser);
+            }
             try
             {
-                string URL = $@"https://localhost:7187/api/User";
+               
+                string apiUrl = $@"https://localhost:7187/api/User/Register";
+                var response = await Client.PostAsJsonAsync(apiUrl, NewUser);
 
-                MultipartFormDataContent Contents = new()
+                if (response.IsSuccessStatusCode)
                 {
-                    { new StringContent(Input.Username!),                              nameof(Input.Username) },
-                    { new StringContent(Input.Password!),                              nameof(Input.Password) },
-                    { new StringContent(Input.FirstName ?? ""),                        nameof(Input.FirstName) },
-                    { new StringContent(Input.LastName ?? ""),                         nameof(Input.LastName) },
-                    { new StringContent(Input.Email ?? ""),                            nameof(Input.Email) },
-                    { new StringContent(Input.Address ?? ""),                          nameof(Input.Address) },
-                    { new StringContent(Input.PhoneNumber ?? ""),                      nameof(Input.PhoneNumber) },
-                    { new StringContent(((int)VisibilityStatus.Available).ToString()), nameof(Input.Status) }
-                };
-
-                var Response = await Client.PostAsync(URL, Contents);
-
-                if (Response.StatusCode == HttpStatusCode.OK || Response.StatusCode == HttpStatusCode.Created)
-                {
-                    TempData["SuccessBanner"] = "SUCCESS";
+                    TempData["SuccessBanner"] = "Tài khoản đã được tạo thành công!";
+                    return RedirectToAction("Index", "Login");
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    TempData["FailureBanner"] = $"Tạo tài khoản không thành công! {errorMessage}";
+                    return View(NewUser);
+                }
             }
-            catch (Exception Msg)
+            catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(Msg.Message);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                TempData["FailureBanner"] = $"{Msg.Message} ({Msg.HResult})";
-                return View();
+                TempData["FailureBanner"] = $"Có lỗi xảy ra: {ex.Message}";
+                return View(NewUser);
             }
+        }
+        private Guid GetCurrentUserId()
+        {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID");
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("UserId không tồn tại trong token.");
+            }
+
+            return Guid.Parse(userIdClaim.Value);
         }
     }
 }

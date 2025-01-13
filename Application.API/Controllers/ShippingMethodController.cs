@@ -3,6 +3,7 @@ using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

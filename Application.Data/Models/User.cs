@@ -28,4 +28,5 @@ namespace Application.Data.Models
         public virtual Voucher? Voucher { get; set; }
         public virtual Role? Role { get; set; }
 	}
+
 }

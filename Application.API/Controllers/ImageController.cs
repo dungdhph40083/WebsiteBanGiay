@@ -3,6 +3,7 @@ using Application.Data.DTOs;
 using Application.Data.Enums;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

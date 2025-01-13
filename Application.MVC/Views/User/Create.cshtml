@@ -28,13 +28,13 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+    @*     <div class="col-md-6">
             <label asp-for="Status" class="form-label">Trạng thái</label>
             <select asp-for="Status" class="form-control" aria-label="Is it available?">
                 <option selected value="@((int)VisibilityStatus.Available)">Mở</option>
                 <option value="@((int)VisibilityStatus.Locked)">Khóa</option>
             </select>
-        </div>
+        </div> *@
         <div class="col-md-6">
             <label asp-for="RoleID" class="form-label">Vai trò</label>
             <select asp-for="RoleID" class="form-control" aria-label="What permissions?" asp-items="@ViewBag.Roles">

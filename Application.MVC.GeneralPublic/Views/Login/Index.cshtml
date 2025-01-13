@@ -1,9 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-<!-- Login Start -->
+﻿@model Application.Data.Models.User
 <div class="login">
     <div class="container-fluid">
         <div class="row">
@@ -11,6 +6,14 @@
             <div class="col-lg-6">
                 <div class="login-form">
                     <div class="row">
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="col-md-12">
+                                <div class="alert alert-danger" role="alert">
+                                    @TempData["ErrorMessage"]
+                                </div>
+                            </div>
+                        }
                         @if (TempData["SuccessBanner"] != null)
                         {
                             <div class="col-md-12">
@@ -22,24 +25,26 @@
                         <div class="col-md-12">
                             <h1>Đăng nhập</h1>
                         </div>
-                        <div class="col-md-12">
-                            <label>Tên người dùng hoặc Email</label>
-                            <input class="form-control" type="text" placeholder="Tên người dùng/Email">
-                        </div>
-                        <div class="col-md-12">
-                            <label>Mật khẩu</label>
-                            <input class="form-control" type="text" placeholder="Mật khẩu">
-                        </div>
-                        <div class="col-md-12">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="newaccount">
-                                <label class="custom-control-label" for="newaccount">Giữ trạng thái đăng nhập</label>
+                        <form asp-action="Login" method="post">
+                            <div class="col-md-12">
+                                <label>Tên người dùng hoặc Email</label>
+                                <input name="Username" class="form-control" type="text" placeholder="Tên người dùng/Email" required>
                             </div>
-                        </div>
-                        <div class="col-md-12">
-                            <button class="btn">Đăng nhập</button>
-                            <a asp-action="Register" class="btn">Đăng ký</a>
-                        </div>
+                            <div class="col-md-12">
+                                <label>Mật khẩu</label>
+                                <input name="Password" class="form-control" type="password" placeholder="Mật khẩu" required>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="custom-control custom-checkbox">
+                                    <input name="RememberMe" type="checkbox" class="custom-control-input" id="rememberMe">
+                                    <label class="custom-control-label" for="rememberMe">Giữ trạng thái đăng nhập</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn">Đăng nhập</button>
+                                <a asp-action="Register" class="btn">Đăng ký</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

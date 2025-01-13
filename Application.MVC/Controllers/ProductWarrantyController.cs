@@ -5,15 +5,18 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace Application.MVC.Controllers
 {
     public class ProductWarrantyController : Controller
     {
         HttpClient client = new HttpClient();
+        private readonly HttpClient _httpClient;
         public ProductWarrantyController()
         {
-            client = new HttpClient();
+            _httpClient = new HttpClient();
         }
         public ActionResult Index()
         {
@@ -32,6 +35,7 @@ namespace Application.MVC.Controllers
         }
         public async Task<IActionResult> Create()
         {
+
             try
             {
                 // Lấy danh sách sản phẩm từ API
@@ -59,6 +63,7 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(ProductWarranty productWarranty)
         {
+
             try
             {
                 // Gán lại giá trị CreatedAt và UpdatedAt để đảm bảo ngày giờ chính xác
@@ -94,6 +99,7 @@ namespace Application.MVC.Controllers
 
         public async Task<IActionResult> Update(Guid id)
         {
+
             try
             {
                 string requestURL = $"https://localhost:7187/api/ProductWarranty/{id}";
@@ -163,6 +169,7 @@ namespace Application.MVC.Controllers
         }
         public ActionResult Delete(Guid id)
         {
+
             string requestURL = $"https://localhost:7187/api/ProductWarranty/{id}";
             var response = client.DeleteAsync(requestURL).Result;
             return RedirectToAction("Index");

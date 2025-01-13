@@ -4,6 +4,7 @@ using Application.Data.Enums;
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace Application.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProduct _productRepository;
@@ -27,18 +29,21 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Product?>>> GetProducts()
         {
             return await _productRepository.GetAll();
         }
         
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Product?>> GetProduct(Guid id)
         {
             return await _productRepository.GetById(id);
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO product, IFormFile? Image)
         {
             // Kiểm tra và xử lý ảnh nếu có
@@ -74,6 +79,7 @@ namespace Application.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Product?>> PutProduct(Guid id, [FromForm] ProductDTO product, IFormFile? Image)
         {
             // Kiểm tra xem sản phẩm có tồn tại không
@@ -128,6 +134,7 @@ namespace Application.API.Controllers
 
 
         [HttpDelete("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult>? DeleteProduct(Guid id)
         {
             await ProductDetailRepo.DeleteExistingByProductID(id);

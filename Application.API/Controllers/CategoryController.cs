@@ -2,6 +2,7 @@
 using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -20,12 +21,14 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Category>>> GetAll()
         {
             return Ok(await _categoryRepository.GetAllCategory());
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Category>> GetById(Guid id)
         {
             var category = await _categoryRepository.GetByIdCategory(id);

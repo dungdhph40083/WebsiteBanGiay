@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
@@ -14,7 +15,11 @@ namespace Application.MVC.Controllers
     {
         HttpClient Client = new HttpClient();
         // GET: VoucherController
-
+        private readonly HttpClient _httpClient;
+        public VoucherController()
+        {
+            _httpClient = new HttpClient();
+        }
         [HttpGet]
         public async Task<ActionResult> Index(string SortByTime, string SortByLook)
         {
@@ -122,6 +127,7 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(Guid ID)
         {
+
             await FetchInfoPlsPlsPlsPls();
             string URL = $@"https://localhost:7187/api/Voucher/{ID}";
             var Response = await Client.GetFromJsonAsync<VoucherDTO>(URL);
@@ -153,6 +159,7 @@ namespace Application.MVC.Controllers
         // POST: VoucherController/Delete/5
         public async Task<ActionResult> Delete(Guid ID)
         {
+
             try
             {
                 string URL = $@"https://localhost:7187/api/Voucher/{ID}";

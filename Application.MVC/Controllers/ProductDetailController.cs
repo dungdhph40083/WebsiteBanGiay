@@ -10,12 +10,18 @@ using Mono.TextTemplating;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using System.Security.Permissions;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
     public class ProductDetailController : Controller
     {
         HttpClient Client = new HttpClient();
+        private readonly HttpClient _httpClient;
+        public ProductDetailController()
+        {
+            _httpClient = new HttpClient();
+        }
 
         public async Task<ActionResult> Index(int Page = 1, int PageSize = 10, string SearchQuery = "", string Status = "")
         {
@@ -81,6 +87,7 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Create(Guid? FromID)
         {
+        
             try
             {
                 await PopulateDropdowns(FromID);

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
 {
@@ -19,7 +20,11 @@ namespace Application.MVC.Controllers
         Guid SessionUserID = Guid.Parse("bbd122d1-8961-4363-820e-3ad1a87064e4");
 
         // GET: UserController
-
+        private readonly HttpClient _httpClient;
+        public UserController()
+        {
+            _httpClient = new HttpClient();
+        }
         [HttpGet]
         public async Task<ActionResult> Index()
         {
@@ -32,6 +37,7 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Details(Guid ID)
         {
+
             string URL = $@"https://localhost:7187/api/User/{ID}";
             var Response = await Client.GetFromJsonAsync<User>(URL);
             if (Response != null && Response.Image != null && Response.Image.ImageFileName != null)
@@ -83,7 +89,7 @@ namespace Application.MVC.Controllers
                     { new StringContent(Input.Email ?? ""),                                       nameof(Input.Email) },
                     { new StringContent(Input.Address ?? ""),                                     nameof(Input.Address) },
                     { new StringContent(Input.PhoneNumber ?? ""),                                 nameof(Input.PhoneNumber) },
-                    { new StringContent(Input.Status.ToString() ?? "1"),                          nameof(Input.Status) },
+                   // { new StringContent(Input.Status.ToString() ?? "1"),                          nameof(Input.Status) },
                     { new StringContent(Input.RoleID.ToString() ?? DefaultValues.UserRoleGUID),   nameof(Input.RoleID) }
                 };
 
@@ -138,7 +144,7 @@ namespace Application.MVC.Controllers
                     { new StringContent(NewInput.Email ?? ""),                                       nameof(NewInput.Email) },
                     { new StringContent(NewInput.Address ?? ""),                                     nameof(NewInput.Address) },
                     { new StringContent(NewInput.PhoneNumber ?? ""),                                 nameof(NewInput.PhoneNumber) },
-                    { new StringContent(NewInput.Status.ToString() ?? "1"),                          nameof(NewInput.Status) },
+                  //  { new StringContent(NewInput.Status.ToString() ?? "1"),                          nameof(NewInput.Status) },
                     { new StringContent(NewInput.RoleID.ToString() ?? DefaultValues.UserRoleGUID),   nameof(NewInput.RoleID) }
                 };
 
@@ -191,6 +197,7 @@ namespace Application.MVC.Controllers
         // POST: UserController/Delete/5
         public async Task<ActionResult> Delete(Guid ID)
         {
+
             try
             {
                 string URL = $@"https://localhost:7187/api/User/{ID}";

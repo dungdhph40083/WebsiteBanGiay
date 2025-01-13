@@ -1,6 +1,7 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,12 +18,14 @@ namespace Application.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Size>>> Get()
         {
             return await SizeRepo.GetSizes();
         }
 
         [HttpGet("{ID}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Size?>> Get(Guid ID)
         {
             return await SizeRepo.GetSizeByID(ID);
