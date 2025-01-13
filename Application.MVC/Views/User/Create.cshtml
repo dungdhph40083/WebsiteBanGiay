@@ -5,7 +5,8 @@
     ViewData["Title"] = "Thêm người dùng";
 }
 
-<h1>Thêm người dùng</h1>
+<h1 class="text-center mt-4 text-primary">Thêm người dùng</h1>
+<hr class="border-primary" />
 
 @if (TempData["Error"] != null)
 {
@@ -14,68 +15,87 @@
     </div>
 }
 
-<form asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="row">
+<!-- Form -->
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="shadow-lg p-4 rounded-3 bg-white">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="row g-3">
+        <!-- Username -->
         <div class="col-md-4">
-            <label asp-for="Username" class="form-label">Tên tài khoản</label>
-            <input asp-for="Username" class="form-control" type="text" maxlength="30" required aria-label="Enter unique username">
-            <span asp-validation-for="Username"></span>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="Password" class="form-label">Mật khẩu</label>
-            <input asp-for="Password" class="form-control" type="password" required aria-label="Enter a super memorable password">
-            <span asp-validation-for="Password"></span>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="RoleID" class="form-label">Vai trò</label>
-            <select asp-for="RoleID" class="form-control" aria-label="What permissions?" asp-items="@ViewBag.Roles">
-            </select>
-        </div>
-    </div>
-@*     <div class="row">
-    @*     <div class="col-md-6">
-            <label asp-for="Status" class="form-label">Trạng thái</label>
-            <select asp-for="Status" class="form-control" aria-label="Is it available?">
-                <option selected value="@((int)VisibilityStatus.Available)">Mở</option>
-                <option value="@((int)VisibilityStatus.Locked)">Khóa</option>
-            </select>
+            <label asp-for="Username" class="form-label fw-semibold text-muted">Tên tài khoản</label>
+            <input asp-for="Username" class="form-control shadow-sm" type="text" maxlength="30" required aria-label="Enter unique username" placeholder="Nhập tên tài khoản" />
+            <span asp-validation-for="Username" class="text-danger"></span>
         </div>
 
-    </div> *@
-    <div class="row">
+        <!-- Password -->
         <div class="col-md-4">
-            <label asp-for="LastName" class="form-label">Họ</label>
-            <input asp-for="LastName" class="form-control" type="text" aria-label="Enter last name">
+            <label asp-for="Password" class="form-label fw-semibold text-muted">Mật khẩu</label>
+            <input asp-for="Password" class="form-control shadow-sm" type="password" required aria-label="Enter a super memorable password" placeholder="Nhập mật khẩu" />
+            <span asp-validation-for="Password" class="text-danger"></span>
         </div>
+
+        <!-- Role -->
         <div class="col-md-4">
-            <label asp-for="FirstName" class="form-label">Tên</label>
-            <input asp-for="FirstName" class="form-control" type="text" aria-label="Enter first name">
+            <label asp-for="RoleID" class="form-label fw-semibold text-muted">Vai trò</label>
+            <select asp-for="RoleID" class="form-control shadow-sm" aria-label="What permissions?" asp-items="@ViewBag.Roles">
+            </select>
         </div>
+    </div>
+
+    <div class="row g-3 mt-3">
+        <!-- Last Name -->
         <div class="col-md-4">
-            <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
-            <input asp-for="PhoneNumber" class="form-control" type="text" maxlength="15" aria-label="Enter your phone number">
+            <label asp-for="LastName" class="form-label fw-semibold text-muted">Họ</label>
+            <input asp-for="LastName" class="form-control shadow-sm" type="text" aria-label="Enter last name" placeholder="Nhập họ" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+
+        <!-- First Name -->
+        <div class="col-md-4">
+            <label asp-for="FirstName" class="form-label fw-semibold text-muted">Tên</label>
+            <input asp-for="FirstName" class="form-control shadow-sm" type="text" aria-label="Enter first name" placeholder="Nhập tên"/>
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="col-md-4">
+            <label asp-for="PhoneNumber" class="form-label fw-semibold text-muted">Số điện thoại</label>
+            <input asp-for="PhoneNumber" class="form-control shadow-sm" type="text" maxlength="10" aria-label="Enter your phone number" placeholder="Nhập số điện thoại" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
         </div>
         <br />
-        <i class="text-decoration-underline" style="text-align: center">Có thể điền những thông tin này sau.</i>
     </div>
-    <div class="row">
+
+    <div class="row g-3 mt-3">
+        <!-- Email -->
         <div class="col-md-8">
-            <label asp-for="Email" class="form-label">Email</label>
-            <input asp-for="Email" class="form-control" type="text" aria-label="Enter email">
-            <span asp-validation-for="Email"></span>
+            <label asp-for="Email" class="form-label fw-semibold text-muted">Email</label>
+            <input asp-for="Email" class="form-control shadow-sm" type="text" aria-label="Enter email" placeholder="Nhập Email " />
+            <span asp-validation-for="Email" class="text-danger"></span>
         </div>
+
+        <!-- Profile Picture -->
         <div class="col-md-4">
-            <label class="form-label">Ảnh đại diện</label>
-            <input type="file" name="ProfilePic" class="form-control" accept="image/png, image/jpeg" aria-label="Upload profile picture" />
+            <label class="form-label fw-semibold text-muted">Ảnh đại diện</label>
+            <input type="file" name="ProfilePic" class="form-control shadow-sm" accept="image/png, image/jpeg" aria-label="Upload profile picture" placeholder="Tải ảnh avatar lên " />
         </div>
     </div>
-    <div class="row">
+
+    <div class="row g-3 mt-3">
+        <!-- Address -->
         <div class="col-md-12">
-            <label asp-for="Address" class="form-label">Địa chỉ</label>
-            <textarea asp-for="Address" class="form-control" style="min-height: 180px" type="text" aria-label="Enter address"></textarea>
+            <label asp-for="Address" class="form-label fw-semibold text-muted">Địa chỉ</label>
+            <textarea asp-for="Address" class="form-control shadow-sm" style="min-height: 180px" aria-label="Enter address" placeholder="Nhập địa chỉ"></textarea>
+            <span asp-validation-for="Address" class="text-danger"></span>
+
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">Thêm</button>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <button type="submit" class="btn btn-primary px-5 py-2 shadow-sm">
+            <i class="bi bi-person-plus"></i> Tạo tài khoản
+        </button>
+    </div>
 </form>
 
 @section Scripts {
@@ -83,3 +103,48 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
+<style>
+    /* Áp dụng hiệu ứng khi form load */
+    form {
+        animation: slideInFromTop 0.8s ease-in-out;
+    }
+
+    /* Tùy chỉnh bấm nút: */
+    .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #004bb5;
+            transform: translateY(-2px);
+        }
+
+    /* Sửa màu cho các inputs */
+    input.form-control, textarea.form-control, select.form-control {
+        border-radius: 0.375rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+        input.form-control:focus, textarea.form-control:focus, select.form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+        }
+
+    /* Thêm bóng cho form */
+    form {
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Custom alert box */
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+</style>

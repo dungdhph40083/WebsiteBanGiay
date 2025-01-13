@@ -21,6 +21,8 @@
 <!-- Validation Summary -->
 <form asp-action="Create" method="post" class="shadow-lg p-4 rounded-3 bg-white">
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <input hidden name="FromEdit" type="checkbox" id="FromEdit" value="true" @(FromID != null ? "checked" : "")/>
+    <input type="hidden" name="FromEdit" value="false"/>
     <div class="row g-3">
         <div class="col-md-6">
             <label asp-for="ProductID" class="form-label fw-semibold text-muted">Sản phẩm</label>
