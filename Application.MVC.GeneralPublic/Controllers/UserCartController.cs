@@ -48,6 +48,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Add2Cart(Guid? ID, int? Quantity, bool? AdditionMode)
         {
+            Console.WriteLine("Quantity is: " + (Quantity.ToString() ?? "null"));
             if (ID != null)
             {
                 try

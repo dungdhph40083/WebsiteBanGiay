@@ -11,7 +11,7 @@ function AddEmUp(ItemPrice) {
 
 function Notify() {
     let Notify = document.getElementById("WARNING_WARNING_ALARM");
-    Notify.innerHTML = '<span class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu! Bấm nút để cập nhật đơn. ▶</span>';
+    Notify.innerHTML = '<span class="text-danger"><i class="fa fa-exclamation"></i> Thay đổi chưa được lưu!</span>';
 }
 
 function DisplayTotalPriceOnSidebar() {

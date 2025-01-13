@@ -19,8 +19,8 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                 var FilteredOutTheTimeConstraints =
                     FilteredOutTheInactivesAndPrivateds.Where
-                    (Flt => DateTime.UtcNow >= Flt.StartingAt.GetValueOrDefault().AddDays(-1) &&
-                            DateTime.UtcNow <= Flt.EndingAt.GetValueOrDefault()).ToList();
+                    (Flt => DateTime.UtcNow >= Flt.StartingAt.GetValueOrDefault(DateTime.UtcNow.AddMilliseconds(-5)).AddDays(-1) &&
+                            DateTime.UtcNow <= Flt.EndingAt.GetValueOrDefault(DateTime.UtcNow.AddMilliseconds(5))).ToList();
 
                 return View(FilteredOutTheTimeConstraints);
             }
