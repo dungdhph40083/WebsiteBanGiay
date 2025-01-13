@@ -9,6 +9,12 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 
 <style>
+    .table thead th {
+        text-align: center; /* Căn giữa */
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
+        padding: 10px; /* Khoảng cách giữa văn bản và viền */
+        font-weight: bold; /* Đậm chữ */
+    }
     .table th, .table td {
         text-align: center;
         vertical-align: middle;
@@ -76,25 +82,25 @@
                     <td>@item.Name</td>
                     <td>@item.Status</td>
                     <td>
-                        <!-- Dropdown Menu -->
+
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-ellipsis-v"></i>
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <!-- Edit -->
+ 
                                 <a class="dropdown-item text-warning" asp-action="Edit" asp-route-id="@item.SizeID">
                                     <i class="fas fa-edit"></i> Sửa
                                 </a>
                                 <div class="dropdown-divider"></div>
 
-                                <!-- Details -->
+
                                 <a class="dropdown-item text-success" asp-action="Details" asp-route-id="@item.SizeID">
                                     <i class="fas fa-info-circle"></i> Chi tiết
                                 </a>
                                 <div class="dropdown-divider"></div>
 
-                                <!-- Delete -->
+
                                 <a class="dropdown-item text-danger delete_trigger" data-id="@item.SizeID" data-controller="Size" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
                                     <i class="fas fa-trash-alt"></i> Xóa
                                 </a>

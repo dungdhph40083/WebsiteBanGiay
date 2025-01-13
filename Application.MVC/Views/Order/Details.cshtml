@@ -9,101 +9,155 @@
     var Items = ViewBag.Grrrrrrrrrr as List<Application.Data.Models.OrderDetail> ?? [];
 }
 
-<h1 class="text-uppercase"><b>Các mặt hàng đã mua</b></h1>
-<div class="row">
-    <div class="col-md-10">
-        <table class="table table-bordered table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Ảnh sản phẩm</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Số lượng</th>
-                    <th>Kích cỡ</th>
-                    <th>Màu</th>
-                    <th>Đơn giá</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var Item in Items)
-                {
-                    <tr>
-                        <td>
-                            @if (Item.ProductDetail?.Product?.Image != null)
-                            {
-                                <img style="width: 100px; height: 100px" src="https://localhost:7187/Images/@(Item.ProductDetail?.Product?.Image?.ImageFileName)" class="img-thumbnail" alt="Ảnh hàng" />
-                            }
-                            else
-                            {
-                                <span>Chưa có ảnh</span>
-                            }
-                        </td>
-                        <td>@Item.ProductDetail?.Product?.Name</td>
-                        <td>@Item.Quantity</td>
-                        <td>@Item.ProductDetail?.Size?.Name</td>
-                        <td>@Item.ProductDetail?.Color?.ColorName</td>
-                        <td><b>@Item.SumTotalPrice.GetValueOrDefault().ToString("#,##0")</b></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <dl class="col-md-2" style="text-align: right;">
-        <dt style="font-size: x-large;">Tổng giá hàng</dt>
-        <dd style="font-size: large;">
-            @(Infos?.RawTotal.GetValueOrDefault().ToString("#,##0"))
-        </dd>
-        @if (Infos?.VoucherID != null)
-        {
-            <dt style="font-size: x-large;">Giảm giá</dt>
-            <dd style="font-size: large;">
-                @if (Infos!.Voucher!.UseDiscountPrice)
-                {
-                    <text>-@Infos?.Voucher.DiscountPrice.GetValueOrDefault().ToString("#,##0")</text>
-                }
-                else
-                {
-                    <text>-@Infos?.Voucher.DiscountPercent.GetValueOrDefault().ToString("N0")%</text>
-                }
-            </dd>
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Arial', sans-serif;
+    }
+
+    h1 {
+        // color: #007bff;
+    }
+
+    table {
+        margin-top: 20px;
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+    }
+
+        table th {
+            background-color: #888888;
+            color: #fff;
+            text-align: center;
         }
-        <dt style="font-size: x-large;">Phí ship</dt>
-        <dd style="font-size: large;">
-            @*((Items.Count() > 1 ? ((Items.Count() - 1) * 1000).ToString("#,##0") : "Miễn phí"))*@ Miễn phí
-        </dd>
-        <dt style="font-size: x-large;">Tổng tiền</dt>
-        <dd style="font-size: large;">
-            @((Infos?.GrandTotal /* + (Items.Count() - 1) * 1000) */ .GetValueOrDefault().ToString("#,##0")))
-        </dd>
-        <dt></dt>
-        <dd><a asp-action="Invoice" asp-route-ID="@Infos?.OrderID" class="btn btn-primary">In hóa đơn</a></dd>
-    </dl>
+
+        table td, table th {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        table img {
+            border-radius: 8px;
+        }
+
+    dl {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    dt {
+        font-weight: bold;
+    }
+
+    dd {
+        margin-bottom: 15px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+</style>
+<div class="container py-5">
+    <h1 class="text-uppercase text-center mb-4"><b>Các mặt hàng đã mua</b></h1>
+    <div class="row">
+        <div class="col-md-10">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th style="color: white;">Ảnh sản phẩm</th>
+                        <th style="color: white;">Tên sản phẩm</th>
+                        <th style="color: white;">Số lượng</th>
+                        <th style="color: white;">Kích cỡ</th>
+                        <th style="color: white;">Màu</th>
+                        <th style="color: white;">Đơn giá</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach (var Item in Items)
+                    {
+                        <tr>
+                            <td>
+                                @if (Item.ProductDetail?.Product?.Image != null)
+                                {
+                                    <img style="width: 100px; height: 100px" src="https://localhost:7187/Images/@(Item.ProductDetail?.Product?.Image?.ImageFileName)" class="img-thumbnail" alt="Ảnh hàng" />
+                                }
+                                else
+                                {
+                                    <span>Chưa có ảnh</span>
+                                }
+                            </td>
+                            <td>@Item.ProductDetail?.Product?.Name</td>
+                            <td>@Item.Quantity</td>
+                            <td>@Item.ProductDetail?.Size?.Name</td>
+                            <td>@Item.ProductDetail?.Color?.ColorName</td>
+                            <td><b>@Item.SumTotalPrice.GetValueOrDefault().ToString("#,##0")</b></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2">
+            <dl>
+                <dt>Tổng giá hàng</dt>
+                <dd>@(Infos?.RawTotal.GetValueOrDefault().ToString("#,##0"))</dd>
+                @if (Infos?.VoucherID != null)
+                {
+                    <dt>Giảm giá</dt>
+                    <dd>
+                        @if (Infos!.Voucher!.UseDiscountPrice)
+                        {
+                            <text>-@Infos?.Voucher.DiscountPrice.GetValueOrDefault().ToString("#,##0")</text>
+                        }
+                        else
+                        {
+                            <text>-@Infos?.Voucher.DiscountPercent.GetValueOrDefault().ToString("N0")%</text>
+                        }
+                    </dd>
+                }
+                <dt>Phí ship</dt>
+                <dd>Miễn phí</dd>
+                <dt>Tổng tiền</dt>
+                <dd>@(Infos?.GrandTotal.GetValueOrDefault().ToString("#,##0"))</dd>
+<dd>
+    <a asp-action="Invoice" asp-route-ID="@Infos?.OrderID" class="btn btn-primary custom-btn">
+        <i class="fa fa-print"></i> In hóa đơn
+    </a>
+</dd>
+
+
+            </dl>
+        </div>
+    </div>
+
 </div>
 
 <hr />
-<h1 class="text-uppercase"><b>Thông tin đơn hàng</b></h1>
-    <dl class="row px-xl-5" style="font-size:larger">
-        <dt class="col-md-6">Mã số đơn</dt>
-        <dd class="col-md-6">
-            <p>@Infos?.OrderNumber
-        </dd>
-        <dt class="col-md-6">Tên khách hàng</dt>
-        <dd class="col-md-6">
-            <p>@Infos?.LastName @Infos?.FirstName
-            </p>
-        </dd>
-        <dt class="col-md-6">Phương thức thanh toán</dt>
-        <dd class="col-md-6">
-            <p>@Infos?.PaymentMethod?.MethodName
-            </p>
-        </dd>
-        <dt class="col-md-6">Ngày đặt đơn</dt>
-        <dd class="col-md-6">
-            <p>@Infos?.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</p>
-        </dd>
-        <dt class="col-md-6">Địa chỉ</dt>
-        <dd class="col-md-6">
-            <p>
-            @{if (Infos?.Email == null)
+<hr />
+<h1 class="text-uppercase text-center mb-4"><b>Thông tin đơn hàng</b></h1>
+<dl class="row px-xl-5">
+    <dt class="col-md-6">Mã đơn hàng:</dt>
+    <dd class="col-md-6">@Infos?.OrderNumber</dd>
+    <dt class="col-md-6">Tên khách hàng :</dt>
+    <dd class="col-md-6">@Infos?.LastName @Infos?.FirstName</dd>
+    <dt class="col-md-6">Phương thức thanh toán :</dt>
+    <dd class="col-md-6">@Infos?.PaymentMethod?.MethodName</dd>
+    <dt class="col-md-6">Ngày đặt đơn :</dt>
+    <dd class="col-md-6">@Infos?.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</dd>
+    <dt class="col-md-6">Email :</dt>
+    <dd class="col-md-6">
+        <p>
+            @{
+                if (Infos?.Email == null)
                 {
                     <i>Không có địa chỉ Email</i>
                 }
@@ -112,138 +166,142 @@
                     @Infos?.Email
                 }
             }
-            <br />
-            @Infos?.PhoneNumber
-            <br />
-            @Infos?.ShippingAddress</p>
-        </dd>
-        <dt class="col-md-6">Trạng thái</dt>
-        <dd class="col-md-6">
-            @if (Infos != null)
-            {
-                <p>
+        </p>
+    </dd>
+    <dt class="col-md-6">Số điện thoại :</dt>
+
+    <dd class="col-md-6">@Infos?.PhoneNumber</dd>
+
+    <dt class="col-md-6">Địa chỉ giao hàng :</dt>
+
+    <dd class="col-md-6">@Infos?.ShippingAddress</dd>
+
+    <dt class="col-md-6">Trạng thái đơn hàng: </dt>
+
+    <dd class="col-md-6">
+        @if (Infos != null)
+        {
                 @switch ((OrderStatus)Infos.Status)
                 {
                     case OrderStatus.Canceled:
-                    <text>Bị hủy</text>
+                        <text>Bị hủy</text>
                         break;
                     case OrderStatus.Refunding:
-                    <text>Yêu cầu hoàn trả</text>
+                        <text>Yêu cầu hoàn trả</text>
                         break;
                     case OrderStatus.RefundProcessed:
-                    <text>Chấp nhận hoàn trả</text>
+                        <text>Chấp nhận hoàn trả</text>
                         break;
                     case OrderStatus.RefundDelivered:
-                    <text>Đơn vị đang đến nhận hàng hoàn trả</text>
+                        <text>Đơn vị đang đến nhận hàng hoàn trả</text>
                         break;
                     case OrderStatus.RefundReceived:
-                    <text>Đơn vị đã nhận hàng trả</text>
+                        <text>Đơn vị đã nhận hàng trả</text>
                         break;
                     case OrderStatus.Refunded:
-                    <text>Đã hoàn trả</text>
+                        <text>Đã hoàn trả</text>
                         break;
                     case OrderStatus.Created:
-                    <text>Chờ xác nhận</text>
+                        <text>Chờ xác nhận</text>
                         break;
                     case OrderStatus.Processed:
-                    <text>Đã xác nhận đơn</text>
+                        <text>Đã xác nhận đơn</text>
                         break;
                     case OrderStatus.Delivered:
-                    <text>Đang vận chuyển</text>
+                        <text>Đang vận chuyển</text>
                         break;
                     case OrderStatus.Arrived:
-                    <text>Đã đến nơi</text>
+                        <text>Đã đến nơi</text>
                         break;
                     case OrderStatus.Received:
                     case OrderStatus.ReceivedAgain:
-                    <text>Đã nhận hàng</text>
+                        <text>Đã nhận hàng</text>
                         break;
                     case OrderStatus.ReceivedCompleted:
-                    <text>Đã nhận hàng thành công</text>
-                    break;
+                        <text>Đã nhận hàng thành công</text>
+                        break;
                     case OrderStatus.ReceivedRefundFail:
-                    <text>Khách đã nhận hàng, hoàn trả thất bại</text>
+                        <text>Khách đã nhận hàng, hoàn trả thất bại</text>
                         break;
                     default:
-                    <text>N/A</text>
+                        <text>N/A</text>
                         break;
                 }
-                @(Infos.HasPaid ? Html.Raw("<br />Đã thanh toán") : "")
-                </p>
+        }
+    </dd>
+    <dt class="col-md-6">Trạng thái thanh toán: </dt>
+    <dd class="col-md-6">@(Infos.HasPaid ? Html.Raw("Đã thanh toán") : "")</dd>
+    <dt class="col-md-6">Thời gian nhận: </dt>
+    <dd class="col-md-6">@(Infos?.AcceptEnd == null ? "N/A" : Infos?.AcceptEnd)</dd>
+
+    @if (Infos?.Status == (byte)OrderStatus.Arrived)
+    {
+        <dt class="col-md-6">Thời gian còn lại</dt>
+        <dd class="col-md-6">
+            @{
+                var Span = (Infos?.AcceptEnd.GetValueOrDefault() ?? DateTime.MinValue) - DateTime.UtcNow;
+                Console.WriteLine(Span.TotalSeconds);
+                if (Span > TimeSpan.Zero)
+                {
+                    if (Span.TotalDays > 0)
+                    {
+                        <text>@((int)Span.TotalDays) ngày @((int)Span.TotalHours % 24) giờ</text>
+                    }
+                    else if (Span.TotalHours > 0)
+                    {
+                        <text>@((int)Span.TotalHours) giờ @((int)Span.TotalMinutes % 60) phút</text>
+                    }
+                    else if (Span.TotalMinutes > 0)
+                    {
+                        <text>@((int)Span.TotalMinutes) phút @((int)Span.TotalSeconds % 60) giây</text>
+                    }
+                    else
+                    {
+                        <text>@((int)Span.TotalSeconds) giây</text>
+                    }
+                }
+                else
+                {
+                    <text>Đã nhận</text>
+                }
             }
         </dd>
+    }
 
-        <dt class="col-md-6">Thời gian nhận</dt>
-        <dd class="col-md-6">@(Infos?.AcceptEnd == null ? "N/A" : Infos?.AcceptEnd)</dd>
-
-        @if (Infos?.Status == (byte)OrderStatus.Arrived)
-        {
-            <dt class="col-md-6">Thời gian còn lại</dt>
-            <dd class="col-md-6">
-                @{
-                    var Span = (Infos?.AcceptEnd.GetValueOrDefault() ?? DateTime.MinValue) - DateTime.UtcNow;
-                    Console.WriteLine(Span.TotalSeconds);
-                    if (Span > TimeSpan.Zero)
+    <dt class="col-md-6">Thời gian hoàn trả được: </dt>
+    <dd class="col-md-6">@(Infos?.RefundEnd == null ? "N/A" : (DateTime.UtcNow > Infos?.RefundEnd ? "Không" : "Có"))</dd>
+    @if (Infos?.Status == (byte)OrderStatus.Received || Infos?.Status == (byte)OrderStatus.ReceivedAgain)
+    {
+        <dt class="col-md-6">Thời gian còn lại</dt>
+        <dd class="col-md-6">
+            @{
+                var Span = (Infos?.RefundEnd.GetValueOrDefault() ?? DateTime.MinValue) - DateTime.UtcNow;
+                Console.WriteLine(Span.TotalSeconds);
+                if (Span > TimeSpan.Zero)
+                {
+                    if (Span.TotalDays > 0)
                     {
-                        if (Span.TotalDays > 0)
-                        {
-                            <text>@((int)Span.TotalDays) ngày @((int)Span.TotalHours % 24) giờ</text>
-                        }
-                        else if (Span.TotalHours > 0)
-                        {
-                            <text>@((int)Span.TotalHours) giờ @((int)Span.TotalMinutes % 60) phút</text>
-                        }
-                        else if (Span.TotalMinutes > 0)
-                        {
-                            <text>@((int)Span.TotalMinutes) phút @((int)Span.TotalSeconds % 60) giây</text>
-                        }
-                        else
-                        {
-                            <text>@((int)Span.TotalSeconds) giây</text>
-                        }
+                        <text>@((int)Span.TotalDays) ngày @((int)Span.TotalHours % 24) giờ</text>
+                    }
+                    else if (Span.TotalHours > 0)
+                    {
+                        <text>@((int)Span.TotalHours) giờ @((int)Span.TotalMinutes % 60) phút</text>
+                    }
+                    else if (Span.TotalMinutes > 0)
+                    {
+                        <text>@((int)Span.TotalMinutes) phút @((int)Span.TotalSeconds % 60) giây</text>
                     }
                     else
                     {
-                        <text>Đã nhận</text>
+                        <text>@((int)Span.TotalSeconds) giây</text>
                     }
                 }
-            </dd>
-        }
-
-        <dt class="col-md-6">Còn hoàn trả được</dt>
-        <dd class="col-md-6">@(Infos?.RefundEnd == null ? "N/A" : (DateTime.UtcNow > Infos?.RefundEnd ? "Không" : "Có"))</dd>
-        @if (Infos?.Status == (byte)OrderStatus.Received || Infos?.Status == (byte)OrderStatus.ReceivedAgain)
-        {
-            <dt class="col-md-6">Thời gian còn lại</dt>
-            <dd class="col-md-6">
-                @{
-                    var Span = (Infos?.RefundEnd.GetValueOrDefault() ?? DateTime.MinValue) - DateTime.UtcNow;
-                    Console.WriteLine(Span.TotalSeconds);
-                    if (Span > TimeSpan.Zero)
-                    {
-                        if (Span.TotalDays > 0)
-                        {
-                            <text>@((int)Span.TotalDays) ngày @((int)Span.TotalHours % 24) giờ</text>
-                        }
-                        else if (Span.TotalHours > 0)
-                        {
-                            <text>@((int)Span.TotalHours) giờ @((int)Span.TotalMinutes % 60) phút</text>
-                        }
-                        else if (Span.TotalMinutes > 0)
-                        {
-                            <text>@((int)Span.TotalMinutes) phút @((int)Span.TotalSeconds % 60) giây</text>
-                        }
-                        else
-                        {
-                            <text>@((int)Span.TotalSeconds) giây</text>
-                        }
-                    }
-                    else
-                    {
-                        <text>Hết hạn trả</text>
-                    }
+                else
+                {
+                    <text>Hết hạn trả</text>
                 }
-            </dd>
-        }
-    </dl>
+            }
+        </dd>
+    }
+</dl>
 

@@ -12,6 +12,12 @@
 
 <!-- Custom CSS for additional styling -->
 <style>
+    .table thead th {
+        text-align: center; /* Căn giữa */
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
+        padding: 10px; /* Khoảng cách giữa văn bản và viền */
+        font-weight: bold; /* Đậm chữ */
+    }
     .table th, .table td {
         text-align: center;
         vertical-align: middle;
@@ -130,7 +136,7 @@
 <table class="table table-striped table-bordered table-hover">
     <thead class="thead-dark">
         <tr>
-            <th>#</th> <!-- Added STT column -->
+            <th>#</th> 
             <th>Tên sản phẩm</th>
             <th>Ảnh</th>
             <th>Giá tiền</th>
@@ -142,11 +148,10 @@
     <tbody id="productTableBody">
         @foreach (var item in Model.Select((value, index) => new { value, index }))
         {
-            <!-- Calculate the serial number for pagination -->
             var serialNumber = (ViewBag.CurrentPage - 1) * ViewBag.PageSize + item.index + 1;
 
             <tr>
-                <td>@serialNumber</td> <!-- Displaying STT based on the calculated serial number -->
+                <td>@serialNumber</td>
                 <td>@Html.DisplayFor(modelItem => item.value.Name)</td>
                 <td>
                     @if (item.value.Image != null)
@@ -172,11 +177,11 @@
                             <a class="dropdown-item text-warning" href="@Url.Action("Edit", new { id = item.value.ProductID })">
                                 <i class="fas fa-edit"></i> Sửa
                             </a>
-                            <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                            <div class="dropdown-divider"></div> 
                             <a class="dropdown-item text-success" href="@Url.Action("Details", new { id = item.value.ProductID })">
                                 <i class="fas fa-info-circle"></i> Chi tiết
                             </a>
-                            <div class="dropdown-divider"></div> <!-- Vạch ngăn cách -->
+                            <div class="dropdown-divider"></div>
                             <button class="dropdown-item text-danger delete_trigger" type="button" data-id="@item.value.ProductID" data-controller="Product" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
                                 <i class="fas fa-trash-alt"></i> Xóa
                             </button>
@@ -193,7 +198,6 @@
 </table>
 
 
-<!-- Pagination -->
 <div class="d-flex justify-content-center mt-3">
     <nav>
         <ul class="pagination">

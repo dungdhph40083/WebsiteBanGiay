@@ -4,11 +4,62 @@
     ViewData["Title"] = "Index";
 }
 
-<h1 class="text-center">Role List</h1>
+<!-- Link to Bootstrap CSS (Ensure you have the correct path or use CDN) -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 
-@* <p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p> *@
+<style>
+    .table thead th {
+        text-align: center; 
+        vertical-align: middle; 
+        padding: 10px;
+        font-weight: bold; 
+    }
+
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .btn-custom {
+        border-radius: 20px;
+        padding: 5px 15px;
+        font-size: 16px;
+    }
+
+    .custom-dropdown-btn {
+        background-color: #007bff; /* Màu xanh đậm */
+        color: white;
+        border-radius: 5px;
+    }
+
+        .custom-dropdown-btn:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+    .dropdown-item.text-warning:hover {
+        background-color: #fff3cd; /* Vàng nhạt */
+        color: #856404;
+    }
+
+    .dropdown-item.text-success:hover {
+        background-color: #d4edda; /* Xanh lá nhạt */
+        color: #155724;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background-color: #f8d7da; /* Đỏ nhạt */
+        color: #721c24;
+    }
+</style>
+
+<h1 class="text-center">Các Quyền</h1>
+
 
 <table class="table table-striped table-bordered table-hover">
     <thead class="thead-dark">
@@ -16,26 +67,15 @@
             <th>Số thứ tự</th>
             <th>@Html.DisplayNameFor(model => model.RoleCode)</th>
             <th>@Html.DisplayNameFor(model => model.RoleName)</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var (item, index) in Model.Select((item, index) => (item, index)))
         {
             <tr>
-                <td>1</td>
+                <td>@(index + 1)</td> 
                 <td>@Html.DisplayFor(modelItem => item.RoleCode)</td>
                 <td>@Html.DisplayFor(modelItem => item.RoleName)</td>
-                @*
-                    <td>
-                    <!-- Update Button -->
-                    @* @Html.ActionLink("Update", "Update", new { id = item.RoleID }, new { @class = "btn btn-warning btn-sm" })
-                    <!-- Details Button -->
-                    @Html.ActionLink("Details", "Details", new { id = item.RoleID }, new { @class = "btn btn-info btn-sm" })
-                    <!-- Delete Button with modal trigger -->
-                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmDeleteModal" data-id="@item.RoleID">Delete</button>
-                </td>
-                *@
             </tr>
         }
     </tbody>

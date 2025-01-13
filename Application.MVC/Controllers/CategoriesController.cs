@@ -66,7 +66,7 @@ namespace Application.MVC.Controllers
         {
             string requestURL = $"https://localhost:7187/api/Category/{id}";
             var response = client.GetStringAsync(requestURL).Result;
-            var data = JsonConvert.DeserializeObject<Category>(response);
+            var data = JsonConvert.DeserializeObject<CategoryDTO>(response);
             return View(data);
         }
 
