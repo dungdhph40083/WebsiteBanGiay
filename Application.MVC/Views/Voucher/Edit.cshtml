@@ -52,11 +52,11 @@
     <div class="row">
         <div class="col-md-6">
             <label asp-for="StartingAt" class="form-label">Bắt đầu vào</label>
-            <input asp-for="StartingAt" value="@Model.StartingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control" type="datetime-local" step="1" required aria-label="Starting date of voucher" />
+            <input asp-for="StartingAt" id="StartInput" onchange="Validate()" value="@Model.StartingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control" type="datetime-local" step="1" required aria-label="Starting date of voucher" />
         </div>
         <div class="col-md-6">
             <label asp-for="EndingAt" class="form-label">Kết thúc vào</label>
-            <input asp-for="EndingAt" value="@Model.EndingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control" type="datetime-local" step="1" required aria-label="Ending date of voucher" />
+            <input asp-for="EndingAt" id="EndInput" onchange="Validate()" value="@Model.EndingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control" type="datetime-local" step="1" required aria-label="Ending date of voucher" />
         </div>
     </div>
     <div class="row">
@@ -84,6 +84,17 @@
 </form>
 
 <script>
+    function Validate() {
+        if (document.getElementById('EndInput').value < document.getElementById('StartInput').value) {
+            document.getElementById('StartInput').value = document.getElementById('EndInput').value;
+        }
+
+        if (document.getElementById('StartInput').value > document.getElementById('EndInput').value) {
+            document.getElementById('EndInput').value = document.getElementById('StartInput').value;
+            // document.getElementById('EndInput').min = document.getElementById('StartInput').value;
+        }
+    }
+
     function Toggle() {
         if (document.getElementById('RadioPercent').checked == true) {
             document.getElementById('PercentInput').removeAttribute('hidden');

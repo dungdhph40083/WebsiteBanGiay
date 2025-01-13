@@ -3,6 +3,16 @@
 
 @{
     ViewData["Title"] = "Tạo chi tiết sản phẩm";
+    var ListOGoods = ViewBag.Prods as List<SelectListItem>;
+    var ListOCatgs = ViewBag.Catgs as List<SelectListItem>;
+    var FromID = ViewBag.FromID as Guid?;
+    var CatgID = ViewBag.CatgID as Guid?;
+
+    if (FromID != null)
+    {
+        ListOGoods = ListOGoods?.Where(Flt => Flt.Value == FromID.GetValueOrDefault().ToString()).ToList();
+        ListOCatgs = ListOCatgs?.Where(Flt => Flt.Value == CatgID.GetValueOrDefault().ToString()).ToList();
+    }
 }
 
 <h1 class="text-center mt-4 text-primary">Tạo chi tiết sản phẩm</h1>
@@ -11,53 +21,47 @@
 <!-- Validation Summary -->
 <form asp-action="Create" method="post" class="shadow-lg p-4 rounded-3 bg-white">
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
     <div class="row g-3">
         <div class="col-md-6">
             <label asp-for="ProductID" class="form-label fw-semibold text-muted">Sản phẩm</label>
-            <select asp-for="ProductID" class="form-control shadow-sm" aria-label="Select product to assign to" asp-items="@ViewBag.Prods">
-                <option selected value="">(Chưa chọn)</option> <!-- Correct closing -->
+            <select asp-for="ProductID" class="form-control shadow-sm" aria-label="Select product to assign to" asp-items="ListOGoods">
+                <option selected hidden value="">(Chưa chọn)</option> <!-- Use value="" to prevent "null" being sent -->
             </select> <!-- Correctly closed -->
-
             <span asp-validation-for="ProductID" class="text-danger"></span>
-
         </div>
-
-        <div class="col-md-6">
-            <label asp-for="CategoryID" class="form-label fw-semibold text-muted">Danh mục</label>
-            <select asp-for="CategoryID" class="form-control shadow-sm" aria-label="Select category to assign to" asp-items="@ViewBag.Catgs">
-                <option selected value="">(Chưa chọn)</option> <!-- Use value="" to prevent "null" being sent -->
-            </select>
-            <span asp-validation-for="CategoryID" class="text-danger"></span>
+            <div class="col-md-6">
+                <label asp-for="CategoryID" class="form-label fw-semibold text-muted">Danh mục</label>
+                <select asp-for="CategoryID" class="form-control shadow-sm" aria-label="Select category to assign to" asp-items="ListOCatgs">
+                    <option selected hidden value="">(Chưa chọn)</option> <!-- Use value="" to prevent "null" being sent -->
+                </select>
+                <span asp-validation-for="CategoryID" class="text-danger"></span>
+            </div>
         </div>
-
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-md-3">
-            <label asp-for="Material" class="form-label fw-semibold text-muted">Chất liệu</label>
-            <input asp-for="Material" type="text" class="form-control shadow-sm" placeholder="Nhập chất liệu" />
-            <span asp-validation-for="Material" class="text-danger"></span>
+        <div class="row mt-3">
+            <div class="col-md-3">
+                <label asp-for="Material" class="form-label fw-semibold text-muted">Chất liệu</label>
+                <input asp-for="Material" type="text" class="form-control shadow-sm" placeholder="Nhập chất liệu" />
+                <span asp-validation-for="Material" class="text-danger"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Brand" class="form-label fw-semibold text-muted">Hãng hiệu</label>
+                <input asp-for="Brand" type="text" class="form-control shadow-sm" placeholder="Nhập hãng hiệu" />
+                <span asp-validation-for="Brand" class="text-danger"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="PlaceOfOrigin" class="form-label fw-semibold text-muted">Xuất xứ</label>
+                <input asp-for="PlaceOfOrigin" type="text" class="form-control shadow-sm" placeholder="Nhập xuất xứ" />
+                <span asp-validation-for="PlaceOfOrigin" class="text-danger"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Status" class="form-label fw-semibold text-muted">Trạng thái</label>
+                <select asp-for="Status" class="form-control shadow-sm">
+                    <option value="1" selected>Còn bán</option>
+                    <option value="0">Không bán</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
         </div>
-        <div class="col-md-3">
-            <label asp-for="Brand" class="form-label fw-semibold text-muted">Hãng hiệu</label>
-            <input asp-for="Brand" type="text" class="form-control shadow-sm" placeholder="Nhập hãng hiệu" />
-            <span asp-validation-for="Brand" class="text-danger"></span>
-        </div>
-        <div class="col-md-3">
-            <label asp-for="PlaceOfOrigin" class="form-label fw-semibold text-muted">Xuất xứ</label>
-            <input asp-for="PlaceOfOrigin" type="text" class="form-control shadow-sm" placeholder="Nhập xuất xứ" />
-            <span asp-validation-for="PlaceOfOrigin" class="text-danger"></span>
-        </div>
-        <div class="col-md-3">
-            <label asp-for="Status" class="form-label fw-semibold text-muted">Trạng thái</label>
-            <select asp-for="Status" class="form-control shadow-sm">
-                <option value="1" selected>Còn bán</option>
-                <option value="0">Không bán</option>
-            </select>
-            <span asp-validation-for="Status" class="text-danger"></span>
-        </div>
-    </div>
     <hr />
     <div class="row">
         <div class="col-md-6">
@@ -111,6 +115,37 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<script src="~/js/do_add_variants_script.js"></script>
+<script>
+    var queryString = window.location.href.replace(/^[^\?]+\??/,'');
+    // var params = parseQuery( queryString );
+    // function parseQuery ( query ) {
+    //        var Params = new Object ();
+    //        if ( ! query ) return Params; // return empty object
+    //        var Pairs = query.split(/[;&]/);
+    //        for ( var i = 0; i < Pairs.length; i++ ) {
+    //           var KeyVal = Pairs[i].split('=');
+    //           if ( ! KeyVal || KeyVal.length != 2 ) continue;
+    //           var key = unescape( KeyVal[0] );
+    //           var val = unescape( KeyVal[1] );
+    //           val = val.replace(/\+/g, ' ');
+    //           if ( ! Params[key] ) Params[key] = new Array ();
+    //           Params[key].push( val );
+    //        }
+    //        console.log(Params);
+    //        return Params;
+    //     }
+    if (queryString != '')
+    {
+        document.getElementById('ProductID').setAttribute('readonly', '');
+        document.getElementById('CategoryID').setAttribute('readonly', '');
+        document.getElementById('Material').setAttribute('readonly', '');
+        document.getElementById('Brand').setAttribute('readonly', '');
+        document.getElementById('PlaceOfOrigin').setAttribute('readonly', '');
+        document.getElementById('Status').setAttribute('readonly', '');
+    }
+</script>
 
 <script src="~/js/do_add_variants_script.js"></script>
 

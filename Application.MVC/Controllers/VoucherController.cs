@@ -175,5 +175,42 @@ namespace Application.MVC.Controllers
                 return View();
             }
         }
+
+
+        public async Task<ActionResult> ToggleStatus(Guid ID)
+        {
+            try
+            {
+                string URL = $@"https://localhost:7187/api/Voucher/ToggleStatus/{ID}";
+                var Response = await Client.PatchAsync(URL, null);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
+                return View();
+            }
+        }
+
+        public async Task<ActionResult> StopThisRightNow(Guid ID)
+        {
+            try
+            {
+                string URL = $@"https://localhost:7187/api/Voucher/StopVoucher/{ID}";
+                var Response = await Client.PatchAsync(URL, null);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                TempData["Error"] = $"Đã có lỗi xảy ra! Lỗi:\n{Msg.Message} ({Msg.HResult})";
+                return View();
+            }
+        }
     }
 }

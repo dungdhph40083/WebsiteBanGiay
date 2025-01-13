@@ -160,10 +160,10 @@
                                         <div class="product-img position-relative overflow-hidden">
                                             <img class="img-fluid w-100 product-image" src="https://localhost:7187/Images/@productImage" alt="@productName">
                                             <div class="product-action">
-                                                <button data-productid="@item.ProductID" class="btn btn-outline-dark btn-square addCart" asp-controller="UserCart" asp-action="Add2Cart"
+@*                                                 <button data-productid="@item.ProductID" class="btn btn-outline-dark btn-square addCart" asp-controller="UserCart" asp-action="Add2Cart"
                                                    asp-route-ID="@item.ProductDetailID"
                                                    asp-route-Quantity="1"
-                                                   asp-route-AdditionMode="true"><i class="fa fa-shopping-cart"></i></button>
+                                                   asp-route-AdditionMode="true"><i class="fa fa-shopping-cart"></i></button> *@
                                         @*                                         <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a> *@
                                                 <a class="btn btn-outline-dark btn-square" href="@Url.Action("Details", new { id = item.ProductDetailID })"><i class="fa fa-search"></i></a>
                                             </div>

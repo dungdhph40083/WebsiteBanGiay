@@ -99,23 +99,38 @@ namespace Application.Data.Repositories
             else return default;
         }
 
-        public async Task<string> VoucherValidator(string VoucherCode)
+        public async Task<string> VoucherValidator(Guid UserID, string VoucherCode)
         {
             var Target = await GetVoucherByVoucherCode(VoucherCode);
-            if (Target != null && Target.Status != 0)
+            if (Target != null)
             {
-                if (DateTime.UtcNow > Target.EndingAt)
-                {
-                    return ValidateErrorResult.VOUCHER_EXPIRED;
-                }
-                if (DateTime.UtcNow < Target.StartingAt)
-                {
-                    return ValidateErrorResult.VOUCHER_IS_PREMATURE;
-                }
-                if (Target.UsesLeft <= 0)
-                {
-                    return ValidateErrorResult.VOUCHER_RAN_OUT_OF_USES;
-                }
+                #region Eye-destroyer
+                var Shoppings = await Context.ShoppingCarts
+                //.Include(UU => UU.User)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Category : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Color : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Size : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                .Include(UU => UU.ProductDetail)
+                    .ThenInclude(VV => VV != null ? VV.Product : default)
+                        .ThenInclude(WW => WW != null ? WW.Image : default)
+                  .Where(UU => UU.UserID.Equals(UserID)).ToListAsync();
+                #endregion
+
+                if (Target.EndingAt < DateTime.UtcNow ||
+                Target.Status == 0 ||
+                Target.Status == 100) return ValidateErrorResult.VOUCHER_EXPIRED;
+
+                if (DateTime.UtcNow < Target.StartingAt) return ValidateErrorResult.VOUCHER_IS_PREMATURE;
+
+                if (Shoppings.Sum(P => P.Price) < Target.RequiredGrandTotal.GetValueOrDefault()) return ValidateErrorResult.VOUCHER_REQUIREMENT_FAIL;
+
+                if (Target.UsesLeft == 0) return ValidateErrorResult.VOUCHER_RAN_OUT_OF_USES;
+
                 return ValidateErrorResult.VOUCHER_VALID;
             }
             else return ValidateErrorResult.VOUCHER_DOES_NOT_EXIST;
@@ -156,6 +171,32 @@ namespace Application.Data.Repositories
                     default:
                         break;
                 }
+                Context.Vouchers.Update(Target);
+                await Context.SaveChangesAsync();
+                return Target;
+            }
+            else return default;
+        }
+        public async Task<Voucher?> StopVoucher(Guid ID)
+        {
+            var Target = await GetVoucherByID(ID);
+            if (Target != null && (Target.Status == 1 || Target.Status == 101))
+            {
+                Context.Vouchers.Attach(Target);
+                Target.EndingAt = DateTime.UtcNow;
+                switch ((VoucherStatus)Target.Status.GetValueOrDefault())
+                {
+                    case VoucherStatus.Active:
+                        Target.Status = (byte)VoucherStatus.Disabled;
+                        break;
+                    case VoucherStatus.ActivePrivate:
+                        Target.Status = (byte)VoucherStatus.DisabledPrivate;
+                        break;
+                    default:
+                        break;
+                }
+                Context.Vouchers.Update(Target);
+                await Context.SaveChangesAsync();
                 return Target;
             }
             else return default;

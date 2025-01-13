@@ -1,6 +1,7 @@
 ﻿using Application.Data.Enums;
 using Application.Data.Models;
 using Humanizer;
+using Application.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuGet.Protocol;
@@ -31,7 +32,26 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                 var Response = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
                 var Voucher = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
-                ViewBag.VoucherInfo = Voucher;
+
+                if (Voucher != null)
+                {
+                    string URL_VoucherValidator = $@"https://localhost:7187/api/Voucher/Validate/{ID}/{Voucher.VoucherCode}";
+                    var VoucherResponse = await Client.PostAsync(URL_VoucherValidator, null).Result.Content.ReadAsStringAsync();
+                    if (VoucherResponse == ValidateErrorResult.VOUCHER_VALID)
+                    {
+                        ViewBag.VoucherInfo = Voucher;
+                    }
+                    else
+                    {
+                        switch (VoucherResponse)
+                        {
+                            default:
+                                ViewBag.ErrorMessage = "No";
+                                break;
+                        }
+                    }
+                }
+
                 return View(Response);
             }
             catch (UnauthorizedAccessException ex)
@@ -40,6 +60,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                 return View(new List<ShoppingCart>());
             }
         }
+        
 
         public async Task<ActionResult> Add2Cart(Guid? ID, int? Quantity, bool? AdditionMode)
         {
@@ -87,10 +108,8 @@ namespace Application.MVC.GeneralPublic.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<ActionResult> ApplyVoucher(string VoucherCode)
+        public async Task<ActionResult> ApplyVoucher(Guid ID, string? VoucherCode)
         {
-            Guid ID = GetCurrentUserId();
-
             try
             {
                 Console.WriteLine($"\nUser ID is {ID}\nVoucher code is {VoucherCode}\n");

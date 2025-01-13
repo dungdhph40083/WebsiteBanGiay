@@ -11,7 +11,9 @@ namespace Application.Data.Repositories.IRepository
         Task<Voucher?> GetVoucherByVoucherCode(string VoucherCode);
         Task<Voucher> CreateVoucher(VoucherDTO NewVoucher);
         Task<Voucher?> UpdateVoucher(Guid TargetID, VoucherDTO UpdatedVoucher);
+        Task<string> VoucherValidator(Guid UserID, string VoucherCode);
         Task<Voucher?> ToggleStatus(Guid ID);
+        Task<Voucher?> StopVoucher(Guid ID);
         Task DeleteVoucher(Guid TargetID);
     }
 }

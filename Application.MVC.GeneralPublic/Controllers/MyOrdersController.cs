@@ -192,48 +192,12 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
         }
 
-        public async Task<ActionResult> RequestRefund(ReturnDTO ReturnInfo, string Reason, string? Comments)
+        public async Task<ActionResult> RequestRefund(Guid ID)
         {
-            Guid ID = GetCurrentUserId();
-            ReturnInfo.OrderID = ID;
-
-            switch (Reason)
-            {
-                case Reasoning.Generic:
-                    ReturnInfo.Reason = "Hàng không ưng ý";
-                    break;
-                case Reasoning.UsedProduct:
-                    ReturnInfo.Reason = "Hàng đã sử dụng";
-                    break;
-                case Reasoning.FakeProduct:
-                    ReturnInfo.Reason = "Hàng giả/hàng nhái";
-                    break;
-                case Reasoning.BrokenProduct:
-                    ReturnInfo.Reason = "Hàng bị lỗi hoặc gặp hỏng hóc";
-                    break;
-                case Reasoning.Other:
-                    if (Comments != null)
-                    {
-                        ReturnInfo.Reason = Comments;
-                        break;
-                    }
-                    else
-                    {
-                        ViewData["NoReasoningFound"] = "Đừng quên nhập lý do!";
-                        return View();
-                    }
-                default:
-                    ViewData["NoReasoningFound"] = "Đã có lỗi xảy ra. Hãy thử lại.";
-                    return View();
-            }
-
             try
             {
-                string URL_Returns = $@"https://localhost:7187/api/Returns";
-                var ReturnResponse = await Client.PostAsJsonAsync(URL_Returns, ReturnInfo);
-
-                string URL_Orders = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Refunding}";
-                var OrderResponse = await Client.PatchAsync(URL_Orders, null);
+                string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Refunding}";
+                var Response = await Client.PatchAsync(URL, null);
                 return RedirectToAction(nameof(Details), new { ID });
             }
             catch (Exception Msg)
@@ -244,5 +208,57 @@ namespace Application.MVC.GeneralPublic.Controllers
                 return View();
             }
         }
+
+        //public async Task<ActionResult> RequestRefund(Guid ID, ReturnDTO ReturnInfo, string Reason, string? Comments)
+        //{
+        //    ReturnInfo.OrderID = ID;
+
+        //    switch (Reason)
+        //    {
+        //        case Reasoning.Generic:
+        //            ReturnInfo.Reason = "Hàng không ưng ý";
+        //            break;
+        //        case Reasoning.UsedProduct:
+        //            ReturnInfo.Reason = "Hàng đã sử dụng";
+        //            break;
+        //        case Reasoning.FakeProduct:
+        //            ReturnInfo.Reason = "Hàng giả/hàng nhái";
+        //            break;
+        //        case Reasoning.BrokenProduct:
+        //            ReturnInfo.Reason = "Hàng bị lỗi hoặc gặp hỏng hóc";
+        //            break;
+        //        case Reasoning.Other:
+        //            if (Comments != null)
+        //            {
+        //                ReturnInfo.Reason = Comments;
+        //                break;
+        //            }
+        //            else
+        //            {
+        //                ViewData["NoReasoningFound"] = "Đừng quên nhập lý do!";
+        //                return View();
+        //            }
+        //        default:
+        //            ViewData["NoReasoningFound"] = "Đã có lỗi xảy ra. Hãy thử lại.";
+        //            return View();
+        //    }
+
+        //    try
+        //    {
+        //        string URL_Returns = $@"https://localhost:7187/api/Returns";
+        //        var ReturnResponse = await Client.PostAsJsonAsync(URL_Returns, ReturnInfo);
+
+        //        string URL_Orders = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={(int)OrderStatus.Refunding}";
+        //        var OrderResponse = await Client.PatchAsync(URL_Orders, null);
+        //        return RedirectToAction(nameof(Details), new { ID });
+        //    }
+        //    catch (Exception Msg)
+        //    {
+        //        Console.ForegroundColor = ConsoleColor.Red;
+        //        Console.WriteLine(Msg.Message);
+        //        Console.ForegroundColor = ConsoleColor.Gray;
+        //        return View();
+        //    }
+        //}
     }
 }

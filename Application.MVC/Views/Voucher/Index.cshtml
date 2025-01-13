@@ -27,7 +27,7 @@
         <div class="alert alert-light rounded-5 text-center">
             <a asp-route-SortByTime="@SortByTime" asp-route-SortByLook="@(null)" class="btn @(string.IsNullOrWhiteSpace(SortByLook) ? "btn-primary text-light" : "btn-outline-primary")">Tất cả</a>
             <a asp-route-SortByTime="@SortByTime" asp-route-SortByLook="@VoucherFilters.VOUCHER_PUBLIC" class="btn @(SortByLook == VoucherFilters.VOUCHER_PUBLIC ? "btn-success text-light" : "btn-outline-success")">Công khai</a>
-            <a asp-route-SortByTime="@SortByTime" asp-route-SortByLook="@VoucherFilters.VOUCHER_PRIVATE" class="btn @(SortByLook == VoucherFilters.VOUCHER_PRIVATE ? "btn-danger text-light" : "btn-outline-danger ")">Không công khai</a>
+            <a asp-route-SortByTime="@SortByTime" asp-route-SortByLook="@VoucherFilters.VOUCHER_PRIVATE" class="btn @(SortByLook == VoucherFilters.VOUCHER_PRIVATE ? "btn-danger text-light" : "btn-outline-danger ")">Riêng tư</a>
         </div>
     </div>
 </div>
@@ -109,7 +109,7 @@
                             }
                             else
                             {
-                                <span class="badge badge-danger">Đã bị hủy</span>
+                                <span class="badge badge-danger">Đã kết thúc</span>
                             }
                         }
                         else
@@ -118,9 +118,34 @@
                         }
                     </td>
                     <td>
-                        <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.VoucherID)">Sửa</a>
-                        <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.VoucherID">Chi tiết</a>
-                        <button type="button" class="btn btn-danger delete_trigger" data-id="@Entry.VoucherID" data-controller="Voucher" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">Xóa</button>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-clipboard"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right text-center rounded-3 border-1 m-2">
+                                <a class="btn btn-warning w-75" asp-action="Edit" asp-route-ID="@(@Entry.VoucherID)">Sửa</a><br />
+                                <a class="btn btn-secondary w-75 mt-1" asp-action="Details" asp-route-ID="@Entry.VoucherID">Chi tiết</a><br />
+                                @if (Entry.StartingAt.GetValueOrDefault() <= DateTime.UtcNow && DateTime.UtcNow <= Entry.EndingAt.GetValueOrDefault())
+                                {
+                                    if (Entry.Status == 1 || Entry.Status == 101)
+                                    {
+                                        <a asp-action="ToggleStatus" asp-route-ID="@(Entry.VoucherID)" class="btn btn-danger w-75 mt-1">Tạm dừng</a>
+                                        <br />
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="ToggleStatus" asp-route-ID="@(Entry.VoucherID)" class="btn btn-info w-75 mt-1">Tiếp tục</a>
+
+                                        <br />
+                                    }
+                                    <a asp-action="StopThisRightNow" asp-route-ID="@(Entry.VoucherID)" class="btn btn-warning w-75 mt-1">Kết thúc</a>
+                                }
+                                @if (DateTime.UtcNow <= Entry.StartingAt.GetValueOrDefault())
+                                {
+                                    <button type="button" class="btn btn-danger delete_trigger mt-1 w-75" data-id="@Entry.VoucherID" data-controller="Voucher" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">Xóa</button>
+                                }
+                            </div>
+                        </div>
                     </td>
                 </tr>
             }

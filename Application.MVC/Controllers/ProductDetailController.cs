@@ -90,8 +90,8 @@ namespace Application.MVC.Controllers
         
             try
             {
-                // Populate dropdowns
-                await PopulateDropdowns();
+                await PopulateDropdowns(FromID);
+
                 if (FromID != null)
                 {
                     string URL = $@"https://localhost:7187/api/ProductDetails/ByProduct/{FromID}";
@@ -99,7 +99,8 @@ namespace Application.MVC.Controllers
 
                     if (Response != null)
                     {
-                        Console.WriteLine(Response.ToJson(Formatting.Indented));
+                        ViewBag.FromID = FromID;
+                        ViewBag.CatgID = Response?.First().CategoryID;
 
                         var ParsedOutInfo = new ProductDetailMultiDTO();
 
@@ -133,22 +134,31 @@ namespace Application.MVC.Controllers
             }
         }
 
-        private async Task PopulateDropdowns()
+        private async Task PopulateDropdowns(Guid? FromID = null)
         {
-            // Lấy danh sách Products và ProductDetails từ API
             var ProductsList = await Client.GetFromJsonAsync<List<Product>>(@"https://localhost:7187/api/Product");
             var ProductDetailsList = await Client.GetFromJsonAsync<List<ProductDetail>>(@"https://localhost:7187/api/ProductDetails");
 
-            // Lọc các sản phẩm chưa được sử dụng trong ProductDetails
-            var AvailableProducts = ProductsList?
-                .ToList();
+            List<Product> AvailableProducts;
+
+            if (FromID == null)
+            {
+                AvailableProducts = ProductsList?
+                    .Where(product => !ProductDetailsList!.Any(detail => detail.ProductID == product.ProductID))
+                    .ToList();
+            }
+            else
+            {
+
+                AvailableProducts = ProductsList;
+            }
+
 
             var ColorsList = await Client.GetFromJsonAsync<List<Color>>(@"https://localhost:7187/api/Color");
             var SizesList = await Client.GetFromJsonAsync<List<Size>>(@"https://localhost:7187/api/Size");
             var CategoriesList = await Client.GetFromJsonAsync<List<Category>>(@"https://localhost:7187/api/Category");
             var SalesList = await Client.GetFromJsonAsync<List<Sale>>(@"https://localhost:7187/api/Sale");
 
-            // Tạo danh sách SelectListItem cho các dropdown
             ViewBag.Prods = AvailableProducts?
                 .Select(pls => new SelectListItem
                 {
@@ -190,12 +200,11 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ProductDetailMultiDTO Details)
         {
-            Console.WriteLine(Details.ToJson(Formatting.Indented));
-
             try
             {
                 var Response = await Client.PostAsJsonAsync($@"https://localhost:7187/api/ProductDetails/AddVariations", Details);
-                return RedirectToAction(nameof(Index));
+                Console.WriteLine(Details.ProductID);
+                return RedirectToAction(nameof(Edit), new {ID = Details.ProductID});
             }
             catch (Exception Msg)
             {
@@ -299,12 +308,8 @@ namespace Application.MVC.Controllers
         {
             try
             {
-                Console.WriteLine("Sent data is (Indented formatting for easier view):\n\n" + Details.ToJson(Formatting.Indented));
-
                 string URL = $@"https://localhost:7187/api/ProductDetails/UpdateVariations/{ID}";
                 var Response = await Client.PutAsJsonAsync(URL, Details);
-
-                Console.WriteLine("Response received is:\n\n" + Response.ToJson(Formatting.Indented));
 
                 return RedirectToAction(nameof(Edit), new { ID });
             }
@@ -347,13 +352,6 @@ namespace Application.MVC.Controllers
             {
                 return StatusCode((byte)response.StatusCode, "Đổi trạng thái thất bại."); // Trả về lỗi nếu không thành công
             }
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> PauseOrContinueVoucher(Guid ID)
-        {
-            string URL = $@"";
-            return RedirectToAction(nameof(Index));
         }
     }
 }

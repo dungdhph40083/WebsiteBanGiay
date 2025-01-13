@@ -31,8 +31,27 @@ namespace Application.MVC.GeneralPublic.Controllers
             var totalAmount = cartItems?.Sum(item => item.QuantityCart * item.Price) ?? 0;
 
             string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{UserID}";
+
             var Voucher = JsonConvert.DeserializeObject<Voucher>(await _client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
-            ViewBag.VoucherInfo = Voucher;
+
+            if (Voucher != null)
+            {
+                string URL_VoucherValidator = $@"https://localhost:7187/api/Voucher/Validate/{UserID}/{Voucher.VoucherCode}";
+                var VoucherResponse = await _client.PostAsync(URL_VoucherValidator, null).Result.Content.ReadAsStringAsync();
+                if (VoucherResponse == ValidateErrorResult.VOUCHER_VALID)
+                {
+                    ViewBag.VoucherInfo = Voucher;
+                }
+                else
+                {
+                    switch (VoucherResponse)
+                    {
+                        default:
+                            ViewBag.ErrorMessage = "No";
+                            break;
+                    }
+                }
+            }
 
             // Truyền thông tin người dùng và giỏ hàng vào ViewBag
             ViewBag.DefaultUser = user;
@@ -60,6 +79,29 @@ namespace Application.MVC.GeneralPublic.Controllers
                 Details.PhoneNumber = UserData!.PhoneNumber;
                 Details.ShippingAddress = UserData!.Address;
                 Details.VoucherID = UserData!.VoucherID;
+            }
+
+            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{UserID}";
+
+            var Voucher = JsonConvert.DeserializeObject<Voucher>(await _client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
+
+            if (Voucher != null)
+            {
+                string URL_VoucherValidator = $@"https://localhost:7187/api/Voucher/Validate/{UserID}/{Voucher.VoucherCode}";
+                var VoucherResponse = await _client.PostAsync(URL_VoucherValidator, null).Result.Content.ReadAsStringAsync();
+                if (VoucherResponse == ValidateErrorResult.VOUCHER_VALID)
+                {
+                    ViewBag.VoucherInfo = Voucher;
+                }
+                else
+                {
+                    switch (VoucherResponse)
+                    {
+                        default:
+                            ViewBag.ErrorMessage = "No";
+                            break;
+                    }
+                }
             }
 
             if (PaymentMethod == PaymentMethods.CashOnDelivery)

@@ -26,7 +26,7 @@ namespace Application.Data.Repositories
 
             User User = new() { UserID = Guid.NewGuid(), CreatedAt = DateTimeSync, UpdatedAt = DateTimeSync};
 
-            NewUser.Password = PasswordHasher(NewUser.Password!);
+            //NewUser.Password = PasswordHasher(NewUser.Password!);
 
             User = Mapper.Map(NewUser, User);
 
@@ -69,7 +69,7 @@ namespace Application.Data.Repositories
                 Context.Entry(Target).State = EntityState.Modified;
 
                 // Cập nhật mật khẩu khi mật khẩu ko null
-                if (!string.IsNullOrWhiteSpace(UpdatedUser.Password)) UpdatedUser.Password = PasswordHasher(UpdatedUser.Password);
+                if (!string.IsNullOrWhiteSpace(UpdatedUser.Password)) UpdatedUser.Password = /*PasswordHasher*/(UpdatedUser.Password);
                 else UpdatedUser.Password = Target.Password;
                 
                 // Ko cập nhật ảnh khi ảnh null
