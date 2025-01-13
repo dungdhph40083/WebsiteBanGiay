@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http;
+using Application.Data.Repositories.IRepository;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -24,10 +25,10 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<ActionResult> Index()
         {          
             var userId = HttpContext.Session.GetString("UserID");
-            if (userId != null)
+            var user = _context.Users.FirstOrDefault(u => u.UserID == Guid.Parse(userId));
+            if (userId != null && user.IsBanned)
             {
-                var user = _context.Users.FirstOrDefault(u => u.UserID == Guid.Parse(userId));
-                return View(user);
+                return View("Banned");
             }
             await FetchInfo();
             return View(new User());

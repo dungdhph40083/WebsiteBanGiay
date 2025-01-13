@@ -74,8 +74,13 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                         if (Response != null)
                         {
-                            HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName ?? "N/A");
+                            HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName);
                         }
+                        else
+                        {
+                            HttpContext.Session.Remove("UserAvatar");
+                        }
+                        HttpContext.Session.SetString("UserRole", role);
                         if (role == "Admin")
                         {
                             return Redirect("https://localhost:7200/#");
@@ -89,10 +94,13 @@ namespace Application.MVC.GeneralPublic.Controllers
                 else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
                     TempData["ErrorMessage"] = "Tên người dùng hoặc mật khẩu không đúng.";
+                    return RedirectToAction("index", "Login");
                 }
                 else
                 {
                     TempData["ErrorMessage"] = "Có lỗi xảy ra trong quá trình đăng nhập.";
+                    return RedirectToAction("index", "Login");
+
                 }
 
             }
@@ -114,7 +122,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Register([FromForm] UserDTO NewUser, IFormFile? profilePic)
+        public async Task<IActionResult> Register([FromForm] UserDTO NewUser)
         {
             if (!ModelState.IsValid)
             {
@@ -123,7 +131,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
             try
             {
-               
+                NewUser.RoleID = Guid.Parse(DefaultValues.UserRoleGUID);
                 string apiUrl = $@"https://localhost:7187/api/User/Register";
                 var response = await Client.PostAsJsonAsync(apiUrl, NewUser);
 
@@ -145,6 +153,19 @@ namespace Application.MVC.GeneralPublic.Controllers
                 return View(NewUser);
             }
         }
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string Email)
+        {
+   
+            return View();
+        }
+
         private Guid GetCurrentUserId()
         {
             string token = HttpContext.Session.GetString("JwtToken");

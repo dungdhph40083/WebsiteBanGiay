@@ -137,12 +137,6 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> Details(Guid ID)
         {
-            string token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
-            {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
-            }
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var productss = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
             ViewBag.Products = productss ?? new List<Product>();
 

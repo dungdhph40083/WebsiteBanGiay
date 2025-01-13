@@ -23,7 +23,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             string token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
             {
-                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
+                throw new UnauthorizedAccessException("Hãy Đăng Nhập Để Thực Hiện Chức Năng Này.");
             }
 
             var handler = new JwtSecurityTokenHandler();
@@ -128,7 +128,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             string token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
             {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
+                return Unauthorized(" Hãy Đăng Nhập Để Thực Hiện Chức Năng Này.");
             }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
@@ -151,7 +151,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             string token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
             {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
+                return Unauthorized("Hãy Đăng Nhập Để Thực Hiện Chức Năng Này.");
             }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try
@@ -174,7 +174,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             string token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
             {
-                return Unauthorized("Token không tồn tại. Vui lòng đăng nhập lại.");
+                return Unauthorized("Hãy Đăng Nhập Để Thực Hiện Chức Năng Này.");
             }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             try

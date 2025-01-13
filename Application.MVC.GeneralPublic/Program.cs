@@ -26,6 +26,7 @@ builder.Services.AddDbContext<GiayDBContext>(options =>
 builder.Services.AddScoped<ICustomerSupportMessage, CustomerSupportMessageRepository>();
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddMemoryCache();
 builder.Services.AddMvc().AddMvcOptions(o => o.AllowEmptyInputInBodyModelBinding = true);
 
 // Các dịch vụ khác

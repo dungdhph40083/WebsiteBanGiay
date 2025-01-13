@@ -154,7 +154,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             string token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
             {
-                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
+                throw new UnauthorizedAccessException("Hãy Đăng Nhập Để Thực Hiện Chức Năng Này.");
             }
 
             var handler = new JwtSecurityTokenHandler();
