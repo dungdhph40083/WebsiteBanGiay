@@ -87,7 +87,6 @@ namespace Application.MVC.Controllers
         [HttpGet]
         public async Task<ActionResult> Create(Guid? FromID)
         {
-        
             try
             {
                 await PopulateDropdowns(FromID);
@@ -198,13 +197,19 @@ namespace Application.MVC.Controllers
         // POST: ProductDetail/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(ProductDetailMultiDTO Details)
+        public async Task<ActionResult> Create(bool FromEdit, ProductDetailMultiDTO Details)
         {
             try
             {
+                Console.WriteLine("From edit: " + FromEdit);
+
                 var Response = await Client.PostAsJsonAsync($@"https://localhost:7187/api/ProductDetails/AddVariations", Details);
                 Console.WriteLine(Details.ProductID);
-                return RedirectToAction(nameof(Edit), new {ID = Details.ProductID});
+                if (FromEdit)
+                {
+                    return RedirectToAction(nameof(Edit), new { ID = Details.ProductID });
+                }
+                else return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
             {

@@ -54,10 +54,14 @@ namespace Application.MVC.Controllers
             return View(data);
         }
 
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ProductDTO product, IFormFile? Image)
         {
             // Kiểm tra xem tên sản phẩm đã tồn tại trong cơ sở dữ liệu chưa
@@ -99,6 +103,7 @@ namespace Application.MVC.Controllers
                 else
                 {
                     var error = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(error);
                     ModelState.AddModelError(string.Empty, $"Create failed: {error}");
                     return View(product); // Trả về form chỉnh sửa với thông báo lỗi
                 }

@@ -3,7 +3,21 @@
 @{
     ViewData["Title"] = "Index";
     var products = ViewBag.Orders as List<Application.Data.Models.Product>;
-    var selectedPrice = ViewBag.SelectedPrice as string;
+
+    var Paginations = ViewBag.CurrentPage as int?;
+    var TotalPages = ViewBag.TotalPages as int?;
+
+    var PriceRange = ViewBag.PriceRange as string;
+
+    var CurrentPage = ViewBag.CurrentPage as int?;
+    var SortOrder = ViewBag.SortOrder as string;
+    var CatgSelects = ViewBag.SelectedCategory as Guid?;
+    var ColrSelects = ViewBag.SelectedColor as Guid?;
+    var SizeSelects = ViewBag.SelectedSize as Guid?;
+
+    var Colors = ViewBag.Colors as List<Application.Data.Models.Color>;
+    var Sizes = ViewBag.Sizes as List<Application.Data.Models.Size>;
+    var Categories = ViewBag.Categories as List<Application.Data.Models.Category>;
 }
 
 <head>
@@ -44,8 +58,8 @@
             });
         });
     </script>
-
 </head>
+
 <div class="container-fluid">
     <div class="row px-xl-5">
         <div class="col-12">
@@ -60,6 +74,7 @@
     <div class="row px-xl-5">
         <!-- Bộ lọc bên trái -->
         <div class="col-lg-3 col-md-4 mb-4">
+
             <!-- Lọc theo giá -->
             <h5 class="section-title position-relative text-uppercase mb-3 filter-toggle">
                 <span class="bg-secondary pr-3">Lọc theo giá</span>
@@ -67,24 +82,28 @@
             <div class="bg-light p-4 mb-30 filter-section">
                 <form method="get" action="/Product/Index">
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="all" id="price-all" onchange="this.form.submit()" @(selectedPrice == "all" ? "checked" : "")>
+                        <input type="radio" class="custom-control-input" name="PriceRange" value="All" id="price-all" onchange="this.form.submit()" @(PriceRange == "All" ? "checked" : "")>
                         <label class="custom-control-label" for="price-all">Tất cả giá</label>
                     </div>
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="0-1" id="price-1" onchange="this.form.submit()" @(selectedPrice == "0-1" ? "checked" : "")>
-                        <label class="custom-control-label" for="price-1">10.000 VNĐ - 500.000 VNĐ</label>
+                        <input type="radio" class="custom-control-input" name="PriceRange" value="Low" id="price-low" onchange="this.form.submit()" @(PriceRange == "Low" ? "checked" : "")>
+                        <label class="custom-control-label" for="price-low">Từ 100,000 VNĐ trở xuống</label>
                     </div>
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="1-2" id="price-2" onchange="this.form.submit()" @(selectedPrice == "1-2" ? "checked" : "")>
-                        <label class="custom-control-label" for="price-2">500.000 VNĐ - 1.000.000 VNĐ</label>
+                        <input type="radio" class="custom-control-input" name="PriceRange" value="Mid" id="price-mid" onchange="this.form.submit()" @(PriceRange == "Mid" ? "checked" : "")>
+                        <label class="custom-control-label" for="price-mid">Từ 100,000 VNĐ đến 500,000 VNĐ</label>
                     </div>
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="2-3" id="price-3" onchange="this.form.submit()" @(selectedPrice == "2-3" ? "checked" : "")>
-                        <label class="custom-control-label" for="price-3">1.000.000 VNĐ - 2.000.000 VNĐ</label>
+                        <input type="radio" class="custom-control-input" name="PriceRange" value="High" id="price-high" onchange="this.form.submit()" @(PriceRange == "High" ? "checked" : "")>
+                        <label class="custom-control-label" for="price-high">Từ 500,000 VNĐ đến 1,000,000 VNĐ</label>
                     </div>
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="priceRange" value="3-4" id="price-4" onchange="this.form.submit()" @(selectedPrice == "3-4" ? "checked" : "")>
-                        <label class="custom-control-label" for="price-4">2.000.000 VNĐ - Trở lên</label>
+                        <input type="radio" class="custom-control-input" name="PriceRange" value="Ultra" id="price-ultra" onchange="this.form.submit()" @(PriceRange == "Ultra" ? "checked" : "")>
+                        <label class="custom-control-label" for="price-ultra">Từ 1,000,000 VNĐ đến 2,500,000 VNĐ</label>
+                    </div>
+                    <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                        <input type="radio" class="custom-control-input" name="PriceRange" value="ProMax" id="price-pro-max" onchange="this.form.submit()" @(PriceRange == "ProMax" ? "checked" : "")>
+                        <label class="custom-control-label" for="price-pro-max">Từ 2,500,000 VNĐ trở lên</label>
                     </div>
                 </form>
             </div>
@@ -95,36 +114,12 @@
             </h5>
             <div class="bg-light p-4 mb-30 filter-section">
                 <form method="get" action="/Product/Index">
-                    <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="categoryId" value="" id="category-all" onchange="this.form.submit()" @(ViewBag.SelectedCategory == null ? "checked" : "")>
-                        <label class="custom-control-label" for="category-all">Tất cả danh mục</label>
-                    </div>
-                    @foreach (var category in ViewBag.Categories)
+                    @foreach (var Col in Colors)
                     {
-                            <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                                <input type="radio" class="custom-control-input" name="categoryId" value="@category.CategoryID" id="category-@category.CategoryID" onchange="this.form.submit()" @(ViewBag.SelectedCategory != null && Guid.Parse(ViewBag.SelectedCategory.ToString()) == category.CategoryID ? "checked" : "")>
-                                <label class="custom-control-label" for="category-@category.CategoryID">@category.CategoryName </label>
-                            </div>
-                    }
-                </form>
-            </div>
-
-            <!-- Lọc theo màu sắc -->
-            <h5 class="section-title position-relative text-uppercase mb-3 filter-toggle">
-                <span class="bg-secondary pr-3">Lọc theo màu sắc</span>
-            </h5>
-            <div class="bg-light p-4 mb-30 filter-section">
-                <form method="get" action="/Product/Index">
-                    <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="colorId" value="" id="color-all" onchange="this.form.submit()" @(ViewBag.SelectedColor == null ? "checked" : "")>
-                        <label class="custom-control-label" for="color-all">Tất cả màu sắc</label>
-                    </div>
-                    @foreach (var color in ViewBag.Colors)
-                    {
-                            <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                                <input type="radio" class="custom-control-input" name="colorId" value="@color.ColorID" id="color-@color.ColorID" onchange="this.form.submit()" @(ViewBag.SelectedColor != null && Guid.Parse(ViewBag.SelectedColor.ToString()) == color.ColorID ? "checked" : "")>
-                                <label class="custom-control-label" for="color-@color.ColorID">@color.ColorName </label>
-                            </div>
+                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                            <input type="radio" class="custom-control-input" name="ColorQuery" value="@Col.ColorID" id="color-@Col.ColorID" onchange="this.form.submit()" @(ColrSelects == @Col.ColorID ? "checked" : "")>
+                            <label class="custom-control-label" for="color-@Col.ColorID">@Col.ColorName</label>
+                        </div>
                     }
                 </form>
             </div>
@@ -155,37 +150,37 @@
                         var productPrice = product?.Price ?? 0;
                         var productImage = product?.Image?.ImageFileName;
 
-                                <div class="col-md-4 pb-1">
-                                    <div class="product-item bg-light mb-4">
-                                        <div class="product-img position-relative overflow-hidden">
-                                            <img class="img-fluid w-100 product-image" src="https://localhost:7187/Images/@productImage" alt="@productName">
-                                            <div class="product-action">
+                        <div class="col-md-4 pb-1">
+                            <div class="product-item bg-light mb-4">
+                                <div class="product-img position-relative overflow-hidden">
+                                    <img class="img-fluid w-100 product-image" src="https://localhost:7187/Images/@productImage" alt="@productName">
+                                    <div class="product-action">
 @*                                                 <button data-productid="@item.ProductID" class="btn btn-outline-dark btn-square addCart" asp-controller="UserCart" asp-action="Add2Cart"
-                                                   asp-route-ID="@item.ProductDetailID"
-                                                   asp-route-Quantity="1"
-                                                   asp-route-AdditionMode="true"><i class="fa fa-shopping-cart"></i></button> *@
-                                        @*                                         <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a> *@
-                                                <a class="btn btn-outline-dark btn-square" href="@Url.Action("Details", new { id = item.ProductDetailID })"><i class="fa fa-search"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="text-center py-4">
-                                            <a class="h6 text-decoration-none text-truncate" href="@Url.Action("Details", new { id = item.ProductDetailID })">@productName</a>
-                                            <div class="d-flex align-items-center justify-content-center mt-2">
-                                                <h5>@(Convert.ToDecimal(productPrice).ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) VNĐ</h5>
-                                            </div>
-                                            <div class="d-flex align-items-center justify-content-center mb-1">
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                                <small class="fa fa-star text-primary mr-1"></small>
-                                            </div>
-                                            <div>
-                                                <a class="btn btn-primary" href="@Url.Action("Details", new { id = item.ProductDetailID })">Xem Ngay</a>
-                                            </div>
-                                        </div>
+                                            asp-route-ID="@item.ProductDetailID"
+                                            asp-route-Quantity="1"
+                                            asp-route-AdditionMode="true"><i class="fa fa-shopping-cart"></i></button> *@
+                                @*                                         <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a> *@
+                                        <a class="btn btn-outline-dark btn-square" href="@Url.Action("Details", new { id = item.ProductDetailID })"><i class="fa fa-search"></i></a>
                                     </div>
                                 </div>
+                                <div class="text-center py-4">
+                                    <a class="h6 text-decoration-none text-truncate" href="@Url.Action("Details", new { id = item.ProductDetailID })">@productName</a>
+                                    <div class="d-flex align-items-center justify-content-center mt-2">
+                                        <h5>@(Convert.ToDecimal(productPrice).ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) VNĐ</h5>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-center mb-1">
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                        <small class="fa fa-star text-primary mr-1"></small>
+                                    </div>
+                                    <div>
+                                        <a class="btn btn-primary" href="@Url.Action("Details", new { id = item.ProductDetailID })">Xem Ngay</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
                 }
                 else
@@ -197,17 +192,17 @@
             <div class="col-12">
                 <nav>
                     <ul class="pagination justify-content-center">
-                        <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)">Trước</a>
+                        <li class="page-item @(Paginations.GetValueOrDefault() <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="?page=@(Paginations.GetValueOrDefault() - 1)">Trước</a>
                         </li>
-                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        @for (int i = 1; i <= TotalPages; i++)
                         {
-                                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <li class="page-item @(i == Paginations.GetValueOrDefault() ? "active" : "")">
                                     <a class="page-link" href="?page=@i">@i</a>
                                 </li>
                         }
-                        <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)">Tiếp</a>
+                        <li class="page-item @(Paginations.GetValueOrDefault() >= TotalPages ? "disabled" : "")">
+                            <a class="page-link" href="?page=@(Paginations.GetValueOrDefault() + 1)">Tiếp</a>
                         </li>
                     </ul>
                 </nav>
