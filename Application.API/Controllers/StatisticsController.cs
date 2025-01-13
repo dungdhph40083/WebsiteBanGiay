@@ -27,8 +27,8 @@ namespace Application.MVC.Controllers
             }
 
             // Các trạng thái cần đếm: 200-203 (thành công), 0 (thất bại), 5 (hoàn trả)
-            byte[] successStatuses = { 200, 201, 202, 203 };
-            byte[] failedStatuses = { 0 };
+            byte[] successStatuses = { 200, 201, 202, 203, 103 };
+            byte[] failedStatuses = { 0 ,66};
             byte[] returnStatuses = { 5 , 2 };
 
             // Đếm số lượng đơn hàng theo các trạng thái

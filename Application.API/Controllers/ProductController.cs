@@ -138,9 +138,11 @@ namespace Application.API.Controllers
         public async Task<ActionResult>? DeleteProduct(Guid id)
         {
             await ProductDetailRepo.DeleteExistingByProductID(id);
+            await _productRepository.Delete(id);
             return NoContent();
         }
         [HttpGet("CheckProductName/{name}")]
+        [AllowAnonymous]
         public async Task<IActionResult> CheckProductName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
