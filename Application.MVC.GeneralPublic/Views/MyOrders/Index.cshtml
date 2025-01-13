@@ -1,5 +1,38 @@
 ﻿@using Application.Data.Enums
 @model List<Application.Data.Models.Order>
+@{
+    var errorMessage = ViewBag.ErrorMessage as string;
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div id="errorModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thông báo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>@errorMessage</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="/Account/Login" class="btn btn-primary">Đăng nhập</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function() {
+        var errorMessage = "@errorMessage";
+        if (errorMessage) {
+            $('#errorModal').modal('show');
+        }
+    });
+</script>
 
 <div class="container-fluid">
     <div class="row px-xl-5">

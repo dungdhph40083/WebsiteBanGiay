@@ -39,20 +39,29 @@ namespace Application.MVC.GeneralPublic.Controllers
         }
         public async Task<ActionResult> Index()
         {
-            Guid ID = GetCurrentUserId();
+            try
+            {
+                Guid ID = GetCurrentUserId();
 
-            string URL = $@"https://localhost:7187/api/Orders/User/{ID}";
+                string URL = $@"https://localhost:7187/api/Orders/User/{ID}";
 
-            var Response = await Client.GetFromJsonAsync<List<Order>>(URL);
+                var Response = await Client.GetFromJsonAsync<List<Order>>(URL);
 
-            return View(Response);
+                return View(Response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View(new List<Order>());
+            }
+
+
         }
 
         public async Task<ActionResult> Details(Guid ID)
         {
-            Guid userId = GetCurrentUserId();
-            string URL_OList = $@"https://localhost:7187/api/OrderDetails/Order/{ID}/{userId}";
-            string URL_Order = $@"https://localhost:7187/api/Orders/{ID}/{userId}";
+            string URL_OList = $@"https://localhost:7187/api/OrderDetails/Order/{ID}";
+            string URL_Order = $@"https://localhost:7187/api/Orders/{ID}";
 
             var Items = await Client.GetFromJsonAsync<List<OrderDetail>>(URL_OList);
             ViewBag.OrderItems = Items ?? new List<OrderDetail>();
@@ -111,7 +120,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
             var Response = await Client.PatchAsJsonAsync(URL_Order, NewDetail);
 
-            return RedirectToAction(nameof(Details), new {ID});
+            return RedirectToAction(nameof(Details), new { ID });
         }
 
         public async Task<ActionResult> DestroyOrder(Guid ID)
@@ -183,7 +192,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
         }
 
-        public async Task<ActionResult> RequestRefund( ReturnDTO ReturnInfo, string Reason, string? Comments)
+        public async Task<ActionResult> RequestRefund(ReturnDTO ReturnInfo, string Reason, string? Comments)
         {
             Guid ID = GetCurrentUserId();
             ReturnInfo.OrderID = ID;

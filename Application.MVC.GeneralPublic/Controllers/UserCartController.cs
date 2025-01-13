@@ -13,36 +13,45 @@ namespace Application.MVC.GeneralPublic.Controllers
     public class UserCartController : Controller
     {
         HttpClient Client = new HttpClient();
-        private readonly HttpClient _httpClient;
-        public UserCartController()
-        {
-            _httpClient = new HttpClient();
-        }
+        //private readonly HttpClient _httpClient;
+        //public UserCartController()
+        //{
+        //    _httpClient = new HttpClient();
+        //}
         // Fake data; xóa sau khi có Đăng nhập/Đăng ký!!!
         // USER ID LÀ MỘT USER ĐỊNH SẴN NÊN NÓ CŨNG LÀ FAKE DATA
 
         public async Task<ActionResult> Index()
         {
-            Guid ID = GetCurrentUserId();
-            string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{ID}";
+            try
+            {
+                Guid ID = GetCurrentUserId();
+                string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{ID}";
+                string URL = $@"https://localhost:7187/api/ShoppingCart/User/{ID}";
 
-            string URL = $@"https://localhost:7187/api/ShoppingCart/User/{ID}";
-
-            var Response = await _httpClient.GetFromJsonAsync<List<ShoppingCart>>(URL);
-            var Voucher = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
-            ViewBag.VoucherInfo = Voucher;
-            return View(Response);
+                var Response = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
+                var Voucher = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
+                ViewBag.VoucherInfo = Voucher;
+                return View(Response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View(new List<ShoppingCart>());
+            }
         }
 
-        public async Task<ActionResult> Add2Cart(int? Quantity, bool? AdditionMode)
+        public async Task<ActionResult> Add2Cart(Guid? ID, int? Quantity, bool? AdditionMode)
         {
-            Guid ID = GetCurrentUserId();
+            Console.WriteLine("Quantity: " + Quantity ?? "null");
 
-            if (ID != null)
+            Guid UserID = GetCurrentUserId();
+
+            if (UserID != null && ID != null)
             {
                 try
                 {
-                    string URL = $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{ID}?Quantity={Quantity ?? 0}&AdditionMode={AdditionMode}";
+                    string URL = $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{UserID}/{ID}?Quantity={Quantity ?? 0}&AdditionMode={AdditionMode}";
                     var Response = await Client.PutAsync(URL, null);
 
                     return RedirectToAction(nameof(Index), Controller2String.Eat(nameof(UserCartController)));
@@ -63,7 +72,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             foreach (var Item in BigCart)
             {
-                string URL = $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{Item.ProductDetailID}?Quantity={Item.QuantityCart ?? 0}&AdditionMode=false";
+                string URL = $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{ID}/{Item.ProductDetailID}?Quantity={Item.QuantityCart ?? 0}&AdditionMode=false";
 
                 var Response = await Client.PutAsync(URL, null);
             }

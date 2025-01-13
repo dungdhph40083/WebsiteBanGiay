@@ -39,10 +39,10 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                 return View();
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
-                return View("Error");
+                ViewBag.ErrorMessage = ex.Message;
+                return View(new User());
             }
         }
 
@@ -75,9 +75,10 @@ namespace Application.MVC.GeneralPublic.Controllers
                         TempData["ErrorMessage"] = "Có lỗi khi gửi tin nhắn!";
                     }
                 }
-                catch (Exception ex)
+                catch (UnauthorizedAccessException ex)
                 {
-                    TempData["ErrorMessage"] = $"Có lỗi xảy ra: {ex.Message}";
+                    ViewBag.ErrorMessage = ex.Message;
+                    return View();
                 }
             }
             return View(model);

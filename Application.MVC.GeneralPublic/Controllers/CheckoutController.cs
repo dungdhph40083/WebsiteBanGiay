@@ -4,13 +4,14 @@ using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
     public class CheckoutController : Controller
     {
         private readonly HttpClient _client;
-        private readonly Guid UserID = Guid.Parse("BBD122D1-8961-4363-820E-3AD1A87064E4");
+
 
         public CheckoutController(IHttpClientFactory httpClientFactory)
         {
@@ -19,6 +20,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<IActionResult> Index()
         {
+            Guid UserID = GetCurrentUserId();
             // Gọi API để lấy danh sách người dùng
             var user = await _client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{UserID}");
 
@@ -42,6 +44,8 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<ActionResult> InstantCheckout(OrderDto Details, string PaymentMethod, bool HasExternalInfo)
         {
+            Guid UserID = GetCurrentUserId();
+
             Details.UserID = UserID;
             Details.HasExternalInfo = true;
             if (!HasExternalInfo)
@@ -102,6 +106,25 @@ namespace Application.MVC.GeneralPublic.Controllers
                 }
             }
             else return RedirectToAction(nameof(Index));
+        }
+        private Guid GetCurrentUserId()
+        {
+            string token = HttpContext.Session.GetString("JwtToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID");
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("UserId không tồn tại trong token.");
+            }
+
+            return Guid.Parse(userIdClaim.Value);
         }
     }
 }

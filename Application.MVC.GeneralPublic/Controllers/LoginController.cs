@@ -74,7 +74,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                         if (Response != null)
                         {
-                            HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName ?? "default-avatar.png");
+                            HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName ?? "N/A");
                         }
                         if (role == "Admin")
                         {
@@ -101,7 +101,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                 TempData["ErrorMessage"] = $"Lỗi kết nối: {ex.Message}";
             }
            
-            return RedirectToAction("index");
+            return RedirectToAction("index", "Home");
         }
 
         private class LoginResponse
@@ -114,35 +114,35 @@ namespace Application.MVC.GeneralPublic.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Register([FromForm] UserDTO model, IFormFile? profilePic)
+        public async Task<IActionResult> Register([FromForm] UserDTO NewUser, IFormFile? profilePic)
         {
             if (!ModelState.IsValid)
             {
                 TempData["FailureBanner"] = "Dữ liệu nhập không hợp lệ. Vui lòng kiểm tra lại.";
-                return View(model);
+                return View(NewUser);
             }
             try
             {
                
-                string apiUrl = $@"https://localhost:7187/api/User";
-                var response = await Client.PostAsJsonAsync(apiUrl, model);
+                string apiUrl = $@"https://localhost:7187/api/User/Register";
+                var response = await Client.PostAsJsonAsync(apiUrl, NewUser);
 
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["SuccessBanner"] = "Tài khoản đã được tạo thành công!";
-                    return RedirectToAction("Index", "Account");
+                    return RedirectToAction("Index", "Login");
                 }
                 else
                 {
                     var errorMessage = await response.Content.ReadAsStringAsync();
                     TempData["FailureBanner"] = $"Tạo tài khoản không thành công! {errorMessage}";
-                    return View(model);
+                    return View(NewUser);
                 }
             }
             catch (Exception ex)
             {
                 TempData["FailureBanner"] = $"Có lỗi xảy ra: {ex.Message}";
-                return View(model);
+                return View(NewUser);
             }
         }
         private Guid GetCurrentUserId()
