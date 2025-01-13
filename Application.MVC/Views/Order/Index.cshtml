@@ -6,47 +6,125 @@
     var Badge = ViewBag.BadgeData as Application.Data.Models.CategorizedOrdersCountModel ?? new();
     string? SortByParamValue = ViewData["FilterValue"] as string;
 }
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 
-<h1>Danh sách đơn hàng</h1>
-<p>Tổng số đơn hàng: @Model.Count()</p>
+<style>
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
 
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .btn-custom {
+        border-radius: 20px;
+        padding: 5px 15px;
+        font-size: 16px;
+    }
+
+    .custom-dropdown-btn {
+        background-color: #007bff; 
+        color: white;
+        border-radius: 5px;
+    }
+
+        .custom-dropdown-btn:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+    .dropdown-item.text-warning:hover {
+        background-color: #fff3cd; 
+        color: #856404;
+    }
+
+    .dropdown-item.text-success:hover {
+        background-color: #d4edda; 
+        color: #155724;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background-color: #f8d7da; 
+        color: #721c24;
+    }
+
+    .table thead th {
+        text-align: center; 
+        vertical-align: middle; 
+        padding: 10px; 
+        font-weight: bold; 
+    }
+
+
+</style>
+
+<h1 class="text-center">Danh sách đơn hàng</h1>
 <div class="row mb-2">
-    <div class="col-9">
-        <input type="text" id="SearchInput" class="form-control text-monospace-cascadia" placeholder="Tìm kiếm đơn hàng... (nhập mã đơn)" onkeyup="SearchOrders()">
-    </div>
-    <div class="col-3">
+    <div class="col-md-6 col-lg-4">
         <div class="dropdown">
-            <button class="btn btn-secondary" type="button" data-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary custom-dropdown-btn" type="button" data-toggle="dropdown" aria-expanded="false">
                 Lọc trạng thái đơn
             </button>
-            <div class="dropdown-menu rounded-3 border-1 text-center m-2" >
-                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_PENDING ? "active" : "")" style="border-radius: 10px; width: 94%" asp-route-Filter="@OrderFilters.ORDERS_PENDING">Chờ xác nhận @if(Badge.PendingOrders > 0) {<span class="badge badge-secondary">@Badge.PendingOrders</span>}</a>
-                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_ONGOING ? "active" : "")" style="border-radius: 10px; width: 94%" asp-route-Filter="@OrderFilters.ORDERS_ONGOING">Đang giao hàng @if(Badge.OngoingOrders > 0) {<span class="badge badge-secondary">@Badge.OngoingOrders</span>}</a>
-                <hr />
-                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_SUCCEEDED ? "active" : "")" style="border-radius: 10px; width: 94%" asp-route-Filter="@OrderFilters.ORDERS_SUCCEEDED">Thành công @if(Badge.SucceededOrders > 0) {<span class="badge badge-secondary">@Badge.SucceededOrders</span>}</a>
-                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_FAILED ? "active" : "")" style="border-radius: 10px; width: 94%" asp-route-Filter="@OrderFilters.ORDERS_FAILED">Thất bại @if(Badge.FailedOrders > 0) {<span class="badge badge-secondary">@Badge.FailedOrders</span>}</a>
-                <hr />
-                <a class="dropdown-item ml-1 mr-1 @(string.IsNullOrWhiteSpace(SortByParamValue) ? "active" : "")" style="border-radius: 10px; width: 94%" asp-action="Index">Tất cả</a>
+            <div class="dropdown-menu rounded-3 border-1 text-center m-2">
+                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_PENDING ? "active" : "")" style="border-radius: 10px;" asp-route-Filter="@OrderFilters.ORDERS_PENDING">
+                    Chờ xác nhận @if (Badge.PendingOrders > 0)
+                    {
+                        <span class="badge badge-primary">@Badge.PendingOrders</span>
+                    }
+                </a>
+                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_ONGOING ? "active" : "")" style="border-radius: 10px;" asp-route-Filter="@OrderFilters.ORDERS_ONGOING">
+                    Đang giao hàng @if (Badge.OngoingOrders > 0)
+                    {
+                        <span class="badge badge-success">@Badge.OngoingOrders</span>
+                    }
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_SUCCEEDED ? "active" : "")" style="border-radius: 10px;" asp-route-Filter="@OrderFilters.ORDERS_SUCCEEDED">
+                    Thành công @if (Badge.SucceededOrders > 0)
+                    {
+                        <span class="badge badge-success">@Badge.SucceededOrders</span>
+                    }
+                </a>
+                <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_FAILED ? "active" : "")" style="border-radius: 10px;" asp-route-Filter="@OrderFilters.ORDERS_FAILED">
+                    Thất bại @if (Badge.FailedOrders > 0)
+                    {
+                        <span class="badge badge-danger">@Badge.FailedOrders</span>
+                    }
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item ml-1 mr-1 @(string.IsNullOrWhiteSpace(SortByParamValue) ? "active" : "")" style="border-radius: 10px;" asp-action="Index">Tất cả</a>
             </div>
         </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4 text-right">
+        <input type="text" id="SearchInput" class="form-control" placeholder="Tìm kiếm đơn hàng..." onkeyup="SearchOrders()">
+    </div>
+
+    <div class="col-lg-4 text-right mt-2 mt-lg-0">
+        <h5 class="font-weight-bold">Tổng số đơn hàng: <span class="badge badge-info">@Model.Count</span></h5>
     </div>
 </div>
 
 @if (Model.Count() != 0)
 {
-    <table class="table table-bordered table-striped">
-        <thead class="bg-primary">
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="thead-dark">
             <tr>
-                <th>ID đơn hàng</th>
-                <th>Tên người dùng</th>
-                <th>Ngày đặt</th>
-                <th>Phương thức thanh toán</th>
-                <th>Tổng tiền đơn</th>
-                <th>Trạng thái đơn</th>
-                <th>Trạng thái thanh toán</th>
-                <th>Thao tác đơn hàng&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                <th class="text-center">Mã đơn hàng</th>
+                <th class="text-center">Tên tài khoản</th>
+                <th class="text-center">Ngày đặt</th>
+                <th class="text-center">Phương thức thanh toán</th>
+                <th class="text-center">Tổng tiền đơn</th>
+                <th class="text-center">Trạng thái đơn</th>
+                <th class="text-center">Trạng thái thanh toán</th>
+                <th class="text-center">Thao tác đơn hàng</th>
             </tr>
         </thead>
+
         <tbody id="OrdersTableBody">
             @foreach (var Entry in Model)
             {
@@ -122,7 +200,7 @@
                     </td>
                     <td>
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right rounded-3 border-1 text-center m-2">

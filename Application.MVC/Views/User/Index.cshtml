@@ -4,29 +4,94 @@
 @{
     ViewData["Title"] = "Danh sách tài khoản";
 }
+<!-- Link to Bootstrap CSS (Ensure you have the correct path or use CDN) -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
 
-<h1>Danh sách tài khoản</h1>
-@if (Model.Count() > 0)
-{
-    <p>Tổng số tài khoản: @Model.Count()</p>
-}
-<a class="btn btn-success mb-2" asp-action="Create">Tạo mới</a>
+<style>
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .btn-custom {
+        border-radius: 20px;
+        padding: 5px 15px;
+        font-size: 16px;
+    }
+
+    .custom-dropdown-btn {
+        background-color: #007bff; /* Màu xanh đậm */
+        color: white;
+        border-radius: 5px;
+    }
+
+        .custom-dropdown-btn:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+    .dropdown-item.text-warning:hover {
+        background-color: #fff3cd; /* Vàng nhạt */
+        color: #856404;
+    }
+
+    .dropdown-item.text-success:hover {
+        background-color: #d4edda; /* Xanh lá nhạt */
+        color: #155724;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background-color: #f8d7da; /* Đỏ nhạt */
+        color: #721c24;
+    }
+
+    .table thead th {
+        text-align: center; /* Căn giữa */
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
+        padding: 10px; /* Khoảng cách giữa văn bản và viền */
+        font-weight: bold; /* Đậm chữ */
+    }
+</style>
+
+<h1 class="text-center">Danh sách tài khoản</h1>
+<div class="row align-items-center mb-2">
+
+    <div class="col-md-6 col-lg-4 ">
+        <a class="btn btn-primary btn-custom" asp-action="Create">Tạo tài khoản</a>
+    </div>
+
+    <div class="col-lg-4 text-md-right mt-2 mt-lg-0">
+        <input type="text" id="SearchInput" class="form-control" placeholder="Tìm kiếm tài khoản..." onkeyup="SearchAccounts()">
+    </div>
+
+    <div class="col-md-6 col-lg-4 text-md-right mt-2 mt-md-0">
+        <h5 class="font-weight-bold mb-0">Tổng số tài khoản: <span class="badge badge-info">@Model.Count()</span></h5>
+    </div>
+
+
+</div>
+
 
 @if (Model.Count() != 0)
 {
-    <table class="table table-bordered table-striped border-info">
-        <thead class="bg-primary">
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="thead-dark">
             <tr>
-                <th>Tên người dùng</th>
-                <th>Tên đầy đủ</th>
-                <th>Email</th>
-                <th>SĐT</th>
-                <th>Vai trò</th>
-                <th>Thời điểm tạo</th>
-                <th>Thao tác</th>
+                <th class="text-center">Tên người dùng</th>
+                <th class="text-center">Tên đầy đủ</th>
+                <th class="text-center">Email</th>
+                <th class="text-center">SĐT</th>
+                <th class="text-center">Vai trò</th>
+                <th class="text-center">Thời điểm tạo</th>
+                <th class="text-center">Thao tác</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="AccountsTableBody">
             @foreach (var Entry in Model)
             {
                 <tr>
@@ -35,24 +100,49 @@
                     <td>@Entry.Email</td>
                     <td>••••••••@Entry.PhoneNumber?.Substring(8)</td>
                     <td>@Entry.Role?.RoleName</td>
-                    <td>@(Entry.CreatedAt.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss"))</td>
+                    <td>@Entry.CreatedAt.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
                     <td>
-                        <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.UserID)">Sửa</a>
-                        <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.UserID">Chi tiết</a>
-                        <a class="btn @(Entry.Status == 1 ? "btn-danger" : "btn-info")" asp-action="Toggle" asp-route-ID="@(@Entry.UserID)">@(Entry.Status == 1 ? "Khóa" : "Mở")</a>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right rounded-3 border-1 text-center m-2">
+                                <a asp-action="Details" asp-route-ID="@Entry.UserID" class="btn btn-secondary">Chi tiết</a>
+                                <hr />
+                                <a asp-action="Edit" asp-route-ID="@Entry.UserID" class="btn btn-warning">Chỉnh sửa</a>
+                                <a asp-action="Delete" asp-route-ID="@Entry.UserID" class="btn btn-danger mt-1">Xóa</a>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             }
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="6"></td>
-            </tr>
-        </tfoot>
     </table>
 }
 else
 {
-    <h1 class="text-center">Chưa có người dùng.</h1>
-    <p class="text-center">Tạo mới người dùng bằng cách nhấn "<b>Tạo mới</b>"!</p>
+    <h1 class="text-center">Không thấy tài khoản nào.</h1>
 }
+<script>
+    function SearchAccounts() {
+        // Lấy giá trị nhập vào từ ô tìm kiếm
+        const searchValue = document.getElementById('SearchInput').value.toLowerCase();
+
+        // Lấy danh sách các hàng trong bảng
+        const tableRows = document.querySelectorAll('#AccountsTableBody tr');
+
+        // Duyệt qua từng hàng để kiểm tra
+        tableRows.forEach(row => {
+            // Lấy nội dung của các cột có thể tìm kiếm
+            const username = row.children[0].textContent.toLowerCase(); // Tên người dùng
+            const fullName = row.children[1].textContent.toLowerCase(); // Tên đầy đủ
+
+            // Kiểm tra nếu nội dung có chứa giá trị tìm kiếm
+            if (username.includes(searchValue) || fullName.includes(searchValue)) {
+                row.style.display = ''; // Hiển thị hàng
+            } else {
+                row.style.display = 'none'; // Ẩn hàng
+            }
+        });
+    }
+</script>
