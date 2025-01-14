@@ -13,6 +13,7 @@ namespace Application.Data.Repositories.IRepository
         Task<List<Color>> GetAllColors();
         List<Color?> GetColorsByProductId(Guid productId);
         List<Color?> GetColorsByProductIdAndSize(Guid productId, Guid size);
+        Task<bool> ColorNameAvailibility(string? ColorName);
         Task<Color?> GetColorById(Guid id);
         Task<Color> CreateColor(ColorDTO colorDTO);
         Task<Color?> UpdateColor(Guid ID, ColorDTO colorDTO);

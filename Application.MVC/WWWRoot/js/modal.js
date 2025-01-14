@@ -14,7 +14,8 @@ $(".delete_trigger").on("click", (event) => {
     redirect_url = $(target).data('redirect-url'); // this is probably for redirecting to a page after triggering the function (but since we don't have one this one is probably useless for now)
 
     url = "/" + controller + "/" + action + "/" + id; // link structure
-    document.getElementById("ItemID").innerText = id;
+
+    document.getElementById('confirm_deletion').setAttribute('href', url);
 });
 
 $("#confirm_deletion").on("click", () => {
@@ -26,27 +27,6 @@ $("#confirm_deletion").on("click", () => {
     ButtonTxt.setAttribute("disabled", "disabled");
     ButtonClose.setAttribute("disabled", "disabled");
     ButtonCancel.setAttribute("disabled", "disabled");
-    $.get(url)
-        .done((result) => { // if success
-            if (!redirect_url) {
-                return $(target).parent().parent().hide("slow");
-                // remove or hide but remove is better?
-            }
-        })
-        .fail((error) => { // if fail
-           
-        })
-        .always(() => { // ALWAYS DO THIS WHEN GET
-            $("#ModalDelete").modal("hide"); // self explainatory - hides the modal
-
-            location = location
-
-            ButtonTxt.className = "btn btn-danger";
-            ButtonTxt.innerText = "Xóa";
-            ButtonTxt.removeAttribute("disabled")
-            ButtonClose.removeAttribute("disabled");
-            ButtonCancel.removeAttribute("disabled");
-        });
 });
 
 // all i need in life is jquery and nothing else

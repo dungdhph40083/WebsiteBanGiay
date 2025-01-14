@@ -39,6 +39,9 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CategoryDTO categoryDto)
         {
+            var Check = await _categoryRepository.NameAvailability(categoryDto.CategoryName);
+            if (!Check) return Conflict();
+
             // Gọi phương thức AddCategory và lưu kết quả trả về
             var createdCategory = await _categoryRepository.AddCategory(categoryDto);
 
@@ -49,18 +52,26 @@ namespace Application.API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(Guid id, CategoryDTO categoryDto)
         {
-            // if (GetById(id) == null) return BadRequest();
+            var Check = await _categoryRepository.NameAvailability(categoryDto.CategoryName);
+            if (!Check) return Conflict();
+
             return Ok(await _categoryRepository.UpdateCategory(id, categoryDto));
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var category = await _categoryRepository.GetByIdCategory(id);
-            if (category == null) return NotFound();
-
-            await _categoryRepository.DeleteCategory(id);
-            return NoContent();
+            try
+            {
+                await _categoryRepository.DeleteCategory(id);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                var category = await _categoryRepository.GetByIdCategory(id);
+                if (category == null) return NoContent();
+                else return Conflict();
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace Application.API.Controllers
 {
@@ -20,10 +21,12 @@ namespace Application.API.Controllers
     {
         private readonly IUser UserRepo;
         private readonly IImageRepository ImageRepo;
-        public UserController(IUser UserRepo, IImageRepository ImageRepo)
+        private readonly IMapper Mapper;
+        public UserController(IUser UserRepo, IImageRepository ImageRepo, IMapper Mapper)
         {
             this.UserRepo = UserRepo;
             this.ImageRepo = ImageRepo;
+            this.Mapper = Mapper;
         }
 
         // lấy hết
@@ -63,6 +66,9 @@ namespace Application.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<User>> Post([FromForm] UserDTO NewUser, IFormFile? ProfilePic)
         {
+            var Sfdsjhhsdl = await UserRepo.UsernameChecker(NewUser.Username);
+            if (!Sfdsjhhsdl) return Conflict();
+
             try
             {
                 if (ProfilePic != null)
@@ -114,8 +120,14 @@ namespace Application.API.Controllers
 
         // cập nhật người dùng (1 cái)
         [HttpPut("{ID}")]
-        public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserDTO UpdatedUser, IFormFile? NewProfilePic)
+        public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserEditDTO UpdatedUserDTO, IFormFile? NewProfilePic)
         {
+            var Sfdsjhhsdl = await UserRepo.UsernameChecker(UpdatedUserDTO.Username);
+            if (!Sfdsjhhsdl) return Conflict();
+
+            var UpdatedUser = new UserDTO();
+            UpdatedUser = Mapper.Map(UpdatedUserDTO, UpdatedUser);
+
             if (NewProfilePic != null)
             {
                 switch (ImageUploaderValidator.ValidateImageSizeAndHeader(NewProfilePic, 4_194_304))
@@ -144,11 +156,22 @@ namespace Application.API.Controllers
             if (Result) return Ok("SUCCESS");
             else return BadRequest("FAILURE");
         }
+
+        // For debugging. Don't use.
         [HttpDelete("{ID}")]
         public async Task<ActionResult> DeleteUser(Guid ID)
         {
-            await UserRepo.DeleteUser(ID);
-            return NoContent();
+            try
+            {
+                await UserRepo.DeleteUser(ID);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                var Target = await UserRepo.GetUserByID(ID);
+                if (Target != null) return Conflict();
+                else return NoContent();
+            }
         }
     }
 }

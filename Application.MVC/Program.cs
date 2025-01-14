@@ -1,5 +1,9 @@
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Extensions;
+using AspNetCoreHero.ToastNotification.Notyf;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +14,17 @@ builder.Services.AddSession(Options =>
     Options.IdleTimeout = TimeSpan.FromMinutes(14);
     Options.Cookie.HttpOnly = true;
     Options.Cookie.IsEssential = true;
+});
+
+// Add INotyfService
+builder.Services.AddScoped<INotyfService, NotyfService>();
+// Add Notyf // Đây là thông báo
+builder.Services.AddNotyf(config =>
+{
+    config.DurationInSeconds = 3;
+    config.IsDismissable = true;
+    config.HasRippleEffect = true;
+    config.Position = NotyfPosition.TopRight;
 });
 
 // builder.Services.AddHttpClient();
@@ -29,6 +44,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
+
+app.UseNotyf();
 
 app.UseAuthorization();
 

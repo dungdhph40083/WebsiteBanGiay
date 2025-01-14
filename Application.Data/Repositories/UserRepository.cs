@@ -116,5 +116,12 @@ namespace Application.Data.Repositories
             }
             else return default;
         }
+
+        public async Task<bool> UsernameChecker(string Username)
+        {
+            var Target = await Context.Users.FirstOrDefaultAsync(Foda => Foda.Username == Username);
+            if (Target == null) return true;
+            else return false;
+        }
     }
 }

@@ -5,7 +5,7 @@ using Application.Data.Enums;
 
 namespace Application.Data.DTOs
 {
-    public class UserDTO
+    public class UserEditDTO
     {
         public Guid? RoleID { get; set; }
         public Guid? ImageID { get; set; }
@@ -14,7 +14,7 @@ namespace Application.Data.DTOs
         [MaxLength(30, ErrorMessage = "Tên người dùng quá dài!")]
         [Required(ErrorMessage = "Bắt buộc phải nhập tài khoản")]
         public string Username { get; set; } = null!;
-        [Required(ErrorMessage = "Bắt buộc phải nhập mật khẩu")]
+
         [MinLength(8, ErrorMessage = "Mật khẩu quá ngắn.")]
         [RegularExpression(
             @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{8,}$",

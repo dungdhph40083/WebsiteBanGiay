@@ -153,8 +153,8 @@ namespace Application.MVC.Controllers
             }
 
 
-            var ColorsList = await Client.GetFromJsonAsync<List<Color>>(@"https://localhost:7187/api/Color");
-            var SizesList = await Client.GetFromJsonAsync<List<Size>>(@"https://localhost:7187/api/Size");
+            var ColorsList = (await Client.GetFromJsonAsync<List<Color>>(@"https://localhost:7187/api/Color"))?.Where(No => No.Status == 1).ToList();
+            var SizesList = (await Client.GetFromJsonAsync<List<Size>>(@"https://localhost:7187/api/Size"))?.Where(No => No.Status == 1).ToList();
             var CategoriesList = await Client.GetFromJsonAsync<List<Category>>(@"https://localhost:7187/api/Category");
             var SalesList = await Client.GetFromJsonAsync<List<Sale>>(@"https://localhost:7187/api/Sale");
 

@@ -7,6 +7,7 @@ namespace Application.Data.Repositories.IRepository
     {
         Task<List<Category>> GetAllCategory();
         Task<Category?> GetByIdCategory(Guid id);
+        Task<bool> NameAvailability(string? Name);
         Task<Category> AddCategory(CategoryDTO categoryDto);
         Task<Category?> UpdateCategory(Guid TargetID, CategoryDTO categoryDto);
         Task DeleteCategory(Guid id);

@@ -5,7 +5,6 @@ namespace Application.Data.DTOs
 {
     public class CategoryDTO
     {
-        public Guid CategoryID { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập tên danh mục")]
         [StringLength(100, ErrorMessage = "Tên danh mục không được dài quá 100 ký tự.")]
         public string? CategoryName { get; set; }

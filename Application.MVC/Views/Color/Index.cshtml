@@ -95,9 +95,9 @@
                                 <i class="fas fa-info-circle"></i> Chi tiết
                             </a>
                             <div class="dropdown-divider"></div> 
-                            <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.ColorID">
+                            <button class="dropdown-item text-danger delete_trigger" data-toggle="modal" data-target="#ModalDelete" data-controller="Categories" data-action="Delete" data-id="@category.CategoryID">
                                 <i class="fas fa-trash-alt"></i> Xóa
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </td>
@@ -105,3 +105,25 @@
         }
     </tbody>
 </table>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Xác nhận</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-btn" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn để xóa màu này?<br />
+                @* <span style="font-size:small" class="font-monospace-cascadia">Category ID: <span id="ItemID" class="font-monospace-cascadia"></span></span> *@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel-btn">Hủy</button>
+                <a href="" class="btn btn-danger" id="confirm_deletion">Xóa</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/modal.js"></script>

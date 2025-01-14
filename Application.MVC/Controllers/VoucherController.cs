@@ -1,6 +1,7 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
 using Application.Data.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,12 +15,12 @@ namespace Application.MVC.Controllers
     public class VoucherController : Controller
     {
         HttpClient Client = new HttpClient();
-        // GET: VoucherController
-        private readonly HttpClient _httpClient;
+        private readonly INotyfService ToastNotifier;
         public VoucherController()
         {
-            _httpClient = new HttpClient();
+            
         }
+        // GET: VoucherController
         [HttpGet]
         public async Task<ActionResult> Index(string SortByTime, string SortByLook)
         {
@@ -107,10 +108,35 @@ namespace Application.MVC.Controllers
         {
             try
             {
-                Console.WriteLine($"Using price discount: {Input.UseDiscountPrice}");
-
                 string URL = $@"https://localhost:7187/api/Voucher";
                 var Response = await Client.PostAsJsonAsync(URL, Input);
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Sửa danh mục thành công!");
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Sửa danh mục thất bại.");
+                            break;
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Sửa danh mục thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case System.Net.HttpStatusCode.Unauthorized:
+                        case System.Net.HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case System.Net.HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                        case System.Net.HttpStatusCode.Conflict:
+                            ToastNotifier.Error("Sửa danh mục thất bại: đã có sản phẩm khác sử dụng danh mục này rồi.");
+                            break;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
