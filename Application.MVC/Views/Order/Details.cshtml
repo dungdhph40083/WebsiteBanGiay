@@ -147,12 +147,12 @@
 <dl class="row px-xl-5">
     <dt class="col-md-6">Mã đơn hàng:</dt>
     <dd class="col-md-6">@Infos?.OrderNumber</dd>
-    <dt class="col-md-6">Tên khách hàng :</dt>
-    <dd class="col-md-6">@Infos?.LastName @Infos?.FirstName</dd>
-    <dt class="col-md-6">Phương thức thanh toán :</dt>
-    <dd class="col-md-6">@Infos?.PaymentMethod?.MethodName</dd>
+
+
     <dt class="col-md-6">Ngày đặt đơn :</dt>
     <dd class="col-md-6">@Infos?.OrderDate.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</dd>
+    <dt class="col-md-6">Tên khách hàng :</dt>
+    <dd class="col-md-6">@Infos?.LastName @Infos?.FirstName</dd>
     <dt class="col-md-6">Email :</dt>
     <dd class="col-md-6">
         <p>
@@ -175,68 +175,81 @@
     <dt class="col-md-6">Địa chỉ giao hàng :</dt>
 
     <dd class="col-md-6">@Infos?.ShippingAddress</dd>
-
+    <dt class="col-md-6">Phương thức thanh toán :</dt>
+    <dd class="col-md-6">@Infos?.PaymentMethod?.MethodName</dd>
     <dt class="col-md-6">Trạng thái đơn hàng: </dt>
 
     <dd class="col-md-6">
         @if (Infos != null)
         {
-                @switch ((OrderStatus)Infos.Status)
-                {
-                    case OrderStatus.Canceled:
-                        <text>Bị hủy</text>
-                        break;
-                    case OrderStatus.Refunding:
-                        <text>Yêu cầu hoàn trả</text>
-                        break;
-                    case OrderStatus.RefundProcessed:
-                        <text>Chấp nhận hoàn trả</text>
-                        break;
-                    case OrderStatus.RefundDelivered:
-                        <text>Đơn vị đang đến nhận hàng hoàn trả</text>
-                        break;
-                    case OrderStatus.RefundReceived:
-                        <text>Đơn vị đã nhận hàng trả</text>
-                        break;
-                    case OrderStatus.Refunded:
-                        <text>Đã hoàn trả</text>
-                        break;
-                    case OrderStatus.Created:
-                        <text>Chờ xác nhận</text>
-                        break;
-                    case OrderStatus.Processed:
-                        <text>Đã xác nhận đơn</text>
-                        break;
-                    case OrderStatus.Delivered:
-                        <text>Đang vận chuyển</text>
-                        break;
-                    case OrderStatus.Arrived:
-                        <text>Đã đến nơi</text>
-                        break;
-                    case OrderStatus.Received:
-                    case OrderStatus.ReceivedAgain:
-                        <text>Đã nhận hàng</text>
-                        break;
-                    case OrderStatus.ReceivedCompleted:
-                        <text>Đã nhận hàng thành công</text>
-                        break;
-                    case OrderStatus.ReceivedRefundFail:
-                        <text>Khách đã nhận hàng, hoàn trả thất bại</text>
-                        break;
-                    default:
-                        <text>N/A</text>
-                        break;
-                }
+            @switch ((OrderStatus)Infos.Status)
+            {
+                case OrderStatus.Canceled:
+                    <span class="badge badge-danger">Bị hủy</span>
+                    break;
+                case OrderStatus.Refunding:
+                    <span class="badge badge-warning">Yêu cầu hoàn trả</span>
+                    break;
+                case OrderStatus.RefundProcessed:
+                    <span class="badge badge-info">Chấp nhận hoàn trả</span>
+                    break;
+                case OrderStatus.RefundDelivered:
+                    <span class="badge badge-primary">Đơn vị đang đến nhận hàng hoàn trả</span>
+                    break;
+                case OrderStatus.RefundReceived:
+                    <span class="badge badge-info">Đơn vị đã nhận hàng trả</span>
+                    break;
+                case OrderStatus.Refunded:
+                    <span class="badge badge-success">Đã hoàn trả</span>
+                    break;
+                case OrderStatus.Created:
+                    <span class="badge badge-warning">Chờ xác nhận</span>
+                    break;
+                case OrderStatus.Processed:
+                    <span class="badge badge-primary">Đã xác nhận đơn</span>
+                    break;
+                case OrderStatus.Delivered:
+                    <span class="badge badge-info">Đang vận chuyển</span>
+                    break;
+                case OrderStatus.Arrived:
+                    <span class="badge badge-success">Đã giao thành công</span>
+                    break;
+                case OrderStatus.Received:
+                case OrderStatus.ReceivedAgain:
+                    <span class="badge badge-success">Đã nhận hàng</span>
+                    break;
+                case OrderStatus.ReceivedCompleted:
+                    <span class="badge badge-success">Đã nhận hàng thành công</span>
+                    break;
+                case OrderStatus.DeliveryIsDead:
+                    <span class="badge badge-danger">Giao hàng thất bại</span>
+                    break;
+                case OrderStatus.DeliveryFailure:
+                    <span class="badge badge-danger">Giao hàng chưa thành công</span>
+                    break;
+                case OrderStatus.ReceivedRefundFail:
+                    <span class="badge badge-danger">Khách đã nhận hàng, hoàn trả thất bại</span>
+                    break;
+                default:
+                    <span class="badge badge-secondary">N/A</span>
+                    break;
+            }
+
         }
     </dd>
     <dt class="col-md-6">Trạng thái thanh toán: </dt>
-    <dd class="col-md-6">@(Infos.HasPaid ? Html.Raw("Đã thanh toán") : "")</dd>
+    <dd class="col-md-6">
+        @(Infos.HasPaid
+            ? Html.Raw("<span class='badge badge-success'>Đã thanh toán</span>")
+            : Html.Raw("<span class='badge badge-warning'>Chưa thanh toán</span>"))
+    </dd>
+
     <dt class="col-md-6">Thời gian nhận: </dt>
     <dd class="col-md-6">@(Infos?.AcceptEnd == null ? "N/A" : Infos?.AcceptEnd)</dd>
 
     @if (Infos?.Status == (byte)OrderStatus.Arrived)
     {
-        <dt class="col-md-6">Thời gian còn lại</dt>
+        <dt class="col-md-6">Thời gian chờ khách xác nhận: </dt>
         <dd class="col-md-6">
             @{
                 var Span = (Infos?.AcceptEnd.GetValueOrDefault() ?? DateTime.MinValue) - DateTime.UtcNow;
