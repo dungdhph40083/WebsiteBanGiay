@@ -65,7 +65,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult<Voucher?>> Put(Guid ID, [FromBody] VoucherDTO UpdatedVoucher)
         {
             var OldVoucher = await VoucherRepo.GetVoucherByID(ID);
-            if (UpdatedVoucher.VoucherCode != OldVoucher?.VoucherCode)
+            if (string.Equals(UpdatedVoucher.VoucherCode, OldVoucher?.VoucherCode, StringComparison.OrdinalIgnoreCase))
             {
                 var CheckVal = await VoucherRepo.GetVoucherByVoucherCode(UpdatedVoucher.VoucherCode);
                 if (CheckVal != null) return Conflict();

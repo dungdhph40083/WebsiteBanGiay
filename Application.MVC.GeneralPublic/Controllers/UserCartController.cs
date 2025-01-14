@@ -68,7 +68,7 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             Guid UserID = GetCurrentUserId();
 
-            if (UserID != null && ID != null)
+            if (ID != null)
             {
                 try
                 {
@@ -138,7 +138,7 @@ namespace Application.MVC.GeneralPublic.Controllers
         }
         private Guid GetCurrentUserId()
         {
-            string token = HttpContext.Session.GetString("JwtToken");
+            string? token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
             {
                 throw new UnauthorizedAccessException("Token không tồn tại. Vui lòng đăng nhập lại.");
