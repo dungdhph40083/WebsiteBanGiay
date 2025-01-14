@@ -66,8 +66,15 @@ namespace Application.API.Controllers
         [HttpPost("AddVariations")]
         public async Task<ActionResult<ProductDetailVariationMetadata>> PostVariations([FromBody] ProductDetailMultiDTO Variations)
         {
-            var Response = await ProductDetailRepo.CreateNewVariations(Variations);
-            return Response;
+            try
+            {
+                var Response = await ProductDetailRepo.CreateNewVariations(Variations);
+                return Response;
+            }
+            catch (Exception)
+            {
+                return Conflict(Response);
+            }
         }
 
         [HttpPut("{ID}")]
@@ -85,30 +92,37 @@ namespace Application.API.Controllers
         [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID)
         {
-            await ProductDetailRepo.DeleteExisting(ID);
-            return NoContent();
+            try
+            {
+                await ProductDetailRepo.DeleteExisting(ID);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                var Target = await ProductDetailRepo.GetProductDetailByID(ID);
+                if (Target == null) return NoContent();
+                else return Conflict();
+            }
         }
 
         [HttpDelete("ByProduct/{ProductID}")]
         public async Task<ActionResult> DeleteAllByProduct(Guid ProductID)
         {
+            bool DetectedDetailsInUse = false;
             var Items = await ProductDetailRepo.GetProductDetailsByProductID(ProductID);
-            Console.WriteLine("\nGot product details, proceeding\n");
             foreach (var Item in Items)
             {
-                Console.WriteLine($"\nTrying to remove all cart entries of item {Item.ProductDetailID}\n");
                 await ShoppingCartRepository.DeleteShoppingCartsByDetailID(Item.ProductDetailID);
-                Console.WriteLine($"\nRemoving all cart entries of item {Item.ProductDetailID}\n");
 
                 if ((await OrderDetailRepository.GetDetailsByProductDetailID(Item.ProductDetailID)).Count > 0)
                 {
+                    DetectedDetailsInUse = true;
                     await ProductDetailRepo.UpdateSetToZero(Item.ProductDetailID);
-                    Console.WriteLine($"\nProduct {Item.ProductDetailID} exists in bill, setting quantity to 0 instead\n");
                 }
                 else await ProductDetailRepo.DeleteExisting(Item.ProductDetailID);
-                Console.WriteLine($"\nProduct {Item.ProductDetailID} doesn't exist in bill, deleting\n");
             }
-            return NoContent();
+            if (DetectedDetailsInUse) { return Conflict(); }
+            else return NoContent();
         }
 
         // Phương thức để chuyển trạng thái sản phẩm giữa "mở bán" và "dừng bán"

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System;
 using System.Net.Http.Headers;
 
 namespace Application.MVC.Controllers
@@ -16,9 +17,9 @@ namespace Application.MVC.Controllers
     {
         HttpClient Client = new HttpClient();
         private readonly INotyfService ToastNotifier;
-        public VoucherController()
+        public VoucherController(INotyfService ToastNotifier)
         {
-            
+            this.ToastNotifier = ToastNotifier;
         }
         // GET: VoucherController
         [HttpGet]
@@ -112,7 +113,7 @@ namespace Application.MVC.Controllers
                 var Response = await Client.PostAsJsonAsync(URL, Input);
                 if (Response.IsSuccessStatusCode)
                 {
-                    ToastNotifier.Success("Sửa danh mục thành công!");
+                    ToastNotifier.Success("Tạo Voucher mới thành công!");
                 }
                 else
                 {
@@ -120,10 +121,10 @@ namespace Application.MVC.Controllers
                     {
                         case System.Net.HttpStatusCode.BadRequest:
                         default:
-                            ToastNotifier.Error("Sửa danh mục thất bại.");
+                            ToastNotifier.Error("Tạo Voucher mới thất bại.");
                             break;
                         case System.Net.HttpStatusCode.InternalServerError:
-                            ToastNotifier.Error("Sửa danh mục thất bại: đã có lỗi máy chủ xảy ra.");
+                            ToastNotifier.Error("Tạo Voucher mới thất bại: đã có lỗi máy chủ xảy ra.");
                             break;
                         case System.Net.HttpStatusCode.Unauthorized:
                         case System.Net.HttpStatusCode.Forbidden:
@@ -133,7 +134,7 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Warning("Không tìm thấy gì.");
                             break;
                         case System.Net.HttpStatusCode.Conflict:
-                            ToastNotifier.Error("Sửa danh mục thất bại: đã có sản phẩm khác sử dụng danh mục này rồi.");
+                            ToastNotifier.Error("Tạo Voucher mới thất bại: đã có Voucher khác sử dụng mã này rồi.");
                             break;
                     }
                 }
@@ -170,6 +171,35 @@ namespace Application.MVC.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Voucher/{ID}";
                 var Response = await Client.PutAsJsonAsync(URL, NewInput);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Sửa Voucher thành công!");
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Sửa Voucher thất bại.");
+                            break;
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Sửa Voucher thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case System.Net.HttpStatusCode.Unauthorized:
+                        case System.Net.HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case System.Net.HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                        case System.Net.HttpStatusCode.Conflict:
+                            ToastNotifier.Error("Sửa Voucher thất bại: đã có Voucher khác sử dụng mã Voucher này rồi.");
+                            break;
+                    }
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -190,6 +220,35 @@ namespace Application.MVC.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Voucher/{ID}";
                 var Response = await Client.DeleteAsync(URL);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Xóa Voucher thành công!");
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Xóa Voucher thất bại.");
+                            break;
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Xóa Voucher thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case System.Net.HttpStatusCode.Unauthorized:
+                        case System.Net.HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case System.Net.HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                        case System.Net.HttpStatusCode.Conflict:
+                            ToastNotifier.Error("Xóa Voucher thất bại: Voucher này đã được sử dụng ít nhất một lần trong sự kiện trước đó.");
+                            break;
+                    }
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -209,6 +268,48 @@ namespace Application.MVC.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Voucher/ToggleStatus/{ID}";
                 var Response = await Client.PatchAsync(URL, null);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    var NewVoucherState = JsonConvert.DeserializeObject<Voucher>(await Response.Content.ReadAsStringAsync());
+                    switch (NewVoucherState?.Status)
+                    {
+                        case (byte)VoucherStatus.Active:
+                        case (byte)VoucherStatus.ActivePrivate:
+                            {
+                                if (NewVoucherState.StartingAt.GetValueOrDefault() <= DateTime.UtcNow && DateTime.UtcNow <= NewVoucherState.EndingAt.GetValueOrDefault())
+                                {
+                                    ToastNotifier.Success("Đã tiếp tục Voucher thành công!");
+                                }
+                                else
+                                {
+                                    ToastNotifier.Success("Đổi trạng thái thành công!");
+                                }
+                                break;
+                            }
+                        case (byte)VoucherStatus.Disabled:
+                        case (byte)VoucherStatus.DisabledPrivate:
+                            {
+                                if (NewVoucherState.StartingAt.GetValueOrDefault() <= DateTime.UtcNow && DateTime.UtcNow <= NewVoucherState.EndingAt.GetValueOrDefault())
+                                {
+                                    ToastNotifier.Success("Đã tạm dừng Voucher thành công!");
+                                }
+                                else
+                                {
+                                    ToastNotifier.Success("Đã kết thúc Voucher thành công!");
+                                }
+                                break;
+                            }
+                        default:
+                            ToastNotifier.Success("Đổi trạng thái thành công!");
+                            break;
+                    }
+                }
+                else
+                {
+                    ToastNotifier.Error("Đổi trạng thái thất bại.");
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -227,6 +328,16 @@ namespace Application.MVC.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Voucher/StopVoucher/{ID}";
                 var Response = await Client.PatchAsync(URL, null);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Đã kết thúc Voucher thành công!");
+                }
+                else
+                {
+                    ToastNotifier.Error("Kết thúc Voucher thất bại.");
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)

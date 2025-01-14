@@ -122,8 +122,12 @@ namespace Application.API.Controllers
         [HttpPut("{ID}")]
         public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserEditDTO UpdatedUserDTO, IFormFile? NewProfilePic)
         {
-            var Sfdsjhhsdl = await UserRepo.UsernameChecker(UpdatedUserDTO.Username);
-            if (!Sfdsjhhsdl) return Conflict();
+            var OldUser = await UserRepo.GetUserByID(ID);
+            if (string.Equals(OldUser?.Username, UpdatedUserDTO.Username, StringComparison.OrdinalIgnoreCase))
+            {
+                var Sfdsjhhsdl = await UserRepo.UsernameChecker(UpdatedUserDTO.Username);
+                if (!Sfdsjhhsdl) return Conflict();
+            }
 
             var UpdatedUser = new UserDTO();
             UpdatedUser = Mapper.Map(UpdatedUserDTO, UpdatedUser);

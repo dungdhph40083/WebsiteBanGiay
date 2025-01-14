@@ -1,5 +1,6 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Models;
+using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -47,8 +48,12 @@ namespace Application.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateColor(Guid id, ColorDTO colorDTO)
         {
-            var Check = await _colorRepository.ColorNameAvailibility(colorDTO.ColorName);
-            if (Check == false) return Conflict();
+            var OldColor = await _colorRepository.GetColorById(id);
+            if (string.Equals(OldColor?.ColorName, colorDTO.ColorName, StringComparison.OrdinalIgnoreCase))
+            {
+                var Check = await _colorRepository.ColorNameAvailibility(colorDTO.ColorName);
+                if (Check == false) return Conflict();
+            }
 
             await _colorRepository.UpdateColor(id, colorDTO);
             return Ok();

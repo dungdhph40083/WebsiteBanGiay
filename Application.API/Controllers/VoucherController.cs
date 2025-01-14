@@ -64,8 +64,12 @@ namespace Application.API.Controllers
         [HttpPut("{ID}")]
         public async Task<ActionResult<Voucher?>> Put(Guid ID, [FromBody] VoucherDTO UpdatedVoucher)
         {
-            var CheckVal = await VoucherRepo.GetVoucherByVoucherCode(UpdatedVoucher.VoucherCode);
-            if (CheckVal != null) return Conflict();
+            var OldVoucher = await VoucherRepo.GetVoucherByID(ID);
+            if (UpdatedVoucher.VoucherCode != OldVoucher?.VoucherCode)
+            {
+                var CheckVal = await VoucherRepo.GetVoucherByVoucherCode(UpdatedVoucher.VoucherCode);
+                if (CheckVal != null) return Conflict();
+            }
 
             var Response = await VoucherRepo.UpdateVoucher(ID, UpdatedVoucher);
             if (Response == null) return NotFound();

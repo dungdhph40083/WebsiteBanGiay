@@ -176,7 +176,6 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Error("Xóa danh mục thất bại: đã có sản phẩm khác sử dụng danh mục này rồi.");
                             break;
                     }
-                    Console.WriteLine(response.StatusCode);
                 }
                 return RedirectToAction(nameof(Index));
             }

@@ -1,15 +1,22 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
 using Application.Data.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace Application.MVC.Controllers
 {
     public class OrderController : Controller
     {
         HttpClient Client = new HttpClient();
+        private readonly INotyfService ToastNotifier;
+        public OrderController(INotyfService ToastNotifier)
+        {
+            this.ToastNotifier = ToastNotifier;
+        }
         
         public async Task<ActionResult> Index(string? Filter)
         {
@@ -83,6 +90,32 @@ namespace Application.MVC.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders";
                 var Response = await Client.PostAsJsonAsync(URL, Input);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Tạo mới đơn hàng thành công!");
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Tạo mới đơn hàng thất bại.");
+                            break;
+                        case HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Tạo mới đơn hàng thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case HttpStatusCode.Unauthorized:
+                        case HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                    }
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -99,6 +132,71 @@ namespace Application.MVC.Controllers
             {
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={StatusCode}";
                 var Response = await Client.PatchAsync(URL, null);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    switch ((OrderStatus)StatusCode)
+                    {
+                        case OrderStatus.RefundProcessed:
+                            ToastNotifier.Warning("Đã chấp nhận hoàn trả đơn!");
+                            break;
+                        case OrderStatus.RefundDelivered:
+                            ToastNotifier.Information("Đã bắt đầu tiến hành hoàn trả đơn.");
+                            break;
+                        case OrderStatus.RefundReceived:
+                            ToastNotifier.Information("Đã xác nhận lấy hàng trả.");
+                            break;
+                        case OrderStatus.Refunded:
+                            ToastNotifier.Warning("Đã xác nhận hoàn trả thành công!");
+                            break;
+                        case OrderStatus.DeliveryFailure:
+                            ToastNotifier.Warning("Đã xác nhận giao hàng không thành công.");
+                            break;
+                        case OrderStatus.DeliveryIsDead:
+                            ToastNotifier.Warning("Đã xác nhận giao hàng thât bại.");
+                            break;
+                        case OrderStatus.Processed:
+                            ToastNotifier.Success("Xác nhận đơn thành công!");
+                            break;
+                        case OrderStatus.Delivered:
+                            ToastNotifier.Information("Đã xác nhận lấy hàng trả.");
+                            break;
+                        case OrderStatus.Arrived:
+                            ToastNotifier.Information("Đã xác nhận giao hàng thành công!");
+                            break;
+                        case OrderStatus.Received:
+                        case OrderStatus.ReceivedAgain:
+                        case OrderStatus.ReceivedCompleted:
+                            ToastNotifier.Success("Đã xác nhận khách đã nhận hàng thành công!");
+                            break;
+                        case OrderStatus.ReceivedRefundFail:
+                            ToastNotifier.Warning("Đã xác nhận hoàn trả thất bại.");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Cập nhật trạng thái đơn thất bại.");
+                            break;
+                        case HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Cập nhật trạng thái đơn thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case HttpStatusCode.Unauthorized:
+                        case HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                    }
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)

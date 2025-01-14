@@ -45,8 +45,12 @@ namespace Application.API.Controllers
         [HttpPut("{ID}")]
         public async Task<ActionResult<Size?>> Put(Guid ID, [FromBody] SizeDTO UpdatedSize)
         {
-            var Target = await SizeRepo.SizeNameAvailability(UpdatedSize.Name);
-            if (!Target) return Conflict();
+            var OldSize = await SizeRepo.GetSizeByID(ID);
+            if (string.Equals(OldSize?.Name, UpdatedSize.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                var Target = await SizeRepo.SizeNameAvailability(UpdatedSize.Name);
+                if (!Target) return Conflict();
+            }
 
             return await SizeRepo.UpdateSize(ID, UpdatedSize);
         }
