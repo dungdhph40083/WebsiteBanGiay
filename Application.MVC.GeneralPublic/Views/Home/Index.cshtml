@@ -307,10 +307,10 @@
                         <div class="product-img position-relative overflow-hidden">
                             <img class="img-fluid w-100" style="height: 20em;" src="@($"https://localhost:7187/Images/{Item.Product?.Image?.ImageFileName}")" alt="">
                             <div class="product-action">
-                                <a class="btn btn-outline-dark btn-square" asp-controller="UserCart" asp-action="Add2Cart"
-                                   asp-route-ID="@Item.ProductDetailID"
-                                   asp-route-Quantity="1"
-                                   asp-route-AdditionMode="true"><i class="fa fa-shopping-cart"></i></a>
+                                <a class="btn btn-outline-dark btn-square" href="@Url.Action("Details", "Product", new { id = Item.ProductDetailID })">
+                                    <i class="fa fa-search"></i>
+                                </a>
+
                             </div>
                         </div>
                         <div class="text-center py-4">

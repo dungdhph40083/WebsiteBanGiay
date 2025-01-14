@@ -72,7 +72,7 @@
                 <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_PENDING ? "active" : "")" style="border-radius: 10px;" asp-route-Filter="@OrderFilters.ORDERS_PENDING">
                     Chờ xác nhận @if (Badge.PendingOrders > 0)
                     {
-                        <span class="badge badge-primary">@Badge.PendingOrders</span>
+                        <span class="badge badge-warning">@Badge.PendingOrders</span>
                     }
                 </a>
                 <a class="dropdown-item ml-1 mr-1 @(SortByParamValue == OrderFilters.ORDERS_ONGOING ? "active" : "")" style="border-radius: 10px;" asp-route-Filter="@OrderFilters.ORDERS_ONGOING">
