@@ -44,16 +44,19 @@ namespace Application.MVC.GeneralPublic.Controllers
                     var ContentUpdate = JsonConvert.DeserializeObject<Order>
                         (await ResponseUpdate.Content.ReadAsStringAsync());
 
-                    ViewBag.Message = "THANH TOÁN THÀNH CÔNG.!";
+                    ViewBag.Message = "ĐÃ ĐẶT ĐƠN HÀNG VÀ THANH TOÁN THÀNH CÔNG.!";
+                    ViewBag.MessageType = "success"; // Thành công
                 }
                 else if (vnp_TransactionStatus == "02")
                 {
-                    ViewBag.Message = "ĐÃ ĐẶT HÀNG THÀNH CÔNG , NHƯNG CHƯA THANH TOÁN ĐƠN HÀNG!!!";
+                    ViewBag.Message = "ĐÃ ĐẶT HÀNG NHƯNG CHƯA THANH TOÁN ĐƠN HÀNG!!!";
+                    ViewBag.MessageType = "warning"; // Cảnh báo
                 }
             }
             catch
             {
                 ViewBag.Message = "Có lỗi xảy ra trong quá trình thanh toán";
+                ViewBag.MessageType = "error"; // Lỗi
             }
             return View();
         }
