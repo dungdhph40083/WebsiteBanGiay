@@ -123,7 +123,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserEditDTO UpdatedUserDTO, IFormFile? NewProfilePic)
         {
             var OldUser = await UserRepo.GetUserByID(ID);
-            if (string.Equals(OldUser?.Username, UpdatedUserDTO.Username, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(OldUser?.Username, UpdatedUserDTO.Username, StringComparison.OrdinalIgnoreCase))
             {
                 var Sfdsjhhsdl = await UserRepo.UsernameChecker(UpdatedUserDTO.Username);
                 if (!Sfdsjhhsdl) return Conflict();

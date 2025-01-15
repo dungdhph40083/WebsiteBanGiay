@@ -110,7 +110,9 @@
                                 <a asp-action="Details" asp-route-ID="@Entry.UserID" class="btn btn-secondary">Chi tiết</a>
                                 <hr />
                                 <a asp-action="Edit" asp-route-ID="@Entry.UserID" class="btn btn-warning">Chỉnh sửa</a>
-                                <a asp-action="Delete" asp-route-ID="@Entry.UserID" class="btn btn-danger mt-1">Xóa</a>
+                                <br />
+                                <a class="btn @(Entry.Status == 1 ? "btn-danger" : "btn-info")" asp-action="Toggle" asp-route-ID="@(@Entry.UserID)">@(Entry.Status == 1 ? "Khóa" : "Mở")</a>
+                                @* <a asp-action="Delete" asp-route-ID="@Entry.UserID" class="btn btn-danger mt-1">Xóa</a> *@
                             </div>
                         </div>
                     </td>

@@ -83,6 +83,7 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Error("Thêm kích cỡ mới thất bại: đã có sản phẩm khác sử dụng danh mục này rồi.");
                             break;
                     }
+                    return View(Input);
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -141,6 +142,7 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Error("Sửa kích cỡ thất bại: đã có sản phẩm khác sử dụng danh mục này rồi.");
                             break;
                     }
+                    return View(NewInput);
                 }
                 return RedirectToAction(nameof(Index));
             }

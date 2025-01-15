@@ -137,6 +137,7 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Error("Tạo Voucher mới thất bại: đã có Voucher khác sử dụng mã này rồi.");
                             break;
                     }
+                    return View(Input);
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -198,6 +199,7 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Error("Sửa Voucher thất bại: đã có Voucher khác sử dụng mã Voucher này rồi.");
                             break;
                     }
+                    return View(NewInput);
                 }
 
                 return RedirectToAction(nameof(Index));

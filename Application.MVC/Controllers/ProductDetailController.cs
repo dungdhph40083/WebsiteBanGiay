@@ -226,12 +226,13 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Warning("Không tìm thấy gì.");
                             break;
                         case System.Net.HttpStatusCode.Conflict:
-                            {
-                                ToastNotifier.Success("Tạo các biến thể thành công!");
-                                ToastNotifier.Warning("Một số biến thể mới đã không tạo ra do các biến thể đó đã tồn tại trước đó.");
-                                break;
-                            }
+                        {
+                            ToastNotifier.Success("Tạo các biến thể thành công!");
+                            ToastNotifier.Warning("Một số biến thể mới đã không tạo ra do các biến thể đó đã tồn tại trước đó.");
+                            break;
+                        }
                     }
+                    return View(Details);
                 }
                 if (FromEdit)
                 {
@@ -367,11 +368,12 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Warning("Không tìm thấy gì.");
                             break;
                         case System.Net.HttpStatusCode.Conflict:
-                            {
-                                ToastNotifier.Success("Sửa các biến thể thành công!");
-                                ToastNotifier.Warning("Một số biến thể mới đã không thể sửa do các biến thể đó đã tồn tại trước đó.");
-                                break;
-                            }
+                        {
+                            ToastNotifier.Success("Sửa các biến thể thành công!");
+                            ToastNotifier.Warning("Một số biến thể mới đã không thể sửa do các biến thể đó đã tồn tại trước đó.");
+                            break;
+                        }
+                        return View(Details);
                     }
                 }
 
@@ -427,8 +429,11 @@ namespace Application.MVC.Controllers
             string requestURL = $@"https://localhost:7187/api/ProductDetails/ByProduct/{ID}";
             var response = await Client.DeleteAsync(requestURL);
 
+            Console.WriteLine("\n" + response.StatusCode + "\n");
+
             if (response.IsSuccessStatusCode)
             {
+                Console.WriteLine("Deleted whole for some reason");
                 ToastNotifier.Success("Xóa các biến thể thành công!");
             }
             else
@@ -444,15 +449,22 @@ namespace Application.MVC.Controllers
                         break;
                     case System.Net.HttpStatusCode.Unauthorized:
                     case System.Net.HttpStatusCode.Forbidden:
-                        ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                        {
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            Unauthorized();
+                        }
                         break;
                     case System.Net.HttpStatusCode.NotFound:
-                        ToastNotifier.Warning("Không tìm thấy gì.");
+                        {
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            NotFound();
+                        }
                         break;
                     case System.Net.HttpStatusCode.Conflict:
                         {
                             ToastNotifier.Success("Xóa các biến thể thành công!");
                             ToastNotifier.Warning("Một số biến thể đã không thể xóa do các biến thể đó đã được đặt hàng trước đó.");
+                            Conflict();
                             break;
                         }
                 }

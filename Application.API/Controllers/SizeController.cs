@@ -66,18 +66,9 @@ namespace Application.API.Controllers
             catch (Exception)
             {
                 var Target = await SizeRepo.GetSizeByID(ID);
-                if (Target != null) return NoContent();
-                else return Conflict();
+                if (Target != null) return Conflict(); 
+                else return NoContent();
             }
         }
     }
 }
-
-/*
-Check Name:
-- Danh mục -- done
-- Size -- done
-- Màu -- done
-- Tài khoản : Check Tên tài khoản , Email , SĐT -- done
-- Voucher -- done
- */

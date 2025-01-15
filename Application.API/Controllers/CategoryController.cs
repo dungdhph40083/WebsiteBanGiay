@@ -53,7 +53,7 @@ namespace Application.API.Controllers
         public async Task<ActionResult> Update(Guid id, CategoryDTO categoryDto)
         {
             var OldCategory = await _categoryRepository.GetByIdCategory(id);
-            if (string.Equals(categoryDto.CategoryName, OldCategory?.CategoryName, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(categoryDto.CategoryName, OldCategory?.CategoryName, StringComparison.OrdinalIgnoreCase))
             {
                 var Check = await _categoryRepository.NameAvailability(categoryDto.CategoryName);
                 if (!Check) return Conflict();

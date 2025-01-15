@@ -121,8 +121,8 @@ namespace Application.API.Controllers
                 }
                 else await ProductDetailRepo.DeleteExisting(Item.ProductDetailID);
             }
-            if (DetectedDetailsInUse) { return Conflict(); }
-            else return NoContent();
+            if (DetectedDetailsInUse) { Console.WriteLine("\n409\n"); return Conflict(); }
+            else { Console.WriteLine("\n204\n"); return NoContent(); }
         }
 
         // Phương thức để chuyển trạng thái sản phẩm giữa "mở bán" và "dừng bán"

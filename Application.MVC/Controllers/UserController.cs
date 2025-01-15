@@ -129,6 +129,7 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Error("Tạo mới người dùng thất bại: trùng tên người dùng.");
                             break;
                     }
+                    return View(Input);
                 }
                 return RedirectToAction(nameof(Index));
 
@@ -213,6 +214,7 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Error("Sửa người dùng thất bại: trùng tên người dùng.");
                             break;
                     }
+                    return View(NewInput);
                 }
                 return RedirectToAction(nameof(Index));
             }

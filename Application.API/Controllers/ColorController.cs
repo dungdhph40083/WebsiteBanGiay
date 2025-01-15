@@ -49,7 +49,7 @@ namespace Application.API.Controllers
         public async Task<IActionResult> UpdateColor(Guid id, ColorDTO colorDTO)
         {
             var OldColor = await _colorRepository.GetColorById(id);
-            if (string.Equals(OldColor?.ColorName, colorDTO.ColorName, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(OldColor?.ColorName, colorDTO.ColorName, StringComparison.OrdinalIgnoreCase))
             {
                 var Check = await _colorRepository.ColorNameAvailibility(colorDTO.ColorName);
                 if (Check == false) return Conflict();
