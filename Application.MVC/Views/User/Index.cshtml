@@ -87,6 +87,7 @@
                 <th class="text-center">Email</th>
                 <th class="text-center">SĐT</th>
                 <th class="text-center">Vai trò</th>
+                <th class="text-center">Trạng thái</th>
                 <th class="text-center">Thời điểm tạo</th>
                 <th class="text-center">Thao tác</th>
             </tr>
@@ -100,23 +101,35 @@
                     <td>@Entry.Email</td>
                     <td>••••••••@Entry.PhoneNumber?.Substring(8)</td>
                     <td>@Entry.Role?.RoleName</td>
-                    <td>@Entry.CreatedAt.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
                     <td>
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" data-toggle="dropdown" aria-expanded="false">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right rounded-3 border-1 text-center m-2">
-                                <a asp-action="Details" asp-route-ID="@Entry.UserID" class="btn btn-secondary">Chi tiết</a>
-                                <hr />
-                                <a asp-action="Edit" asp-route-ID="@Entry.UserID" class="btn btn-warning">Chỉnh sửa</a>
-                                <br />
-                                <a class="btn @(Entry.Status == 1 ? "btn-danger" : "btn-info")" asp-action="Toggle" asp-route-ID="@(@Entry.UserID)">@(Entry.Status == 1 ? "Khóa" : "Mở")</a>
-                                @* <a asp-action="Delete" asp-route-ID="@Entry.UserID" class="btn btn-danger mt-1">Xóa</a> *@
-                            </div>
-                        </div>
+                        @if (Entry.Status == 1)
+                        {
+                            <span class="badge bg-success text-white">Đã kích hoạt</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger text-white">Đã khoá</span>
+                        }
                     </td>
-                </tr>
+
+
+                        <td>@Entry.CreatedAt.GetValueOrDefault().ToLocalTime().ToString("d/M/yyyy H:mm:ss")</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" data-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right rounded-3 border-1 text-center m-2">
+                                    <a asp-action="Details" asp-route-ID="@Entry.UserID" class="btn btn-secondary">Chi tiết</a>
+                                    <hr />
+                                    <a asp-action="Edit" asp-route-ID="@Entry.UserID" class="btn btn-warning">Chỉnh sửa</a>
+                                    <br />
+                                    <a class="btn @(Entry.Status == 1 ? "btn-danger" : "btn-info")" asp-action="Toggle" asp-route-ID="@(@Entry.UserID)">@(Entry.Status == 1 ? "Khóa" : "Mở")</a>
+                                    @* <a asp-action="Delete" asp-route-ID="@Entry.UserID" class="btn btn-danger mt-1">Xóa</a> *@
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
             }
         </tbody>
     </table>
