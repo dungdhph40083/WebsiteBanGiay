@@ -58,6 +58,7 @@ namespace Application.Data.Repositories
             return Context.Users
                 .Include(UU => UU.Image)
                 .Include(RR => RR.Role)
+                .OrderByDescending(B => B.CreatedAt)
                 .ToListAsync();
         }
 
@@ -121,6 +122,20 @@ namespace Application.Data.Repositories
         public async Task<bool> UsernameChecker(string Username)
         {
             var Target = await Context.Users.FirstOrDefaultAsync(Foda => Foda.Username == Username);
+            if (Target == null) return true;
+            else return false;
+        }
+
+        public async Task<bool> EmailChecker(string? EmailAddress)
+        {
+            var Target = await Context.Users.FirstOrDefaultAsync(Foda => Foda.Email == EmailAddress);
+            if (Target == null) return true;
+            else return false;
+        }
+
+        public async Task<bool> PhoneNumberChecker(string? PhoneNumber)
+        {
+            var Target = await Context.Users.FirstOrDefaultAsync(Foda => Foda.PhoneNumber == PhoneNumber);
             if (Target == null) return true;
             else return false;
         }

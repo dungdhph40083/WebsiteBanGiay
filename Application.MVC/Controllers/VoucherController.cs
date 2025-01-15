@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.OutputCaching;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using System;
@@ -21,6 +22,7 @@ namespace Application.MVC.Controllers
         {
             this.ToastNotifier = ToastNotifier;
         }
+        [ResponseCache(NoStore = true, Duration = 0)]
         // GET: VoucherController
         [HttpGet]
         public async Task<ActionResult> Index(string SortByTime, string SortByLook)
@@ -107,6 +109,7 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(VoucherDTO Input)
         {
+            await FetchInfoPlsPlsPlsPls();
             try
             {
                 string URL = $@"https://localhost:7187/api/Voucher";
@@ -168,6 +171,7 @@ namespace Application.MVC.Controllers
         // POST: VoucherController/Edit/5
         public async Task<ActionResult> Edit(Guid ID, VoucherDTO NewInput)
         {
+            await FetchInfoPlsPlsPlsPls();
             try
             {
                 string URL = $@"https://localhost:7187/api/Voucher/{ID}";

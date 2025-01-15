@@ -5,30 +5,36 @@
     ViewData["Title"] = "Update product size";
 }
 
-<h1>Cập nhật thông tin Voucher</h1>
+<h1 class="text-center mt-4 text-primary">Cập nhật thông tin Voucher</h1>
+<hr class="border-primary" />
 
-<form asp-action="Edit" method="post">
-    <div class="row">
+<form asp-action="Edit" method="post" class="shadow-lg p-4 rounded-3 bg-white">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="row g-3">
         <div class="col-md-4">
-            <label asp-for="VoucherCode" class="form-label">Mã Voucher</label>
-            <input asp-for="VoucherCode" class="form-control font-monospace-cascadia" required aria-label="Input voucher code to use" />
-            <span>Mã Voucher phải độc nhất và không chứa ký tự đặc biệt!</span>
+            <label asp-for="VoucherCode" class="form-label fw-semibold text-muted">Mã Voucher</label>
+            <input asp-for="VoucherCode" class="form-control shadow-sm font-monospace-cascadia" required aria-label="Input voucher code to use" />
+            <span asp-validation-for="VoucherCode" class="text-danger"></span>
+            @* <span>Mã Voucher phải độc nhất và không chứa ký tự đặc biệt!</span> *@
         </div>
         <div class="col-md-4">
-            <label asp-for="UsesLeft" class="form-label">Số lượng</label>
-            <input asp-for="UsesLeft" class="form-control" type="number" placeholder="0" step="1" min="-1" max="10000000"
-                   aria-label="Input how many uses this voucher can be used. Select -1 for INFINITE USES!!!" />
-            <span>Điền <b>-1</b> để có vô số Voucher này.</span>
+            <label asp-for="UsesLeft" class="form-label fw-semibold text-muted">Số lượng</label>
+            <input asp-for="UsesLeft" class="form-control shadow-sm" type="number" placeholder="0" step="1" min="-1" max="10000000" aria-label="Input how many uses this voucher can be used." />
+            <span asp-validation-for="UsesLeft" class="text-danger"></span>
+            @* <span>Điền <b>-1</b> để có vô số Voucher này.</span> *@
         </div>
         <div class="col-md-4">
-            <label asp-for="RequiredGrandTotal" class="form-label">Yêu cầu tổng giá tối thiểu</label>
-            <input asp-for="RequiredGrandTotal" class="form-control" type="number" placeholder="0" step="100" min="0" max="@(1e15)" aria-label="" />
-            <span>Tối đa: 1,000,000,000,000.</span>
+            <label asp-for="RequiredGrandTotal" class="form-label fw-semibold text-muted">Yêu cầu tổng giá tối thiểu</label>
+            <input asp-for="RequiredGrandTotal" class="form-control shadow-sm" type="number" placeholder="0" min="0" max="@(1e15)" aria-label="" />
+            <span asp-validation-for="RequiredGrandTotal" class="text-danger"></span>
+            @* <span>Tối đa: 1,000,000,000,000.</span> *@
         </div>
     </div>
-    <div class="row">
+
+    <div class="row g-3 mt-3">
         <div class="col-md-4">
-            <label asp-for="UseDiscountPrice" class="form-label">Giảm giá theo</label><br />
+            <label asp-for="UseDiscountPrice" class="form-label fw-semibold text-muted">Giảm giá theo</label><br />
             <div class="custom-control custom-radio custom-control-inline">
                 <input type="radio" onchange="Toggle()" id="RadioPercent" value="False" asp-for="UseDiscountPrice" class="custom-control-input" checked>
                 <label class="custom-control-label" for="RadioPercent">Phần trăm đơn</label>
@@ -39,29 +45,33 @@
             </div>
         </div>
         <div class="col-md-8" id="PercentInput" @(@Model.UseDiscountPrice ? "hidden" : "")>
-            <label asp-for="DiscountPercent" class="form-label">Giảm % giá</label>
-            <input asp-for="DiscountPercent" class="form-control" type="number" placeholder="0" step="0.01" min="0" max="100" aria-label="" />
+            <label asp-for="DiscountPercent" class="form-label fw-semibold text-muted">Giảm % giá</label>
+            <input asp-for="DiscountPercent" class="form-control shadow-sm" type="number" placeholder="0" step="0.01" min="0" max="100" aria-label="" />
+            <span asp-validation-for="DiscountPercent" class="text-danger"></span>
             <span>Từ 0 đến 100%.</span>
         </div>
         <div class="col-md-8" id="NumberInput" @(@Model.UseDiscountPrice ? "" : "hidden")>
-            <label asp-for="DiscountPrice" class="form-label">Giảm giá tiền</label>
-            <input asp-for="DiscountPrice" class="form-control" type="number" placeholder="0" step="100" min="0" max="@(1e15)" aria-label="" />
+            <label asp-for="DiscountPrice" class="form-label fw-semibold text-muted">Giảm giá tiền</label>
+            <input asp-for="DiscountPrice" class="form-control shadow-sm" type="number" placeholder="0" step="100" min="0" max="@(1e15)" aria-label="" />
+            <span asp-validation-for="DiscountPrice" class="text-danger"></span>
             <span>Từ 0 đến 1,000,000,000,000.</span>
         </div>
     </div>
-    <div class="row">
+
+    <div class="row g-3 mt-3">
         <div class="col-md-6">
-            <label asp-for="StartingAt" class="form-label">Bắt đầu vào</label>
-            <input asp-for="StartingAt" id="StartInput" onchange="Validate()" value="@Model.StartingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control" type="datetime-local" step="1" required aria-label="Starting date of voucher" />
+            <label asp-for="StartingAt" class="form-label fw-semibold text-muted">Bắt đầu vào</label>
+            <input asp-for="StartingAt" id="StartInput" onchange="Validate()" value="@Model.StartingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control shadow-sm" type="datetime-local" step="1" required aria-label="Starting date of voucher" />
         </div>
         <div class="col-md-6">
-            <label asp-for="EndingAt" class="form-label">Kết thúc vào</label>
-            <input asp-for="EndingAt" id="EndInput" onchange="Validate()" value="@Model.EndingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control" type="datetime-local" step="1" required aria-label="Ending date of voucher" />
+            <label asp-for="EndingAt" class="form-label fw-semibold text-muted">Kết thúc vào</label>
+            <input asp-for="EndingAt" id="EndInput" onchange="Validate()" value="@Model.EndingAt.GetValueOrDefault().ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control shadow-sm" type="datetime-local" step="1" required aria-label="Ending date of voucher" />
         </div>
     </div>
-    <div class="row">
+
+    <div class="row g-3 mt-3">
         <div class="col-md-12">
-            <label class="form-label" asp-for="Status">Trạng thái</label><br />
+            <label class="form-label fw-semibold text-muted" asp-for="Status">Trạng thái</label><br />
             <div class="custom-control custom-radio custom-control-inline col-5 align-right">
                 <input type="radio" id="RadioPublic" value="1" asp-for="Status" class="custom-control-input" checked>
                 <label class="custom-control-label" for="RadioPublic">Công khai</label>
@@ -72,16 +82,59 @@
             </div>
         </div>
     </div>
-    <div class="row">
+
+    <div class="row g-3 mt-3">
         <div class="col-md-12">
-            <label asp-for="Description">Mô tả</label>
-            <textarea asp-for="Description" class="form-control" aria-label="Enter voucher description">
-                Voucher giảm giá...
-            </textarea>
+            <label asp-for="Description" class="form-label fw-semibold text-muted">Mô tả</label>
+            <textarea asp-for="Description" class="form-control shadow-sm" placeholder="Voucher giảm giá..." aria-label="Enter voucher description"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
         </div>
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <button type="submit" class="btn btn-primary px-5 py-2 shadow-sm">
+            <i class="bi bi-save"></i> Cập nhật
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary px-5 py-2 shadow-sm">
+            <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
+    </div>
 </form>
+
+<style>
+    form {
+        animation: slideInFromTop 0.8s ease-in-out;
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #004bb5;
+            transform: translateY(-2px);
+        }
+
+    input.form-control, textarea.form-control, select.form-control {
+        border-radius: 0.375rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+        input.form-control:focus, textarea.form-control:focus, select.form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+        }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
 
 <script>
     function Validate() {

@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Application.MVC\\Application.MVC.csproj",
+        "Action": "StartWithoutDebugging"
+      },
+      {
+        "Path": "Application.API\\Application.API.csproj",
+        "Action": "StartWithoutDebugging"
+      },
+      {
+        "Path": "Application.MVC.GeneralPublic\\Application.MVC.GeneralPublic.csproj",
+        "Action": "StartWithoutDebugging"
+      }
+    ]
+  }
+]

@@ -20,7 +20,7 @@ namespace Application.MVC.Controllers
         {
             this.ToastNotifier = ToastNotifier;
         }
-        
+        [ResponseCache(NoStore = true, Duration = 0)]
         public ActionResult Index()
         {
             string requestURL = $@"https://localhost:7187/api/Category";

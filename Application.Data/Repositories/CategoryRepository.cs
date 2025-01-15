@@ -51,7 +51,7 @@ namespace Application.Data.Repositories
 
         public async Task<List<Category>> GetAllCategory()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories.OrderBy(HELP => HELP.CategoryName).ToListAsync();
         }
 
         public async Task<Category?> GetByIdCategory(Guid id)

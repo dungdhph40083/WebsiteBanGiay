@@ -39,13 +39,14 @@ namespace Application.Data.Repositories
         {
             GiayDBContext _context = new GiayDBContext();
             return _context.ProductDetails.Where(p => p.ProductID == productId).Select(p => p.Color).Distinct()
-           .ToList();
+            .OrderBy(Sd => Sd != null ? Sd.ColorName : default)
+            .ToList();
         }
         public List<Color?> GetColorsByProductIdAndSize(Guid productId, Guid size)
         {
             GiayDBContext _context = new GiayDBContext();
             return _context.ProductDetails.Where(p => p.ProductID == productId && p.SizeID == size)
-                .Select(p => p.Color).Distinct().ToList();
+                .Select(p => p.Color).Distinct().OrderBy(Sd => Sd != null ? Sd.ColorName : default).ToList();
         }
         public async Task DeleteColor(Guid id)
         {
@@ -60,6 +61,7 @@ namespace Application.Data.Repositories
         public async Task<List<Color>> GetAllColors()
         {
             return await _context.Colors
+                .OrderBy(Sd => Sd != null ? Sd.ColorName : default)
            .ToListAsync();
         }
 

@@ -1,6 +1,7 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
 using Application.Data.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuGet.Protocol;
@@ -11,11 +12,13 @@ namespace Application.MVC.GeneralPublic.Controllers
     public class CheckoutController : Controller
     {
         private readonly HttpClient _client;
+        private readonly INotyfService ToastNotifier;
 
 
-        public CheckoutController(IHttpClientFactory httpClientFactory)
+        public CheckoutController(IHttpClientFactory httpClientFactory, INotyfService ToastNotifier)
         {
             _client = httpClientFactory.CreateClient();
+            this.ToastNotifier = ToastNotifier;
         }
 
         public async Task<IActionResult> Index()
@@ -26,6 +29,11 @@ namespace Application.MVC.GeneralPublic.Controllers
 
             // Gọi API để lấy giỏ hàng của người dùng với ID
             var cartItems = await _client.GetFromJsonAsync<List<ShoppingCart>>($"https://localhost:7187/api/ShoppingCart/User/{UserID}");
+            if (cartItems?.Count == 0 || cartItems?.Sum(X => X.Price) < 69)
+            {
+                ToastNotifier.Error("Bạn không có mặt hàng nào để thanh toán!");
+                return RedirectToAction(nameof(Index), Controller2String.Eat(nameof(HomeController)));
+            }
 
             // Tính tổng giá trị đơn hàng
             var totalAmount = cartItems?.Sum(item => item.QuantityCart * item.Price) ?? 0;
@@ -64,6 +72,14 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<ActionResult> InstantCheckout(OrderDto Details, string PaymentMethod, bool HasExternalInfo)
         {
             Guid UserID = GetCurrentUserId();
+
+            // Check... again...
+            var cartItems = await _client.GetFromJsonAsync<List<ShoppingCart>>($"https://localhost:7187/api/ShoppingCart/User/{UserID}");
+            if (cartItems?.Count == 0 || cartItems?.Sum(X => X.Price) < 69)
+            {
+                ToastNotifier.Error("Bạn không có mặt hàng nào để thanh toán!");
+                return RedirectToAction(nameof(Index), Controller2String.Eat(nameof(HomeController)));
+            }
 
             Details.UserID = UserID;
             Details.HasExternalInfo = true;

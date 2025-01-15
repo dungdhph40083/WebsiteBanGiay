@@ -15,11 +15,13 @@ namespace Application.MVC.Controllers
         {
             this.ToastNotifier = ToastNotifier;
         }
+        [ResponseCache(NoStore = true, Duration = 0)]
         public ActionResult Index()
         {
             string requestURL = "https://localhost:7187/api/Color";
             var response = _client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<List<ColorDTO>>(response);
+
             return View(data);
         }
         public ActionResult Details(Guid id)

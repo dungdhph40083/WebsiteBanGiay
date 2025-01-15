@@ -23,7 +23,7 @@ namespace Application.MVC.Controllers
         {
             this.ToastNotifier = ToastNotifier;
         }
-
+        [ResponseCache(NoStore = true, Duration = 0)]
         public async Task<ActionResult> Index(int Page = 1, int PageSize = 10, string SearchQuery = "", string Status = "")
         {
             string URL_Products = $@"https://localhost:7187/api/ProductDetails";
@@ -200,6 +200,7 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(bool FromEdit, ProductDetailMultiDTO Details)
         {
+            await PopulateDropdowns(Details.ProductID);
             try
             {
                 var Response = await Client.PostAsJsonAsync($@"https://localhost:7187/api/ProductDetails/AddVariations", Details);
@@ -340,6 +341,7 @@ namespace Application.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(Guid ID, ProductDetailMultiDTO Details)
         {
+            await PopulateDropdowns(ID);
             try
             {
                 string URL = $@"https://localhost:7187/api/ProductDetails/UpdateVariations/{ID}";
@@ -373,8 +375,8 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Warning("Một số biến thể mới đã không thể sửa do các biến thể đó đã tồn tại trước đó.");
                             break;
                         }
-                        return View(Details);
                     }
+                    return View(Details);
                 }
 
                 return RedirectToAction(nameof(Edit), new { ID });
@@ -433,8 +435,7 @@ namespace Application.MVC.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine("Deleted whole for some reason");
-                ToastNotifier.Success("Xóa các biến thể thành công!");
+                //ToastNotifier.Success("Xóa các biến thể thành công!");
             }
             else
             {
@@ -442,30 +443,31 @@ namespace Application.MVC.Controllers
                 {
                     case System.Net.HttpStatusCode.BadRequest:
                     default:
-                        ToastNotifier.Error("Xóa các biến thể thất bại.");
-                        break;
+                        {
+                            //ToastNotifier.Error("Xóa các biến thể thất bại.");
+                            return BadRequest();
+                        }
                     case System.Net.HttpStatusCode.InternalServerError:
-                        ToastNotifier.Error("Xóa các biến thể thất bại: đã có lỗi máy chủ xảy ra.");
-                        break;
+                        {
+                            //ToastNotifier.Error("Xóa các biến thể thất bại: đã có lỗi máy chủ xảy ra.");
+                            return BadRequest();
+                        }
                     case System.Net.HttpStatusCode.Unauthorized:
                     case System.Net.HttpStatusCode.Forbidden:
                         {
-                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
-                            Unauthorized();
+                            //ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            return Unauthorized();
                         }
-                        break;
                     case System.Net.HttpStatusCode.NotFound:
                         {
-                            ToastNotifier.Warning("Không tìm thấy gì.");
-                            NotFound();
+                            //ToastNotifier.Warning("Không tìm thấy gì.");
+                            return NotFound();
                         }
-                        break;
                     case System.Net.HttpStatusCode.Conflict:
                         {
-                            ToastNotifier.Success("Xóa các biến thể thành công!");
-                            ToastNotifier.Warning("Một số biến thể đã không thể xóa do các biến thể đó đã được đặt hàng trước đó.");
-                            Conflict();
-                            break;
+                            //ToastNotifier.Success("Xóa các biến thể thành công!");
+                            //ToastNotifier.Warning("Một số biến thể đã không thể xóa do các biến thể đó đã được đặt hàng trước đó.");
+                            return Conflict();
                         }
                 }
             }

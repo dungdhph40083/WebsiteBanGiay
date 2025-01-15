@@ -283,17 +283,8 @@
                                     <a class="btn btn-danger mt-1"
                                         asp-action="UpdateOrderStatus"
                                         asp-route-ID="@Entry.OrderID"
-                                        asp-route-StatusCode="@((int)(OrderStatus.ReceivedAgain))">
-                                        Hủy
-                                    </a>
-
-                                    <hr />
-
-                                    <a class="btn btn-danger mt-1"
-                                        asp-action="UpdateOrderStatus"
-                                        asp-route-ID="@Entry.OrderID"
                                         asp-route-StatusCode="@((int)(OrderStatus.ReceivedCompleted))">
-                                        Không chấp nhận đổi trả nữa
+                                        Từ chối
                                     </a>
                                 break;
                             }
