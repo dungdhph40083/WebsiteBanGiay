@@ -134,61 +134,64 @@ namespace Application.MVC.Controllers
                 string URL = $@"https://localhost:7187/api/Orders/UpdateStatus/{ID}?StatusCode={StatusCode}";
                 var Response = await Client.PatchAsync(URL, null);
 
-                if (Response.IsSuccessStatusCode && Response.Content != null)
+                if (Response.IsSuccessStatusCode /*&& Response.Content != null*/)
                 {
-                    var Response2JSON = JsonConvert.DeserializeObject<Order>(await Response.Content.ReadAsStringAsync());
+                    // Screw this.
+                    ToastNotifier.Success("Cập nhật trạng thái đơn thành công!");
 
-                    switch ((OrderStatus)Response2JSON!.Status)
-                    {
-                        case OrderStatus.RefundProcessed:
-                            ToastNotifier.Warning("Đã chấp nhận hoàn trả đơn!");
-                            break;
-                        case OrderStatus.RefundDelivered:
-                            ToastNotifier.Information("Đã bắt đầu tiến hành hoàn trả đơn.");
-                            break;
-                        case OrderStatus.RefundReceived:
-                            ToastNotifier.Information("Đã xác nhận lấy hàng trả.");
-                            break;
-                        case OrderStatus.Refunded:
-                            ToastNotifier.Warning("Đã xác nhận hoàn trả thành công!");
-                            break;
-                        case OrderStatus.DeliveryFailure:
-                            {
-                                if (Response2JSON?.AttemptsLeft != 0)
-                                {
-                                    ToastNotifier.Warning("Đã xác nhận giao hàng không thành công.");
-                                }
-                                else
-                                {
-                                    ToastNotifier.Warning("Đã xác nhận giao hàng thất bại.");
-                                }
-                            }
-                            break;
-                        case OrderStatus.DeliveryIsDead:
-                            ToastNotifier.Warning("Đã xác nhận giao hàng thất bại.");
-                            break;
-                        case OrderStatus.Processed:
-                            ToastNotifier.Success("Xác nhận đơn thành công!");
-                            break;
-                        case OrderStatus.Delivered:
-                            ToastNotifier.Information("Đã xác nhận giao đơn.");
-                            break;
-                        case OrderStatus.Arrived:
-                            ToastNotifier.Information("Đã xác nhận giao hàng thành công!");
-                            break;
-                        case OrderStatus.Received:
-                        case OrderStatus.ReceivedAgain:
-                            ToastNotifier.Success("Đã xác nhận khách đã nhận hàng thành công!");
-                            break;
-                        case OrderStatus.ReceivedCompleted:
-                            ToastNotifier.Information("Đã từ chối hoàn trả thành công.");
-                            break;
-                        case OrderStatus.ReceivedRefundFail:
-                            ToastNotifier.Warning("Đã xác nhận hoàn trả thất bại.");
-                            break;
-                        default:
-                            break;
-                    }
+                    //var Response2JSON = JsonConvert.DeserializeObject<Order>(await Response.Content.ReadAsStringAsync());
+
+                    //switch ((OrderStatus)Response2JSON!.Status)
+                    //{
+                    //    case OrderStatus.RefundProcessed:
+                    //        ToastNotifier.Warning("Đã chấp nhận hoàn trả đơn!");
+                    //        break;
+                    //    case OrderStatus.RefundDelivered:
+                    //        ToastNotifier.Information("Đã bắt đầu tiến hành hoàn trả đơn.");
+                    //        break;
+                    //    case OrderStatus.RefundReceived:
+                    //        ToastNotifier.Information("Đã xác nhận lấy hàng trả.");
+                    //        break;
+                    //    case OrderStatus.Refunded:
+                    //        ToastNotifier.Warning("Đã xác nhận hoàn trả thành công!");
+                    //        break;
+                    //    case OrderStatus.DeliveryFailure:
+                    //        {
+                    //            if (Response2JSON?.AttemptsLeft != 0)
+                    //            {
+                    //                ToastNotifier.Warning("Đã xác nhận giao hàng không thành công.");
+                    //            }
+                    //            else
+                    //            {
+                    //                ToastNotifier.Warning("Đã xác nhận giao hàng thất bại.");
+                    //            }
+                    //        }
+                    //        break;
+                    //    case OrderStatus.DeliveryIsDead:
+                    //        ToastNotifier.Warning("Đã xác nhận giao hàng thất bại.");
+                    //        break;
+                    //    case OrderStatus.Processed:
+                    //        ToastNotifier.Success("Xác nhận đơn thành công!");
+                    //        break;
+                    //    case OrderStatus.Delivered:
+                    //        ToastNotifier.Information("Đã xác nhận giao đơn.");
+                    //        break;
+                    //    case OrderStatus.Arrived:
+                    //        ToastNotifier.Information("Đã xác nhận giao hàng thành công!");
+                    //        break;
+                    //    case OrderStatus.Received:
+                    //    case OrderStatus.ReceivedAgain:
+                    //        ToastNotifier.Success("Đã xác nhận khách đã nhận hàng thành công!");
+                    //        break;
+                    //    case OrderStatus.ReceivedCompleted:
+                    //        ToastNotifier.Information("Đã từ chối hoàn trả thành công.");
+                    //        break;
+                    //    case OrderStatus.ReceivedRefundFail:
+                    //        ToastNotifier.Warning("Đã xác nhận hoàn trả thất bại.");
+                    //        break;
+                    //    default:
+                    //        break;
+                    //}
                 }
                 else
                 {

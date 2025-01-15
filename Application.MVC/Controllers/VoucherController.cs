@@ -109,6 +109,7 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(VoucherDTO Input)
         {
+            await FetchInfoPlsPlsPlsPls();
             try
             {
                 string URL = $@"https://localhost:7187/api/Voucher";
@@ -170,6 +171,7 @@ namespace Application.MVC.Controllers
         // POST: VoucherController/Edit/5
         public async Task<ActionResult> Edit(Guid ID, VoucherDTO NewInput)
         {
+            await FetchInfoPlsPlsPlsPls();
             try
             {
                 string URL = $@"https://localhost:7187/api/Voucher/{ID}";

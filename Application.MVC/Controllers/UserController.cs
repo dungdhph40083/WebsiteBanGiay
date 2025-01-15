@@ -80,6 +80,7 @@ namespace Application.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(UserDTO Input, IFormFile? ProfilePic)
         {
+            await FetchInfoPlsPlsPlsPls();
             try
             {
                 string URL = $@"https://localhost:7187/api/User";
@@ -128,9 +129,26 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Warning("Không tìm thấy gì.");
                             break;
                         case HttpStatusCode.Conflict:
-                            ToastNotifier.Error("Tạo mới người dùng thất bại: trùng tên người dùng.");
-                            break;
-                    }
+                            {
+                                var ErrorResponse = await Response.Content.ReadAsStringAsync();
+                                switch (ErrorResponse)
+                                {
+                                    case "USERNAME_CONFLICT":
+                                        ToastNotifier.Error("Sửa người dùng thất bại: trùng tên người dùng.");
+                                        break;
+                                    case "EMAIL_CONFLICT":
+                                        ToastNotifier.Error("Sửa người dùng thất bại: trùng email.");
+                                        break;
+                                    case "PHONE_NUM_CONFLICT":
+                                        ToastNotifier.Error("Sửa người dùng thất bại: trùng số điện thoại.");
+                                        break;
+                                    default:
+                                        ToastNotifier.Error("Sửa người dùng thất bại. Hãy thử lại sau.");
+                                        break;
+                                }
+                                break;
+                            }
+                        }
                     return View(Input);
                 }
                 return RedirectToAction(nameof(Index));
@@ -165,6 +183,7 @@ namespace Application.MVC.Controllers
         // POST: UserController/Edit/5
         public async Task<ActionResult> Edit(Guid ID, UserEditDTO NewInput, IFormFile? NewProfilePic)
         {
+            await FetchInfoPlsPlsPlsPls();
             try
             {
                 string URL = $@"https://localhost:7187/api/User/{ID}";
@@ -213,8 +232,25 @@ namespace Application.MVC.Controllers
                             ToastNotifier.Warning("Không tìm thấy gì.");
                             break;
                         case HttpStatusCode.Conflict:
-                            ToastNotifier.Error("Sửa người dùng thất bại: trùng tên người dùng.");
-                            break;
+                            {
+                                var ErrorResponse = await Response.Content.ReadAsStringAsync();
+                                switch (ErrorResponse)
+                                {
+                                    case "USERNAME_CONFLICT":
+                                        ToastNotifier.Error("Sửa người dùng thất bại: trùng tên người dùng.");
+                                        break;
+                                    case "EMAIL_CONFLICT":
+                                        ToastNotifier.Error("Sửa người dùng thất bại: trùng email.");
+                                        break;
+                                    case "PHONE_NUM_CONFLICT":
+                                        ToastNotifier.Error("Sửa người dùng thất bại: trùng số điện thoại.");
+                                        break;
+                                    default:
+                                        ToastNotifier.Error("Sửa người dùng thất bại. Hãy thử lại sau.");
+                                        break;
+                                }
+                                break;
+                            }
                     }
                     return View(NewInput);
                 }

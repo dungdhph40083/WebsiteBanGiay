@@ -324,96 +324,89 @@ else
         }
     }
 
-
-
-    if (false)
-    {
-        console.log("You have somehow did this. You must be bending reality.");
+document.getElementById('searchBtn').addEventListener('click', function () {
+    const searchTerm = document.getElementById('searchInput').value;
+    const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=@ViewBag.CurrentStatus&SearchQuery=${searchTerm}`;
+    window.location.href = url;
+});
+// Tự động tìm kiếm khi người dùng nhấn Enter
+document.getElementById("searchInput").addEventListener("keypress", function (e) {
+    if (e.key === 'Enter') {
+        document.getElementById("searchBtn").click();
     }
-    else
-    {
-    document.getElementById('searchBtn').addEventListener('click', function () {
-        const searchTerm = document.getElementById('searchInput').value;
-        const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=@ViewBag.CurrentStatus&SearchQuery=${searchTerm}`;
+});
+
+document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+        const selectedStatus = this.value;
+        const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=${selectedStatus}`;
         window.location.href = url;
     });
-    // Tự động tìm kiếm khi người dùng nhấn Enter
-    document.getElementById("searchInput").addEventListener("keypress", function (e) {
-        if (e.key === 'Enter') {
-            document.getElementById("searchBtn").click();
-        }
-    });
+});
 
-    document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
-        radio.addEventListener('change', function () {
-            const selectedStatus = this.value;
-            const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=${selectedStatus}`;
-            window.location.href = url;
-        });
-    });
+document.querySelectorAll('.delete_trigger').forEach(button => {
+    button.addEventListener('click', async function () {
+        const productDetailId = this.getAttribute('data-id');
+        const controller = this.getAttribute('data-controller');
+        const action = this.getAttribute('data-action');
+        const deleteUrl = `/${controller}/${action}/${productDetailId}`;
 
-    document.querySelectorAll('.delete_trigger').forEach(button => {
-        button.addEventListener('click', async function () {
-            const productDetailId = this.getAttribute('data-id');
-            const controller = this.getAttribute('data-controller');
-            const action = this.getAttribute('data-action');
-            const deleteUrl = `/${controller}/${action}/${productDetailId}`;
+        // Hiển thị cảnh báo xác nhận xóa với SweetAlert
+        swal({
+            title: "Bạn có chắc chắn?",
+            text: "Sau khi xóa, bạn sẽ không thể khôi phục mục này!",
+            icon: "warning",
+            buttons: ["Hủy", "Xóa"],
+            dangerMode: true,
+        }).then(async (willDelete) => {
+            if (willDelete) {
+                try {
+                    const response = await fetch(deleteUrl, {
+                        method: 'DELETE'
+                    });
 
-            // Hiển thị cảnh báo xác nhận xóa với SweetAlert
-            swal({
-                title: "Bạn có chắc chắn?",
-                text: "Sau khi xóa, bạn sẽ không thể khôi phục mục này!",
-                icon: "warning",
-                buttons: ["Hủy", "Xóa"],
-                dangerMode: true,
-            }).then(async (willDelete) => {
-                if (willDelete) {
-                    try {
-                        const response = await fetch(deleteUrl, {
-                            method: 'DELETE'
+                    if (response.ok) {
+                        // Thông báo thành công
+                        swal({
+                            title: "Đã xóa!",
+                            text: "Chi tiết sản phẩm đã được xóa thành công.",
+                            icon: "success",
+                            timer: 5000,
+                            buttons: false,
+                        }).then(() => {
+                            location.reload(); // Tải lại trang sau khi xóa
                         });
-
-                        if (response.ok) {
-                            // Thông báo thành công
+                        } else if (response.status == 409) { // Lỗi ràng buộc dữ liệu
                             swal({
-                                title: "Đã xóa!",
-                                text: "Chi tiết sản phẩm đã được xóa thành công.",
-                                icon: "success",
-                                timer: 100000,
-                                buttons: false,
+                                title: "Không thể xóa!",
+                                text: "Sản phẩm này có liên quan đến các dữ liệu khác trong hệ thống. Tất cả các sản phẩm đó đã đặt về 0.",
+                                icon: "error",
                             }).then(() => {
                                 location.reload(); // Tải lại trang sau khi xóa
                             });
-                        } else {
-                            // Xử lý lỗi khác (như 400, 500)
-                            swal({
-                                title: "Lỗi!",
-                                text: "Không thể xóa. Vui lòng thử lại.",
-                                icon: "error",
-                            });
-                        }
-                    } catch (error) {
-                        console.error("Error:", error);
-
-                        // Thông báo lỗi hệ thống
-                         if (response.status === 409) { // Lỗi ràng buộc dữ liệu
-                            swal({
-                                title: "Không thể xóa!",
-                                text: "Sản phẩm này có liên quan đến các dữ liệu khác trong hệ thống.<br>Tất cả các sản phẩm đó đã đặt về 0.",
-                                icon: "error",
-                            });
-                        } else
-                        {
+                            }
+                    else {
+                        // Xử lý lỗi khác (như 400, 500)
                         swal({
                             title: "Lỗi!",
-                            text: "Đã xảy ra lỗi trong quá trình xóa.",
+                            text: "Không thể xóa. Vui lòng thử lại. (" + response.status + ")",
                             icon: "error",
+                        }).then(() => {
+                            location.reload(); // Tải lại trang sau khi xóa
                         });
-                        }
                     }
+                } catch (error) {
+                    console.error("Error:", error);
+                    swal({
+                        title: "Lỗi!",
+                        text: "Đã xảy ra lỗi trong quá trình xóa.",
+                        icon: "error",
+                    }).then(() => {
+                            location.reload(); // Tải lại trang sau khi xóa
+                        });
                 }
-            });
+            }
         });
     });
-    }
+});
 </script>

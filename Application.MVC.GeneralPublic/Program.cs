@@ -7,6 +7,10 @@ using Application.Data.ModelContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Notyf;
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient("DefaultClient", client =>
@@ -24,6 +28,19 @@ builder.Services.AddDbContext<GiayDBContext>(options =>
 
 // Đăng ký các service khác, bao gồm cả repository
 builder.Services.AddScoped<ICustomerSupportMessage, CustomerSupportMessageRepository>();
+
+// Add INotyfService
+builder.Services.AddScoped<INotyfService, NotyfService>();
+// Add Notyf // Đây là thông báo
+builder.Services.AddNotyf(config =>
+{
+    config.DurationInSeconds = 3;
+    config.IsDismissable = true;
+    config.HasRippleEffect = true;
+    config.Position = NotyfPosition.TopRight;
+});
+
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddMvc().AddMvcOptions(o => o.AllowEmptyInputInBodyModelBinding = true);
@@ -50,6 +67,7 @@ var app = builder.Build();
 app.UseRouting();
 app.UseStaticFiles();
 app.UseSession();
+app.UseNotyf();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");

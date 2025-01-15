@@ -129,7 +129,7 @@ namespace Application.Data.Repositories
 
         public async Task<bool> SizeNameAvailability(string? SizeName)
         {
-            var Target = await Context.Sales.FirstOrDefaultAsync(LastClick => LastClick.Name == SizeName);
+            var Target = await Context.Sizes.FirstOrDefaultAsync(LastClick => LastClick.Name == SizeName);
             if (Target == null) return true;
             else return false;
         }
