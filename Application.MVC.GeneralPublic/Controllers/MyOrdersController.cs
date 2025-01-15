@@ -1,7 +1,9 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,9 +16,12 @@ namespace Application.MVC.GeneralPublic.Controllers
         // Fake data; xóa sau khi có Đăng nhập/Đăng ký!!!
         HttpClient Client = new HttpClient();
         private readonly HttpClient _httpClient;
-        public MyOrdersController()
+        private readonly GiayDBContext _context;
+
+        public MyOrdersController(GiayDBContext giayDBContext)
         {
             _httpClient = new HttpClient();
+            _context = giayDBContext;
         }
         private Guid GetCurrentUserId()
         {
@@ -39,10 +44,15 @@ namespace Application.MVC.GeneralPublic.Controllers
         }
         public async Task<ActionResult> Index()
         {
+
             try
             {
                 Guid ID = GetCurrentUserId();
-
+                var user = _context.Users.FirstOrDefault(u => u.UserID == ID);
+                if (user != null && user.IsBanned != false)
+                {
+                    return View("Banned");
+                }
                 string URL = $@"https://localhost:7187/api/Orders/User/{ID}";
 
                 var Response = await Client.GetFromJsonAsync<List<Order>>(URL);

@@ -1,4 +1,4 @@
-﻿@model Application.Data.DTOs.UserDTO;
+﻿@model Application.Data.DTOs.UserEditDTO;
 @using Application.Data.Enums;
 
 @{
@@ -44,7 +44,7 @@ else
         <div class="col-md-4">
             <label asp-for="Password" class="form-label fw-semibold text-muted">Mật khẩu</label>
             <input asp-for="Password" class="form-control shadow-sm" type="password" aria-label="Nhập mật khẩu mới để thay đổi mật khẩu" placeholder="Nhập mật khẩu mới">
-            @* <span asp-validation-for="Password" class="text-danger"></span> *@
+            <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
         <!-- Role -->

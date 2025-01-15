@@ -84,5 +84,12 @@ namespace Application.Data.Repositories
             }
             else return default;
         }
+
+        public async Task<bool> ColorNameAvailibility(string? ColorName)
+        {
+            var Target = await _context.Colors.FirstOrDefaultAsync(Bruh => Bruh.ColorName == ColorName);
+            if (Target == null) return true;
+            else return false;
+        }
     }
 }

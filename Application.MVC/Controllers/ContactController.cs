@@ -1,16 +1,19 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace Application.MVC.Controllers
 {
     public class ContactController : Controller
     {
-        HttpClient client;
-        public ContactController()
+        HttpClient client = new HttpClient();
+        private readonly INotyfService ToastNotifier;
+        public ContactController(INotyfService ToastNotifier)
         {
-            client = new HttpClient();
+            this.ToastNotifier = ToastNotifier;
         }
 
         public IActionResult Index()
@@ -19,7 +22,7 @@ namespace Application.MVC.Controllers
             var response = client.GetStringAsync(requestURL).Result;
 
             var data = JsonConvert.DeserializeObject<List<CustomerSupportMessage>>(response);
-            var sortedResponse = data.OrderByDescending(p => p.CreatedAt).ToList(); // Đảm bảo lời nhắn mới nhất lên đầu
+            var sortedResponse = data?.OrderByDescending(p => p.CreatedAt).ToList(); // Đảm bảo lời nhắn mới nhất lên đầu
             return View(sortedResponse); // Sử dụng sortedResponse để hiển thị
         }
 
@@ -34,16 +37,17 @@ namespace Application.MVC.Controllers
         public async Task<IActionResult> ToggleStatus(Guid id)
         {
             string requestURL = $@"https://localhost:7187/api/CustomerSupportMessage/{id}/ToggleStatus";
-            var response = await client.PutAsync(requestURL, null);
+            var Response = await client.PutAsync(requestURL, null);
 
-            if (response.IsSuccessStatusCode)
+            if (Response.IsSuccessStatusCode)
             {
-                return Ok(); // Trả về 200 nếu thành công
+                ToastNotifier.Success("Đổi trạng thái thành công!");
             }
             else
             {
-                return StatusCode((byte)response.StatusCode, "Đổi trạng thái thất bại."); // Trả về lỗi nếu không thành công
+                ToastNotifier.Error("Đổi trạng thái thất bại.");
             }
+            return View();
         }
     }
 }

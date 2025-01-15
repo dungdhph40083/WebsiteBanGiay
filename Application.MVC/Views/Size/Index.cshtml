@@ -101,9 +101,9 @@
                                 <div class="dropdown-divider"></div>
 
 
-                                <a class="dropdown-item text-danger delete_trigger" data-id="@item.SizeID" data-controller="Size" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
+                                <button class="dropdown-item text-danger delete_trigger" data-id="@item.SizeID" data-controller="Size" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">
                                     <i class="fas fa-trash-alt"></i> Xóa
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </td>
@@ -119,23 +119,23 @@ else
 }
 
 <!-- Modal -->
-<div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="DeleteLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="ModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="DeleteLabel">KHOAN!!! <span style="font-size:x-small">(Khoan?)</span></h1>
-                <button type="button" class="close" data-dismiss="modal" id="close-btn" aria-label="Close">
-                    <i class="fa-cross"></i>
-                </button>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Xác nhận</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-btn" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Bạn có chắc chắn để xóa kích cỡ này?<br />
-                <span style="font-size:small" class="font-monospace-cascadia">ID kích cỡ: <span id="ItemID" class="font-monospace-cascadia"></span></span>
+                @* <span style="font-size:small" class="font-monospace-cascadia">Category ID: <span id="ItemID" class="font-monospace-cascadia"></span></span> *@
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-btn">Hủy</button>
-                <button type="button" class="btn btn-danger" id="confirm_deletion">Xóa</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel-btn">Hủy</button>
+                <a href="" class="btn btn-danger" id="confirm_deletion">Xóa</a>
             </div>
         </div>
     </div>
 </div>
+
+<script src="~/js/modal.js"></script>

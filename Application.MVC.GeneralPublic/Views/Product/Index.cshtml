@@ -9,7 +9,6 @@
 
     var PriceRange = ViewBag.PriceRange as string;
 
-    var CurrentPage = ViewBag.CurrentPage as int?;
     var SortOrder = ViewBag.SortOrder as string;
     var CatgSelects = ViewBag.SelectedCategory as Guid?;
     var ColrSelects = ViewBag.SelectedColor as Guid?;
@@ -193,16 +192,16 @@
                 <nav>
                     <ul class="pagination justify-content-center">
                         <li class="page-item @(Paginations.GetValueOrDefault() <= 1 ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(Paginations.GetValueOrDefault() - 1)">Trước</a>
+                            <a class="page-link" asp-route-Page="@(Paginations.GetValueOrDefault() - 1)">Trước</a>
                         </li>
                         @for (int i = 1; i <= TotalPages; i++)
                         {
                                 <li class="page-item @(i == Paginations.GetValueOrDefault() ? "active" : "")">
-                                    <a class="page-link" href="?page=@i">@i</a>
+                                    <a class="page-link" asp-route-Page="@i">@i</a>
                                 </li>
                         }
                         <li class="page-item @(Paginations.GetValueOrDefault() >= TotalPages ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(Paginations.GetValueOrDefault() + 1)">Tiếp</a>
+                            <a class="page-link" asp-route-Page="@(Paginations.GetValueOrDefault() + 1)">Tiếp</a>
                         </li>
                     </ul>
                 </nav>

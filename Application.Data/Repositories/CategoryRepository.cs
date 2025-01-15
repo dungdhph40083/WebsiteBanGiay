@@ -32,6 +32,13 @@ namespace Application.Data.Repositories
             return category;
         }
 
+        public async Task<bool> NameAvailability(string? Name)
+        {
+            var Searched = await _context.Categories.FirstOrDefaultAsync(Flt => Flt.CategoryName == Name);
+            if (Searched != null) return false;
+            else return true;
+        }
+
         public async Task DeleteCategory(Guid id)
         {
             var category = await _context.Categories.FindAsync(id);
@@ -60,12 +67,12 @@ namespace Application.Data.Repositories
             var category = await _context.Categories.FindAsync(TargetID);
             if (category != null)
             {
-                _context.Entry(category).State = EntityState.Modified;
-                var UpdatedTarget = Mapper.Map(categoryDto, category);
-                _context.Update(UpdatedTarget);
+                _context.Categories.Attach(category);
+                category = Mapper.Map(categoryDto, category);
+                _context.Update(category);
                 await _context.SaveChangesAsync();
 
-                return UpdatedTarget;
+                return category;
             }
             else return default;
         }

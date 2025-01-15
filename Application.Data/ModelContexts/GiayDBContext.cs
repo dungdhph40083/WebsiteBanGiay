@@ -69,6 +69,9 @@ namespace Application.Data.ModelContexts
             ModelBuilder.Entity<Size_Product>()
                 .Property(Idx => Idx.Available)
                 .HasDefaultValue(true);
+			ModelBuilder.Entity<User>()
+				.Property(Idx => Idx.IsBanned)
+				.HasDefaultValue(false);
         }
 
         public DbSet<Category> Categories { get; set; }

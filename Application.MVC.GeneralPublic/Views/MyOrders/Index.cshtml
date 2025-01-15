@@ -60,7 +60,7 @@
                                     <th class="text-center">Phương thức thanh toán</th>
                                     <th class="text-center">Trạng thái</th>
                                     <th class="text-right">Tổng giá</th>
-                                    <th></th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -86,52 +86,53 @@
                                             @switch ((OrderStatus)Order.Status)
                                             {
                                                 case OrderStatus.Canceled:
-                                                    <p>Bị hủy</p>
+                                                    <p style="color: red;">Bị hủy</p>
                                                     break;
                                                 case OrderStatus.Refunding:
-                                                    <p>Yêu cầu hoàn trả</p>
+                                                    <p style="color: orange;">Yêu cầu hoàn trả</p>
                                                     break;
                                                 case OrderStatus.RefundProcessed:
-                                                    <p>Chấp nhận hoàn trả</p>
+                                                    <p style="color: teal;">Chấp nhận hoàn trả</p>
                                                     break;
                                                 case OrderStatus.RefundDelivered:
-                                                    <p>Đơn vị đang đến nhận hàng hoàn trả</p>
+                                                    <p style="color: darkblue;">Đơn vị đang đến nhận hàng hoàn trả</p>
                                                     break;
                                                 case OrderStatus.Refunded:
-                                                    <p>Đã hoàn trả</p>
+                                                    <p style="color: green;">Đã hoàn trả</p>
                                                     break;
                                                 case OrderStatus.Created:
-                                                    <p>Chờ xác nhận</p>
+                                                    <p style="color: gray;">Chờ xác nhận</p>
                                                     break;
                                                 case OrderStatus.Processed:
-                                                    <p>Đã xác nhận đơn</p>
+                                                    <p style="color: blue;">Đã xác nhận đơn</p>
                                                     break;
                                                 case OrderStatus.Delivered:
-                                                    <p>Đang vận chuyển</p>
+                                                    <p style="color: purple;">Đang vận chuyển</p>
                                                     break;
                                                 case OrderStatus.Arrived:
-                                                    <p>Đã đến nơi</p>
+                                                    <p style="color: darkgreen;">Đã đến nơi</p>
                                                     break;
                                                 case OrderStatus.Received:
                                                 case OrderStatus.ReceivedAgain:
-                                                    <p>Đã nhận hàng</p>
+                                                    <p style="color: limegreen;">Đã nhận hàng</p>
                                                     break;
                                                 case OrderStatus.ReceivedCompleted:
-                                                    <p>Đã nhận hàng thành công</p>
+                                                    <p style="color: gold;">Đã nhận hàng thành công</p>
                                                     break;
                                                 case OrderStatus.DeliveryFailure:
-                                                    <p>Chưa giao thành công</p>
+                                                    <p style="color: darkred;">Chưa giao thành công</p>
                                                     break;
                                                 case OrderStatus.DeliveryIsDead:
-                                                    <p>Giao hàng thất bại</p>
+                                                    <p style="color: crimson;">Giao hàng thất bại</p>
                                                     break;
                                                 case OrderStatus.ReceivedRefundFail:
-                                                    <p>Hoàn trả thất bại</p>
+                                                    <p style="color: magenta;">Hoàn trả thất bại</p>
                                                     break;
                                                 default:
-                                                    <p>N/A</p>
+                                                    <p style="color: black;">N/A</p>
                                                     break;
                                             }
+
                                         </td>
                                         <td class="text-right">@Order.GrandTotal.GetValueOrDefault().ToString("#,##0")</td>
                                         <td><a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Order.OrderID">Chi tiết</a></td>
@@ -143,9 +144,117 @@
                     else
                     {
                         <h1 class="text-center">Hiện không có đơn hàng.</h1>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
                     }
                 </div>
             </div>
         </div>
     </div>
+
 </div>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+    }
+
+    .breadcrumb {
+        background-color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+        .breadcrumb a {
+            text-decoration: none;
+        }
+
+            .breadcrumb a:hover {
+                text-decoration: underline;
+            }
+
+    .breadcrumb-item.active {
+        color: #6c757d;
+    }
+
+    .table {
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+
+        .table th {
+            font-weight: bold;
+            background-color: #FFD333;
+        }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f8f9fa;
+    }
+
+    .table-striped tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    .modal-content {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        color: #fff;
+        border-bottom: none;
+        padding: 15px 20px;
+    }
+
+    .modal-body {
+        padding: 20px;
+        font-size: 16px;
+    }
+
+    .modal-footer {
+        background-color: #f8f9fa;
+        padding: 15px;
+        text-align: right;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    td p {
+        margin: 0;
+        padding: 0;
+    }
+
+
+</style>

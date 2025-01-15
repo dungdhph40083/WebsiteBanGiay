@@ -11,16 +11,17 @@ using Newtonsoft.Json;
 using NuGet.Protocol;
 using System.Security.Permissions;
 using System.Net.Http.Headers;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace Application.MVC.Controllers
 {
     public class ProductDetailController : Controller
     {
         HttpClient Client = new HttpClient();
-        private readonly HttpClient _httpClient;
-        public ProductDetailController()
+        private readonly INotyfService ToastNotifier;
+        public ProductDetailController(INotyfService ToastNotifier)
         {
-            _httpClient = new HttpClient();
+            this.ToastNotifier = ToastNotifier;
         }
 
         public async Task<ActionResult> Index(int Page = 1, int PageSize = 10, string SearchQuery = "", string Status = "")
@@ -153,8 +154,8 @@ namespace Application.MVC.Controllers
             }
 
 
-            var ColorsList = await Client.GetFromJsonAsync<List<Color>>(@"https://localhost:7187/api/Color");
-            var SizesList = await Client.GetFromJsonAsync<List<Size>>(@"https://localhost:7187/api/Size");
+            var ColorsList = (await Client.GetFromJsonAsync<List<Color>>(@"https://localhost:7187/api/Color"))?.Where(No => No.Status == 1).ToList();
+            var SizesList = (await Client.GetFromJsonAsync<List<Size>>(@"https://localhost:7187/api/Size"))?.Where(No => No.Status == 1).ToList();
             var CategoriesList = await Client.GetFromJsonAsync<List<Category>>(@"https://localhost:7187/api/Category");
             var SalesList = await Client.GetFromJsonAsync<List<Sale>>(@"https://localhost:7187/api/Sale");
 
@@ -201,10 +202,38 @@ namespace Application.MVC.Controllers
         {
             try
             {
-                Console.WriteLine("From edit: " + FromEdit);
-
                 var Response = await Client.PostAsJsonAsync($@"https://localhost:7187/api/ProductDetails/AddVariations", Details);
-                Console.WriteLine(Details.ProductID);
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Tạo các biến thể thành công!");
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Tạo các biến thể thất bại.");
+                            break;
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Tạo các biến thể thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case System.Net.HttpStatusCode.Unauthorized:
+                        case System.Net.HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case System.Net.HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                        case System.Net.HttpStatusCode.Conflict:
+                        {
+                            ToastNotifier.Success("Tạo các biến thể thành công!");
+                            ToastNotifier.Warning("Một số biến thể mới đã không tạo ra do các biến thể đó đã tồn tại trước đó.");
+                            break;
+                        }
+                    }
+                    return View(Details);
+                }
                 if (FromEdit)
                 {
                     return RedirectToAction(nameof(Edit), new { ID = Details.ProductID });
@@ -221,7 +250,7 @@ namespace Application.MVC.Controllers
             }
         }
 
-        private async Task Afvhklsjdfklsjlkjdfklsdjklfjiwrjpofdss()
+        private async Task PopulateDropdownsOld()
         {
             // Lấy danh sách Products và Images từ API
             var ProductsList = await Client.GetFromJsonAsync<List<Product>>($@"https://localhost:7187/api/Product");
@@ -316,6 +345,38 @@ namespace Application.MVC.Controllers
                 string URL = $@"https://localhost:7187/api/ProductDetails/UpdateVariations/{ID}";
                 var Response = await Client.PutAsJsonAsync(URL, Details);
 
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Sửa các biến thể thành công!");
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Sửa các biến thể thất bại.");
+                            break;
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Sửa các biến thể thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case System.Net.HttpStatusCode.Unauthorized:
+                        case System.Net.HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case System.Net.HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                        case System.Net.HttpStatusCode.Conflict:
+                        {
+                            ToastNotifier.Success("Sửa các biến thể thành công!");
+                            ToastNotifier.Warning("Một số biến thể mới đã không thể sửa do các biến thể đó đã tồn tại trước đó.");
+                            break;
+                        }
+                        return View(Details);
+                    }
+                }
+
                 return RedirectToAction(nameof(Edit), new { ID });
             }
             catch (Exception Msg)
@@ -332,6 +393,34 @@ namespace Application.MVC.Controllers
             string requestURL = $@"https://localhost:7187/api/ProductDetails/{ID}";
             var response = await Client.DeleteAsync(requestURL);
 
+            if (response.IsSuccessStatusCode)
+            {
+                ToastNotifier.Success("Xóa biến thể thành công!");
+            }
+            else
+            {
+                switch (response.StatusCode)
+                {
+                    case System.Net.HttpStatusCode.BadRequest:
+                    default:
+                        ToastNotifier.Error("Xóa biến thể thất bại.");
+                        break;
+                    case System.Net.HttpStatusCode.InternalServerError:
+                        ToastNotifier.Error("Xóa biến thể thất bại: đã có lỗi máy chủ xảy ra.");
+                        break;
+                    case System.Net.HttpStatusCode.Unauthorized:
+                    case System.Net.HttpStatusCode.Forbidden:
+                        ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                        break;
+                    case System.Net.HttpStatusCode.NotFound:
+                        ToastNotifier.Warning("Không tìm thấy gì.");
+                        break;
+                    case System.Net.HttpStatusCode.Conflict:
+                        ToastNotifier.Error("Xóa biến thể thất bại: sản phẩm đã được mua trước kia rồi.");
+                        break;
+                }
+            }
+
             return RedirectToAction(nameof(Edit), new { ID = FromID });
         }
 
@@ -339,6 +428,47 @@ namespace Application.MVC.Controllers
         {
             string requestURL = $@"https://localhost:7187/api/ProductDetails/ByProduct/{ID}";
             var response = await Client.DeleteAsync(requestURL);
+
+            Console.WriteLine("\n" + response.StatusCode + "\n");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Deleted whole for some reason");
+                ToastNotifier.Success("Xóa các biến thể thành công!");
+            }
+            else
+            {
+                switch (response.StatusCode)
+                {
+                    case System.Net.HttpStatusCode.BadRequest:
+                    default:
+                        ToastNotifier.Error("Xóa các biến thể thất bại.");
+                        break;
+                    case System.Net.HttpStatusCode.InternalServerError:
+                        ToastNotifier.Error("Xóa các biến thể thất bại: đã có lỗi máy chủ xảy ra.");
+                        break;
+                    case System.Net.HttpStatusCode.Unauthorized:
+                    case System.Net.HttpStatusCode.Forbidden:
+                        {
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            Unauthorized();
+                        }
+                        break;
+                    case System.Net.HttpStatusCode.NotFound:
+                        {
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            NotFound();
+                        }
+                        break;
+                    case System.Net.HttpStatusCode.Conflict:
+                        {
+                            ToastNotifier.Success("Xóa các biến thể thành công!");
+                            ToastNotifier.Warning("Một số biến thể đã không thể xóa do các biến thể đó đã được đặt hàng trước đó.");
+                            Conflict();
+                            break;
+                        }
+                }
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -351,10 +481,12 @@ namespace Application.MVC.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                ToastNotifier.Success("Đổi trạng thái thành công!");
                 return Ok(); // Trả về 200 nếu thành công
             }
             else
             {
+                ToastNotifier.Error("Đổi trạng thái thất bại.");
                 return StatusCode((byte)response.StatusCode, "Đổi trạng thái thất bại."); // Trả về lỗi nếu không thành công
             }
         }

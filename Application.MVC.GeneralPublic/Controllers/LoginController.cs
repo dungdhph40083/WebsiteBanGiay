@@ -1,10 +1,12 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -18,10 +20,13 @@ namespace Application.MVC.GeneralPublic.Controllers
     public class LoginController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly GiayDBContext _giayDBContext;
+
         HttpClient Client = new HttpClient();
-        public LoginController(IHttpClientFactory httpClientFactory)
+        public LoginController(IHttpClientFactory httpClientFactory, GiayDBContext giayDBContext)
         {
             _httpClientFactory = httpClientFactory;
+            _giayDBContext = giayDBContext; 
         }
 
         [HttpGet]
@@ -77,6 +82,15 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                         if (Response != null)
                         {
+                            if ((bool)Response.IsBanned)
+                            {
+                                HttpContext.Session.Remove("JwtToken");
+                                HttpContext.Session.Remove(nameof(Metadata.Username));
+                                HttpContext.Session.Remove("UserAvatar");
+                                HttpContext.Response.Cookies.Delete("AuthToken");
+                                TempData["ErrorMessage"] = "Tài khoản này đã bị cấm.";
+                                return RedirectToAction("index", "Login");
+                            }
                             HttpContext.Session.SetString("UserAvatar", Response.Image == null ? string.Empty : Response.Image!.ImageFileName ?? string.Empty);
                             if(Response.Image == null) HttpContext.Session.Remove("UserAvatar");
                         }
@@ -148,7 +162,14 @@ namespace Application.MVC.GeneralPublic.Controllers
             try
             {
                 NewUser.RoleID = Guid.Parse(DefaultValues.UserRoleGUID);
-                string apiUrl = $@"https://localhost:7187/api/User/Register";
+                NewUser.IsBanned = DefaultValues.IsBanned;
+                var email = await _giayDBContext.Users.FirstOrDefaultAsync(u => u.Email == NewUser.Email);
+                if (email != null)
+                {
+                    TempData["FailureBanner"] = $"Email bạn nhập đã tồn tại";
+                    return View(NewUser);
+                }
+                    string apiUrl = $@"https://localhost:7187/api/User/Register";
                 var response = await Client.PostAsJsonAsync(apiUrl, NewUser);
 
                 if (response.IsSuccessStatusCode)
@@ -159,7 +180,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                 else
                 {
                     var errorMessage = await response.Content.ReadAsStringAsync();
-                    TempData["FailureBanner"] = $"Tạo tài khoản không thành công! {errorMessage}";
+                    TempData["FailureBanner"] = $"Tạo tài khoản không thành công!";
                     return View(NewUser);
                 }
             }

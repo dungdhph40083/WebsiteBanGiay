@@ -279,7 +279,9 @@
     <script src="~/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
     <script src="~/vendor/charts/c3charts/C3chartjs.js"></script>
     <script src="~/js/dashboard-ecommerce.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
+    @await Component.InvokeAsync("Notyf")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

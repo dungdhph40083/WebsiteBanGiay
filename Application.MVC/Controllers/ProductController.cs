@@ -1,5 +1,6 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -12,6 +13,13 @@ namespace Application.MVC.Controllers
     public class ProductController : Controller
     {
         HttpClient client = new HttpClient();
+        private readonly INotyfService ToastNotifier;
+
+        public ProductController(INotyfService ToastNotifier)
+        {
+            this.ToastNotifier = ToastNotifier;
+        }
+
         public async Task<ActionResult> Index(string searchTerm, int page = 1, int pageSize = 15)
         {
             string requestURL = "https://localhost:7187/api/Product";
@@ -98,90 +106,149 @@ namespace Application.MVC.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index");
+                    ToastNotifier.Success("Thêm sản phẩm mới thành công!");
                 }
                 else
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine(error);
-                    ModelState.AddModelError(string.Empty, $"Create failed: {error}");
-                    return View(product); // Trả về form chỉnh sửa với thông báo lỗi
+                    switch (response.StatusCode)
+                    {
+                        case System.Net.HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Thêm sản phẩm mới thất bại.");
+                            break;
+                        case System.Net.HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Thêm sản phẩm mới thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case System.Net.HttpStatusCode.Unauthorized:
+                        case System.Net.HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case System.Net.HttpStatusCode.NotFound:
+                            ToastNotifier.Error("Không tìm thấy gì.");
+                            break;
+                        case System.Net.HttpStatusCode.Conflict:
+                            ToastNotifier.Error("Tên của sản phẩm không được trùng với các sản phẩm khác!");
+                            break;
+                    }
+                    return View(product);
                 }
+                return RedirectToAction("Index");
             }
-            return View(product);
-            }
-            public async Task<ActionResult> Edit(Guid id)
+            else
             {
-
-                string productRequestURL = $"https://localhost:7187/api/Product/{id}";
-                var productResponse = await client.GetStringAsync(productRequestURL);
-
-                if (string.IsNullOrEmpty(productResponse))
-                {
-                    return NotFound();
-                }
-
-                var product = JsonConvert.DeserializeObject<ProductDTO>(productResponse);
-
-                // Đưa dữ liệu hình ảnh vào ViewBag để hiển thị trong combobox
-
+                ToastNotifier.Error("Tên của sản phẩm không được trùng với các sản phẩm khác!");
                 return View(product);
             }
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public async Task<ActionResult> Edit(Guid ID, ProductDTO product, IFormFile? Image)
+        }
+        public async Task<ActionResult> Edit(Guid id)
+        {
+
+            string productRequestURL = $"https://localhost:7187/api/Product/{id}";
+            var productResponse = await client.GetStringAsync(productRequestURL);
+
+            if (string.IsNullOrEmpty(productResponse))
             {
-
-                if (product == null)
-                {
-                    return BadRequest("Invalid product data.");
-                }
-
-                string requestURL = $"https://localhost:7187/api/Product/{ID}";
-
-                MultipartFormDataContent Contents = new()
-            {
-                { new StringContent(product.Name!),        nameof(product.Name) },
-                { new StringContent(product.Description!), nameof(product.Description) },
-                { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
-            };
-
-                if (Image != null)
-                {
-                    var ImageStream = new StreamContent(Image.OpenReadStream());
-                    Contents.Add(ImageStream, nameof(Image), Image.FileName);
-                }
-
-                var response = await client.PutAsync(requestURL, Contents);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index"); // Chuyển hướng sau khi cập nhật thành công
-                }
-                else
-                {
-                    // Lấy thông tin lỗi từ API
-                    var error = await response.Content.ReadAsStringAsync();
-                    ModelState.AddModelError(string.Empty, $"Update failed: {error}");
-                    return View(product); // Trả về form chỉnh sửa với thông báo lỗi
-                }
+                return NotFound();
             }
-            
-            public async Task<ActionResult> Delete(Guid id)
-            {
-                try
-                {
-                    string requestURL = $"https://localhost:7187/api/Product/{id}";
-                    var response = await client.DeleteAsync(requestURL);
 
-                    response.EnsureSuccessStatusCode();
-                }
-                catch (Exception)
-                {
-                    ViewBag.Error = "Không thể xóa do sản phẩm vẫn còn quan hệ ở các bảng khác!\n(Sự kiện, voucher, hóa đơn chi tiết)";
-                    Console.WriteLine((ViewBag.Error as string).ToJson());
-                }
+            var product = JsonConvert.DeserializeObject<ProductDTO>(productResponse);
+
+            // Đưa dữ liệu hình ảnh vào ViewBag để hiển thị trong combobox
+
+            return View(product);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(Guid ID, ProductDTO product, IFormFile? Image)
+        {
+
+            if (product == null)
+            {
+                ToastNotifier.Error("Không tìm thấy gì.");
                 return RedirectToAction(nameof(Index));
             }
+
+            string requestURL = $"https://localhost:7187/api/Product/{ID}";
+
+            MultipartFormDataContent Contents = new()
+        {
+            { new StringContent(product.Name!),        nameof(product.Name) },
+            { new StringContent(product.Description!), nameof(product.Description) },
+            { new StringContent(product.Price.GetValueOrDefault().ToString()), nameof(product.Price) }
+        };
+
+            if (Image != null)
+            {
+                var ImageStream = new StreamContent(Image.OpenReadStream());
+                Contents.Add(ImageStream, nameof(Image), Image.FileName);
+            }
+
+            var response = await client.PutAsync(requestURL, Contents);
+
+            if (response.IsSuccessStatusCode)
+            {
+                ToastNotifier.Success("Sửa sản phẩm thành công!");
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                switch (response.StatusCode)
+                {
+                    case System.Net.HttpStatusCode.BadRequest:
+                    default:
+                        ToastNotifier.Error("Sửa sản phẩm thất bại.");
+                        break;
+                    case System.Net.HttpStatusCode.InternalServerError:
+                        ToastNotifier.Error("Sửa sản phẩm thất bại: đã có lỗi máy chủ xảy ra.");
+                        break;
+                    case System.Net.HttpStatusCode.Unauthorized:
+                    case System.Net.HttpStatusCode.Forbidden:
+                        ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                        break;
+                    case System.Net.HttpStatusCode.NotFound:
+                        ToastNotifier.Error("Không tìm thấy gì.");
+                        break;
+                    case System.Net.HttpStatusCode.Conflict:
+                        ToastNotifier.Error("Tên của sản phẩm không được trùng với các sản phẩm khác!");
+                        break;
+                }
+                return View(product);
+            }
+        }
+            
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            string requestURL = $"https://localhost:7187/api/Product/{id}";
+            var response = await client.DeleteAsync(requestURL);
+
+            if (response.IsSuccessStatusCode)
+            {
+                ToastNotifier.Success("Xóa sản phẩm thành công!");
+            }
+            else
+            {
+                switch (response.StatusCode)
+                {
+                    case System.Net.HttpStatusCode.BadRequest:
+                    default:
+                        ToastNotifier.Error("Xóa sản phẩm thất bại.");
+                        break;
+                    case System.Net.HttpStatusCode.InternalServerError:
+                        ToastNotifier.Error("Xóa sản phẩm thất bại: đã có lỗi máy chủ xảy ra.");
+                        break;
+                    case System.Net.HttpStatusCode.Unauthorized:
+                    case System.Net.HttpStatusCode.Forbidden:
+                        ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                        break;
+                    case System.Net.HttpStatusCode.NotFound:
+                        ToastNotifier.Warning("Không tìm thấy gì.");
+                        break;
+                    case System.Net.HttpStatusCode.Conflict:
+                        ToastNotifier.Error("Xóa sản phẩm thất bại: sản phẩm đã được mua trước kia rồi.");
+                        break;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
+}

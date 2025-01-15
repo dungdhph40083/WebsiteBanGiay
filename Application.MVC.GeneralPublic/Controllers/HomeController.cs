@@ -35,7 +35,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                 return RedirectToAction("index", "Login");
             }
             var user = _context.Users.FirstOrDefault(u => u.UserID == parsedUserId);
-            if (user != null && user.IsBanned)
+            if (user != null && user.IsBanned != false)
             {
                 return View("Banned");
             }

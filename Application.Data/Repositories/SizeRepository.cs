@@ -127,6 +127,13 @@ namespace Application.Data.Repositories
            .Distinct().ToList();
         }
 
+        public async Task<bool> SizeNameAvailability(string? SizeName)
+        {
+            var Target = await Context.Sales.FirstOrDefaultAsync(LastClick => LastClick.Name == SizeName);
+            if (Target == null) return true;
+            else return false;
+        }
+
         public async Task<Size?> UpdateSize(Guid TargetID, SizeDTO UpdatedSize)
         {
             var Target = await GetSizeByID(TargetID);

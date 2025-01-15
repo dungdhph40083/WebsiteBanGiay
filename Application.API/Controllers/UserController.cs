@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 
 namespace Application.API.Controllers
 {
@@ -22,13 +23,15 @@ namespace Application.API.Controllers
         private readonly IUser UserRepo;
         private readonly IImageRepository ImageRepo;
         private readonly IEmailService _emailService;
-        public UserController(IUser UserRepo, IImageRepository ImageRepo, GiayDBContext giayDBContext, IEmailService emailService, IMemoryCache memoryCache)
+        private readonly IMapper Mapper;
+        public UserController(IUser UserRepo, IImageRepository ImageRepo, GiayDBContext giayDBContext, IEmailService emailService, IMemoryCache memoryCache, IMapper Mapper)
         {
             this.UserRepo = UserRepo;
             this.ImageRepo = ImageRepo;
             this._giayDBContext = giayDBContext;
             this._emailService = emailService;
             this._memoryCache = memoryCache;
+            this.Mapper = Mapper;
         }
 
         // lấy hết
@@ -68,6 +71,9 @@ namespace Application.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<User>> Post([FromForm] UserDTO NewUser, IFormFile? ProfilePic)
         {
+            var Sfdsjhhsdl = await UserRepo.UsernameChecker(NewUser.Username);
+            if (!Sfdsjhhsdl) return Conflict();
+
             try
             {
                 if (ProfilePic != null)
@@ -122,7 +128,7 @@ namespace Application.API.Controllers
             try
             {
                 NewUser.RoleID = Guid.Parse(DefaultValues.UserRoleGUID);
-
+                NewUser.IsBanned = DefaultValues.IsBanned;
                 var Response = await UserRepo.CreateUser(NewUser);
                 return CreatedAtAction(nameof(Get), new { ID = Response.UserID }, Response);
             }
@@ -226,8 +232,18 @@ namespace Application.API.Controllers
 
 
         [HttpPut("{ID}")]
-        public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserDTO UpdatedUser, IFormFile? NewProfilePic)
+        public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserEditDTO UpdatedUserDTO, IFormFile? NewProfilePic)
         {
+            var OldUser = await UserRepo.GetUserByID(ID);
+            if (!string.Equals(OldUser?.Username, UpdatedUserDTO.Username, StringComparison.OrdinalIgnoreCase))
+            {
+                var Sfdsjhhsdl = await UserRepo.UsernameChecker(UpdatedUserDTO.Username);
+                if (!Sfdsjhhsdl) return Conflict();
+            }
+
+            var UpdatedUser = new UserDTO();
+            UpdatedUser = Mapper.Map(UpdatedUserDTO, UpdatedUser);
+
             if (NewProfilePic != null)
             {
                 switch (ImageUploaderValidator.ValidateImageSizeAndHeader(NewProfilePic, 4_194_304))
@@ -256,26 +272,22 @@ namespace Application.API.Controllers
             if (Result) return Ok("SUCCESS");
             else return BadRequest("FAILURE");
         }
+
+        // For debugging. Don't use.
         [HttpDelete("{ID}")]
         public async Task<ActionResult> DeleteUser(Guid ID)
         {
-            await UserRepo.DeleteUser(ID);
-            return NoContent();
+            try
+            {
+                await UserRepo.DeleteUser(ID);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                var Target = await UserRepo.GetUserByID(ID);
+                if (Target != null) return Conflict();
+                else return NoContent();
+            }
         }
-        public class ResetPasswordDto
-        {
-            [Required]
-            public string Token { get; set; }
-
-            [Required]
-            [MinLength(6, ErrorMessage = "Mật khẩu ít nhất 6 ký tự.")]
-            public string NewPassword { get; set; }
-
-            [Required]
-            [Compare("NewPassword", ErrorMessage = "Mật khẩu không khớp.")]
-            public string ConfirmPassword { get; set; }
-        }
-
-
     }
 }

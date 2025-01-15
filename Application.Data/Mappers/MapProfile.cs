@@ -86,6 +86,9 @@ namespace Application.Data.Mappers
             CreateMap<User, UserDTO>();
             CreateMap<UserDTO, User>();
 
+            CreateMap<UserDTO, UserEditDTO>();
+            CreateMap<UserEditDTO, UserDTO>();
+
             CreateMap<Voucher, VoucherDTO>();
             CreateMap<VoucherDTO, Voucher>();
         }

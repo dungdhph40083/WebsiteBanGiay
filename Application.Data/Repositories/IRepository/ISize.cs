@@ -12,6 +12,7 @@ public interface ISize
     Guid getProductDetail(Guid ProductId, Guid color, Guid size);
     Guid getProductDetail(Guid ProductId);
     Task<Size?> GetSizeByID(Guid TargetID);
+    Task<bool> SizeNameAvailability(string? SizeName);
     Task<Size> AddSize(SizeDTO NewSize);
     Task<Size?> UpdateSize(Guid TargetID, SizeDTO UpdatedSize);
     Task DeleteSize(Guid TargetID);

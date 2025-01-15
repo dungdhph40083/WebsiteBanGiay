@@ -90,6 +90,7 @@ namespace Application.Data.Repositories
             var Target = await GetUserByID(TargetID);
             if (Target != null)
             {
+                Target.IsBanned = !Target.IsBanned;
                 Context.Entry(Target).State = EntityState.Modified;
 
                 if (Target.Status == 1) Target.Status = 0;
@@ -115,6 +116,13 @@ namespace Application.Data.Repositories
                 return AccountFind.UserID;
             }
             else return default;
+        }
+
+        public async Task<bool> UsernameChecker(string Username)
+        {
+            var Target = await Context.Users.FirstOrDefaultAsync(Foda => Foda.Username == Username);
+            if (Target == null) return true;
+            else return false;
         }
     }
 }

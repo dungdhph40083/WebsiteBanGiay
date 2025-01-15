@@ -43,6 +43,9 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Voucher>> Post([FromBody] VoucherDTO NewVoucher)
         {
+            var CheckVal = await VoucherRepo.GetVoucherByVoucherCode(NewVoucher.VoucherCode);
+            if (CheckVal != null) return Conflict();
+
             var Response = await VoucherRepo.CreateVoucher(NewVoucher);
             return CreatedAtAction(nameof(Get), new { ID = Response.VoucherID }, Response);
         }
@@ -61,6 +64,13 @@ namespace Application.API.Controllers
         [HttpPut("{ID}")]
         public async Task<ActionResult<Voucher?>> Put(Guid ID, [FromBody] VoucherDTO UpdatedVoucher)
         {
+            var OldVoucher = await VoucherRepo.GetVoucherByID(ID);
+            if (!string.Equals(UpdatedVoucher.VoucherCode, OldVoucher?.VoucherCode, StringComparison.OrdinalIgnoreCase))
+            {
+                var CheckVal = await VoucherRepo.GetVoucherByVoucherCode(UpdatedVoucher.VoucherCode);
+                if (CheckVal != null) return Conflict();
+            }
+
             var Response = await VoucherRepo.UpdateVoucher(ID, UpdatedVoucher);
             if (Response == null) return NotFound();
             else return Response;
@@ -81,8 +91,17 @@ namespace Application.API.Controllers
         [HttpDelete("{ID}")]
         public async Task<ActionResult> Delete(Guid ID) 
         {
-            await VoucherRepo.DeleteVoucher(ID);
-            return NoContent();
+            try
+            {
+                await VoucherRepo.DeleteVoucher(ID);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                var Target = await VoucherRepo.GetVoucherByID(ID);
+                if (Target != null) return Conflict();
+                else return NoContent();
+            }
         }
     }
 }

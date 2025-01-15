@@ -12,10 +12,13 @@ namespace Application.API.Service
             message.Subject = subject;
             message.Body = body;
             message.IsBodyHtml = true;
-            Console.WriteLine("To: " + string.Join(", ", message.To));
-            Console.WriteLine("Subject: " + message.Subject);
-            Console.WriteLine("Body: " + message.Body);
-            Console.WriteLine("Is Body Html: " + message.IsBodyHtml);
+
+            using (var client = new SmtpClient("smtp.your-email-provider.com"))
+            {
+                client.Credentials = new NetworkCredential("your-email@example.com", "your-email-password");
+                client.Port = 587;
+                await client.SendMailAsync(message);
+            }
         }
     }
 }

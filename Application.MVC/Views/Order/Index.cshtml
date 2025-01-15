@@ -203,7 +203,7 @@
                             <button class="btn btn-primary dropdown-toggle custom-dropdown-btn" type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <div class="dropdown-menu dropdown-menu-right rounded-3 border-1 text-center m-2">
+                            <div class="dropdown-menu dropdown-menu-right rounded-3 border-1 text-center m-2" style="width:200px">
                                 <a asp-action="Details" asp-route-ID="@Entry.OrderID" class="btn btn-secondary">Chi tiết đơn</a>
                                 <hr />
                         @switch ((OrderStatus)Entry.Status)
@@ -354,10 +354,15 @@
                                 }
                             case OrderStatus.Received:
                             case OrderStatus.ReceivedAgain:
+                                {
+                                    <h5>Đơn hàng đã hoàn thành.</h5>
+                                    <p>Đơn hàng đã hoàn thành và không còn khả dụng nữa.</p>
+                                    break;
+                                }
                             case OrderStatus.ReceivedRefundFail:
                                 {
-                                        <h5>Đơn hàng đã hoàn thành.</h5>
-                                        <p>Đơn hàng đã hoàn thành và không còn khả dụng nữa.</p>
+                                    <h5>Đơn hàng hoàn trả thất bại.</h5>
+                                    <p>Đơn hàng hoàn trả thất bại và không còn khả dụng nữa.</p>
                                     break;
                                 }
                             case OrderStatus.DeliveryFailure:

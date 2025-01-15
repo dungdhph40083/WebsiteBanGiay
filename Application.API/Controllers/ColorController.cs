@@ -1,5 +1,6 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Models;
+using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -37,6 +38,9 @@ namespace Application.API.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateColor(ColorDTO colorDTO)
         {
+            var Check = await _colorRepository.ColorNameAvailibility(colorDTO.ColorName);
+            if (Check == false) return Conflict();
+
             var createdColor = await _colorRepository.CreateColor(colorDTO);
             return CreatedAtAction(nameof(GetColorById), new { id = createdColor.ColorID }, createdColor);
         }
@@ -44,6 +48,13 @@ namespace Application.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateColor(Guid id, ColorDTO colorDTO)
         {
+            var OldColor = await _colorRepository.GetColorById(id);
+            if (!string.Equals(OldColor?.ColorName, colorDTO.ColorName, StringComparison.OrdinalIgnoreCase))
+            {
+                var Check = await _colorRepository.ColorNameAvailibility(colorDTO.ColorName);
+                if (Check == false) return Conflict();
+            }
+
             await _colorRepository.UpdateColor(id, colorDTO);
             return Ok();
         }
@@ -51,8 +62,17 @@ namespace Application.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteColor(Guid id)
         {
-            await _colorRepository.DeleteColor(id);
-            return NoContent();
+            try
+            {
+                await _colorRepository.DeleteColor(id);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                var color = await _colorRepository.GetColorById(id);
+                if (color == null) return NoContent();
+                else return Conflict();
+            }
         }
     }
 }

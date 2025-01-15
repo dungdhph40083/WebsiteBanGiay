@@ -45,7 +45,7 @@ namespace Application.API.Controllers
             var customerSupportRepository = await CustomerSupportMessageRepo.GetMessageByID(ID);
             if (customerSupportRepository == null)
             {
-                return NotFound("Product detail not found");
+                return NotFound("Chat messages not found");
             }
 
             // Đảo trạng thái của productDetail

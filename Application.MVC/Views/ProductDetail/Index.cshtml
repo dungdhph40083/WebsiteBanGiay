@@ -304,6 +304,12 @@ else
 
 <!-- JavaScript for handling search functionality -->
 <script>
+    if (false)
+    {
+        console.log("You have somehow did this. You must be bending reality.");
+    }
+    else
+    {
     document.getElementById('searchBtn').addEventListener('click', function () {
         const searchTerm = document.getElementById('searchInput').value;
         const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=@ViewBag.CurrentStatus&SearchQuery=${searchTerm}`;
@@ -315,18 +321,14 @@ else
             document.getElementById("searchBtn").click();
         }
     });
-</script>
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-<script>
-    document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
-        radio.addEventListener('change', function () {
-            const selectedStatus = this.value;
-            const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=${selectedStatus}`;
-            window.location.href = url;
-        });
-    });
+         document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
+         radio.addEventListener('change', function () {
+             const selectedStatus = this.value;
+             const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=${selectedStatus}`;
+             window.location.href = url;
+         });
+     });
 
     async function toggleStatus(productDetailId) {
         const url = `/ProductDetail/ToggleStatus/${productDetailId}`;
@@ -347,10 +349,9 @@ else
             swal({ title: "Lỗi!", text: "Đã xảy ra lỗi khi đổi trạng thái.", icon: "error" });
         }
     }
-</script>
-<script>
+
     document.querySelectorAll('.delete_trigger').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', async function () {
             const productDetailId = this.getAttribute('data-id');
             const controller = this.getAttribute('data-controller');
             const action = this.getAttribute('data-action');
@@ -363,52 +364,54 @@ else
                 icon: "warning",
                 buttons: ["Hủy", "Xóa"],
                 dangerMode: true,
-            }).then((willDelete) => {
+            }).then(async (willDelete) => {
                 if (willDelete) {
-                    // Gửi yêu cầu xóa
-                    fetch(deleteUrl, {
-                        method: 'DELETE'
-                    })
-                        .then(response => {
-                            if (response.ok) {
-                                // Thông báo thành công
-                                swal({
-                                    title: "Đã xóa!",
-                                    text: "Chi tiết sản phẩm đã được xóa thành công.",
-                                    icon: "success",
-                                    timer: 2000,
-                                    buttons: false,
-                                }).then(() => {
-                                    location.reload(); // Tải lại trang sau khi xóa
-                                });
-                            } else if (response.status === 409) { // Lỗi ràng buộc dữ liệu
-                                swal({
-                                    title: "Không thể xóa!",
-                                    text: "Sản phẩm này có liên quan đến các dữ liệu khác trong hệ thống.",
-                                    icon: "error",
-                                });
-                            } else {
-                                // Xử lý lỗi khác (như 400, 500)
-                                swal({
-                                    title: "Lỗi!",
-                                    text: "Không thể xóa. Vui lòng thử lại.",
-                                    icon: "error",
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error:", error);
+                    try {
+                        const response = await fetch(deleteUrl, {
+                            method: 'DELETE'
+                        });
 
-                            // Thông báo lỗi hệ thống
+                        if (response.ok) {
+                            // Thông báo thành công
+                            swal({
+                                title: "Đã xóa!",
+                                text: "Chi tiết sản phẩm đã được xóa thành công.",
+                                icon: "success",
+                                timer: 100000,
+                                buttons: false,
+                            }).then(() => {
+                                location.reload(); // Tải lại trang sau khi xóa
+                            });
+                        } else {
+                            // Xử lý lỗi khác (như 400, 500)
                             swal({
                                 title: "Lỗi!",
-                                text: "Đã xảy ra lỗi trong quá trình xóa.",
+                                text: "Không thể xóa. Vui lòng thử lại.",
                                 icon: "error",
                             });
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+
+                        // Thông báo lỗi hệ thống
+                         if (response.status === 409) { // Lỗi ràng buộc dữ liệu
+                            swal({
+                                title: "Không thể xóa!",
+                                text: "Sản phẩm này có liên quan đến các dữ liệu khác trong hệ thống.<br>Tất cả các sản phẩm đó đã đặt về 0.",
+                                icon: "error",
+                            });
+                        } else
+                        {
+                        swal({
+                            title: "Lỗi!",
+                            text: "Đã xảy ra lỗi trong quá trình xóa.",
+                            icon: "error",
                         });
+                        }
+                    }
                 }
             });
         });
     });
-
+    }
 </script>

@@ -10,7 +10,7 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<ActionResult> Index(int Page = 1, string PriceRange = "All", string SortBy = "Default", Guid? CategoryQuery = null, Guid? ColorQuery = null, Guid? SizeQuery = null)
         {
             long MinPrice = 0, MaxPrice = long.MaxValue;
-            int PageSize = 9, TotalProducts = 0, TotalPages = (int)Math.Ceiling((double)(TotalProducts / PageSize));
+            int PageSize = 9, TotalProducts = 0, TotalPages = 0;
 
             // Lấy DS sản phẩm & chi tiết của chúng
             var Products = await client.GetFromJsonAsync<List<Product>>("https://localhost:7187/api/Product");
@@ -88,10 +88,9 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                 // Lọc giá (REAL)
                 var FilteredDetails = Details
-                    .Where(Flt => Products.Any
-                          (Cri => Cri.ProductID == Flt.ProductID &&
-                                  Cri.Price.GetValueOrDefault() >= MinPrice &&
-                                  Cri.Price.GetValueOrDefault() <= MaxPrice)).ToList() ?? [];
+                    .Where(Cri => Cri.ProductID == Cri.ProductID &&
+                                  Cri.Product?.Price.GetValueOrDefault() >= MinPrice &&
+                                  Cri.Product?.Price.GetValueOrDefault() <= MaxPrice).ToList() ?? [];
 
                 // Lọc sản phẩm theo danh mục
                 if (CategoryQuery != null)
@@ -127,6 +126,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                 // Xong chưa?
                 TotalProducts = FilteredDetails!.Count;
                 var CurrentPageProducts = FilteredDetails!.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
+                TotalPages = (int)Math.Ceiling((double)TotalProducts / (double)PageSize);
 
                 // Truyền các thứ vào Viu
                 ViewBag.CurrentPage = Page;

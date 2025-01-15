@@ -1,6 +1,7 @@
 ﻿using Application.Data.DTOs;
 using Application.Data.Enums;
 using Application.Data.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,12 +20,13 @@ namespace Application.MVC.Controllers
         // FAKE DATA - Replace this with UserID from session
         Guid SessionUserID = Guid.Parse("bbd122d1-8961-4363-820e-3ad1a87064e4");
 
-        // GET: UserController
-        private readonly HttpClient _httpClient;
-        public UserController()
+        private readonly INotyfService ToastNotifier;
+        public UserController(INotyfService ToastNotifier)
         {
-            _httpClient = new HttpClient();
+            this.ToastNotifier = ToastNotifier;
         }
+
+        // GET: UserController
         [HttpGet]
         public async Task<ActionResult> Index()
         {
@@ -100,7 +102,37 @@ namespace Application.MVC.Controllers
                 }
 
                 var Response = await Client.PostAsync(URL, Contents);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Tạo mới người dùng thành công!");
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Tạo mới người dùng thất bại.");
+                            break;
+                        case HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Tạo mới người dùng thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case HttpStatusCode.Unauthorized:
+                        case HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                        case HttpStatusCode.Conflict:
+                            ToastNotifier.Error("Tạo mới người dùng thất bại: trùng tên người dùng.");
+                            break;
+                    }
+                    return View(Input);
+                }
                 return RedirectToAction(nameof(Index));
+
             }
             catch (Exception Msg)
             {
@@ -121,7 +153,7 @@ namespace Application.MVC.Controllers
 
             await FetchInfoPlsPlsPlsPls();
             string URL = $@"https://localhost:7187/api/User/{ID}";
-            var Response = await Client.GetFromJsonAsync<UserDTO>(URL);
+            var Response = await Client.GetFromJsonAsync<UserEditDTO>(URL);
 
             return View(Response);
         }
@@ -129,7 +161,7 @@ namespace Application.MVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         // POST: UserController/Edit/5
-        public async Task<ActionResult> Edit(Guid ID, UserDTO NewInput, IFormFile? NewProfilePic)
+        public async Task<ActionResult> Edit(Guid ID, UserEditDTO NewInput, IFormFile? NewProfilePic)
         {
             try
             {
@@ -155,6 +187,35 @@ namespace Application.MVC.Controllers
                 }
 
                 var Response = await Client.PutAsync(URL, Contents);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Sửa người dùng thành công!");
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Sửa người dùng thất bại.");
+                            break;
+                        case HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Sửa người dùng thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case HttpStatusCode.Unauthorized:
+                        case HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                        case HttpStatusCode.Conflict:
+                            ToastNotifier.Error("Sửa người dùng thất bại: trùng tên người dùng.");
+                            break;
+                    }
+                    return View(NewInput);
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -182,6 +243,31 @@ namespace Application.MVC.Controllers
                     }
                 };
                 var Response = await Client.SendAsync(Content);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Đổi trạng thái thành công!");
+                }
+                else
+                {
+                    switch (Response.StatusCode)
+                    {
+                        case HttpStatusCode.BadRequest:
+                        default:
+                            ToastNotifier.Error("Đổi trạng thái thất bại.");
+                            break;
+                        case HttpStatusCode.InternalServerError:
+                            ToastNotifier.Error("Đổi trạng thái thất bại: đã có lỗi máy chủ xảy ra.");
+                            break;
+                        case HttpStatusCode.Unauthorized:
+                        case HttpStatusCode.Forbidden:
+                            ToastNotifier.Error("Bạn không có đủ quyền hạn cần thiết.");
+                            break;
+                        case HttpStatusCode.NotFound:
+                            ToastNotifier.Warning("Không tìm thấy gì.");
+                            break;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
@@ -202,6 +288,15 @@ namespace Application.MVC.Controllers
             {
                 string URL = $@"https://localhost:7187/api/User/{ID}";
                 var Response = await Client.DeleteAsync(URL);
+
+                if (Response.IsSuccessStatusCode)
+                {
+                    ToastNotifier.Success("Xóa người dùng thành công!");
+                }
+                else
+                {
+                    ToastNotifier.Error("Xóa người dùng thất bại.");
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception Msg)
