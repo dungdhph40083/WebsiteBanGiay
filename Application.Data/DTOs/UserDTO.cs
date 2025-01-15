@@ -32,8 +32,9 @@ namespace Application.Data.DTOs
         public string? Address { get; set; }
         [Required(ErrorMessage = "Số điện thoại là bắt buộc.")]
         [RegularExpression(@"^(03|05|07|08|09)\d{8}$", ErrorMessage = "Số điện thoại không hợp lệ.")]
-
         public string? PhoneNumber { get; set; }
+        public bool? IsBanned { get; set; }
+
         //[Required(ErrorMessage = "Không khớp.")]
         //public byte? Status { get; set; }
 

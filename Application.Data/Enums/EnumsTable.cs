@@ -91,6 +91,7 @@
         public const string CoDGUID = "4c205562-9c3f-418b-8d89-9fb7176dd10e";
         public const string VNPayGUID = "ab2ed960-8765-47e4-8053-7143ecbe824a";
         public const string MoMoGUID = "ab2ed960-8765-47e4-8053-7143ddddd24a";
+        public const bool IsBanned = false;
     }
 
     public class Metadata

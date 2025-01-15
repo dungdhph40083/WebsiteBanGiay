@@ -20,16 +20,22 @@ namespace Application.MVC.GeneralPublic.Controllers
 {
     public class ProfileController : Controller
     {
+        private readonly GiayDBContext _context;
 
         HttpClient Client = new HttpClient();
-        public ProfileController()
+        public ProfileController(GiayDBContext context)
         {
-   
+            _context = context;
         }
         [HttpGet]
         public async Task<ActionResult> Index()
         {
             Guid ID = GetCurrentUserId();
+            var user = _context.Users.FirstOrDefault(u => u.UserID == ID);
+            if (user != null && user.IsBanned != false)
+            {
+                return View("Banned");
+            }
 
             string URL = $@"https://localhost:7187/api/User/{ID}";
             var Response = await Client.GetFromJsonAsync<User>(URL);

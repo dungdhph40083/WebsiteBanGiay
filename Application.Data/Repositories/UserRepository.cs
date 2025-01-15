@@ -91,6 +91,7 @@ namespace Application.Data.Repositories
             var Target = await GetUserByID(TargetID);
             if (Target != null)
             {
+                Target.IsBanned = !Target.IsBanned;
                 Context.Entry(Target).State = EntityState.Modified;
 
                 if (Target.Status == 1) Target.Status = 0;

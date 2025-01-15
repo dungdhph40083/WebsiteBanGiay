@@ -22,8 +22,8 @@ namespace Application.API.Controllers
         private readonly GiayDBContext _giayDBContext;
         private readonly IUser UserRepo;
         private readonly IImageRepository ImageRepo;
-        private readonly IMapper Mapper;
         private readonly IEmailService _emailService;
+        private readonly IMapper Mapper;
         public UserController(IUser UserRepo, IImageRepository ImageRepo, GiayDBContext giayDBContext, IEmailService emailService, IMemoryCache memoryCache, IMapper Mapper)
         {
             this.UserRepo = UserRepo;
@@ -132,7 +132,7 @@ namespace Application.API.Controllers
             try
             {
                 NewUser.RoleID = Guid.Parse(DefaultValues.UserRoleGUID);
-
+                NewUser.IsBanned = DefaultValues.IsBanned;
                 var Response = await UserRepo.CreateUser(NewUser);
                 return CreatedAtAction(nameof(Get), new { ID = Response.UserID }, Response);
             }
@@ -302,20 +302,6 @@ namespace Application.API.Controllers
                 if (Target != null) return Conflict();
                 else return NoContent();
             }
-        }
-
-        public class ResetPasswordDto
-        {
-            [Required]
-            public string? Token { get; set; }
-
-            [Required]
-            [MinLength(6, ErrorMessage = "Mật khẩu ít nhất 6 ký tự.")]
-            public string? NewPassword { get; set; }
-
-            [Required]
-            [Compare("NewPassword", ErrorMessage = "Mật khẩu không khớp.")]
-            public string? ConfirmPassword { get; set; }
         }
     }
 }
