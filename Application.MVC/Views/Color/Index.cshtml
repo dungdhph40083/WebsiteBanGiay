@@ -79,7 +79,17 @@
         {
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.ColorName)</td>
-                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                <td>
+                    @if (item.Status == 1)
+                    {
+                        <span class="badge bg-success text-white">Sử dụng</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger text-white">Không sử dụng</span>
+                    }
+                </td>
+
                 <td>
                     <!-- Dropdown Menu -->
                     <div class="dropdown">

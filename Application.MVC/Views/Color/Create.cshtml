@@ -23,8 +23,8 @@
         <div class="col-md-6">
             <label asp-for="Status" class="form-label fw-semibold text-muted">Trạng thái</label>
             <select asp-for="Status" class="form-control shadow-sm" required>
-                <option value="1">Kích hoạt</option>
-                <option value="0">Không kích hoạt</option>
+                <option value="1">Sử dụng</option>
+                <option value="0">Không sử dụng</option>
             </select>
             <span asp-validation-for="Status" class="text-danger"></span>
         </div>
@@ -40,9 +40,7 @@
     </div>
 </form>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+
 
 <style>
     /* Áp dụng hiệu ứng khi form load */
