@@ -70,7 +70,7 @@ namespace Application.Data.ModelContexts
                 .Property(Idx => Idx.Available)
                 .HasDefaultValue(true);
 			ModelBuilder.Entity<User>()
-				.Property(Idx => Idx.Ban)
+				.Property(Idx => Idx.IsBanned)
 				.HasDefaultValue(false);
         }
 
