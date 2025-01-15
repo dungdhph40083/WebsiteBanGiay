@@ -2,15 +2,14 @@
 using Application.API.Service;
 using Application.Data.DTOs;
 using Application.Data.Enums;
+using Application.Data.ModelContexts;
 using Application.Data.Models;
-using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 
 namespace Application.API.Controllers
@@ -19,13 +18,19 @@ namespace Application.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IMemoryCache _memoryCache;
+        private readonly GiayDBContext _giayDBContext;
         private readonly IUser UserRepo;
         private readonly IImageRepository ImageRepo;
         private readonly IMapper Mapper;
-        public UserController(IUser UserRepo, IImageRepository ImageRepo, IMapper Mapper)
+        private readonly IEmailService _emailService;
+        public UserController(IUser UserRepo, IImageRepository ImageRepo, GiayDBContext giayDBContext, IEmailService emailService, IMemoryCache memoryCache, IMapper Mapper)
         {
             this.UserRepo = UserRepo;
             this.ImageRepo = ImageRepo;
+            this._giayDBContext = giayDBContext;
+            this._emailService = emailService;
+            this._memoryCache = memoryCache;
             this.Mapper = Mapper;
         }
 
@@ -121,8 +126,115 @@ namespace Application.API.Controllers
                 else throw;
             }
         }
+        [HttpPost("Register")]
+        public async Task<ActionResult<User>> Register([FromBody] UserDTO NewUser)
+        {
+            try
+            {
+                NewUser.RoleID = Guid.Parse(DefaultValues.UserRoleGUID);
 
-        // cập nhật người dùng (1 cái)
+                var Response = await UserRepo.CreateUser(NewUser);
+                return CreatedAtAction(nameof(Get), new { ID = Response.UserID }, Response);
+            }
+            catch (Exception Exc)
+            {
+                if (Exc.HResult == -2147467261)
+                {
+                    var Errors = new ErrorsClass()
+                    {
+                        Password =
+                        [
+                            "Mật khẩu không được để trống."
+                        ]
+                    };
+
+                    var ErrorMsg = new ResponseBodyMimic
+                    {
+                        Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                        Title = "Ome or more validation errors occurred.",
+                        Status = 400,
+                        Errors = Errors,
+                        TraceId = "THERE_IS_NO_TRACE_ID_ONLY_A_CHANGE_OF_WORLDS"
+                    };
+
+                    return StatusCode(400, ErrorMsg);
+                }
+                else throw;
+            }
+        }
+
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var user = await _giayDBContext.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null)
+            {
+                return NotFound(new { message = "Email không tồn tại." });
+            }
+
+            var token = Guid.NewGuid().ToString();
+            _memoryCache.Set(token, user.Email, TimeSpan.FromHours(1));
+            var resetLink = $"https://localhost:7282/Login/ResetPassword?token={token}";
+            await _emailService.SendEmailAsync(user.Email, "Reset Password",
+                $"Click vào đây để đặt lại mật khẩu: <a href='{resetLink}'>link</a>");
+
+            return Ok(new { message = "Email đặt lại mật khẩu đã được gửi." });
+        }
+
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var email = _memoryCache.Get<string>(model.Token);
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest(new { message = "Token không hợp lệ hoặc đã hết hạn." });
+            }
+
+            var user = await _giayDBContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                return NotFound(new { message = "Người dùng không tồn tại." });
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            user.Password = model.NewPassword;
+            await _giayDBContext.SaveChangesAsync();
+
+            _memoryCache.Remove(model.Token);
+
+            return Ok(new { message = "Mật khẩu đã được đặt lại thành công." });
+        }
+        [HttpPost("ban/{userId}")]
+        public async Task<IActionResult> BanAccount(Guid userId)
+        {
+            var user = await _giayDBContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            user.IsBanned = true;
+            await _giayDBContext.SaveChangesAsync();
+            return Ok("Account has been banned.");
+        }
+
+        [HttpPost("unban/{userId}")]
+        public async Task<IActionResult> UnbanAccount(Guid userId)
+        {
+            var user = await _giayDBContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            user.IsBanned = false;
+            await _giayDBContext.SaveChangesAsync();
+            return Ok("Account has been unbanned.");
+        }
+
+
         [HttpPut("{ID}")]
         public async Task<ActionResult<User?>> Put(Guid ID, [FromForm] UserEditDTO UpdatedUserDTO, IFormFile? NewProfilePic)
         {
@@ -190,6 +302,20 @@ namespace Application.API.Controllers
                 if (Target != null) return Conflict();
                 else return NoContent();
             }
+        }
+
+        public class ResetPasswordDto
+        {
+            [Required]
+            public string? Token { get; set; }
+
+            [Required]
+            [MinLength(6, ErrorMessage = "Mật khẩu ít nhất 6 ký tự.")]
+            public string? NewPassword { get; set; }
+
+            [Required]
+            [Compare("NewPassword", ErrorMessage = "Mật khẩu không khớp.")]
+            public string? ConfirmPassword { get; set; }
         }
     }
 }

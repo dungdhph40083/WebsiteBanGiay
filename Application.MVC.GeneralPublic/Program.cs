@@ -24,7 +24,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 // Đăng ký DbContext và các service khác
 builder.Services.AddDbContext<GiayDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay")).EnableSensitiveDataLogging());
 
 // Đăng ký các service khác, bao gồm cả repository
 builder.Services.AddScoped<ICustomerSupportMessage, CustomerSupportMessageRepository>();
@@ -43,6 +43,7 @@ builder.Services.AddNotyf(config =>
 
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddMemoryCache();
 builder.Services.AddMvc().AddMvcOptions(o => o.AllowEmptyInputInBodyModelBinding = true);
 
 // Các dịch vụ khác

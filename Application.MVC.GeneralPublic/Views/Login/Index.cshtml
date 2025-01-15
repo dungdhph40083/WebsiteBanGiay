@@ -18,7 +18,7 @@
                         {
                             <div class="col-md-12">
                                 <div class="alert alert-success" role="alert">
-                                    Tạo tài khoản thành công, hãy đăng nhập!
+                                    @TempData["SuccessBanner"]
                                 </div>
                             </div>
                         }
@@ -43,6 +43,9 @@
                             <div class="col-md-12">
                                 <button type="submit" class="btn">Đăng nhập</button>
                                 <a asp-action="Register" class="btn">Đăng ký</a>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <a asp-action="ForgotPassword" class="forgot-password-link">Quên mật khẩu?</a>
                             </div>
                         </form>
                     </div>

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http;
+using Application.Data.Repositories.IRepository;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -22,12 +23,21 @@ namespace Application.MVC.GeneralPublic.Controllers
             _context = giayDBContext;
         }
         public async Task<ActionResult> Index()
-        {          
+        {
             var userId = HttpContext.Session.GetString("UserID");
-            if (userId != null)
+            if (string.IsNullOrEmpty(userId))
             {
-                var user = _context.Users.FirstOrDefault(u => u.UserID == Guid.Parse(userId));
-                return View(user);
+                return RedirectToAction("index", "Login");
+            }
+            Guid parsedUserId;
+            if (!Guid.TryParse(userId, out parsedUserId))
+            {
+                return RedirectToAction("index", "Login");
+            }
+            var user = _context.Users.FirstOrDefault(u => u.UserID == parsedUserId);
+            if (user != null && user.IsBanned)
+            {
+                return View("Banned");
             }
             await FetchInfo();
             return View(new User());

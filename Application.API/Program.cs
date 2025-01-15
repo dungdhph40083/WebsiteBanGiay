@@ -9,6 +9,7 @@ using Application.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Application.API.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+builder.Services.AddMemoryCache();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -63,7 +65,7 @@ builder.Services.AddScoped<ISale, SaleRepository>();
 builder.Services.AddScoped<IRole, RoleRepository>();
 builder.Services.AddScoped<IShippingMethod, ShippingMethodRepository>();
 builder.Services.AddScoped<IStatisticsRepository, StatisticsRepository>();
-
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Origin",

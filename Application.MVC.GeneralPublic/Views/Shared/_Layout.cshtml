@@ -94,10 +94,14 @@
                     <div class="btn-group">
                         @if (HttpContext.Session.GetString(nameof(Metadata.Username)) != null)
                         {
-                            <a href="#" onclick="navigateAdmin()" class="btn btn-sm btn-primary ml-2">
-                                <i class="fas fa-user-shield mr-2"></i>
-                                Admin
-                            </a>
+                            var userRole = HttpContext.Session.GetString("UserRole");
+                            if (userRole == "Admin")
+                            {
+                                <a href="#" onclick="navigateAdmin()" class="btn btn-sm btn-primary ml-2">
+                                    <i class="fas fa-user-shield mr-2"></i>
+                                    Admin
+                                </a>
+                            }
                             <a href="#" onclick="navigatePrfile()" class="btn btn-sm btn-white ml-2">
                                 <div style="position: absolute; margin-top: -10px">
                                     @if (HttpContext.Session.GetString("UserAvatar") != null)
@@ -106,13 +110,13 @@
                                         <img src="@nam"
                                              alt="User Avatar"
                                              class="rounded-circle"
-                                             style="width: 39px; height: 39px; object-fit: cover; border: 2px solid #ddd;">
+                                             style="width: 30px; height: 30px; margin-top: -6px; margin-left: 25px; object-fit: cover; border: 2px solid #ddd;">
                                     }
                                     else
                                     {
                                         <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                                             style="width: 39px; height: 39px;">
-                                            <span class="text-white">N/A</span>
+                                             style="width: 30px; height: 30px; margin-top: -6px; margin-left: 25px; border: 1px solid gray;">
+                                            <span class="text-gray">N/A</span>
                                         </div>
                                     }
                                 </div>
@@ -126,8 +130,8 @@
                                 <a href="#" onclick="navigateRegister()" class="dropdown-item">Đăng ký</a>
                             </div>
                         }
-
                     </div>
+
                 </div>
                 <div class="d-inline-flex align-items-center d-block d-lg-none">
                     <a asp-controller="UserCart" asp-action="Index" class="btn px-0 ml-2">

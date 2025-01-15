@@ -15,6 +15,10 @@ namespace Application.Data.Models
         [ForeignKey(nameof(Voucher))]
         public Guid? VoucherID { get; set; }
         public string Username { get; set; } = null!;
+        public string? PasswordHash { get; set; }
+        public string? TokenResetPassword { get; set; }
+        public DateTime? TokenResetPasswordExpireTime { get; set; }
+        public bool IsBanned {  get; set; }
         public string Password { get; set; } = null!;
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

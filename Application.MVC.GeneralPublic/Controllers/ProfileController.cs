@@ -90,7 +90,11 @@ namespace Application.MVC.GeneralPublic.Controllers
             var Response = await Client.GetFromJsonAsync<User>(requestURL);
             if (Response != null)
             {
-                HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName ?? "default-avatar.png");
+                HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName);
+            }
+            else
+            {
+                HttpContext.Session.Remove("UserAvatar");
             }
             if (response.IsSuccessStatusCode)
             {
