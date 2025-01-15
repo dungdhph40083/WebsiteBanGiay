@@ -20,7 +20,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 // Đăng ký DbContext và các service khác
 builder.Services.AddDbContext<GiayDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseBanGiay")).EnableSensitiveDataLogging());
 
 // Đăng ký các service khác, bao gồm cả repository
 builder.Services.AddScoped<ICustomerSupportMessage, CustomerSupportMessageRepository>();

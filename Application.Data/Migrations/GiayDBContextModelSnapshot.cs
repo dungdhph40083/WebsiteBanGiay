@@ -17,7 +17,7 @@ namespace Application.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -62,16 +62,55 @@ namespace Application.Data.Migrations
                     b.ToTable("Colors");
                 });
 
+            modelBuilder.Entity("Application.Data.Models.Color_Product", b =>
+                {
+                    b.Property<Guid>("Color_ProductID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Available")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<Guid?>("ColorID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Color_ProductID");
+
+                    b.HasIndex("ColorID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("Color_Products");
+                });
+
             modelBuilder.Entity("Application.Data.Models.CustomerSupportMessage", b =>
                 {
-                    b.Property<long>("MessageID")
+                    b.Property<Guid>("MessageID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("MessageID"));
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageContent")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte?>("Status")
+                        .HasColumnType("tinyint");
 
                     b.Property<Guid?>("UserID")
                         .HasColumnType("uniqueidentifier");
@@ -103,26 +142,91 @@ namespace Application.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("AcceptEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("AcceptStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("AttemptsLeft")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("DiscountValue")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("GrandTotal")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("HasChangedInfo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("HasExternalInfo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("HasPaid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderNumber")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid?>("PaymentMethodID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("RawTotal")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("RefundEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RefundStart")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ShippingAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte?>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<byte>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint")
+                        .HasDefaultValue((byte)100);
 
                     b.Property<Guid?>("UserID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("VoucherID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("OrderID");
+
+                    b.HasIndex("OrderNumber")
+                        .IsUnique()
+                        .HasFilter("[OrderNumber] IS NOT NULL");
 
                     b.HasIndex("PaymentMethodID");
 
                     b.HasIndex("UserID");
+
+                    b.HasIndex("VoucherID");
 
                     b.ToTable("Orders");
                 });
@@ -133,14 +237,11 @@ namespace Application.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ColorID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("Discount")
-                        .HasColumnType("int");
+                    b.Property<long?>("Discount")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid?>("OrderID")
                         .HasColumnType("uniqueidentifier");
@@ -148,7 +249,7 @@ namespace Application.Data.Migrations
                     b.Property<long?>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("ProductID")
+                    b.Property<Guid?>("ProductDetailID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("Quantity")
@@ -157,36 +258,19 @@ namespace Application.Data.Migrations
                     b.Property<Guid?>("SaleID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ShippingMethodID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SizeID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<long?>("SumTotalPrice")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("TotalUnitPrice")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("VoucherID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("OrderDetailID");
-
-                    b.HasIndex("ColorID");
 
                     b.HasIndex("OrderID");
 
-                    b.HasIndex("ProductID");
+                    b.HasIndex("ProductDetailID");
 
                     b.HasIndex("SaleID");
-
-                    b.HasIndex("ShippingMethodID");
-
-                    b.HasIndex("SizeID");
-
-                    b.HasIndex("VoucherID");
 
                     b.ToTable("OrderDetails");
                 });
@@ -197,10 +281,16 @@ namespace Application.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("HasPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LogDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid?>("OrderID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte?>("ShippingStatus")
+                    b.Property<byte?>("Status")
                         .HasColumnType("tinyint");
 
                     b.HasKey("TrackingID");
@@ -307,9 +397,6 @@ namespace Application.Data.Migrations
                     b.Property<Guid?>("ColorID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ImageID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Material")
                         .HasColumnType("nvarchar(max)");
 
@@ -321,9 +408,6 @@ namespace Application.Data.Migrations
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<Guid?>("SaleID")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("SizeID")
                         .HasColumnType("uniqueidentifier");
@@ -340,13 +424,9 @@ namespace Application.Data.Migrations
 
                     b.HasIndex("ColorID");
 
-                    b.HasIndex("ImageID");
-
                     b.HasIndex("ProductID")
                         .IsUnique()
                         .HasFilter("[ProductID] IS NOT NULL");
-
-                    b.HasIndex("SaleID");
 
                     b.HasIndex("SizeID");
 
@@ -427,9 +507,6 @@ namespace Application.Data.Migrations
                     b.Property<string>("Reason")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("RefundAmount")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime?>("ReturnDate")
                         .HasColumnType("datetime2");
 
@@ -472,6 +549,9 @@ namespace Application.Data.Migrations
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<long?>("DiscountPrice")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("EndingAt")
                         .HasColumnType("datetime2");
@@ -526,38 +606,23 @@ namespace Application.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ColorID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<long?>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("ProductID")
+                    b.Property<Guid?>("ProductDetailID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("QuantityCart")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("SizeID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("UserID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("VoucherID")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CartID");
 
-                    b.HasIndex("ColorID");
-
-                    b.HasIndex("ProductID");
-
-                    b.HasIndex("SizeID");
+                    b.HasIndex("ProductDetailID");
 
                     b.HasIndex("UserID");
-
-                    b.HasIndex("VoucherID");
 
                     b.ToTable("ShoppingCarts");
                 });
@@ -585,6 +650,32 @@ namespace Application.Data.Migrations
                     b.ToTable("Sizes");
                 });
 
+            modelBuilder.Entity("Application.Data.Models.Size_Product", b =>
+                {
+                    b.Property<Guid>("Size_ProductID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Available")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<Guid?>("ProductID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SizeID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Size_ProductID");
+
+                    b.HasIndex("ProductID");
+
+                    b.HasIndex("SizeID");
+
+                    b.ToTable("Size_Products");
+                });
+
             modelBuilder.Entity("Application.Data.Models.User", b =>
                 {
                     b.Property<Guid>("UserID")
@@ -606,11 +697,17 @@ namespace Application.Data.Migrations
                     b.Property<Guid?>("ImageID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -619,10 +716,16 @@ namespace Application.Data.Migrations
                     b.Property<Guid?>("RoleID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("1bfa7246-60e1-4d82-a469-cdecf867fd01"));
+                        .HasDefaultValue(new Guid("392d4ba7-020c-4515-863e-5f6582f74b53"));
 
                     b.Property<byte?>("Status")
                         .HasColumnType("tinyint");
+
+                    b.Property<string>("TokenResetPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TokenResetPasswordExpireTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -630,6 +733,9 @@ namespace Application.Data.Migrations
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid?>("VoucherID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserID");
 
@@ -643,6 +749,8 @@ namespace Application.Data.Migrations
 
                     b.HasIndex("Username")
                         .IsUnique();
+
+                    b.HasIndex("VoucherID");
 
                     b.ToTable("Users");
                 });
@@ -662,14 +770,17 @@ namespace Application.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal?>("DiscountPercent")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<long?>("DiscountPrice")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("EndingAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("ProductID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("RequiredGrandTotal")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("StartingAt")
                         .HasColumnType("datetime2");
@@ -679,6 +790,11 @@ namespace Application.Data.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("UseDiscountPrice")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<int?>("UsesLeft")
                         .HasColumnType("int");
@@ -691,9 +807,22 @@ namespace Application.Data.Migrations
 
                     b.HasIndex("CategoryID");
 
-                    b.HasIndex("ProductID");
-
                     b.ToTable("Vouchers");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Color_Product", b =>
+                {
+                    b.HasOne("Application.Data.Models.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorID");
+
+                    b.HasOne("Application.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID");
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Application.Data.Models.CustomerSupportMessage", b =>
@@ -715,54 +844,36 @@ namespace Application.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserID");
 
+                    b.HasOne("Application.Data.Models.Voucher", "Voucher")
+                        .WithMany()
+                        .HasForeignKey("VoucherID");
+
                     b.Navigation("PaymentMethod");
 
                     b.Navigation("User");
+
+                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("Application.Data.Models.OrderDetail", b =>
                 {
-                    b.HasOne("Application.Data.Models.Color", "Color")
-                        .WithMany()
-                        .HasForeignKey("ColorID");
-
                     b.HasOne("Application.Data.Models.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderID");
 
-                    b.HasOne("Application.Data.Models.Product", "Product")
+                    b.HasOne("Application.Data.Models.ProductDetail", "ProductDetail")
                         .WithMany()
-                        .HasForeignKey("ProductID");
+                        .HasForeignKey("ProductDetailID");
 
                     b.HasOne("Application.Data.Models.Sale", "Sale")
                         .WithMany()
                         .HasForeignKey("SaleID");
 
-                    b.HasOne("Application.Data.Models.ShippingMethod", "ShippingMethod")
-                        .WithMany()
-                        .HasForeignKey("ShippingMethodID");
-
-                    b.HasOne("Application.Data.Models.Size", "Size")
-                        .WithMany()
-                        .HasForeignKey("SizeID");
-
-                    b.HasOne("Application.Data.Models.Voucher", "Voucher")
-                        .WithMany()
-                        .HasForeignKey("VoucherID");
-
-                    b.Navigation("Color");
-
                     b.Navigation("Order");
 
-                    b.Navigation("Product");
+                    b.Navigation("ProductDetail");
 
                     b.Navigation("Sale");
-
-                    b.Navigation("ShippingMethod");
-
-                    b.Navigation("Size");
-
-                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("Application.Data.Models.OrderTracking", b =>
@@ -802,17 +913,9 @@ namespace Application.Data.Migrations
                         .WithMany()
                         .HasForeignKey("ColorID");
 
-                    b.HasOne("Application.Data.Models.Image", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageID");
-
                     b.HasOne("Application.Data.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductID");
-
-                    b.HasOne("Application.Data.Models.Sale", "Sale")
-                        .WithMany()
-                        .HasForeignKey("SaleID");
 
                     b.HasOne("Application.Data.Models.Size", "Size")
                         .WithMany()
@@ -822,11 +925,7 @@ namespace Application.Data.Migrations
 
                     b.Navigation("Color");
 
-                    b.Navigation("Image");
-
                     b.Navigation("Product");
-
-                    b.Navigation("Sale");
 
                     b.Navigation("Size");
                 });
@@ -881,10 +980,21 @@ namespace Application.Data.Migrations
 
             modelBuilder.Entity("Application.Data.Models.ShoppingCart", b =>
                 {
-                    b.HasOne("Application.Data.Models.Color", "Color")
+                    b.HasOne("Application.Data.Models.ProductDetail", "ProductDetail")
                         .WithMany()
-                        .HasForeignKey("ColorID");
+                        .HasForeignKey("ProductDetailID");
 
+                    b.HasOne("Application.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+
+                    b.Navigation("ProductDetail");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Application.Data.Models.Size_Product", b =>
+                {
                     b.HasOne("Application.Data.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductID");
@@ -893,23 +1003,9 @@ namespace Application.Data.Migrations
                         .WithMany()
                         .HasForeignKey("SizeID");
 
-                    b.HasOne("Application.Data.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID");
-
-                    b.HasOne("Application.Data.Models.Voucher", "Voucher")
-                        .WithMany()
-                        .HasForeignKey("VoucherID");
-
-                    b.Navigation("Color");
-
                     b.Navigation("Product");
 
                     b.Navigation("Size");
-
-                    b.Navigation("User");
-
-                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("Application.Data.Models.User", b =>
@@ -922,9 +1018,15 @@ namespace Application.Data.Migrations
                         .WithMany()
                         .HasForeignKey("RoleID");
 
+                    b.HasOne("Application.Data.Models.Voucher", "Voucher")
+                        .WithMany()
+                        .HasForeignKey("VoucherID");
+
                     b.Navigation("Image");
 
                     b.Navigation("Role");
+
+                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("Application.Data.Models.Voucher", b =>
@@ -933,13 +1035,7 @@ namespace Application.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CategoryID");
 
-                    b.HasOne("Application.Data.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductID");
-
                     b.Navigation("Category");
-
-                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }

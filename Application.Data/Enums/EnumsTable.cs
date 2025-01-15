@@ -87,7 +87,7 @@
 
     public class DefaultValues
     {
-        public const string UserRoleGUID = "392d4ba7-020c-4515-863e-5f6582f74b53";
+        public const string UserRoleGUID = "47fb2615-9212-42df-9dd1-b29b7fd7b1df";
         public const string CoDGUID = "4c205562-9c3f-418b-8d89-9fb7176dd10e";
         public const string VNPayGUID = "ab2ed960-8765-47e4-8053-7143ecbe824a";
         public const string MoMoGUID = "ab2ed960-8765-47e4-8053-7143ddddd24a";

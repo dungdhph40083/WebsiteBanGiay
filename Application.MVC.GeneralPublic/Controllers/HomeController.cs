@@ -23,10 +23,19 @@ namespace Application.MVC.GeneralPublic.Controllers
             _context = giayDBContext;
         }
         public async Task<ActionResult> Index()
-        {          
+        {
             var userId = HttpContext.Session.GetString("UserID");
-            var user = _context.Users.FirstOrDefault(u => u.UserID == Guid.Parse(userId));
-            if (userId != null && user.IsBanned)
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("index", "Login");
+            }
+            Guid parsedUserId;
+            if (!Guid.TryParse(userId, out parsedUserId))
+            {
+                return RedirectToAction("index", "Login");
+            }
+            var user = _context.Users.FirstOrDefault(u => u.UserID == parsedUserId);
+            if (user != null && user.IsBanned)
             {
                 return View("Banned");
             }

@@ -2,23 +2,14 @@
 using Application.API.Service;
 using Application.Data.DTOs;
 using Application.Data.Enums;
-using Application.Data.Models;
-using Application.Data.Repositories;
-using Application.Data.Repositories.IRepository;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Identity;
-using System.Net.Mail;
-using System.Net;
-using Microsoft.EntityFrameworkCore;
 using Application.Data.ModelContexts;
-using System.ComponentModel.DataAnnotations;
+using Application.Data.Models;
+using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using System.ComponentModel.DataAnnotations;
 
 namespace Application.API.Controllers
 {
@@ -31,12 +22,13 @@ namespace Application.API.Controllers
         private readonly IUser UserRepo;
         private readonly IImageRepository ImageRepo;
         private readonly IEmailService _emailService;
-        public UserController(IUser UserRepo, IImageRepository ImageRepo, GiayDBContext giayDBContext, IEmailService emailService)
+        public UserController(IUser UserRepo, IImageRepository ImageRepo, GiayDBContext giayDBContext, IEmailService emailService, IMemoryCache memoryCache)
         {
             this.UserRepo = UserRepo;
             this.ImageRepo = ImageRepo;
             this._giayDBContext = giayDBContext;
             this._emailService = emailService;
+            this._memoryCache = memoryCache;
         }
 
         // lấy hết
@@ -128,7 +120,9 @@ namespace Application.API.Controllers
         public async Task<ActionResult<User>> Register([FromBody] UserDTO NewUser)
         {
             try
-            {    
+            {
+                NewUser.RoleID = Guid.Parse(DefaultValues.UserRoleGUID);
+
                 var Response = await UserRepo.CreateUser(NewUser);
                 return CreatedAtAction(nameof(Get), new { ID = Response.UserID }, Response);
             }
@@ -159,7 +153,7 @@ namespace Application.API.Controllers
             }
         }
 
-        [HttpPost("api/forgot-password")]
+        [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -170,25 +164,20 @@ namespace Application.API.Controllers
                 return NotFound(new { message = "Email không tồn tại." });
             }
 
-            // Tạo token và lưu vào MemoryCache (hoặc Session)
             var token = Guid.NewGuid().ToString();
-            _memoryCache.Set(token, user.Email, TimeSpan.FromHours(1)); // Lưu token tạm thời
-
-            // Gửi email cho người dùng
-            var resetLink = $"{Request.Scheme}://{Request.Host}/reset-password?token={token}";
+            _memoryCache.Set(token, user.Email, TimeSpan.FromHours(1));
+            var resetLink = $"https://localhost:7282/Login/ResetPassword?token={token}";
             await _emailService.SendEmailAsync(user.Email, "Reset Password",
                 $"Click vào đây để đặt lại mật khẩu: <a href='{resetLink}'>link</a>");
 
             return Ok(new { message = "Email đặt lại mật khẩu đã được gửi." });
         }
 
-
-        [HttpPost("api/reset-password")]
+        [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            // Kiểm tra token trong MemoryCache (hoặc Session)
             var email = _memoryCache.Get<string>(model.Token);
             if (string.IsNullOrEmpty(email))
             {
@@ -201,11 +190,10 @@ namespace Application.API.Controllers
                 return NotFound(new { message = "Người dùng không tồn tại." });
             }
 
-            // Đặt lại mật khẩu
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            user.Password = model.NewPassword;
             await _giayDBContext.SaveChangesAsync();
 
-            // Xóa token sau khi hoàn tất
             _memoryCache.Remove(model.Token);
 
             return Ok(new { message = "Mật khẩu đã được đặt lại thành công." });
@@ -273,12 +261,6 @@ namespace Application.API.Controllers
         {
             await UserRepo.DeleteUser(ID);
             return NoContent();
-        }
-        public class ForgotPasswordDto
-        {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
         }
         public class ResetPasswordDto
         {

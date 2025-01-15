@@ -2,8 +2,10 @@
 using Application.Data.Enums;
 using Application.Data.Models;
 using Application.Data.Repositories.IRepository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http;
@@ -69,17 +71,20 @@ namespace Application.MVC.GeneralPublic.Controllers
                         var jwtToken = handler.ReadJwtToken(token);
                         var role = jwtToken.Claims.FirstOrDefault(c => c.Type.Contains("role"))?.Value;
                         Guid ID = GetCurrentUserId();
+                      
                         string URL = $@"https://localhost:7187/api/User/{ID}";
                         var Response = await Client.GetFromJsonAsync<User>(URL);
 
                         if (Response != null)
                         {
-                            HttpContext.Session.SetString("UserAvatar", Response.Image?.ImageFileName);
+                            HttpContext.Session.SetString("UserAvatar", Response.Image == null ? string.Empty : Response.Image!.ImageFileName ?? string.Empty);
+                            if(Response.Image == null) HttpContext.Session.Remove("UserAvatar");
                         }
                         else
                         {
                             HttpContext.Session.Remove("UserAvatar");
                         }
+                        HttpContext.Session.SetString("UserID", ID.ToString());
                         HttpContext.Session.SetString("UserRole", role);
                         if (role == "Admin")
                         {
@@ -110,6 +115,17 @@ namespace Application.MVC.GeneralPublic.Controllers
             }
            
             return RedirectToAction("index", "Home");
+        }
+
+        private async Task<bool> CheckIfPasswordResetRequired(string username)
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            var response = await httpClient.GetAsync($"https://localhost:7187/api/User/RequiresPasswordReset?username={username}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<bool>();
+            }
+            return false;
         }
 
         private class LoginResponse
@@ -160,10 +176,82 @@ namespace Application.MVC.GeneralPublic.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword(string Email)
+        public async Task<IActionResult> ForgotPassword([FromForm] ForgotPasswordDto forgotPasswordDto)
         {
-   
+
+            if (!ModelState.IsValid)
+            {
+                TempData["FailureBanner"] = "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.";
+                return View(forgotPasswordDto);
+            }
+
+            try
+            {
+                string apiUrl = @"https://localhost:7187/api/User/ForgotPassword";
+                var response = await Client.PostAsJsonAsync(apiUrl, forgotPasswordDto);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessBanner"] = "Email đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư.";
+                    return RedirectToAction("Index", "Login");
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    TempData["FailureBanner"] = $"Yêu cầu quên mật khẩu không thành công! {errorMessage}";
+                    return View(forgotPasswordDto);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["FailureBanner"] = $"Có lỗi xảy ra: {ex.Message}";
+                return View(forgotPasswordDto);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest("Token không hợp lệ.");
+            }
+
+            ViewBag.Token = token;
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword([FromForm] ResetPasswordDto resetPasswordDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["FailureBanner"] = "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.";
+                return View(resetPasswordDto);
+            }
+
+            try
+            {
+                string apiUrl = @"https://localhost:7187/api/User/ResetPassword";
+                var response = await Client.PostAsJsonAsync(apiUrl, resetPasswordDto);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessBanner"] = "Mật khẩu của bạn đã được đặt lại thành công!";
+                    return RedirectToAction("Index", "Login");
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    TempData["FailureBanner"] = $"Đặt lại mật khẩu không thành công! {errorMessage}";
+                    return View(resetPasswordDto);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["FailureBanner"] = $"Có lỗi xảy ra: {ex.Message}";
+                return View(resetPasswordDto);
+            }
         }
 
         private Guid GetCurrentUserId()
