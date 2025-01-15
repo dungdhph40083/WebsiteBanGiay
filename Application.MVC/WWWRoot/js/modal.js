@@ -15,6 +15,10 @@ $(".delete_trigger").on("click", (event) => {
 
     url = "/" + controller + "/" + action + "/" + id; // link structure
 
+    if (url = '/undefined/undefined/undefined') {
+        url = "#";
+    }
+
     document.getElementById('confirm_deletion').setAttribute('href', url);
 });
 

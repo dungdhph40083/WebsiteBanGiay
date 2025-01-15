@@ -23,7 +23,7 @@ namespace Application.MVC.Controllers
         {
             this.ToastNotifier = ToastNotifier;
         }
-
+        [ResponseCache(NoStore = true, Duration = 0)]
         public async Task<ActionResult> Index(int Page = 1, int PageSize = 10, string SearchQuery = "", string Status = "")
         {
             string URL_Products = $@"https://localhost:7187/api/ProductDetails";

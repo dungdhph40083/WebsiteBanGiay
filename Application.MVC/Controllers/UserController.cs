@@ -27,11 +27,13 @@ namespace Application.MVC.Controllers
         }
 
         // GET: UserController
+        [ResponseCache(NoStore = true, Duration = 0)]
         [HttpGet]
         public async Task<ActionResult> Index()
         {
             string URL = $@"https://localhost:7187/api/User";
             var Response = await Client.GetFromJsonAsync<List<User>>(URL);
+
             return View(Response);
         }
 

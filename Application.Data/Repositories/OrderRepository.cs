@@ -38,7 +38,7 @@ namespace Application.Data.Repositories
                 OrderNumber = OrderNumber, // no shit sherlock
                 OrderDate = DateTime.UtcNow,
                 Status = (int)OrderStatus.Created,
-                AttemptsLeft = 3,
+                AttemptsLeft = 2,
                 HasPaid = false
             };
 
@@ -252,7 +252,6 @@ namespace Application.Data.Repositories
                 case OrderStatus.RefundDelivered:
                 case OrderStatus.RefundReceived:
                 case OrderStatus.Refunded:
-                case OrderStatus.DeliveryIsDead:
                 case OrderStatus.Created:
                 case OrderStatus.Delivered:
                 case OrderStatus.ReceivedAgain:
@@ -260,6 +259,16 @@ namespace Application.Data.Repositories
                 case OrderStatus.ReceivedRefundFail:
                     {
                         Order.Status = StatusCode;
+
+                        _context.Update(Order);
+                        await _context.SaveChangesAsync();
+                        return Order;
+                    }
+
+                case OrderStatus.DeliveryIsDead:
+                    {
+                        Order.Status = StatusCode;
+                        Order.AttemptsLeft = 0;
 
                         _context.Update(Order);
                         await _context.SaveChangesAsync();
@@ -365,17 +374,11 @@ namespace Application.Data.Repositories
                 if (Order.Status == (byte)OrderStatus.Arrived && DateTime.UtcNow > Order.AcceptEnd)
                 {
                     await UpdateOrderStatus(Order.OrderID, (byte)OrderStatus.Arrived);
-                    Console.WriteLine($"UPDATED STATUS: Arrived to Received - Order number {Order.OrderNumber}");
                 }
                 else if ((Order.Status == (byte)OrderStatus.Received || Order.Status == (byte)OrderStatus.ReceivedAgain)
                     && DateTime.UtcNow > Order.RefundEnd)
                 {
                     await UpdateOrderStatus(Order.OrderID, (byte)OrderStatus.ReceivedCompleted);
-                    Console.WriteLine($"UPDATED STATUS: Received to ReceivedCompleted - Order number {Order.OrderNumber}");
-                }
-                else
-                {
-                    Console.WriteLine($"Nothing is updated - Order number {Order.OrderNumber}");
                 }
             }
         }
@@ -404,6 +407,5 @@ namespace Application.Data.Repositories
 
             return Order; // Trả về đơn hàng đã cập nhật
         }
-
     }
 }

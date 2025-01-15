@@ -67,7 +67,11 @@ namespace Application.API.Controllers
         public async Task<ActionResult<User>> Post([FromForm] UserDTO NewUser, IFormFile? ProfilePic)
         {
             var Sfdsjhhsdl = await UserRepo.UsernameChecker(NewUser.Username);
-            if (!Sfdsjhhsdl) return Conflict();
+            if (!Sfdsjhhsdl) return Conflict("USERNAME_CONFLICT");
+            var Bjsidjfprt = await UserRepo.EmailChecker(NewUser.Email);
+            if (!Bjsidjfprt) return Conflict("EMAIL_CONFLICT");
+            var Pewrifsosd = await UserRepo.PhoneNumberChecker(NewUser.PhoneNumber);
+            if (!Pewrifsosd) return Conflict("PHONE_NUM_CONFLICT");
 
             try
             {
@@ -126,7 +130,17 @@ namespace Application.API.Controllers
             if (!string.Equals(OldUser?.Username, UpdatedUserDTO.Username, StringComparison.OrdinalIgnoreCase))
             {
                 var Sfdsjhhsdl = await UserRepo.UsernameChecker(UpdatedUserDTO.Username);
-                if (!Sfdsjhhsdl) return Conflict();
+                if (!Sfdsjhhsdl) return Conflict("USERNAME_CONFLICT");
+            }
+            if (!string.Equals(OldUser?.Email, UpdatedUserDTO?.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                var Bjsidjfprt = await UserRepo.EmailChecker(UpdatedUserDTO?.Email);
+                if (!Bjsidjfprt) return Conflict("EMAIL_CONFLICT");
+            }
+            if (!string.Equals(OldUser?.PhoneNumber, UpdatedUserDTO?.PhoneNumber, StringComparison.OrdinalIgnoreCase))
+            {
+                var Pewrifsosd = await UserRepo.PhoneNumberChecker(UpdatedUserDTO?.PhoneNumber);
+                if (!Pewrifsosd) return Conflict("PHONE_NUM_CONFLICT");
             }
 
             var UpdatedUser = new UserDTO();

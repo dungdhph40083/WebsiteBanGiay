@@ -76,6 +76,7 @@ namespace Application.Data.Repositories
         {
             return Context.Vouchers
                 .Include(UU => UU.Category)
+                .OrderByDescending(VV => VV.CreatedAt)
                 .ToListAsync();
         }
 

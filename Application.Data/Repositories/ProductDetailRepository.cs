@@ -69,6 +69,8 @@ namespace Application.Data.Repositories
                     .Where(x => x.ProductID == TargetID)
                         .ToListAsync();
 
+            LeList = LeList.OrderBy(Siz => Siz.Size?.Name).ToList();
+
             //foreach (var Item in LeList)
             //{
             //    await ConstantUpdates(Item);

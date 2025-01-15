@@ -21,12 +21,13 @@ namespace Application.MVC.Controllers
             this.ToastNotifier = ToastNotifier;
         }
         // GET: SizeController
-
+        [ResponseCache(NoStore = true, Duration = 0)]
         [HttpGet]
         public async Task<ActionResult> Index()
         {
             string URL = $@"https://localhost:7187/api/Size";
             var Response = await Client.GetFromJsonAsync<List<Size>>(URL);
+
             return View(Response);
         }
 

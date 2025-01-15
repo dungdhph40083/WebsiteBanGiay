@@ -110,21 +110,21 @@ namespace Application.Data.Repositories
 
         public Task<List<Size>> GetSizes()
         {
-            return Context.Sizes.ToListAsync();
+            return Context.Sizes.OrderBy(A => A.Name).ToListAsync();
         }
 
         public List<Size?> GetSizesByProductId(Guid ProductId)
         {
             GiayDBContext Context = new GiayDBContext();
             return Context.ProductDetails.Where(p => p.ProductID == ProductId).Select(p => p.Size)
-            .Distinct().ToList();
+            .Distinct().OrderBy(A => A != null ? A.Name : default).ToList();
         }
 
         public List<Size?> GetSizesByProductIdAndColor(Guid ProductId, Guid color)
         {
             GiayDBContext Context = new GiayDBContext();
             return Context.ProductDetails.Where(p => p.ProductID == ProductId && p.ColorID == color).Select(p => p.Size)
-           .Distinct().ToList();
+           .Distinct().OrderBy(A => A != null ? A.Name : default).ToList();
         }
 
         public async Task<bool> SizeNameAvailability(string? SizeName)

@@ -16,6 +16,9 @@ namespace Application.MVC.Controllers
             string requestURL = "https://localhost:7187/api/Role";
             var response = client.GetStringAsync(requestURL).Result;
             var Roles = JsonConvert.DeserializeObject<List<Role>>(response);
+
+            Roles = Roles?.OrderBy(Bruh => Bruh.RoleName).ToList();
+
             return View(Roles);
         }
 

@@ -107,6 +107,7 @@
                 <th class="text-center">Giảm giá</th>
                 <th class="text-center">Còn lại</th>
                 <th class="text-center">Loại Voucher</th>
+                <th class="text-center">Thời điểm tạo</th>
                 <th class="text-center">Bắt đầu</th>
                 <th class="text-center">Kết thúc</th>
                 <th class="text-center">Trạng thái</th>
@@ -139,6 +140,7 @@
                             <span class="badge badge-danger">Riêng tư</span>
                         }
                     </td>
+                    <td>@(Entry.CreatedAt.GetValueOrDefault().ToLocalTime().ToString("H:mm:ss d/M/yyyy"))</td>
                     <td>@(Entry.StartingAt.GetValueOrDefault().ToLocalTime().ToString("H:mm:ss d/M/yyyy"))</td>
                     <td>
                         @(Entry.EndingAt.GetValueOrDefault().ToLocalTime().ToString("H:mm:ss d/M/yyyy"))<br />

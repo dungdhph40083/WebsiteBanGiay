@@ -304,32 +304,6 @@ else
 
 <!-- JavaScript for handling search functionality -->
 <script>
-    if (false)
-    {
-        console.log("You have somehow did this. You must be bending reality.");
-    }
-    else
-    {
-    document.getElementById('searchBtn').addEventListener('click', function () {
-        const searchTerm = document.getElementById('searchInput').value;
-        const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=@ViewBag.CurrentStatus&SearchQuery=${searchTerm}`;
-        window.location.href = url;
-    });
-    // Tự động tìm kiếm khi người dùng nhấn Enter
-    document.getElementById("searchInput").addEventListener("keypress", function (e) {
-        if (e.key === 'Enter') {
-            document.getElementById("searchBtn").click();
-        }
-    });
-
-         document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
-         radio.addEventListener('change', function () {
-             const selectedStatus = this.value;
-             const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=${selectedStatus}`;
-             window.location.href = url;
-         });
-     });
-
     async function toggleStatus(productDetailId) {
         const url = `/ProductDetail/ToggleStatus/${productDetailId}`;
         try {
@@ -349,6 +323,34 @@ else
             swal({ title: "Lỗi!", text: "Đã xảy ra lỗi khi đổi trạng thái.", icon: "error" });
         }
     }
+
+
+
+    if (false)
+    {
+        console.log("You have somehow did this. You must be bending reality.");
+    }
+    else
+    {
+    document.getElementById('searchBtn').addEventListener('click', function () {
+        const searchTerm = document.getElementById('searchInput').value;
+        const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=@ViewBag.CurrentStatus&SearchQuery=${searchTerm}`;
+        window.location.href = url;
+    });
+    // Tự động tìm kiếm khi người dùng nhấn Enter
+    document.getElementById("searchInput").addEventListener("keypress", function (e) {
+        if (e.key === 'Enter') {
+            document.getElementById("searchBtn").click();
+        }
+    });
+
+    document.querySelectorAll('input[name="statusFilter"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const selectedStatus = this.value;
+            const url = `/ProductDetail/Index?Page=1&PageSize=@ViewBag.PageSize&Status=${selectedStatus}`;
+            window.location.href = url;
+        });
+    });
 
     document.querySelectorAll('.delete_trigger').forEach(button => {
         button.addEventListener('click', async function () {

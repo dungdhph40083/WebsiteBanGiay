@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.OutputCaching;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using System;
@@ -21,6 +22,7 @@ namespace Application.MVC.Controllers
         {
             this.ToastNotifier = ToastNotifier;
         }
+        [ResponseCache(NoStore = true, Duration = 0)]
         // GET: VoucherController
         [HttpGet]
         public async Task<ActionResult> Index(string SortByTime, string SortByLook)
