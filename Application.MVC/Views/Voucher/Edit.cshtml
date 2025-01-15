@@ -138,15 +138,48 @@
 
 <script>
     function Validate() {
-        if (document.getElementById('EndInput').value < document.getElementById('StartInput').value) {
-            document.getElementById('StartInput').value = document.getElementById('EndInput').value;
-        }
+    const now = new Date(); 
+    now.setMinutes(now.getMinutes() + 1); 
 
-        if (document.getElementById('StartInput').value > document.getElementById('EndInput').value) {
-            document.getElementById('EndInput').value = document.getElementById('StartInput').value;
-            // document.getElementById('EndInput').min = document.getElementById('StartInput').value;
-        }
+
+    const nowLocal = formatDateTimeLocal(now);
+
+    const startInput = document.getElementById('StartInput');
+    const endInput = document.getElementById('EndInput');
+
+    // Kiểm tra ngày bắt đầu
+    if (startInput.value < nowLocal) {
+        alert("Ngày bắt đầu không được trước thời gian hiện tại. Sẽ tự động điều chỉnh.");
+        startInput.value = nowLocal; 
     }
+
+    // Lấy giá trị ngày bắt đầu sau khi kiểm tra và tạo ngày kết thúc mặc định (sau 7 ngày)
+    const startDate = new Date(startInput.value);
+    const defaultEndDate = new Date(startDate);
+    defaultEndDate.setDate(defaultEndDate.getDate() + 7); // Thêm 7 ngày
+    const defaultEndLocal = formatDateTimeLocal(defaultEndDate);
+
+    // Kiểm tra ngày kết thúc
+    if (endInput.value < nowLocal || endInput.value < startInput.value) {
+        alert("Ngày kết thúc không hợp lệ. Sẽ tự động đặt sau 7 ngày của ngày bắt đầu.");
+        endInput.value = defaultEndLocal; // Đặt ngày kết thúc sau 7 ngày của ngày bắt đầu
+    }
+    if (endInput.value < startInput.value) {
+        alert("Ngày kết thúc không được trước ngày bắt đầu.");
+        endInput.value = startInput.value;
+    }
+}
+
+
+function formatDateTimeLocal(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 
     function Toggle() {
         if (document.getElementById('RadioPercent').checked == true) {
