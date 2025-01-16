@@ -25,19 +25,14 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<ActionResult> Index()
         {
             var userId = HttpContext.Session.GetString("UserID");
-            if (string.IsNullOrEmpty(userId))
+            if (userId != null)
             {
-                return RedirectToAction("index", "Login");
-            }
-            Guid parsedUserId;
-            if (!Guid.TryParse(userId, out parsedUserId))
-            {
-                return RedirectToAction("index", "Login");
-            }
-            var user = _context.Users.FirstOrDefault(u => u.UserID == parsedUserId);
-            if (user != null && user.IsBanned != false)
-            {
-                return View("Banned");
+                var user = _context.Users.FirstOrDefault(u => u.UserID == Guid.Parse(userId));
+                if(user.IsBanned == true)
+                {
+                    return View("Banned");
+                }
+                return View(user);
             }
             await FetchInfo();
             return View(new User());

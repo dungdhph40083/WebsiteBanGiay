@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "Cảnh Báo";
+}
+
+<div id="warning-container" class="warning-container">
+    <div class="warning-box">
+        <h2 class="warning-title">Cảnh Báo</h2>
+        <p class="warning-message">Bạn cần đăng nhập để thực hiện chức năng này.</p>
+        <button class="btn btn-primary" onclick="redirectToLogin()">Quay lại màn hình đăng nhập</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function redirectToLogin() {
+            window.location.href = '/Login/Index';
+        }
+        document.addEventListener('click', function (event) {
+            const container = document.getElementById('warning-container');
+            const box = document.getElementById('warning-box');
+
+            if (event.target === container) {
+                container.classList.remove('show');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 500); 
+            }
+        });
+        window.onload = function () {
+            const container = document.getElementById('warning-container');
+            container.classList.add('show');
+        };
+    </script>
+}
+
+@section Styles {
+    <style>
+        .warning-container {
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 0, 0, 0.1);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            transition: top 0.5s ease;
+        }
+
+            .warning-container.show {
+                top: 0;
+            }
+
+        .warning-box {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .warning-title {
+            font-size: 24px;
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        .warning-message {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+}
