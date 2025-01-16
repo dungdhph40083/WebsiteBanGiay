@@ -5,7 +5,7 @@
 }
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">My Profile</h1>
+    <h1 class="text-center mb-4">Hồ sơ</h1>
 
     <div class="card shadow-sm p-4 position-relative">
 
@@ -25,12 +25,12 @@
                     <span class="text-white">N/A</span>
                 </div>
             }
-            <h6 class="text-right mt-3 mr-3 font-weight-bold">My Avatar</h6>
+            <h6 class="text-right mt-3 mr-3 font-weight-bold">Ảnh đại diện</h6>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-4">
-                <label class="font-weight-bold">Username:</label>
+                <label class="font-weight-bold">Tên người dùng:</label>
             </div>
             <div class="col-md-8">
                 <p>@Model.Username</p>
@@ -39,10 +39,10 @@
 
         <div class="row mb-3">
             <div class="col-md-4">
-                <label class="font-weight-bold">Full Name:</label>
+                <label class="font-weight-bold">Tên đầy đủ:</label>
             </div>
             <div class="col-md-8">
-                <p>@(Model.FirstName + " " + Model.LastName)</p>
+                <p>@(Model.LastName + " " + Model.FirstName)</p>
             </div>
         </div>
 
@@ -57,7 +57,7 @@
 
         <div class="row mb-3">
             <div class="col-md-4">
-                <label class="font-weight-bold">Phone Number:</label>
+                <label class="font-weight-bold">SĐT:</label>
             </div>
             <div class="col-md-8">
                 <p>@Model.PhoneNumber</p>
@@ -66,7 +66,7 @@
 
         <div class="row mb-3">
             <div class="col-md-4">
-                <label class="font-weight-bold">Address:</label>
+                <label class="font-weight-bold">Địa chỉ:</label>
             </div>
             <div class="col-md-8">
                 <p>@Model.Address</p>
@@ -74,13 +74,13 @@
         </div>
 
         <div class="text-center mt-4">
-            <a asp-action="Edit" style="border-radius: 4px;" class="btn btn-primary">Edit Profile</a>
+            <a asp-action="Edit" style="border-radius: 4px;" class="btn btn-primary">Sửa thông tin</a>
         </div>
 
         <div class="text-right mt-4">        
             @using (Html.BeginForm("Logout", "Profile", FormMethod.Post))
             {
-                <button style="border-radius: 4px;" type="submit" class="btn btn-danger ml-2">Logout</button>
+                <button style="border-radius: 4px;" type="submit" class="btn btn-danger ml-2">Đăng xuất!</button>
             }
         </div>
     </div>

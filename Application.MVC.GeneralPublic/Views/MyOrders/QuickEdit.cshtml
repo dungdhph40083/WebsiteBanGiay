@@ -66,6 +66,8 @@
                 <div></div>
                 <div class="p-30">
                     <div class="row">
+                        <input asp-for="PaymentMethodID" hidden value="@Model.PaymentMethodID"/>
+                        <input asp-for="VoucherID" hidden value="@Model.VoucherID"/>
                         <div class="col-md-6 form-group">
                             <label>Họ</label>
                             <input asp-for="LastName" class="form-control" type="text" placeholder="Họ khác">

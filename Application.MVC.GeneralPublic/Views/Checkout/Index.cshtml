@@ -31,7 +31,7 @@
 </div>
 
 <div class="container-fluid">
-<form class="bg-light p-30" asp-action="InstantCheckout">
+<form class="bg-light p-30" asp-action="Index">
     <div class="row px-xl-5">
         <div class="col-lg-8">
             <h5 class="section-title position-relative text-uppercase mb-3">
@@ -177,6 +177,14 @@
 </div>
 
 <script>
+
+    var collapse = document.getElementById('shipping-address');
+            if (document.getElementById('use-different-address').checked) {
+                collapse.classList.add('show');
+            } else {
+                collapse.classList.remove('show');
+            }
+
     document.getElementById('use-different-address').addEventListener('change', function () {
         var collapse = document.getElementById('shipping-address');
         if (this.checked) {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.RegularExpressions;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -21,9 +22,13 @@ namespace Application.MVC.GeneralPublic.Controllers
             this.ToastNotifier = ToastNotifier;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             Guid UserID = GetCurrentUserId();
+
+            Console.WriteLine(UserID);
+
             // Gọi API để lấy danh sách người dùng
             var user = await _client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{UserID}");
 
@@ -69,9 +74,17 @@ namespace Application.MVC.GeneralPublic.Controllers
             return View();
         }
 
-        public async Task<ActionResult> InstantCheckout(OrderDto Details, string PaymentMethod, bool HasExternalInfo)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Index(OrderDto Details, string PaymentMethod, bool HasExternalInfo)
         {
+            #region ignore this
             Guid UserID = GetCurrentUserId();
+
+            Console.WriteLine(UserID);
+
+            // Gọi API để lấy danh sách người dùng
+            var user = await _client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{UserID}");
 
             // Check... again...
             var cartItems = await _client.GetFromJsonAsync<List<ShoppingCart>>($"https://localhost:7187/api/ShoppingCart/User/{UserID}");
@@ -80,22 +93,7 @@ namespace Application.MVC.GeneralPublic.Controllers
                 ToastNotifier.Error("Bạn không có mặt hàng nào để thanh toán!");
                 return RedirectToAction(nameof(Index), Controller2String.Eat(nameof(HomeController)));
             }
-
-            Details.UserID = UserID;
-            Details.HasExternalInfo = true;
-            if (!HasExternalInfo)
-            {
-                string URL = $@"https://localhost:7187/api/User/{UserID}";
-                var UserData = await _client.GetFromJsonAsync<User>(URL);
-
-                Details.HasExternalInfo = false;
-                Details.FirstName = UserData!.FirstName;
-                Details.LastName = UserData!.LastName;
-                Details.Email = UserData!.Email;
-                Details.PhoneNumber = UserData!.PhoneNumber;
-                Details.ShippingAddress = UserData!.Address;
-                Details.VoucherID = UserData!.VoucherID;
-            }
+            var totalAmount = cartItems?.Sum(item => item.QuantityCart * item.Price) ?? 0;
 
             string URL_Voucher = $@"https://localhost:7187/api/Voucher/WhatVoucherAreTheyUsing/{UserID}";
 
@@ -117,6 +115,53 @@ namespace Application.MVC.GeneralPublic.Controllers
                             ViewBag.ErrorMessage = "No";
                             break;
                     }
+                }
+            }
+
+            Details.UserID = UserID;
+            Details.HasExternalInfo = true;
+
+            // Truyền thông tin người dùng và giỏ hàng vào ViewBag
+            ViewBag.DefaultUser = user;
+            ViewBag.CartItems = cartItems;
+            ViewBag.TotalAmount = totalAmount;
+
+            #endregion
+
+            if (!HasExternalInfo)
+            {
+                string URL = $@"https://localhost:7187/api/User/{UserID}";
+                var UserData = await _client.GetFromJsonAsync<User>(URL);
+
+                Details.HasExternalInfo = false;
+                Details.FirstName = UserData!.FirstName;
+                Details.LastName = UserData!.LastName;
+                Details.Email = UserData!.Email;
+                Details.PhoneNumber = UserData!.PhoneNumber;
+                Details.ShippingAddress = UserData!.Address;
+                Details.VoucherID = UserData!.VoucherID;
+            }
+            else
+            {
+                if (Details.FirstName == null || Details.LastName == null)
+                {
+                    ToastNotifier.Error("Thông tin đơn hàng bị thiếu họ/tên!");
+                    return View(Details);
+                }
+                if (Details.PhoneNumber == null)
+                {
+                    ToastNotifier.Error("Thông tin đơn hàng bị thiếu số điện thoại!");
+                    return View(Details);
+                }
+                if (Details.ShippingAddress == null)
+                {
+                    ToastNotifier.Error("Thông tin đơn hàng bị thiếu địa chỉ giao hàng!");
+                    return View(Details);
+                }
+                if (!Regex.IsMatch(Details.PhoneNumber, @"^(03|05|07|08|09)\d{8}$"))
+                {
+                    ToastNotifier.Error("Số điện thoại không hợp lệ!");
+                    return View(Details);
                 }
             }
 

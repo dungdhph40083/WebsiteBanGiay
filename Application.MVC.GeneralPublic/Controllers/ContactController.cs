@@ -24,25 +24,38 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         public async Task<IActionResult> Create()
         {
-          
-
-            Guid ID = GetCurrentUserId();
             try
             {
-                var user = await client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{ID}");
-                ViewBag.DefaultUser = user;
-
-                if (TempData["SuccessMessage"] != null)
+                Guid? ID = GetCurrentUserId();
+                if (ID != null)
                 {
-                    ViewBag.SuccessMessage = TempData["SuccessMessage"];
-                }
+                    try
+                    {
+                        var user = await client.GetFromJsonAsync<User>($@"https://localhost:7187/api/User/{ID}");
+                        ViewBag.DefaultUser = user;
 
-                return View();
+                        if (TempData["SuccessMessage"] != null)
+                        {
+                            ViewBag.SuccessMessage = TempData["SuccessMessage"];
+                        }
+
+                        return View();
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        ViewBag.ErrorMessage = ex.Message;
+                        return View(new User());
+                    }
+                }
+                else return View();
             }
-            catch (UnauthorizedAccessException ex)
+            catch (Exception Exc)
             {
-                ViewBag.ErrorMessage = ex.Message;
-                return View(new User());
+                if (Exc.GetType() == typeof(UnauthorizedAccessException))
+                {
+                    return View();
+                }
+                else throw;
             }
         }
 

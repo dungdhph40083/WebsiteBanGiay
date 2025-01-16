@@ -31,7 +31,8 @@ namespace Application.API.Controllers
                 return BadRequest("Username and password are required.");
 
             var user = await _context.Users.Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Username == request.Username && u.Password == request.Password);
+                .FirstOrDefaultAsync
+                (u => (u.Username == request.Username || u.Email == request.Username) && u.Password == request.Password);
 
             if (user == null)
                 return Unauthorized("Invalid username or password.");

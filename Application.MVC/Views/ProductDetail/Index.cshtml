@@ -183,7 +183,6 @@
             <tr>
                 <th class="text-center">#</th> <!-- Serial number header -->
                 <th class="text-center">Tên sản phẩm</th>
-                <th class="text-center">Ảnh SP</th>
                 <th class="text-center">Danh mục</th>
                 <th class="text-center">Chất liệu</th>
                 <th class="text-center">Thời gian cập nhật</th>
@@ -198,16 +197,6 @@
                 <tr>
                     <td>@(Index + ((ViewBag.CurrentPage ?? 1) - 1) * (ViewBag.PageSize ?? 10))</td>
                     <td>@Entry.Product?.Name</td>
-                    <td>
-                        @if (Entry.Product?.Image != null)
-                        {
-                            <img src="https://localhost:7187/Images/@(Entry.Product.Image.ImageFileName)" class="img-thumbnail" alt="Product Image" />
-                        }
-                        else
-                        {
-                            <span>Chưa có ảnh</span>
-                        }
-                    </td>
                     <td>@Entry.Category?.CategoryName</td>
                     <td>@Entry.Material</td>
                     <td>@Entry.UpdatedAt?.ToLocalTime().ToString("dd/MM/yyyy | HH:mm")</td>

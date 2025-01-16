@@ -58,13 +58,9 @@ namespace Application.Data.Repositories
 
         public async Task<int> GetBannedAccountsAsync()
         {
-            // Chuyển chuỗi GUID thành Guid object
-            Guid roleIdToCheck = Guid.Parse("B463986E-60F1-4029-91C4-1116C4E073E7");
-
-            // Đếm số tài khoản có RoleID khớp
             return await _context.Users
-                .Where(u => u.RoleID == roleIdToCheck) // Điều kiện chỉ kiểm tra RoleID
-                .CountAsync();
+            .Where(u => u.Status == 0)
+            .CountAsync();
         }
 
         public async Task<int> GetTotalVouchersAsync()

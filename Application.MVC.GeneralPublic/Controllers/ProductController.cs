@@ -116,10 +116,10 @@ namespace Application.MVC.GeneralPublic.Controllers
                 switch (SortBy)
                 {
                     case "Ascending":
-                        FilteredDetails = FilteredDetails?.OrderBy(Req => Req.Product?.Name).ToList();
+                        FilteredDetails = FilteredDetails?.OrderBy(Req => Req.Product?.Price).ToList();
                         break;
                     case "Descending":
-                        FilteredDetails = FilteredDetails?.OrderByDescending(Req => Req.Product?.Name).ToList();
+                        FilteredDetails = FilteredDetails?.OrderByDescending(Req => Req.Product?.Price).ToList();
                         break;
                     case "Default":
                     default:

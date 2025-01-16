@@ -66,15 +66,12 @@ namespace Application.API.Controllers
         [HttpPost("AddVariations")]
         public async Task<ActionResult<ProductDetailVariationMetadata>> PostVariations([FromBody] ProductDetailMultiDTO Variations)
         {
-            try
-            {
-                var Response = await ProductDetailRepo.CreateNewVariations(Variations);
-                return Response;
-            }
-            catch (Exception)
+            var Response = await ProductDetailRepo.CreateNewVariations(Variations);
+            if (Response.VariationsNotAdded > 0)
             {
                 return Conflict(Response);
             }
+            else return Response;
         }
 
         [HttpPut("{ID}")]

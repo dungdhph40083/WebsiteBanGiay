@@ -2,12 +2,14 @@
 using Application.Data.Enums;
 using Application.Data.ModelContexts;
 using Application.Data.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NuGet.Protocol;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -17,11 +19,12 @@ namespace Application.MVC.GeneralPublic.Controllers
         HttpClient Client = new HttpClient();
         private readonly HttpClient _httpClient;
         private readonly GiayDBContext _context;
-
-        public MyOrdersController(GiayDBContext giayDBContext)
+        private readonly INotyfService ToastNotifier;
+        public MyOrdersController(GiayDBContext giayDBContext, INotyfService ToastNotifier)
         {
             _httpClient = new HttpClient();
             _context = giayDBContext;
+            this.ToastNotifier = ToastNotifier;
         }
         private Guid GetCurrentUserId()
         {
@@ -123,13 +126,30 @@ namespace Application.MVC.GeneralPublic.Controllers
                 NewDetail.Email = User!.Email;
                 NewDetail.PhoneNumber = User!.PhoneNumber;
                 NewDetail.ShippingAddress = User!.Address;
+                NewDetail.UserID = userId;
             }
             else
             {
-                NewDetail.FirstName ??= User!.FirstName;
-                NewDetail.LastName ??= User!.LastName;
-                NewDetail.PhoneNumber ??= User!.PhoneNumber;
-                NewDetail.ShippingAddress ??= User!.Address;
+                if (NewDetail.FirstName == null || NewDetail.LastName == null)
+                {
+                    ToastNotifier.Error("Thông tin đơn hàng bị thiếu họ/tên!");
+                    return View(NewDetail);
+                }
+                if (NewDetail.PhoneNumber == null)
+                {
+                    ToastNotifier.Error("Thông tin đơn hàng bị thiếu số điện thoại!");
+                    return View(NewDetail);
+                }
+                if (NewDetail.ShippingAddress == null)
+                {
+                    ToastNotifier.Error("Thông tin đơn hàng bị thiếu địa chỉ giao hàng!");
+                    return View(NewDetail);
+                }
+                if (!Regex.IsMatch(NewDetail.PhoneNumber, @"^(03|05|07|08|09)\d{8}$"))
+                {
+                    ToastNotifier.Error("Số điện thoại không hợp lệ!");
+                    return View(NewDetail);
+                }
             }
             var Response = await Client.PatchAsJsonAsync(URL_Order, NewDetail);
 

@@ -230,7 +230,11 @@ namespace Application.MVC.Controllers
                         {
                             ToastNotifier.Success("Tạo các biến thể thành công!");
                             ToastNotifier.Warning("Một số biến thể mới đã không tạo ra do các biến thể đó đã tồn tại trước đó.");
-                            break;
+                            if (FromEdit)
+                            {
+                                return RedirectToAction(nameof(Edit), new { ID = Details.ProductID });
+                            }
+                            else return RedirectToAction(nameof(Index));
                         }
                     }
                     return View(Details);

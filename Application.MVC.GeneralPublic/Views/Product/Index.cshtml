@@ -2,8 +2,8 @@
 
 @{
     ViewData["Title"] = "Index";
-    var products = ViewBag.Orders as List<Application.Data.Models.Product>;
-    var Images = ViewBag.Images as List<Application.Data.Models.Image>;
+    var products = ViewBag.Orders as List<Application.Data.Models.Product> ?? [];
+    var Images = ViewBag.Images as List<Application.Data.Models.Image> ?? [];
 
     var Paginations = ViewBag.CurrentPage as int?;
     var TotalPages = ViewBag.TotalPages as int?;
@@ -15,9 +15,9 @@
     var ColrSelects = ViewBag.SelectedColor as Guid?;
     var SizeSelects = ViewBag.SelectedSize as Guid?;
 
-    var Colors = ViewBag.Colors as List<Application.Data.Models.Color>;
-    var Sizes = ViewBag.Sizes as List<Application.Data.Models.Size>;
-    var Categories = ViewBag.Categories as List<Application.Data.Models.Category>;
+    var Colors = ViewBag.Colors as List<Application.Data.Models.Color> ?? [];
+    var Sizes = ViewBag.Sizes as List<Application.Data.Models.Size> ?? [];
+    var Categories = ViewBag.Categories as List<Application.Data.Models.Category> ?? [];
 }
 
 <head>
@@ -82,7 +82,7 @@
             <div class="bg-light p-4 mb-30 filter-section">
                 <form method="get" action="/Product/Index">
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                        <input type="radio" class="custom-control-input" name="PriceRange" value="All" id="price-all" onchange="this.form.submit()" @(PriceRange == "All" ? "checked" : "")>
+                        <input type="radio" class="custom-control-input" name="PriceRange" value="All" id="price-all" onchange="this.form.submit()" checked>
                         <label class="custom-control-label" for="price-all">Tất cả giá</label>
                     </div>
                     <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
@@ -108,17 +108,49 @@
                 </form>
             </div>
 
+            <!-- Lọc theo màu sắc -->
+            <h5 class="section-title position-relative text-uppercase mb-3 filter-toggle">
+                <span class="bg-secondary pr-3">Lọc theo màu sắc</span>
+            </h5>
+            <div class="bg-light p-4 mb-30 filter-section">
+                <form method="get" action="/Product/Index">
+                    @for (var Idx = 0; Idx < Colors.Count(); Idx++)
+                    {
+                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                            <input type="radio" class="custom-control-input" name="ColorQuery" value="@Colors[Idx].ColorID" id="color-@Colors[Idx].ColorID" onchange="this.form.submit()" @(ColrSelects == @Colors[Idx].ColorID ? "checked" : "")>
+                            <label class="custom-control-label" for="color-@Colors[Idx].ColorID">@Colors[Idx].ColorName</label>
+                        </div>
+                    }
+                </form>
+            </div>
+
+            <!-- Lọc theo kích cỡ -->
+            <h5 class="section-title position-relative text-uppercase mb-3 filter-toggle">
+                <span class="bg-secondary pr-3">Lọc theo kích cỡ</span>
+            </h5>
+            <div class="bg-light p-4 mb-30 filter-section">
+                <form method="get" action="/Product/Index">
+                    @for (var Idx = 0; Idx < Sizes.Count(); Idx++)
+                    {
+                        <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
+                            <input type="radio" class="custom-control-input" name="SizeQuery" value="@Sizes[Idx].SizeID" id="color-@Sizes[Idx].SizeID" onchange="this.form.submit()" @(ColrSelects == @Sizes[Idx].SizeID ? "checked" : "")>
+                            <label class="custom-control-label" for="color-@Sizes[Idx].SizeID">@Sizes[Idx].Name</label>
+                        </div>
+                    }
+                </form>
+            </div>
+
             <!-- Lọc theo danh mục -->
             <h5 class="section-title position-relative text-uppercase mb-3 filter-toggle">
                 <span class="bg-secondary pr-3">Lọc theo danh mục</span>
             </h5>
             <div class="bg-light p-4 mb-30 filter-section">
                 <form method="get" action="/Product/Index">
-                    @foreach (var Col in Colors)
+                    @for (var Idx = 0; Idx < Categories.Count(); Idx++)
                     {
                         <div class="custom-control custom-radio d-flex align-items-center justify-content-between mb-3">
-                            <input type="radio" class="custom-control-input" name="ColorQuery" value="@Col.ColorID" id="color-@Col.ColorID" onchange="this.form.submit()" @(ColrSelects == @Col.ColorID ? "checked" : "")>
-                            <label class="custom-control-label" for="color-@Col.ColorID">@Col.ColorName</label>
+                            <input type="radio" class="custom-control-input" name="CategoryQuery" value="@Categories[Idx].CategoryID" id="color-@Categories[Idx].CategoryID" onchange="this.form.submit()" @(ColrSelects == @Categories[Idx].CategoryID ? "checked" : "")>
+                            <label class="custom-control-label" for="color-@Categories[Idx].CategoryID">@Categories[Idx].CategoryName</label>
                         </div>
                     }
                 </form>
@@ -133,8 +165,9 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Sắp xếp hiển thị</button>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="?sortOrder=price_asc&priceRange=@ViewBag.SelectedPrice">Giá từ thấp đến cao</a>
-                            <a class="dropdown-item" href="?sortOrder=price_desc&priceRange=@ViewBag.SelectedPrice">Giá từ cao đến thấp</a>
+                            <a class="dropdown-item" asp-route-SortBy="Default">Không sắp xếp</a>
+                            <a class="dropdown-item" asp-route-SortBy="Ascending">Giá từ thấp đến cao</a>
+                            <a class="dropdown-item" asp-route-SortBy="Descending">Giá từ cao đến thấp</a>
                         </div>
                     </div>
                 </div>
