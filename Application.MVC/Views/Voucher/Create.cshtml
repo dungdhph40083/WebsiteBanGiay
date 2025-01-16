@@ -61,7 +61,7 @@
     <div class="row g-3 mt-3">
         <div class="col-md-6">
             <label asp-for="StartingAt" class="form-label fw-semibold text-muted">Bắt đầu vào</label>
-            <input asp-for="StartingAt" id="StartInput" onchange="Validate()" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control shadow-sm" type="datetime-local" step="1" required aria-label="Starting date of voucher" />
+            <input asp-for="StartingAt" id="StartInput" onchange="Validate()" value="@DateTime.Now.AddMinutes(1).ToString("yyyy-MM-ddTHH:mm:ss")" class="form-control shadow-sm" type="datetime-local" step="1" required aria-label="Starting date of voucher" />
         </div>
         <div class="col-md-6">
             <label asp-for="EndingAt" class="form-label fw-semibold text-muted">Kết thúc vào</label>
