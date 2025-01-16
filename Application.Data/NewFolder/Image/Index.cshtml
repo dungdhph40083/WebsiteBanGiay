@@ -1,4 +1,4 @@
-﻿@using Application.Data.Enums
+﻿@* @using Application.Data.Enums
 @model IEnumerable<Application.Data.Models.Image>;
 
 @{
@@ -32,7 +32,7 @@
                     <td>
                         <a class="btn btn-warning" asp-action="Edit" asp-route-ID="@(@Entry.ImageID)">Edit</a>
                         <a class="btn btn-secondary" asp-action="Details" asp-route-ID="@Entry.ImageID">Details</a>
-                        <button type="button" class="btn btn-danger delete_trigger" data-id="@Entry.ImageID" data-controller="Image" data-action="Delete" data-bs-toggle="modal" data-bs-target="#ModalDelete">Delete</button>
+                        <button type="button" class="btn btn-danger delete_trigger" data-id="@Entry.ImageID" data-controller="Image" data-action="Delete" data-toggle="modal" data-target="#ModalDelete">Delete</button>
                     </td>
                 </tr>
             }
@@ -64,7 +64,7 @@ else
 }
 
 <!-- Modal -->
-<div class="modal fade" id="ModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="ModalDelete" data-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -81,4 +81,4 @@ else
             </div>
         </div>
     </div>
-</div>
+</div> *@

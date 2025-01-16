@@ -44,26 +44,8 @@ namespace Application.API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO product, IFormFile? Image)
+        public async Task<ActionResult<Product>> PostProduct([FromForm] ProductDTO product, List<IFormFile>? Image)
         {
-            // Kiểm tra và xử lý ảnh nếu có
-            if (Image != null)
-            {
-                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(Image, 4_194_304))  // Kiểm tra kích thước và định dạng ảnh
-                {
-                    case ErrorResult.IMAGE_TOO_BIG_ERROR:
-                        return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!"); // Nếu ảnh quá lớn
-                    case ErrorResult.IMAGE_IS_BROKEN_ERROR:
-                    default:
-                        return BadRequest("Tệp ảnh không hợp lệ!"); // Nếu ảnh bị lỗi
-                    case SuccessResult.IMAGE_OK:
-                        // Nếu ảnh hợp lệ, lưu ảnh vào hệ thống
-                        var createdImage = await _imageRepository.CreateImageAsync(Image);
-                        product.ImageID = createdImage.ImageID; // Gán ID ảnh vào sản phẩm
-                        break;
-                }
-            }
-
             // Kiểm tra tên sản phẩm xem đã tồn tại trong cơ sở dữ liệu chưa
             var existingProduct = await _productRepository.CheckProductNameAsync(product.Name);
             if (existingProduct != null)
@@ -74,13 +56,44 @@ namespace Application.API.Controllers
             // Thêm sản phẩm vào cơ sở dữ liệu
             var response = await _productRepository.Add(product);
 
+            // Kiểm tra và xử lý ảnh nếu có
+            if (Image != null && Image.Count != 0)
+            {
+                int FailedUploadsBczTooBig = 0;
+                int FailedUploadsBczBroken = 0;
+
+                foreach (var ImgItem in Image)
+                {
+                    switch (ImageUploaderValidator.ValidateImageSizeAndHeader(ImgItem, 4_194_304))  // Kiểm tra kích thước và định dạng ảnh
+                    {
+                        case ErrorResult.IMAGE_TOO_BIG_ERROR:
+                            {
+                                FailedUploadsBczTooBig++;
+                                Image.Remove(ImgItem);
+                                break;
+                            }
+                        case ErrorResult.IMAGE_IS_BROKEN_ERROR:
+                        default:
+                            {
+                                FailedUploadsBczBroken++;
+                                Image.Remove(ImgItem);
+                                break;
+                            }
+                        case SuccessResult.IMAGE_OK:
+                            // ko làm gì cả
+                            break;
+                    }
+                }
+                await _imageRepository.CreateShittonOfImagesWithProductIDAsync(response.ProductID, Image);
+            }
+
             // Trả về phản hồi sau khi thêm sản phẩm thành công
             return CreatedAtAction(nameof(GetProduct), new { id = response.ProductID }, response);
         }
 
         [HttpPut("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<Product?>> PutProduct(Guid id, [FromForm] ProductDTO product, IFormFile? Image)
+        public async Task<ActionResult<Product?>> PutProduct(Guid id, [FromForm] ProductDTO product, List<IFormFile>? Image)
         {
             // Kiểm tra xem sản phẩm có tồn tại không
             var existingProduct = await _productRepository.GetById(id);
@@ -99,34 +112,43 @@ namespace Application.API.Controllers
                 }
             }
 
-            // Nếu không có ảnh mới, giữ nguyên ảnh cũ
-            if (Image == null)
-            {
-                product.ImageID = existingProduct.ImageID; // Giữ nguyên ảnh cũ
-            }
-            else
-            {
-                // Kiểm tra và xử lý ảnh nếu có
-                switch (ImageUploaderValidator.ValidateImageSizeAndHeader(Image, 4_194_304))
-                {
-                    case ErrorResult.IMAGE_TOO_BIG_ERROR:
-                        return BadRequest($"Tệp ảnh không được vượt quá {4_194_304 / 1_048_576}MB!");
-                    case ErrorResult.IMAGE_IS_BROKEN_ERROR:
-                    default:
-                        return BadRequest("Tệp ảnh không hợp lệ!");
-                    case SuccessResult.IMAGE_OK:
-                        var createdImage = await _imageRepository.CreateImageAsync(Image);
-                        product.ImageID = createdImage.ImageID; // Gán ID ảnh vào sản phẩm
-                        break;
-                }
-            }
-
             // Cập nhật sản phẩm
             var updatedProduct = await _productRepository.Update(id, product);
 
             if (updatedProduct == null)
             {
                 return NotFound("Không thể cập nhật sản phẩm.");
+            }
+
+            // Kiểm tra và xử lý ảnh nếu có
+            if (Image != null && Image.Count != 0)
+            {
+                int FailedUploadsBczTooBig = 0;
+                int FailedUploadsBczBroken = 0;
+
+                foreach (var ImgItem in Image)
+                {
+                    switch (ImageUploaderValidator.ValidateImageSizeAndHeader(ImgItem, 4_194_304))  // Kiểm tra kích thước và định dạng ảnh
+                    {
+                        case ErrorResult.IMAGE_TOO_BIG_ERROR:
+                            {
+                                FailedUploadsBczTooBig++;
+                                Image.Remove(ImgItem);
+                                break;
+                            }
+                        case ErrorResult.IMAGE_IS_BROKEN_ERROR:
+                        default:
+                            {
+                                FailedUploadsBczBroken++;
+                                Image.Remove(ImgItem);
+                                break;
+                            }
+                        case SuccessResult.IMAGE_OK:
+                            // ko làm gì cả
+                            break;
+                    }
+                }
+                await _imageRepository.CreateShittonOfImagesWithProductIDAsync(updatedProduct.ProductID, Image);
             }
 
             return Ok(updatedProduct); // Trả về sản phẩm đã cập nhật
@@ -137,9 +159,25 @@ namespace Application.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult>? DeleteProduct(Guid id)
         {
-            await ProductDetailRepo.DeleteExistingByProductID(id);
-            await _productRepository.Delete(id);
-            return NoContent();
+            try
+            {
+                await ProductDetailRepo.DeleteExistingByProductID(id);
+                var Imgs = await _imageRepository.GetImagesByProductID(id);
+                foreach (var Img in Imgs)
+                {
+                    await _imageRepository.DeleteImageAsync(Img.ImageID);
+                }
+                await _productRepository.Delete(id);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                if (await _productRepository.GetById(id) != null)
+                {
+                    return Conflict();
+                }
+                else return NoContent();
+            }
         }
 
         [HttpGet("CheckProductName/{name}")]

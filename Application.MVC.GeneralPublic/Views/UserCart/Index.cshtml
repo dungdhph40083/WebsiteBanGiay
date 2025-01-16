@@ -16,6 +16,7 @@
     var SuccessMessage = ViewBag.Success as string;
     var FailureMessage = ViewBag.Failure as string;
 
+    var Images = ViewBag.Images as List<Application.Data.Models.Image>;
 }
 
 <div class="breadcrumb-wrap">
@@ -65,7 +66,7 @@
                                                 <input hidden asp-for="@Model[Idx].UserID" value="@Model[Idx].UserID" />
                                                 <input hidden asp-for="@Model[Idx].ProductDetailID" value="@Model[Idx].ProductDetailID" />
                                                 <td class="align-middle">
-                                                    <a href="#"><img class="img-fluid img-thumbnail" style="width: 150px; height: 150px" src="@($"https://localhost:7187/Images/{Model[Idx]?.ProductDetail?.Product?.Image?.ImageFileName}")" alt="Image"></a>
+                                                    <a href="#"><img class="img-fluid img-thumbnail" style="width: 150px; height: 150px" src="@($"https://localhost:7187/Images/{Images?.FirstOrDefault(B => B.ProductID == Model[Idx].ProductDetail?.ProductID)?.ImageFileName}")" alt="Image"></a>
                                                     <p>@Model[Idx]?.ProductDetail?.Product?.Name</p>
                                                 </td>
                                                 <td class="align-middle">

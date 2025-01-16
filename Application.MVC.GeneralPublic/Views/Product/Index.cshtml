@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Index";
     var products = ViewBag.Orders as List<Application.Data.Models.Product>;
+    var Images = ViewBag.Images as List<Application.Data.Models.Image>;
 
     var Paginations = ViewBag.CurrentPage as int?;
     var TotalPages = ViewBag.TotalPages as int?;
@@ -22,39 +23,39 @@
 <head>
     <style>
         .product-image {
-            height: 300px; /* Chiều cao cố định */
-            object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
-            margin: 0 auto;
+        height: 300px; /* Chiều cao cố định */
+        object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
+        margin: 0 auto;
         }
 
         .filter-section {
-            display: none; /* Ẩn phần lọc khi chưa mở */
+        display: none; /* Ẩn phần lọc khi chưa mở */
         }
 
         .filter-toggle {
-            cursor: pointer; /* Con trỏ chuột kiểu 'pointer' khi di chuột vào tiêu đề */
+        cursor: pointer; /* Con trỏ chuột kiểu 'pointer' khi di chuột vào tiêu đề */
         }
 
         .filter-section label {
-            font-size: 14px;
+        font-size: 14px;
         }
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Tìm tất cả các tiêu đề của bộ lọc
-            const filterToggles = document.querySelectorAll('.filter-toggle');
+        // Tìm tất cả các tiêu đề của bộ lọc
+        const filterToggles = document.querySelectorAll('.filter-toggle');
 
-            filterToggles.forEach(function (toggle) {
-                toggle.addEventListener('click', function () {
-                    const filterSection = this.nextElementSibling;
-                    // Kiểm tra trạng thái hiện tại và thay đổi display
-                    if (filterSection.style.display === "none") {
-                        filterSection.style.display = "block"; // Hiển thị phần lọc
-                    } else {
-                        filterSection.style.display = "none"; // Ẩn phần lọc
-                    }
-                });
-            });
+        filterToggles.forEach(function (toggle) {
+        toggle.addEventListener('click', function () {
+        const filterSection = this.nextElementSibling;
+        // Kiểm tra trạng thái hiện tại và thay đổi display
+        if (filterSection.style.display === "none") {
+        filterSection.style.display = "block"; // Hiển thị phần lọc
+        } else {
+        filterSection.style.display = "none"; // Ẩn phần lọc
+        }
+        });
+        });
         });
     </script>
 </head>
@@ -147,7 +148,7 @@
                         var product = products?.FirstOrDefault(p => p.ProductID == item.ProductID);
                         var productName = product?.Name ?? "Không có tên";
                         var productPrice = product?.Price ?? 0;
-                        var productImage = product?.Image?.ImageFileName;
+                        var productImage = Images?.FirstOrDefault(B => B.ProductID == item.ProductID)?.ImageFileName;
 
                         <div class="col-md-4 pb-1">
                             <div class="product-item bg-light mb-4">

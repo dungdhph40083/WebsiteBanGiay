@@ -1,6 +1,7 @@
 ﻿using Application.API.Service;
 using Application.Data.DTOs;
 using Application.Data.Enums;
+using Application.Data.Models;
 using Application.Data.Repositories;
 using Application.Data.Repositories.IRepository;
 using Microsoft.AspNetCore.Authorization;
@@ -20,10 +21,17 @@ namespace Application.API.Controllers
             _imageRepository = imageRepository;
         }
 
-        [HttpGet()]
-        public async Task<ActionResult<IEnumerable<ImageDTO>>> GetImages()
+        [HttpGet]
+        public async Task<ActionResult<List<Image>>> GetImages()
         {
             var images = await _imageRepository.GetAllImagesAsync();
+            return Ok(images);
+        }
+
+        [HttpGet("ByProduct/{ProductID}")]
+        public async Task<ActionResult<List<Image>>> GetImagesByProductID(Guid ProductID)
+        {
+            var images = await _imageRepository.GetImagesByProductID(ProductID);
             return Ok(images);
         }
 

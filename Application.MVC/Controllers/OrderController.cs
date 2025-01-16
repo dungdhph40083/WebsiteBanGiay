@@ -43,8 +43,13 @@ namespace Application.MVC.Controllers
             var Infos = await Client.GetFromJsonAsync<Order>(URL_Order);
             var Items = await Client.GetFromJsonAsync<List<OrderDetail>>(URL_OList);
 
+
+            string ImageURL = "https://localhost:7187/api/Image";
+            var ResponseImgs = await Client.GetFromJsonAsync<List<Image>>(ImageURL);
+
             ViewBag.AlwaysTired = Infos ?? new Order();
             ViewBag.Grrrrrrrrrr = Items ?? new List<OrderDetail>();
+            ViewBag.Images = ResponseImgs;
 
             return View();
         }

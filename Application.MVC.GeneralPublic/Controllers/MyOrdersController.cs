@@ -76,6 +76,9 @@ namespace Application.MVC.GeneralPublic.Controllers
             var Items = await Client.GetFromJsonAsync<List<OrderDetail>>(URL_OList);
             ViewBag.OrderItems = Items ?? new List<OrderDetail>();
 
+            var Images = await Client.GetFromJsonAsync<List<Image>>("https://localhost:7187/api/Image");
+            ViewBag.Images = Images ?? new List<Image>();
+
             var Response = await Client.GetFromJsonAsync<Order>(URL_Order);
 
             return View(Response);

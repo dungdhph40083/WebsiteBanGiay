@@ -1,5 +1,6 @@
 ﻿@{
     var Top8Products = ViewBag.Top8Products as List<Application.Data.Models.ProductDetail>;
+    var Images = ViewBag.Images as List<Application.Data.Models.Image>;
 }
 
 <!-- Carousel Start -->
@@ -305,7 +306,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                     <div class="product-item bg-light mb-4">
                         <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" style="height: 20em;" src="@($"https://localhost:7187/Images/{Item.Product?.Image?.ImageFileName}")" alt="">
+                            <img class="img-fluid w-100" style="height: 20em;" src="@($"https://localhost:7187/Images/{Images?.FirstOrDefault(Bruh => Bruh.ProductID == Item.ProductID)?.ImageFileName}")" alt="">
                             <div class="product-action">
                                 <a class="btn btn-outline-dark btn-square" href="@Url.Action("Details", "Product", new { id = Item.ProductDetailID })">
                                     <i class="fa fa-search"></i>

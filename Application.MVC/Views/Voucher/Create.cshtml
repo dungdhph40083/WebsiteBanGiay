@@ -46,13 +46,13 @@
         </div>
         <div class="col-md-8" id="PercentInput">
             <label asp-for="DiscountPercent" class="form-label fw-semibold text-muted">Giảm % giá</label>
-            <input asp-for="DiscountPercent" class="form-control shadow-sm" type="number" placeholder="0" step="0.01" min="0" max="100" aria-label="" />
+            <input asp-for="DiscountPercent" class="form-control shadow-sm" type="number" value="0" placeholder="0" step="0.01" min="0" max="100" aria-label="" />
             <span asp-validation-for="DiscountPercent" class="text-danger"></span>
 
         </div>
         <div class="col-md-8" id="NumberInput" hidden>
             <label asp-for="DiscountPrice" class="form-label fw-semibold text-muted">Giảm giá tiền</label>
-            <input asp-for="DiscountPrice" class="form-control shadow-sm" type="number" placeholder="0" min="0" max="@(1e15)" aria-label="" />
+            <input asp-for="DiscountPrice" class="form-control shadow-sm" type="number" value="0" placeholder="0" min="0" max="@(1e15)" aria-label="" />
             <span asp-validation-for="DiscountPrice" class="text-danger"></span>
 
         </div>
@@ -138,6 +138,22 @@
 }
 
 <script>
+    if (document.getElementById('RadioPercent').checked == true)
+    {
+        document.getElementById('PercentInput').removeAttribute('hidden');
+        document.getElementById('NumberInput').setAttribute('hidden', '');
+
+        document.getElementById('DiscountPrice').value = 1000;
+    }
+    if (document.getElementById('RadioPercent').checked == false)
+    {
+        document.getElementById('PercentInput').setAttribute('hidden', '');
+        document.getElementById('NumberInput').removeAttribute('hidden');
+
+        document.getElementById('DiscountPercent').value = 1;
+    }
+
+
     function Validate()
     {
         if (document.getElementById('EndInput').value < document.getElementById('StartInput').value)
@@ -158,11 +174,15 @@
         {
             document.getElementById('PercentInput').removeAttribute('hidden');
             document.getElementById('NumberInput').setAttribute('hidden', '');
+
+            document.getElementById('DiscountPrice').value = 1000;
         }
         if (document.getElementById('RadioPercent').checked == false)
         {
             document.getElementById('PercentInput').setAttribute('hidden', '');
             document.getElementById('NumberInput').removeAttribute('hidden');
+
+            document.getElementById('DiscountPercent').value = 1;
         }
     }
 </script>

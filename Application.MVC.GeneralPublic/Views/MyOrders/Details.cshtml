@@ -2,6 +2,7 @@
 @model Application.Data.Models.Order
 @{
     var OrderItems = ViewBag.OrderItems as List<Application.Data.Models.OrderDetail> ?? new List<Application.Data.Models.OrderDetail>();
+    var Images = ViewBag.Images as List<Application.Data.Models.Image>;
 }
 <style>
     .order-details-container {
@@ -51,9 +52,9 @@
                         {
                             <tr>
                                 <td class="align-middle">
-                                    @if (Item.ProductDetail?.Product?.Image != null)
+                                    @if (Item.ProductDetail != null)
                                     {
-                                        <img style="width: 100px; height: 100px" src="https://localhost:7187/Images/@(Item.ProductDetail?.Product?.Image?.ImageFileName)" class="img-thumbnail" alt="Ảnh hàng" />
+                                        <img style="width: 100px; height: 100px" src="https://localhost:7187/Images/@(Images.FirstOrDefault(B => B.ProductID == Item.ProductDetail?.ProductID)?.ImageFileName)" class="img-thumbnail" alt="Ảnh hàng" />
                                     }
                                     else
                                     {

@@ -25,6 +25,9 @@ namespace Application.MVC.Controllers
             string requestURL = "https://localhost:7187/api/Product";
             var response = await client.GetFromJsonAsync<List<Product>>(requestURL);
 
+            string ImageURL = "https://localhost:7187/api/Image";
+            var ResponseImgs = await client.GetFromJsonAsync<List<Image>>(ImageURL);
+
             // Lọc sản phẩm theo tên nếu có searchTerm
             if (!string.IsNullOrEmpty(searchTerm))
             {
@@ -49,16 +52,24 @@ namespace Application.MVC.Controllers
             ViewBag.PageSize = pageSize;
             ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
+            ViewBag.Images = ResponseImgs;
+
             return View(pagedData);
         }
 
 
 
-        public ActionResult Details(Guid id)
+        public async Task<ActionResult> Details(Guid id)
         {
             string requestURL = $"https://localhost:7187/api/Product/{id}";
             var response = client.GetStringAsync(requestURL).Result;
             var data = JsonConvert.DeserializeObject<Product>(response);
+
+            string ImageURL = $"https://localhost:7187/api/Image/ByProduct/{id}";
+            var GetImagesList = await client.GetFromJsonAsync<List<Image>>(ImageURL);
+
+            ViewBag.Images = GetImagesList ?? new List<Image>();
+
             return View(data);
         }
 
@@ -70,7 +81,7 @@ namespace Application.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(ProductDTO product, IFormFile? Image)
+        public async Task<ActionResult> Create(ProductDTO product, List<IFormFile>? Image)
         {
             // Kiểm tra xem tên sản phẩm đã tồn tại trong cơ sở dữ liệu chưa
             string checkProductNameURL = $"https://localhost:7187/api/Product/CheckProductName/{product.Name}";
@@ -98,8 +109,11 @@ namespace Application.MVC.Controllers
 
                 if (Image != null)
                 {
-                    var ImageStream = new StreamContent(Image.OpenReadStream());
-                    Contents.Add(ImageStream, nameof(Image), Image.FileName);
+                    foreach (var ImgItem in Image)
+                    {
+                        var ImageStream = new StreamContent(ImgItem.OpenReadStream());
+                        Contents.Add(ImageStream, nameof(Image), ImgItem.FileName);
+                    }
                 }
 
                 var response = await client.PostAsync(requestURL, Contents);
@@ -148,18 +162,25 @@ namespace Application.MVC.Controllers
 
             if (string.IsNullOrEmpty(productResponse))
             {
-                return NotFound();
+                ToastNotifier.Error("Không tìm thấy gì.");
+                return RedirectToAction(nameof(Index));
             }
 
             var product = JsonConvert.DeserializeObject<ProductDTO>(productResponse);
 
-            // Đưa dữ liệu hình ảnh vào ViewBag để hiển thị trong combobox
+            // Đưa dữ liệu hình ảnh vào ViewBag để hiển thị trong bảng
+            string ImageURL = $"https://localhost:7187/api/Image/ByProduct/{id}";
+            var GetImagesList = await client.GetFromJsonAsync<List<Image>>(ImageURL) ?? new List<Image>();
+
+            Console.WriteLine("\nImages list: " + GetImagesList.ToJson(Formatting.Indented) + "\n");
+
+            ViewBag.Images = GetImagesList ?? new List<Image>();
 
             return View(product);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(Guid ID, ProductDTO product, IFormFile? Image)
+        public async Task<ActionResult> Edit(Guid ID, ProductDTO product, List<IFormFile>? Image)
         {
 
             if (product == null)
@@ -179,8 +200,11 @@ namespace Application.MVC.Controllers
 
             if (Image != null)
             {
-                var ImageStream = new StreamContent(Image.OpenReadStream());
-                Contents.Add(ImageStream, nameof(Image), Image.FileName);
+                foreach (var ImgItem in Image)
+                {
+                    var ImageStream = new StreamContent(ImgItem.OpenReadStream());
+                    Contents.Add(ImageStream, nameof(Image), ImgItem.FileName);
+                }
             }
 
             var response = await client.PutAsync(requestURL, Contents);
@@ -249,6 +273,24 @@ namespace Application.MVC.Controllers
                 }
             }
             return RedirectToAction(nameof(Index));
+        }
+
+            //POST: ImageController/Delete/5
+        public async Task<ActionResult> DeleteImage(Guid FromID, Guid ImgID)
+        {
+            try
+            {
+                string URL = $@"https://localhost:7187/api/Image/{ImgID}";
+                var Response = await client.DeleteAsync(URL);
+                return RedirectToAction(nameof(Edit), new {ID = FromID});
+            }
+            catch (Exception Msg)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(Msg.Message);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return View();
+            }
         }
     }
 }

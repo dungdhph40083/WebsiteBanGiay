@@ -67,11 +67,13 @@ namespace Application.Data.Repositories
             var Target = await GetUserByID(TargetID);
             if (Target != null)
             {
-                Context.Entry(Target).State = EntityState.Modified;
+                Context.Users.Attach(Target);
 
                 // Cập nhật mật khẩu khi mật khẩu ko null
                 if (!string.IsNullOrWhiteSpace(UpdatedUser.Password)) UpdatedUser.Password = /*PasswordHasher*/(UpdatedUser.Password);
                 else UpdatedUser.Password = Target.Password;
+
+                if (UpdatedUser.RoleID == null) UpdatedUser.RoleID = Target.RoleID;
                 
                 // Ko cập nhật ảnh khi ảnh null
                 if (UpdatedUser.ImageID == null) UpdatedUser.ImageID = Target.ImageID;
@@ -92,7 +94,7 @@ namespace Application.Data.Repositories
             if (Target != null)
             {
                 Target.IsBanned = !Target.IsBanned;
-                Context.Entry(Target).State = EntityState.Modified;
+                Context.Users.Attach(Target);
 
                 if (Target.Status == 1) Target.Status = 0;
                 else Target.Status = 1;

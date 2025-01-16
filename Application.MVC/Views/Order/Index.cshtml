@@ -253,9 +253,17 @@
                                             asp-route-StatusCode="@((int)(OrderStatus.DeliveryFailure))">
                                             Chưa giao được hàng
                                         </a>
+                                        <hr />
+                                        <a class="btn btn-danger mt-1"
+                                            asp-action="UpdateOrderStatus"
+                                            asp-route-ID="@Entry.OrderID"
+                                            asp-route-StatusCode="@((int)(OrderStatus.DeliveryIsDead))">
+                                            Giao hàng thất bại
+                                        </a>
                                     }
                                     else
                                     {
+                                        <hr />
                                         <a class="btn btn-danger mt-1"
                                             asp-action="UpdateOrderStatus"
                                             asp-route-ID="@Entry.OrderID"

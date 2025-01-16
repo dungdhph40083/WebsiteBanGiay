@@ -21,6 +21,9 @@ namespace Application.MVC.GeneralPublic.Controllers
                 .GroupBy(Sdf => Sdf.ProductID).Select(Req => Req.First()).ToList();
             ViewBag.Details = Details ?? new List<ProductDetail>();
 
+            var Images = await client.GetFromJsonAsync<List<Image>>("https://localhost:7187/api/Image");
+            ViewBag.Images = Images ?? new List<Image>();
+
             if (Products != null && Details != null)
             {
                 // Lấy các DS: danh mục, màu và kích cỡ
@@ -160,10 +163,14 @@ namespace Application.MVC.GeneralPublic.Controllers
             string productDetailUrl = $"https://localhost:7187/api/ProductDetails/{ID}";
             var productDetail = await client.GetFromJsonAsync<ProductDetail>(productDetailUrl);
 
-
             if (productDetail == null)
             {
                 return NotFound();
+            }
+            else
+            {
+                var Images = await client.GetFromJsonAsync<List<Image>>($@"https://localhost:7187/api/Image/ByProduct/{productDetail.ProductID}");
+                ViewBag.Images = Images ?? new List<Image>();
             }
 
             return View(productDetail);

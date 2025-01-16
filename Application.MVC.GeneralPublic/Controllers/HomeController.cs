@@ -45,16 +45,20 @@ namespace Application.MVC.GeneralPublic.Controllers
 
         private async Task FetchInfo()
         {
-            string URL_Prods = $@"https://localhost:7187/api/ProductDetails";
+            string URL_Prods = "https://localhost:7187/api/ProductDetails";
+            string URL_Imgds = "https://localhost:7187/api/Image";
 
             var Details = await Client.GetFromJsonAsync<List<ProductDetail>>(URL_Prods);
-            // Lấy 8 con từ đầu danh sách sau khi được sắp xếp theo ngày từ cuối lên đầu
+            var Images  = await Client.GetFromJsonAsync<List<Image>>(URL_Imgds);
 
+            // Lấy 8 con từ đầu danh sách sau khi được sắp xếp theo ngày từ cuối lên đầu
             // Sau đó cho vào ViewBag
             ViewBag.Top8Products = Details?
                 .OrderByDescending(Req => Req.Product?.CreatedAt)
                 .GroupBy(Sdf => Sdf.ProductID).Select(Req => Req.First())
                 .Take(20).ToList() ?? new List<ProductDetail>();
+
+            ViewBag.Images = Images;
         }
     }
 }

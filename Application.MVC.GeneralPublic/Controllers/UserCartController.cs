@@ -1,13 +1,8 @@
 ﻿using Application.Data.Enums;
 using Application.Data.Models;
-using Humanizer;
-using Application.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using NuGet.Protocol;
-using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
 
 namespace Application.MVC.GeneralPublic.Controllers
 {
@@ -32,6 +27,9 @@ namespace Application.MVC.GeneralPublic.Controllers
 
                 var Response = await Client.GetFromJsonAsync<List<ShoppingCart>>(URL);
                 var Voucher = JsonConvert.DeserializeObject<Voucher>(await Client.GetAsync(URL_Voucher).Result.Content.ReadAsStringAsync());
+
+                var Images = await Client.GetFromJsonAsync<List<Image>>("https://localhost:7187/api/Image");
+                ViewBag.Images = Images ?? new List<Image>();
 
                 if (Voucher != null)
                 {

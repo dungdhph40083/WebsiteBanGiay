@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Index";
+
+    var ImgList = ViewBag.Images as List<Application.Data.Models.Image>;
 }
 <!-- jQuery -->
 <!-- Link to Bootstrap CSS (Ensure you have the correct path or use CDN) -->
@@ -154,9 +156,9 @@
                 <td>@serialNumber</td>
                 <td>@Html.DisplayFor(modelItem => item.value.Name)</td>
                 <td>
-                    @if (item.value.Image != null)
+                    @if (ImgList != null && ImgList?.FirstOrDefault(Bruh => Bruh.ProductID == item.value.ProductID) != null)
                     {
-                        <img src="https://localhost:7187/Images/@(item.value.Image.ImageFileName)" class="img-thumbnail" alt="Thumbnail">
+                        <img src="https://localhost:7187/Images/@(ImgList.FirstOrDefault(Bruh => Bruh.ProductID == item.value.ProductID).ImageFileName)" class="img-thumbnail" alt="Thumbnail">
                     }
                     else
                     {
@@ -250,19 +252,18 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="ModalDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="ModalDelete" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Xác nhận</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-btn" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Bạn có chắc chắn để xóa sản phẩm này?<br />
                 @* <span style="font-size:small" class="font-monospace-cascadia">Category ID: <span id="ItemID" class="font-monospace-cascadia"></span></span> *@
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancel-btn">Hủy</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-btn">Hủy</button>
                 <a href="" class="btn btn-danger" id="confirm_deletion">Xóa</a>
             </div>
         </div>

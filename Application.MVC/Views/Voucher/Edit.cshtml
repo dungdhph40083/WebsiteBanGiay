@@ -137,25 +137,51 @@
 }
 
 <script>
-    function Validate() {
-        if (document.getElementById('EndInput').value < document.getElementById('StartInput').value) {
+    if (document.getElementById('RadioPercent').checked == true)
+    {
+        document.getElementById('PercentInput').removeAttribute('hidden');
+        document.getElementById('NumberInput').setAttribute('hidden', '');
+
+        document.getElementById('DiscountPrice').value = 1000;
+    }
+    if (document.getElementById('RadioPercent').checked == false)
+    {
+        document.getElementById('PercentInput').setAttribute('hidden', '');
+        document.getElementById('NumberInput').removeAttribute('hidden');
+
+        document.getElementById('DiscountPercent').value = 1;
+    }
+
+
+    function Validate()
+    {
+        if (document.getElementById('EndInput').value < document.getElementById('StartInput').value)
+        {
             document.getElementById('StartInput').value = document.getElementById('EndInput').value;
         }
 
-        if (document.getElementById('StartInput').value > document.getElementById('EndInput').value) {
+        if (document.getElementById('StartInput').value > document.getElementById('EndInput').value)
+        {
             document.getElementById('EndInput').value = document.getElementById('StartInput').value;
             // document.getElementById('EndInput').min = document.getElementById('StartInput').value;
         }
     }
 
-    function Toggle() {
-        if (document.getElementById('RadioPercent').checked == true) {
+    function Toggle()
+    {
+        if (document.getElementById('RadioPercent').checked == true)
+        {
             document.getElementById('PercentInput').removeAttribute('hidden');
             document.getElementById('NumberInput').setAttribute('hidden', '');
+
+            document.getElementById('DiscountPrice').value = 1000;
         }
-        if (document.getElementById('RadioPercent').checked == false) {
+        if (document.getElementById('RadioPercent').checked == false)
+        {
             document.getElementById('PercentInput').setAttribute('hidden', '');
             document.getElementById('NumberInput').removeAttribute('hidden');
+
+            document.getElementById('DiscountPercent').value = 1;
         }
     }
 </script>

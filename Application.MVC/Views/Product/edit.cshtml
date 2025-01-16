@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Sửa sản phẩm";
+    var GetImages = ViewBag.Images as List<Application.Data.Models.Image>;
 }
 
 <h1 class="text-center mt-4 text-primary">Sửa sản phẩm</h1>
@@ -27,8 +28,52 @@
 
     <div class="row mt-3">
         <div class="col-md-6">
-            <label class="form-label fw-semibold text-muted">Ảnh bìa</label>
-            <input type="file" name="Image" class="form-control shadow-sm" accept="image/png, image/jpeg" />
+            <label class="form-label fw-semibold text-muted">Thêm ảnh bìa</label>
+            <input type="file" name="Image" class="form-control shadow-sm" accept="image/png, image/jpeg" multiple/>
+            @if (GetImages != null || GetImages?.Count() > 0)
+            {
+                <hr />
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="col-md-8">Ảnh</th>
+                            <th class="col-md-4"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var Idx = 0; Idx < GetImages.Count(); Idx++)
+                        {
+                            <tr>
+                                <td style="width: 75%"><img src="https://localhost:7187/Images/@GetImages[Idx].ImageFileName" alt="@GetImages[Idx].ImageFileName" style="width: 25%" class="img img-thumbnail"></td>
+                                <td>
+                                    @if (Idx != 0)
+                                    {
+                                        <div class="dropdown" style="width: 25%">
+                                            <button class="btn btn-secondary" type="button" id="ConfirmDelBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-x"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right ml-1 mr-1 text-center" aria-labelledby="ConfirmDelBtn" style="width: 150px">
+                                                <h1 class="">Xác nhận</h1>
+                                                <a class="btn btn-danger w-75" asp-action="DeleteImage" asp-route-FromID="@Context.GetRouteValue("ID")" asp-route-ImgID="@GetImages[Idx].ImageID">Xóa</a><br />
+                                                <a class="btn btn-secondary mt-1 w-75" href="#">Bỏ</a>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <i>(Mặc định)</i>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <hr />
+                <i>Chưa có ảnh.</i>
+            }
         </div>
 
         <div class="col-md-6">
@@ -47,6 +92,8 @@
         </a>
     </div>
 </form>
+
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

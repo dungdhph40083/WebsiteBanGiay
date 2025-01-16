@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Chi tiết sản phẩm";
+    var GetImages = ViewBag.Images as List<Application.Data.Models.Image>;
 }
 
 <div class="container">
@@ -39,15 +40,26 @@
 
         <!-- Optional Image Section -->
         <!-- Optional Image Section -->
-        @if (Model.Image != null)
+        @if (GetImages != null || GetImages?.Count == 0)
         {
             <div class="col-md-4">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Ảnh sản phẩm</h5>
-                        <img src="https://localhost:7187/Images/@Model.Image.ImageFileName" class="img-fluid mb-3" alt="Ảnh sản phẩm" />
-                        <div class="font-italic">@Model.Image.ImageFileName</div>
+                <div id="ImageList" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        @for (int ImgIndx = 0; ImgIndx < GetImages.Count(); ImgIndx++)
+                        {
+                            <div class="carousel-item @(ImgIndx == 0 ? "active" : "")">
+                                <img class="d-block w-100" src="https://localhost:7187/Images/@GetImages[ImgIndx].ImageFileName" alt="@GetImages[ImgIndx].ImageFileName" />
+                            </div>
+                        }
                     </div>
+                    <a class="carousel-control-prev" href="#ImageList" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Trái</span>
+                    </a>
+                    <a class="carousel-control-next" href="#ImageList" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Phải</span>
+                    </a>
                 </div>
             </div>
         }
