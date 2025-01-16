@@ -59,7 +59,7 @@ namespace Application.Data.Repositories
         public async Task<int> GetBannedAccountsAsync()
         {
             return await _context.Users
-            .Where(u => u.Status == 0)
+            .Where(u => u.Status == 0)  // Giả sử trạng thái 0 là tài khoản bị cấm
             .CountAsync();
         }
 
