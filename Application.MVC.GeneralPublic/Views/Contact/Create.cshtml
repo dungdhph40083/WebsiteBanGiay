@@ -1,4 +1,4 @@
-﻿@model Application.Data.Models.CustomerSupportMessage
+@model Application.Data.DTOs.CustomerSupportMessageDTO
 
 @{
     ViewData["Title"] = "Create";
@@ -55,14 +55,17 @@
                     <div class="col-md-6 form-group">
                         <label>Tên</label>
                         <input class="form-control" asp-for="FirstName" type="text" value="@user?.FirstName" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 form-group">
                         <label>E-mail</label>
                         <input class="form-control" asp-for="Email" type="email" value="@user?.Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 form-group">
                         <label>Số điện thoại</label>
                         <input class="form-control" asp-for="PhoneNumber" type="text" value="@user?.PhoneNumber" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="MessageContent" class="control-label">Nội dung tin nhắn</label>
