@@ -56,7 +56,7 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="~/css/style.min.css" rel="stylesheet">
-
+    @await RenderSectionAsync("Styles", required: false)
     <style>
         /* #region hide arrows on number input fields */
 

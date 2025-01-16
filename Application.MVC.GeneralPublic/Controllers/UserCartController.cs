@@ -67,7 +67,6 @@ namespace Application.MVC.GeneralPublic.Controllers
             Console.WriteLine("Quantity: " + Quantity ?? "null");
 
             Guid UserID = GetCurrentUserId();
-
             if (ID != null)
             {
                 try
@@ -90,7 +89,10 @@ namespace Application.MVC.GeneralPublic.Controllers
         public async Task<ActionResult> UpdateWholeCart(List<ShoppingCart> BigCart)
         {
             Guid ID = GetCurrentUserId();
-
+            if (ID == Guid.Empty)
+            {
+                return RedirectToAction("LoginRequest", "Login");
+            }
             foreach (var Item in BigCart)
             {
                 string URL = $@"https://localhost:7187/api/ShoppingCart/Add2Cart/{ID}/{Item.ProductDetailID}?Quantity={Item.QuantityCart ?? 0}&AdditionMode=false";
@@ -141,7 +143,7 @@ namespace Application.MVC.GeneralPublic.Controllers
             string? token = HttpContext.Session.GetString("JwtToken");
             if (string.IsNullOrEmpty(token))
             {
-                throw new UnauthorizedAccessException("Hãy Đăng Nhập Để Thực Hiện Chức Năng Này.");
+                return Guid.Empty;
             }
 
             var handler = new JwtSecurityTokenHandler();

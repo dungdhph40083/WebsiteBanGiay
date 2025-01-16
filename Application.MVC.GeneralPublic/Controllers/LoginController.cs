@@ -164,12 +164,24 @@ namespace Application.MVC.GeneralPublic.Controllers
                 NewUser.RoleID = Guid.Parse(DefaultValues.UserRoleGUID);
                 NewUser.IsBanned = DefaultValues.IsBanned;
                 var email = await _giayDBContext.Users.FirstOrDefaultAsync(u => u.Email == NewUser.Email);
+                var userName = await _giayDBContext.Users.FirstOrDefaultAsync(u => u.Username == NewUser.Username);
+                var phoneNumber = await _giayDBContext.Users.FirstOrDefaultAsync(u => u.PhoneNumber == NewUser.PhoneNumber);
                 if (email != null)
                 {
                     TempData["FailureBanner"] = $"Email bạn nhập đã tồn tại";
                     return View(NewUser);
                 }
-                    string apiUrl = $@"https://localhost:7187/api/User/Register";
+                if (userName != null)
+                {
+                    TempData["FailureBanner"] = $"UserName đã tồn tại";
+                    return View(NewUser);
+                }
+                if (phoneNumber != null)
+                {
+                    TempData["FailureBanner"] = $"Số điện thoại đã tồn tại";
+                    return View(NewUser);
+                }
+                string apiUrl = $@"https://localhost:7187/api/User/Register";
                 var response = await Client.PostAsJsonAsync(apiUrl, NewUser);
 
                 if (response.IsSuccessStatusCode)
@@ -273,6 +285,10 @@ namespace Application.MVC.GeneralPublic.Controllers
                 TempData["FailureBanner"] = $"Có lỗi xảy ra: {ex.Message}";
                 return View(resetPasswordDto);
             }
+        }
+        public IActionResult LoginRequest()
+        {
+            return View();
         }
 
         private Guid GetCurrentUserId()
