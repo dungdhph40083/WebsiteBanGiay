@@ -25,10 +25,11 @@ namespace Application.Data.Repositories
             var DateTimeSync = DateTime.UtcNow;
 
             User User = new() { UserID = Guid.NewGuid(), CreatedAt = DateTimeSync, UpdatedAt = DateTimeSync};
-
             //NewUser.Password = PasswordHasher(NewUser.Password!);
 
             User = Mapper.Map(NewUser, User);
+
+            User.Status = 1;
 
             await Context.Users.AddAsync(User);
             await Context.SaveChangesAsync();

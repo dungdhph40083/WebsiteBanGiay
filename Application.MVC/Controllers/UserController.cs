@@ -94,7 +94,7 @@ namespace Application.MVC.Controllers
                     { new StringContent(Input.Email ?? ""),                                       nameof(Input.Email) },
                     { new StringContent(Input.Address ?? ""),                                     nameof(Input.Address) },
                     { new StringContent(Input.PhoneNumber ?? ""),                                 nameof(Input.PhoneNumber) },
-                   // { new StringContent(Input.Status.ToString() ?? "1"),                          nameof(Input.Status) },
+                    //{ new StringContent(Input.Status.ToString() ?? "1"),                          nameof(Input.Status) },
                     { new StringContent(Input.RoleID.ToString() ?? DefaultValues.UserRoleGUID),   nameof(Input.RoleID) }
                 };
 
